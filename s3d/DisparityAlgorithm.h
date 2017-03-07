@@ -41,12 +41,10 @@ struct DisparityPoint
 
 class Disparities {
 public:
-    using value_type = DisparityPoint;
-
-    virtual const std::vector<value_type> &getDisparities() = 0;
+    virtual const std::vector<DisparityPoint> &getDisparities() = 0;
     virtual Image getDisparityMap() = 0;
-    virtual value_type max() = 0;
-    virtual value_type min() = 0;
+    virtual DisparityPoint max() = 0;
+    virtual DisparityPoint min() = 0;
 };
 
 class DisparityAlgorithm
