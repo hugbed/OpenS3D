@@ -24,15 +24,13 @@ struct ImageSize
 class DisparitiesSparse : public Disparities
 {
 public:
-    using value_type = DisparityPoint;
-
-    DisparitiesSparse(const std::vector<value_type> &disparities, ImageSize imageSize)
+    DisparitiesSparse(const std::vector<DisparityPoint> &disparities, ImageSize imageSize)
             : disparities_(disparities)
             , disparityMap_(cv::Mat::zeros(static_cast<int>(imageSize.rows), static_cast<int>(imageSize.cols), CV_8U))
     {
     }
 
-    virtual const std::vector<value_type> &getDisparities() override // const & ??
+    virtual const std::vector<DisparityPoint> &getDisparities() override // const & ??
     {
         return disparities_;
     }
@@ -54,26 +52,24 @@ public:
         return disparityMap_;
     }
 
-    virtual value_type max() override
+    virtual DisparityPoint max() override
     {
         return *(std::max(std::begin(disparities_), std::end(disparities_)));
     }
 
-    virtual value_type min() override
+    virtual DisparityPoint min() override
     {
         return *(std::min(std::begin(disparities_), std::end(disparities_)));
     }
 
 private:
-    std::vector<value_type> disparities_;
+    std::vector<DisparityPoint> disparities_;
     Image disparityMap_;
 };
 
 class DisparityAlgorithmORB : public DisparityAlgorithm
 {
 public:
-    using value_type = DisparitiesSparse;
-
     std::unique_ptr<Disparities> ComputeDisparities(Image leftImg, Image rightImg) override
     {
         auto left = leftImg.mat;

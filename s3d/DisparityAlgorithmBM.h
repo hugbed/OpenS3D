@@ -18,18 +18,16 @@
 class DisparitiesDense : public Disparities
 {
 public:
-    using value_type = DisparityPoint;
-
     DisparitiesDense(Image disparityMap,
-                  value_type minDisparity,
-                  value_type maxDisparity)
+                     DisparityPoint minDisparity,
+                     DisparityPoint maxDisparity)
         : disparityMap_(disparityMap)
         , min_(minDisparity)
         , max_(maxDisparity)
     {
     }
 
-    virtual const std::vector<value_type> &getDisparities() override
+    virtual const std::vector<DisparityPoint> &getDisparities() override
     {
         if (disparities_.size() > 0) return disparities_;
         for( int i = 0; i < disparityMap_.mat.rows; ++i) {
@@ -46,21 +44,21 @@ public:
         return disparityMap_;
     }
 
-    virtual value_type max() override
+    virtual DisparityPoint max() override
     {
         return max_;
     }
 
-    virtual value_type min() override
+    virtual DisparityPoint min() override
     {
         return min_;
     }
 
 private:
     Image disparityMap_;
-    std::vector<value_type> disparities_;
-    value_type min_;
-    value_type max_;
+    std::vector<DisparityPoint> disparities_;
+    DisparityPoint min_;
+    DisparityPoint max_;
 };
 
 class DisparityAlgorithmBM : public DisparityAlgorithm
