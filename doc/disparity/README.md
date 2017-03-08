@@ -4,7 +4,6 @@ This interface allows the implementation of different strategies to retrieve pix
 
 ## Interface specification
 
-![alt tag](https://raw.githubusercontent.com/hugbed/OpenS3D/master/docs/disparity/DisparityInterfaceUML.png)
 ![alt tag](DisparityInterfaceUML.png)
 
 Implementation can extended by deriving the DisparityComputationAlgorithm interface for a specific disparity type (e.g, uint_8, float). 
