@@ -6,6 +6,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake-mod
 
 find_package(OpenCV REQUIRED)
 
-set(SOURCE_FILES main.cpp hb_utils.h s3d/DisparityAlgorithm.h s3d/DisparityAlgorithmBM.h s3d/DisparityAlgorithmORB.h)
+set(SOURCE_FILES main.cpp hb_utils.h s3d/disparity/DisparityAlgorithm.h s3d/disparity/DisparityAlgorithmBM.h s3d/disparity/DisparityAlgorithmORB.h)
 add_executable(OpenS3D ${SOURCE_FILES})
 target_link_libraries(OpenS3D ${OpenCV_LIBS})
