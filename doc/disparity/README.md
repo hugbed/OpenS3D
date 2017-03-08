@@ -6,11 +6,24 @@ This interface allows the implementation of different strategies to retrieve pix
 
 ![alt tag](DisparityInterfaceUML.png)
 
-Implementation can extended by deriving the DisparityComputationAlgorithm interface for a specific disparity type (e.g, uint_8, float). 
+Implementations can extended by deriving the `DisparityComputationAlgorithm` interface for a specific disparity type (e.g, uint_8, float). A specific implementation of `computeDisparities` can then be provided and will return a `Disparities` structure with the specified disparity type :
 
-A specific implementation of computeDisparities can then be provided and will return a Disparities structure with the specified disparity types. 
+```cpp
+class DisparityAlgorithmConcrete : public DisparityAlgorithm<int>
+{
+public:
+    using value_type = int;
+    Disparities<value_type> computeDisparities(Image left, Image right) { return {}; }
+};
+```
 
-An implementation can decide to only fill horizontalDisparities if pixelLocations are trivial and verticalDisparities are 0 (e.g, for a depth map). The horizontal disparities will then be equivalent to a 1D disparity image.
+An implementation can decide to only fill `horizontalDisparities` if `pixelLocations` are trivial and `verticalDisparities` are 0 (e.g, for a depth map). The horizontal disparities will then be equivalent to a 1D disparity image :
+
+Example of depth map implementation :
+
+* horizontalDisparities = {d1, d2, d3, d3, ...} <-- horizontalDisparities.size() == image.nbPixels
+* verticalDisparities = {}
+* pixelLocations = {}
 
 An implementation with feature correspondance could also fill horizontalDisparities and pixelLocations of each disparity since the disparities are sparse in this case and pixel locations need to be provided.
 
