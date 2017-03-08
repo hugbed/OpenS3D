@@ -74,7 +74,7 @@ int main()
     
     Disparities<char> disp = algorithm->computeDisparities(left, right);
     
-    auto horiz = disp.horizontalDisparities;
-    auto vert = disp.verticalDisparities;    
+    auto& horiz = disp.horizontalDisparities;
+    auto& vert = disp.verticalDisparities;    
 }
 ```
