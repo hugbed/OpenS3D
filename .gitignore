@@ -30,3 +30,5 @@
 \.idea/
 
 cmake-build-debug/
+
+src/apps/ogre-s3d-player/cmake-build-release/
