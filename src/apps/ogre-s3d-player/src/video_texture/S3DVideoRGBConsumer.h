@@ -5,17 +5,17 @@
 #ifndef OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 #define OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 
-#include "../utils/SyncConsumer.h"
-#include "VideoTexture.h"
+#include "../utils/ConsumerBarrierSync.h"
+#include "DynamicTextureThreadSafe.h"
 
-class VideoBytesConsumer : public SyncConsumer<std::vector<uint8_t>>
+class S3DVideoRGBConsumer : public ConsumerBarrierSync<std::vector<uint8_t>>
 {
 public:
-    VideoBytesConsumer(VideoTexture* videoTextureL, VideoTexture *videoTextureR,
+    S3DVideoRGBConsumer(DynamicTextureThreadSafe* videoTextureL, DynamicTextureThreadSafe *videoTextureR,
         std::mutex &doneProducingMutex,
         std::condition_variable &shouldConsumeCV,
-        const std::vector<SyncProducer<std::vector<uint8_t>>*> producers)
-    : SyncConsumer(doneProducingMutex, shouldConsumeCV, producers)
+        const std::vector<ProducerBarrierSync<std::vector<uint8_t>>*> producers)
+    : ConsumerBarrierSync(doneProducingMutex, shouldConsumeCV, producers)
     , videoTextureL{videoTextureL}
     , videoTextureR{videoTextureR}
     {
@@ -25,10 +25,11 @@ private:
     virtual void consume() override
     {
         sleepUntilNextFrame();
+        const auto& producers = getProducers();
         auto& leftImage = producers[0]->getProduct();
         auto& rightImage = producers[1]->getProduct();
-        videoTextureL->pushFrame(leftImage);
-        videoTextureR->pushFrame(rightImage);
+        videoTextureL->updateImage(leftImage);
+        videoTextureR->updateImage(rightImage);
         nbFrames++;
     }
 
@@ -40,14 +41,9 @@ private:
         lastConsumeTime = std::chrono::high_resolution_clock::now();
     }
 
-    virtual bool shouldStopConsuming() override
-    {
-        return nbFrames == 100;
-    }
-
     int nbFrames{0};
-    VideoTexture* videoTextureL;
-    VideoTexture* videoTextureR;
+    DynamicTextureThreadSafe* videoTextureL;
+    DynamicTextureThreadSafe* videoTextureR;
     std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 

@@ -5,34 +5,39 @@
 #ifndef OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 #define OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 
-#include "../utils/SyncProducer.h"
+#include "../utils/ProducerBarrierSync.h"
 #include "../utils/file_io.h"
 #include "../utils/compression.h"
 
 #include <fstream>
 
-class YUVToRGBFileBytesProducer : public SyncProducer<std::vector<uint8_t>>
+class IfYUVToRGBProducer : public ProducerBarrierSync<std::vector<uint8_t>>
 {
 public:
     // image size, etc
-    YUVToRGBFileBytesProducer(const std::string& filename,
+    IfYUVToRGBProducer(const std::string& filename,
                       std::mutex &doneProducingMutex, std::condition_variable &shouldConsumeCV)
-        : SyncProducer(doneProducingMutex, shouldConsumeCV)
+        : ProducerBarrierSync(doneProducingMutex, shouldConsumeCV)
         , yuvBytes{}
         , rgbBytes{}
-        , nbChunks{}
         , fileStream{filename, std::ios::binary}
     {
         // hardcoded for now
         yuvBytes.resize(1920 * 1080 * 2);
         rgbBytes.resize(1920 * 1080 * 3);
     }
+
+    virtual bool shouldStopProducing() override
+    {
+        return fileStream.eof();
+    }
+
 private:
+
     virtual void produce() override
     {
         read_n_bytes(fileStream, yuvBytes.size(), std::begin(yuvBytes));
         yuv2rgb(std::begin(yuvBytes), std::end(yuvBytes), std::begin(rgbBytes));
-        nbChunks++;
     }
 
     virtual const std::vector<uint8_t>& getProduct()
@@ -40,14 +45,8 @@ private:
         return rgbBytes;
     }
 
-    virtual bool shouldStopProducing() override
-    {
-        return nbChunks == 100;
-    }
-
     std::vector<uint8_t> yuvBytes;
     std::vector<uint8_t> rgbBytes;
-    int nbChunks;
     std::ifstream fileStream;
 };
 

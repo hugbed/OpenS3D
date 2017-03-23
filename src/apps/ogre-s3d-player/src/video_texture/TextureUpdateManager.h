@@ -6,14 +6,14 @@
 #define OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
 
 #include <condition_variable>
-#include "VideoTexture.h"
-#include "YUVToRGBFileBytesProducer.h"
-#include "VideoBytesConsumer.h"
+#include "DynamicTextureThreadSafe.h"
+#include "IfYUVToRGBProducer.h"
+#include "S3DVideoRGBConsumer.h"
 
 class TextureUpdateManager
 {
 public:
-    virtual void handleTextureUpdate(VideoTexture*, VideoTexture*) = 0;
+    virtual void handleTextureUpdate(DynamicTextureThreadSafe*, DynamicTextureThreadSafe*) = 0;
 };
 
 class YUVFileTextureUpdateManager : public TextureUpdateManager
@@ -25,18 +25,18 @@ public:
     }
 
     // starts a thread so main thread can stop it maybe
-    virtual void handleTextureUpdate(VideoTexture* videoTextureL, VideoTexture* videoTextureR) override
+    virtual void handleTextureUpdate(DynamicTextureThreadSafe* videoTextureL, DynamicTextureThreadSafe* videoTextureR) override
     {
         auto textureHandlingThread = std::thread([this, videoTextureL, videoTextureR]{
             std::mutex doneProducingMutex;
             std::condition_variable shouldConsumeCV;
 
-            YUVToRGBFileBytesProducer fileProducerL(filenames.first,
+            IfYUVToRGBProducer fileProducerL(filenames.first,
                                                     doneProducingMutex, shouldConsumeCV);
-            YUVToRGBFileBytesProducer fileProducerR(filenames.second,
+            IfYUVToRGBProducer fileProducerR(filenames.second,
                                                     doneProducingMutex, shouldConsumeCV);
 
-            std::vector<SyncProducer<std::vector<uint8_t>>*> producers = {
+            std::vector<ProducerBarrierSync<std::vector<uint8_t>>*> producers = {
                     &fileProducerL,
                     &fileProducerR
             };
@@ -49,7 +49,7 @@ public:
                 }));
             }
 
-            VideoBytesConsumer consumer(videoTextureL, videoTextureR,
+            S3DVideoRGBConsumer consumer(videoTextureL, videoTextureR,
                                         doneProducingMutex, shouldConsumeCV,
                                         producers);
 
@@ -59,6 +59,9 @@ public:
             for (auto & producerThread : producerThreads) {
                 producerThread.join();
             }
+
+            videoTextureL->clear();
+            videoTextureR->clear();
         });
         textureHandlingThread.detach();
     }

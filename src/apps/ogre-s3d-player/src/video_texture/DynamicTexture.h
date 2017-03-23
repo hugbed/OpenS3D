@@ -9,9 +9,9 @@
 
 #include <vector>
 
-class DynamicImageTexture {
+class DynamicTexture {
 public:
-    DynamicImageTexture(const std::string &textureName,
+    DynamicTexture(const std::string &textureName,
                     Ogre::PixelFormat format,
                     ushort imgWidth,
                     ushort imgHeight)
@@ -30,7 +30,7 @@ public:
     }
 
     // source: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-    void updateImage(const std::vector<uint8_t> &data)
+    virtual void updateImage(const std::vector<uint8_t> &data)
     {
         auto pixelBuffer = m_pDynamicTexture->getBuffer();
         assert(data.size() == pixelBuffer->getSizeInBytes());

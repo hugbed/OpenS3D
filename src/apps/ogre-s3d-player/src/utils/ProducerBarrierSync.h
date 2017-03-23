@@ -14,25 +14,46 @@
 #include <algorithm>
 
 template <class T>
-class SyncProducer {
+class ProducerBarrierSync {
 public:
-    SyncProducer(std::mutex &doneProducingMutex, std::condition_variable &shouldConsumeCV)
-            : doneProducingCondition{false}
-            , doneConsumingCondition{false}
-            , shouldConsumeCV{shouldConsumeCV}
-            , doneProducingMutex{doneProducingMutex}
-    {}
+    ProducerBarrierSync(std::mutex &doneProducingMutex, std::condition_variable &shouldConsumeCV)
+            : doneProducingCondition{false}, doneConsumingCondition{false}, shouldConsumeCV{shouldConsumeCV},
+              doneProducingMutex{doneProducingMutex} {}
 
-    virtual const T& getProduct() = 0;
+    virtual const T &getProduct() = 0;
 
-    void startProducing()
-    {
-        while (!shouldStopProducing())
-        {
+    void startProducing() {
+        while (!shouldStopProducing()) {
+            waitToProduce();
             produce();
             notifyDoneProducing();
-            waitToProduce();
         }
+    }
+
+    void acknowledgeDoneProducing()
+    {
+        doneProducingCondition = false;
+    }
+
+    bool isDoneProducing()
+    {
+        return doneProducingCondition;
+    }
+
+    void notifyDoneConsuming()
+    {
+        std::unique_lock<std::mutex> lk(doneConsumingMutex);
+        doneConsumingCondition = true;
+    }
+
+    std::mutex &getDoneConsumingMutex()
+    {
+        return doneConsumingMutex;
+    }
+
+    void notifyShouldProduce()
+    {
+        shouldProduceCV.notify_one();
     }
 
     virtual bool shouldStopProducing()
@@ -40,6 +61,7 @@ public:
         return false;
     }
 
+private:
     virtual void produce() = 0; // where the work happens : set product
 
     void notifyDoneProducing()

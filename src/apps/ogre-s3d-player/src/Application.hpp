@@ -5,8 +5,8 @@
 
 #include <thread>
 
-class DynamicImageTexture;
-class VideoTexture;
+class DynamicTexture;
+class DynamicTextureThreadSafe;
 class TextureUpdateManager;
 
 class Application : public BaseApplication
@@ -23,12 +23,12 @@ protected:
 
     void createVideoRectangle(
         std::unique_ptr<Ogre::Rectangle2D> &rect,
-        std::unique_ptr<VideoTexture> &videoTexture,
+        std::unique_ptr<DynamicTextureThreadSafe> &videoTexture,
         const std::string &id
     );
 
     // to stream image to texture (L, R)
-    std::pair<std::unique_ptr<VideoTexture>, std::unique_ptr<VideoTexture>> m_videoTextures;
+    std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>> m_videoTextures;
     std::pair<std::unique_ptr<Ogre::Rectangle2D>, std::unique_ptr<Ogre::Rectangle2D>> m_Rectangles;
 
     std::unique_ptr<TextureUpdateManager> m_textureUpdateManager;

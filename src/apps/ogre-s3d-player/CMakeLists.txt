@@ -66,22 +66,20 @@ set(HDRS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.hpp
-        src/utils/SyncProducer.h
-        src/utils/SyncConsumer.h)
+		src/utils/ProducerBarrierSync.h
+		src/utils/ConsumerBarrierSync.h)
  
 set(SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-        src/video_texture/DynamicImageTexture.cpp
-        src/video_texture/DynamicImageTexture.h
-        src/video_texture/VideoTexture.cpp
-        src/video_texture/VideoTexture.h
+		src/video_texture/DynamicTexture.h
+		src/video_texture/DynamicTextureThreadSafe.h
         src/utils/file_io.h
         src/utils/compression.h
-        src/utils/SyncProducer.h
-        src/utils/SyncConsumer.h src/video_texture/YUVToRGBFileBytesProducer.h src/video_texture/VideoBytesConsumer.h src/video_texture/TextureUpdateManager.h)
+		src/utils/ProducerBarrierSync.h
+		src/utils/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h)
  
 include_directories( ${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}

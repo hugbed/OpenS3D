@@ -6,31 +6,34 @@
 #define OGRE_SAMPLE_VIDEOTEXTURE_H
 
 
-#include "DynamicImageTexture.h"
+#include "DynamicTexture.h"
 
 #include <mutex>
 #include <chrono>
 #include <atomic>
 
-// DynamicImageTexture with frame rate checks
-class VideoTexture : public Ogre::FrameListener {
+// DynamicTexture with frame rate checks and thread safe texture update
+class DynamicTextureThreadSafe : public DynamicTexture, public Ogre::FrameListener {
 public:
-    VideoTexture(std::unique_ptr<DynamicImageTexture> texture, float timePerFrame)
-        : m_dynamicTexture(std::move(texture))
+    DynamicTextureThreadSafe(const std::string &textureName,
+                             Ogre::PixelFormat format,
+                             ushort imgWidth, ushort imgHeight,
+                             float timePerFrame)
+        : DynamicTexture(textureName, format, imgWidth, imgHeight)
         , m_frameMutex{}
         , m_nextFrame{}
         , m_frameReady{ false }
         , m_secPerFrame(timePerFrame)
         , m_timeSinceLastUpdate{}
     {
-        m_nextFrame.resize(m_dynamicTexture->getSizeInBytes());
+        m_nextFrame.resize(getSizeInBytes());
     }
 
-    void pushFrame(const std::vector<uint8_t> &frame)
+    virtual void updateImage(const std::vector<uint8_t> &data) override
     {
         std::unique_lock<std::mutex> mlock(m_frameMutex);
-        assert(frame.size() == m_nextFrame.size());
-        std::copy(std::begin(frame), std::end(frame), std::begin(m_nextFrame));
+        assert(data.size() == m_nextFrame.size());
+        std::copy(std::begin(data), std::end(data), std::begin(m_nextFrame));
         m_frameReady = true;
     }
 
@@ -40,7 +43,7 @@ public:
         if (m_timeSinceLastUpdate > m_secPerFrame) {
             if (m_frameReady) {
                 std::unique_lock<std::mutex> mlock(m_frameMutex);
-                m_dynamicTexture->updateImage(m_nextFrame);
+                DynamicTexture::updateImage(m_nextFrame);
                 m_timeSinceLastUpdate = 0.0f;
                 m_frameReady = false;
             }
@@ -48,8 +51,6 @@ public:
     }
 
 private:
-    std::unique_ptr<DynamicImageTexture> m_dynamicTexture;
-
     std::mutex m_frameMutex;
     std::vector<uint8_t> m_nextFrame;
     std::atomic<bool> m_frameReady;

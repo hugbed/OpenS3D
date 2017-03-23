@@ -1,5 +1,5 @@
 #include "Application.hpp"
-#include "video_texture/DynamicImageTexture.h"
+#include "video_texture/DynamicTexture.h"
 
 #include <OgreSceneManager.h>
 #include <OgreViewport.h>
@@ -11,10 +11,10 @@
 #include <OISException.h>
 
 #include <OgreRectangle2D.h>
-#include "video_texture/VideoTexture.h"
+#include "video_texture/DynamicTextureThreadSafe.h"
 
-#include "video_texture/YUVToRGBFileBytesProducer.h"
-#include "video_texture/VideoBytesConsumer.h"
+#include "video_texture/IfYUVToRGBProducer.h"
+#include "video_texture/S3DVideoRGBConsumer.h"
 #include "video_texture/TextureUpdateManager.h"
 
 #include <future>
@@ -50,18 +50,18 @@ void Application::createScene() {
 
 void Application::createVideoRectangle(
     std::unique_ptr<Ogre::Rectangle2D> &rect,
-    std::unique_ptr<VideoTexture> &videoTexture,
+    std::unique_ptr<DynamicTextureThreadSafe> &videoTexture,
     const std::string &id
 )
 {
     constexpr auto refreshRate = 1.0f/60.0f; // twice as fast as update to prevent aliasing (if this makes sense)
 
     // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-    auto dynamicTexture = std::make_unique<DynamicImageTexture>(std::string("DynamicTexture").append(id),
-                                                                Ogre::PixelFormat::PF_R8G8B8, 1920, 1080);
-    auto material = DynamicImageTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
-                                                             dynamicTexture->getTextureName());
-    videoTexture = std::make_unique<VideoTexture>(std::move(dynamicTexture), refreshRate);
+    videoTexture = std::make_unique<DynamicTextureThreadSafe>(std::string("DynamicTexture").append(id),
+                                                              Ogre::PixelFormat::PF_R8G8B8, 1920, 1080, refreshRate);
+    auto material = DynamicTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
+                                                        videoTexture->getTextureName());
+
     m_frameListeners.push_back(videoTexture.get());
 
     // Create background rectangles covering the whole screen
