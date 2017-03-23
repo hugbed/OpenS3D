@@ -1,5 +1,5 @@
 #include "Application.hpp"
-#include "DynamicImageTexture.h"
+#include "video_texture/DynamicImageTexture.h"
 
 #include <OgreSceneManager.h>
 #include <OgreViewport.h>
@@ -11,17 +11,19 @@
 #include <OISException.h>
 
 #include <OgreRectangle2D.h>
-#include "VideoTexture.h"
+#include "video_texture/VideoTexture.h"
 
-#include "YUVToRGBFileBytesProducer.h"
-#include "VideoConsumer.h"
+#include "video_texture/YUVToRGBFileBytesProducer.h"
+#include "video_texture/VideoBytesConsumer.h"
+#include "video_texture/TextureUpdateManager.h"
 
-#include <chrono>
 #include <future>
 
 //-------------------------------------------------------------------------------------
 Application::Application()
-    : m_pImageThread{}
+    : m_textureUpdateManager(
+        std::make_unique<YUVFileTextureUpdateManager>("../media/materials/textures/current-left.yuv",
+                                                      "../media/materials/textures/current-right.yuv"))
 {
 }
 
@@ -34,104 +36,52 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent & evt)
 {
     for (auto & listeners : m_frameListeners)
         listeners->frameRenderingQueued(evt);
-
     return BaseApplication::frameRenderingQueued(evt);
 }
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-    // Create background material
-    {
-        // solution is dynamic texture
-        // see http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-        auto dynamicTexture = std::make_unique<DynamicImageTexture>("DynamicTextureL", Ogre::PixelFormat::PF_R8G8B8, 1920,
-                                                                 1080);
-        auto material = DynamicImageTexture::createImageMaterial("BackgroundMaterialL",
-                                                                 dynamicTexture->getTextureName());
-        m_videoTexture = std::make_unique<VideoTexture>(std::move(dynamicTexture), 1.0f/60.0f);
-        m_frameListeners.push_back(m_videoTexture.get());
+    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
+    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
-        // Create background rectangle covering the whole screen
-        Ogre::Rectangle2D *rect = new Ogre::Rectangle2D(true);
-        rect->setCorners(-1.0f, 1.0f, 0.0f, -1.0f);
-        rect->setMaterial(material->getName());
-
-        // Render the background before everything else
-        rect->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-
-        // Use infinite AAB to always stay visible
-        Ogre::AxisAlignedBox aabInf;
-        aabInf.setInfinite();
-        rect->setBoundingBox(aabInf);
-
-        // Attach background to the scene
-        Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgroundL");
-        node->attachObject(rect);
-    }
-
-    // Create background material
-    {
-        // solution is dynamic texture
-        // see http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-        auto dynamicTexture = std::make_unique<DynamicImageTexture>("DynamicTextureR", Ogre::PixelFormat::PF_R8G8B8, 1920,
-                                                                 1080);
-        auto material = DynamicImageTexture::createImageMaterial("BackgroundMaterialR",
-                                                                 dynamicTexture->getTextureName());
-        m_videoTextureR = std::make_unique<VideoTexture>(std::move(dynamicTexture), 1.0f/60.0f);
-        m_frameListeners.push_back(m_videoTextureR.get());
-
-        // Create background rectangle covering the whole screen
-        Ogre::Rectangle2D *rect = new Ogre::Rectangle2D(true);
-        rect->setCorners(0.0f, 1.0f, 1.0f, -1.0f);
-        rect->setMaterial(material->getName());
-
-        // Render the background before everything else
-        rect->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-
-        // Use infinite AAB to always stay visible
-        Ogre::AxisAlignedBox aabInf;
-        aabInf.setInfinite();
-        rect->setBoundingBox(aabInf);
-
-        // Attach background to the scene
-        Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgroundR");
-        node->attachObject(rect);
-    }
-
-    m_pImageThread = std::make_unique<std::thread>(&Application::loadImagesThread, this);
-    m_pImageThread->detach();
-
-// Don't forget to delete the Rectangle2D in the destructor of your application:
-//    delete rect;
+    // start texture update thread or something
+    m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(), m_videoTextures.second.get());
 }
 
-void Application::loadImagesThread()
+void Application::createVideoRectangle(
+    std::unique_ptr<Ogre::Rectangle2D> &rect,
+    std::unique_ptr<VideoTexture> &videoTexture,
+    const std::string &id
+)
 {
-    using namespace std::chrono;
-    using namespace std::chrono_literals;
+    constexpr auto refreshRate = 1.0f/60.0f; // twice as fast as update to prevent aliasing (if this makes sense)
 
-    std::mutex doneProducingMutex;
-    std::condition_variable shouldConsumeCV;
+    // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
+    auto dynamicTexture = std::make_unique<DynamicImageTexture>(std::string("DynamicTexture").append(id),
+                                                                Ogre::PixelFormat::PF_R8G8B8, 1920, 1080);
+    auto material = DynamicImageTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
+                                                             dynamicTexture->getTextureName());
+    videoTexture = std::make_unique<VideoTexture>(std::move(dynamicTexture), refreshRate);
+    m_frameListeners.push_back(videoTexture.get());
 
-    YUVToRGBFileBytesProducer fileProducerL("../media/materials/textures/current-left.yuv", doneProducingMutex, shouldConsumeCV);
-    YUVToRGBFileBytesProducer fileProducerR("../media/materials/textures/current-right.yuv", doneProducingMutex, shouldConsumeCV);
+    // Create background rectangles covering the whole screen
+    std::pair<float, float> boundaries{-1.0f, 0.0f};
+    if (id == "R") {
+        boundaries = {0.0f, 1.0f};
+    }
+    rect = std::make_unique<Ogre::Rectangle2D>(true);
+    rect->setCorners(boundaries.first, 1.0f, boundaries.second, -1.0f);
+    rect->setMaterial(material->getName());
 
-    std::vector<SyncProducer<std::vector<uint8_t>>*> producers = {
-        &fileProducerL,
-        &fileProducerR
-    };
+    // Render the background before everything else
+    rect->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
 
-    auto pL_thread = std::thread([&fileProducerL]{
-        fileProducerL.startProducing();
-    });
+    // Use infinite AAB to always stay visible
+    Ogre::AxisAlignedBox aabInf;
+    aabInf.setInfinite();
+    rect->setBoundingBox(aabInf);
 
-    auto pR_thread = std::thread([&fileProducerR]{
-        fileProducerR.startProducing();
-    });
-
-    VideoConsumer consumer(m_videoTexture.get(), m_videoTextureR.get(), doneProducingMutex, shouldConsumeCV, producers);
-    consumer.startConsuming();
-
-    pL_thread.join();
-    pR_thread.join();
+    // Attach background to the scene
+    Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode(std::string("Background").append(id));
+    node->attachObject(rect.get());
 }

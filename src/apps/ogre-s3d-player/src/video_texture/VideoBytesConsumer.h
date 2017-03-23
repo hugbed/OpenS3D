@@ -5,13 +5,13 @@
 #ifndef OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 #define OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 
-#include "SyncConsumer.h"
+#include "../utils/SyncConsumer.h"
 #include "VideoTexture.h"
 
-class VideoConsumer : public SyncConsumer<std::vector<uint8_t>>
+class VideoBytesConsumer : public SyncConsumer<std::vector<uint8_t>>
 {
 public:
-    VideoConsumer(VideoTexture* videoTextureL, VideoTexture *videoTextureR,
+    VideoBytesConsumer(VideoTexture* videoTextureL, VideoTexture *videoTextureR,
         std::mutex &doneProducingMutex,
         std::condition_variable &shouldConsumeCV,
         const std::vector<SyncProducer<std::vector<uint8_t>>*> producers)
@@ -20,6 +20,7 @@ public:
     , videoTextureR{videoTextureR}
     {
     }
+
 private:
     virtual void consume() override
     {
@@ -33,8 +34,8 @@ private:
 
     void sleepUntilNextFrame()
     {
-        using namespace std::chrono_literals;
         auto t2 = std::chrono::high_resolution_clock::now();
+        using namespace std::chrono_literals;
         std::this_thread::sleep_for(33.33ms - std::chrono::duration_cast<std::chrono::milliseconds>(t2-lastConsumeTime));
         lastConsumeTime = std::chrono::high_resolution_clock::now();
     }

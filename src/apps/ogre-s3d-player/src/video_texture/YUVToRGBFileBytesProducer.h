@@ -5,13 +5,12 @@
 #ifndef OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 #define OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 
-#include "SyncProducer.h"
-#include "file_io.h"
-#include "compression.h"
+#include "../utils/SyncProducer.h"
+#include "../utils/file_io.h"
+#include "../utils/compression.h"
 
 #include <fstream>
 
-// bad class name for now
 class YUVToRGBFileBytesProducer : public SyncProducer<std::vector<uint8_t>>
 {
 public:

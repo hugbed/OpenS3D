@@ -7,6 +7,7 @@
 
 class DynamicImageTexture;
 class VideoTexture;
+class TextureUpdateManager;
 
 class Application : public BaseApplication
 {
@@ -14,20 +15,23 @@ public:
 	Application();
     virtual ~Application();
 
-    void loadImagesThread();
-
 protected:
 
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &) override;
 
     void createScene();
 
-    // to stream image to texture
-    std::unique_ptr<VideoTexture> m_videoTexture;
-    std::unique_ptr<VideoTexture> m_videoTextureR;
+    void createVideoRectangle(
+        std::unique_ptr<Ogre::Rectangle2D> &rect,
+        std::unique_ptr<VideoTexture> &videoTexture,
+        const std::string &id
+    );
 
-    // image loading
-    std::unique_ptr<std::thread> m_pImageThread;
+    // to stream image to texture (L, R)
+    std::pair<std::unique_ptr<VideoTexture>, std::unique_ptr<VideoTexture>> m_videoTextures;
+    std::pair<std::unique_ptr<Ogre::Rectangle2D>, std::unique_ptr<Ogre::Rectangle2D>> m_Rectangles;
+
+    std::unique_ptr<TextureUpdateManager> m_textureUpdateManager;
 
     // frame request listeners
     std::vector<Ogre::FrameListener*> m_frameListeners;

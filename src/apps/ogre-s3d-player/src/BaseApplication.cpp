@@ -118,6 +118,7 @@ void BaseApplication::createViewports()
     // Alter the camera aspect ratio to match the viewport
     mCamera->setAspectRatio(
         Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+//    mWindow->setFullscreen(true, vp->getActualWidth(), vp->getActualHeight());
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::setupResources()
