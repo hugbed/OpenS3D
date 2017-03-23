@@ -13,17 +13,17 @@
 #include <atomic>
 
 // DynamicImageTexture with frame rate checks
-class VideoTexture {
+class VideoTexture : public Ogre::FrameListener {
 public:
-    VideoTexture(DynamicImageTexture* texture, float timePerFrame)
-        : m_dynamicTexture(texture)
+    VideoTexture(std::unique_ptr<DynamicImageTexture> texture, float timePerFrame)
+        : m_dynamicTexture(std::move(texture))
         , m_frameMutex{}
         , m_nextFrame{}
         , m_frameReady{ false }
         , m_secPerFrame(timePerFrame)
         , m_timeSinceLastUpdate{}
     {
-        m_nextFrame.resize(texture->getSizeInBytes());
+        m_nextFrame.resize(m_dynamicTexture->getSizeInBytes());
     }
 
     void pushFrame(const std::vector<uint8_t> &frame)
@@ -48,7 +48,7 @@ public:
     }
 
 private:
-    DynamicImageTexture* m_dynamicTexture;
+    std::unique_ptr<DynamicImageTexture> m_dynamicTexture;
 
     std::mutex m_frameMutex;
     std::vector<uint8_t> m_nextFrame;

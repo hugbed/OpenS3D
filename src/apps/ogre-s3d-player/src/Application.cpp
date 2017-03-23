@@ -11,11 +11,10 @@
 #include <OISException.h>
 
 #include <OgreRectangle2D.h>
-#include "DynamicImageTexture.h"
 #include "VideoTexture.h"
 
-#include "file_io.h"
-#include "compression.h"
+#include "YUVToRGBFileBytesProducer.h"
+#include "VideoConsumer.h"
 
 #include <chrono>
 #include <future>
@@ -33,9 +32,9 @@ Application::~Application()
 
 bool Application::frameRenderingQueued(const Ogre::FrameEvent & evt)
 {
-    // should really use a list of frameRenderingQueueListeners
-    if (m_videoTexture) m_videoTexture->frameRenderingQueued(evt);
-    if (m_videoTextureR) m_videoTextureR->frameRenderingQueued(evt);
+    for (auto & listeners : m_frameListeners)
+        listeners->frameRenderingQueued(evt);
+
     return BaseApplication::frameRenderingQueued(evt);
 }
 
@@ -45,11 +44,12 @@ void Application::createScene() {
     {
         // solution is dynamic texture
         // see http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-        m_dynamicTexture = std::make_unique<DynamicImageTexture>("DynamicTextureL", Ogre::PixelFormat::PF_R8G8B8, 1920,
+        auto dynamicTexture = std::make_unique<DynamicImageTexture>("DynamicTextureL", Ogre::PixelFormat::PF_R8G8B8, 1920,
                                                                  1080);
         auto material = DynamicImageTexture::createImageMaterial("BackgroundMaterialL",
-                                                                 m_dynamicTexture->getTextureName());
-        m_videoTexture = std::make_unique<VideoTexture>(m_dynamicTexture.get(), 1.0f/60.0f);
+                                                                 dynamicTexture->getTextureName());
+        m_videoTexture = std::make_unique<VideoTexture>(std::move(dynamicTexture), 1.0f/60.0f);
+        m_frameListeners.push_back(m_videoTexture.get());
 
         // Create background rectangle covering the whole screen
         Ogre::Rectangle2D *rect = new Ogre::Rectangle2D(true);
@@ -73,11 +73,12 @@ void Application::createScene() {
     {
         // solution is dynamic texture
         // see http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-        m_dynamicTextureR = std::make_unique<DynamicImageTexture>("DynamicTextureR", Ogre::PixelFormat::PF_R8G8B8, 1920,
+        auto dynamicTexture = std::make_unique<DynamicImageTexture>("DynamicTextureR", Ogre::PixelFormat::PF_R8G8B8, 1920,
                                                                  1080);
         auto material = DynamicImageTexture::createImageMaterial("BackgroundMaterialR",
-                                                                 m_dynamicTextureR->getTextureName());
-        m_videoTextureR = std::make_unique<VideoTexture>(m_dynamicTextureR.get(), 1.0f/60.0f);
+                                                                 dynamicTexture->getTextureName());
+        m_videoTextureR = std::make_unique<VideoTexture>(std::move(dynamicTexture), 1.0f/60.0f);
+        m_frameListeners.push_back(m_videoTextureR.get());
 
         // Create background rectangle covering the whole screen
         Ogre::Rectangle2D *rect = new Ogre::Rectangle2D(true);
@@ -109,41 +110,28 @@ void Application::loadImagesThread()
     using namespace std::chrono;
     using namespace std::chrono_literals;
 
-    const auto frameSizeBytesYUV = 1920 * 1080 * 2;
-    const auto frameSizeBytesRGB = 1920 * 1080 * 3;
+    std::mutex doneProducingMutex;
+    std::condition_variable shouldConsumeCV;
 
-    std::ifstream videoFile{"../media/materials/textures/current.yuv", std::ios::binary};
+    YUVToRGBFileBytesProducer fileProducerL("../media/materials/textures/current-left.yuv", doneProducingMutex, shouldConsumeCV);
+    YUVToRGBFileBytesProducer fileProducerR("../media/materials/textures/current-right.yuv", doneProducingMutex, shouldConsumeCV);
 
-    std::vector<uint8_t> fileDataL, fileDataR, rgbDataL, rgbDataR;
-    fileDataL.resize(frameSizeBytesYUV);
-    fileDataR.resize(frameSizeBytesYUV);
-    rgbDataL.resize(frameSizeBytesRGB);
-    rgbDataR.resize(frameSizeBytesRGB);
+    std::vector<SyncProducer<std::vector<uint8_t>>*> producers = {
+        &fileProducerL,
+        &fileProducerR
+    };
 
-    for (int i = 0; i < 100; ++i) {
+    auto pL_thread = std::thread([&fileProducerL]{
+        fileProducerL.startProducing();
+    });
 
-        auto t1 = std::chrono::high_resolution_clock::now();
+    auto pR_thread = std::thread([&fileProducerR]{
+        fileProducerR.startProducing();
+    });
 
-        // LEFT FRAME
-        read_n_bytes(videoFile, frameSizeBytesYUV, std::begin(fileDataL));
-        assert(fileDataL.size() == frameSizeBytesYUV);
-        // could be interface to some decompression algorithm : like decompress()
-        // RIGHT FRAME
-        read_n_bytes(videoFile, frameSizeBytesYUV, std::begin(fileDataR));
-        assert(fileDataR.size() == frameSizeBytesYUV);
+    VideoConsumer consumer(m_videoTexture.get(), m_videoTextureR.get(), doneProducingMutex, shouldConsumeCV, producers);
+    consumer.startConsuming();
 
-        // could be interface to some decompression algorithm : like decompress()
-        yuv2rgb(std::begin(fileDataL), std::end(fileDataL), std::begin(rgbDataL));
-        assert(rgbDataL.size() == frameSizeBytesRGB);
-        yuv2rgb(std::begin(fileDataR), std::end(fileDataR), std::begin(rgbDataR));
-        assert(rgbDataR.size() == frameSizeBytesRGB);
-
-        m_videoTexture->pushFrame(rgbDataL);
-        m_videoTextureR->pushFrame(rgbDataR);
-
-        std::this_thread::sleep_for(33ms - duration_cast<milliseconds>(high_resolution_clock::now()-t1));
-
-//        t2 = std::chrono::high_resolution_clock::now();
-//        std::cout << "Loop time : " << duration_cast<milliseconds>(t2-t1).count() << std::endl;
-    }
+    pL_thread.join();
+    pR_thread.join();
 }

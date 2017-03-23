@@ -66,14 +66,22 @@ set(HDRS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.hpp
-)
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/SyncProducer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/SyncConsumer.h)
  
 set(SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-        src/DynamicImageTexture.cpp src/DynamicImageTexture.h src/VideoTexture.cpp src/VideoTexture.h src/file_io.h src/compression.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/DynamicImageTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/DynamicImageTexture.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/VideoTexture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/VideoTexture.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/file_io.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/compression.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/SyncProducer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/SyncConsumer.h src/YUVToRGBFileBytesProducer.h src/VideoConsumer.h)
  
 include_directories( ${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}

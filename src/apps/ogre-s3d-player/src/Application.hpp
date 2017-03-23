@@ -23,13 +23,14 @@ protected:
     void createScene();
 
     // to stream image to texture
-    std::unique_ptr<DynamicImageTexture> m_dynamicTexture;
     std::unique_ptr<VideoTexture> m_videoTexture;
-    std::unique_ptr<DynamicImageTexture> m_dynamicTextureR;
     std::unique_ptr<VideoTexture> m_videoTextureR;
 
     // image loading
     std::unique_ptr<std::thread> m_pImageThread;
+
+    // frame request listeners
+    std::vector<Ogre::FrameListener*> m_frameListeners;
 };
 
 #endif // #ifndef __Application_h_
