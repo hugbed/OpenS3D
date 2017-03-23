@@ -23,7 +23,7 @@ public:
     {
         while (!shouldStopConsuming()) {
             notifyShouldProduce();
-            waitToConsume();
+            waitUntilAllDoneProducing();
             consume();
         }
     }
@@ -49,7 +49,7 @@ private:
         return std::all_of(std::begin(producers), std::end(producers), [](auto &p) { return p->isDoneProducing(); });
     }
 
-    void waitToConsume()
+    void waitUntilAllDoneProducing()
     {
         // wait until all producers are done producing
         std::unique_lock<std::mutex> lk(doneProducingMutex);

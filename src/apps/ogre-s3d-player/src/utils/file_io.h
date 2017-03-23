@@ -20,12 +20,14 @@ static void push_back_n_bytes(std::istream& stream, Size_t n, std::vector<uint8_
 }
 
 template <class OIt, typename Size_t>
-static void read_n_bytes(std::istream& stream, Size_t n, OIt it)
+static bool read_n_bytes(std::istream& stream, Size_t n, OIt it)
 {
+    if (stream.peek() == EOF) return false;
     std::copy_n(std::istreambuf_iterator<char>{stream},
                 n,
                 it);
-    stream.get(); // to prevent reading twice the last character
+    stream.get();
+    return !stream.eof();
 }
 
 std::vector<uint8_t> load_bytes(const std::string& filename)

@@ -16,6 +16,7 @@ public:
     virtual void handleTextureUpdate(DynamicTextureThreadSafe*, DynamicTextureThreadSafe*) = 0;
 };
 
+// YUV422
 class YUVFileTextureUpdateManager : public TextureUpdateManager
 {
 public:
@@ -31,9 +32,10 @@ public:
             std::mutex doneProducingMutex;
             std::condition_variable shouldConsumeCV;
 
-            IfYUVToRGBProducer fileProducerL(filenames.first,
+            constexpr auto imageSizeBytesYUV = 1920*1080*2;
+            IfYUVToRGBProducer fileProducerL(filenames.first, imageSizeBytesYUV, videoTextureL->getSizeInBytes(),
                                                     doneProducingMutex, shouldConsumeCV);
-            IfYUVToRGBProducer fileProducerR(filenames.second,
+            IfYUVToRGBProducer fileProducerR(filenames.second, imageSizeBytesYUV, videoTextureR->getSizeInBytes(),
                                                     doneProducingMutex, shouldConsumeCV);
 
             std::vector<ProducerBarrierSync<std::vector<uint8_t>>*> producers = {
@@ -60,8 +62,8 @@ public:
                 producerThread.join();
             }
 
-            videoTextureL->clear();
-            videoTextureR->clear();
+//            videoTextureL->clear();
+//            videoTextureR->clear();
         });
         textureHandlingThread.detach();
     }

@@ -24,7 +24,7 @@ public:
 
     void startProducing() {
         while (!shouldStopProducing()) {
-            waitToProduce();
+            waitUntilProductIsConsumed();
             produce();
             notifyDoneProducing();
         }
@@ -73,7 +73,7 @@ private:
         shouldConsumeCV.notify_one();
     }
 
-    void waitToProduce()
+    void waitUntilProductIsConsumed()
     {
         // wait until doneConsuming
         std::unique_lock<std::mutex> lk(doneConsumingMutex);

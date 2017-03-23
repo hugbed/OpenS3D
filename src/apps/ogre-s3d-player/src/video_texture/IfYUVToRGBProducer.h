@@ -15,7 +15,7 @@ class IfYUVToRGBProducer : public ProducerBarrierSync<std::vector<uint8_t>>
 {
 public:
     // image size, etc
-    IfYUVToRGBProducer(const std::string& filename,
+    IfYUVToRGBProducer(const std::string& filename, size_t imageSizeBytesYUV, size_t imageSizeBytesRGB,
                       std::mutex &doneProducingMutex, std::condition_variable &shouldConsumeCV)
         : ProducerBarrierSync(doneProducingMutex, shouldConsumeCV)
         , yuvBytes{}
@@ -23,12 +23,17 @@ public:
         , fileStream{filename, std::ios::binary}
     {
         // hardcoded for now
-        yuvBytes.resize(1920 * 1080 * 2);
-        rgbBytes.resize(1920 * 1080 * 3);
+        yuvBytes.resize(imageSizeBytesYUV);
+        rgbBytes.resize(imageSizeBytesRGB);
     }
 
     virtual bool shouldStopProducing() override
     {
+        // read in loop :D
+        if (fileStream.eof()) {
+            fileStream.clear();
+            fileStream.seekg(0, std::ios::beg);
+        }
         return fileStream.eof();
     }
 

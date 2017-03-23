@@ -44,6 +44,9 @@ void Application::createScene() {
     createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
     createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
+//    createVideoPlane(m_videoTextures.first, "_plane");
+//    createVideoPlane(m_videoTextures.second, "_plane2");
+
     // start texture update thread or something
     m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(), m_videoTextures.second.get());
 }
@@ -84,4 +87,33 @@ void Application::createVideoRectangle(
     // Attach background to the scene
     Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode(std::string("Background").append(id));
     node->attachObject(rect.get());
+}
+
+void Application::createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &videoTexture, const std::string &id)
+{
+    constexpr auto refreshRate = 1.0f/60.0f; // twice as fast as update to prevent aliasing (if this makes sense)
+
+    // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
+    videoTexture = std::make_unique<DynamicTextureThreadSafe>(std::string("DynamicTexture").append(id),
+                                                              Ogre::PixelFormat::PF_R8G8B8, 1920, 1080, refreshRate);
+    auto material = DynamicTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
+                                                        videoTexture->getTextureName());
+
+    m_frameListeners.push_back(videoTexture.get());
+
+    // instead let's create a cube
+    Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
+    Ogre::MeshManager::getSingleton().createPlane(
+            std::string("ground").append(id),
+            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            plane,
+            10, 5, 1, 1,
+            true,
+            1, 1, 1,
+            Ogre::Vector3::UNIT_Y);
+
+    Ogre::Entity* groundEntity = mSceneMgr->createEntity(std::string("ground").append(id));
+    groundEntity->setMaterial(material);
+
+    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
 }
