@@ -21,6 +21,10 @@ protected:
 
     void createScene();
 
+    void addLights();
+
+    void createGroundPlane();
+
     void createVideoRectangle(
         std::unique_ptr<Ogre::Rectangle2D> &rect,
         std::unique_ptr<DynamicTextureThreadSafe> &videoTexture,
@@ -28,6 +32,8 @@ protected:
     );
 
     void createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &videoTexture, const std::string &id);
+
+    void createPointCloud();
 
     // to stream image to texture (L, R)
     std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>> m_videoTextures;

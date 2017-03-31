@@ -16,6 +16,7 @@
 #include "video_texture/IfYUVToRGBProducer.h"
 #include "video_texture/S3DVideoRGBConsumer.h"
 #include "video_texture/TextureUpdateManager.h"
+#include "point_cloud/PointCloudMesh.h"
 
 #include <future>
 
@@ -41,14 +42,49 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent & evt)
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
-    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
+//    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
+//    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
-//    createVideoPlane(m_videoTextures.first, "_plane");
-//    createVideoPlane(m_videoTextures.second, "_plane2");
+    createVideoPlane(m_videoTextures.first, "_plane");
+    createVideoPlane(m_videoTextures.second, "_plane2");
 
     // start texture update thread or something
     m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(), m_videoTextures.second.get());
+
+    addLights();
+    createGroundPlane();
+    createPointCloud();
+}
+
+void Application::addLights()
+{
+    Ogre::Light* directionalLight = mSceneMgr->createLight("DirectionalLight");
+    directionalLight->setType(Ogre::Light::LT_DIRECTIONAL);
+    directionalLight->setDiffuseColour(Ogre::ColourValue(.4, .4, .4));
+    directionalLight->setSpecularColour(Ogre::ColourValue(.4, .4, .4));
+    directionalLight->setDirection(Ogre::Vector3(0, -1, 1));
+    Ogre::Light* pointLight = mSceneMgr->createLight("PointLight");
+    pointLight->setType(Ogre::Light::LT_POINT);
+    pointLight->setDiffuseColour(.3, .3, .3);
+    pointLight->setSpecularColour(.3, .3, .3);
+    pointLight->setPosition(Ogre::Vector3(0, 150, 250));
+}
+
+void Application::createGroundPlane()
+{
+    Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+    Ogre::MeshManager::getSingleton().createPlane(
+            "ground",
+            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            plane,
+            1500, 1500, 20, 20,
+            true,
+            1, 5, 5,
+            Ogre::Vector3::UNIT_Z);
+    Ogre::Entity* groundEntity = mSceneMgr->createEntity("ground");
+    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
+    groundEntity->setCastShadows(false);
+    groundEntity->setMaterialName("Rockwall");
 }
 
 void Application::createVideoRectangle(
@@ -60,6 +96,7 @@ void Application::createVideoRectangle(
     constexpr auto refreshRate = 1.0f/60.0f; // twice as fast as update to prevent aliasing (if this makes sense)
 
     // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
+    // todo: should probably create video textures outside to assign them to multiple places without recreating them
     videoTexture = std::make_unique<DynamicTextureThreadSafe>(std::string("DynamicTexture").append(id),
                                                               Ogre::PixelFormat::PF_R8G8B8, 1920, 1080, refreshRate);
     auto material = DynamicTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
@@ -85,8 +122,7 @@ void Application::createVideoRectangle(
     rect->setBoundingBox(aabInf);
 
     // Attach background to the scene
-    Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode(std::string("Background").append(id));
-    node->attachObject(rect.get());
+    mSceneMgr->getRootSceneNode()->createChildSceneNode(std::string("Background").append(id))->attachObject(rect.get());
 }
 
 void Application::createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &videoTexture, const std::string &id)
@@ -96,8 +132,9 @@ void Application::createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &vi
     // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
     videoTexture = std::make_unique<DynamicTextureThreadSafe>(std::string("DynamicTexture").append(id),
                                                               Ogre::PixelFormat::PF_R8G8B8, 1920, 1080, refreshRate);
-    auto material = DynamicTexture::createImageMaterial(std::string("BackgroundMaterial").append(id),
-                                                        videoTexture->getTextureName());
+    auto material = Ogre::MaterialManager::getSingleton().create(std::string("BackgroundMaterial").append(id), "General");
+    material->getTechnique(0)->getPass(0)->createTextureUnitState(std::string("DynamicTexture").append(id));
+    material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
 
     m_frameListeners.push_back(videoTexture.get());
 
@@ -107,7 +144,8 @@ void Application::createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &vi
             std::string("ground").append(id),
             Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             plane,
-            10, 5, 1, 1,
+            1.6f, 0.9f, // w, h
+            1, 1,
             true,
             1, 1, 1,
             Ogre::Vector3::UNIT_Y);
@@ -115,5 +153,41 @@ void Application::createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &vi
     Ogre::Entity* groundEntity = mSceneMgr->createEntity(std::string("ground").append(id));
     groundEntity->setMaterial(material);
 
-    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
+    auto sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    sceneNode->setPosition(0.0f, 1.5f, 0.0f);
+    sceneNode->attachObject(groundEntity);
+}
+
+void Application::createPointCloud()
+{
+    // try to create a 16x9 point cloud with 1920x1080 resolution
+    // naive version, just to test the point cloud
+    const auto rW = 1.6f, rH = 0.9f, iW = 1920.0f, iH = 1080.0f;
+    std::vector<float> points, colors;
+
+    auto worldPixelHeight = rH/iH;
+    auto worldPixelWidth = rW/iW;
+
+    for (auto i = -1080.0f/2.0f + worldPixelHeight; i < 1080.0f/2.0f - worldPixelHeight; i += 8) {
+        auto posI = 0.5f * worldPixelHeight + i*worldPixelHeight;
+        for (auto j = -1920.0f/2.0f + worldPixelWidth; j < 1920.0f/2.0f - worldPixelWidth; j += 8) {
+            auto posJ = 0.5f * worldPixelWidth + j*worldPixelWidth;
+            points.emplace_back(posJ);
+            points.emplace_back(posI);
+            points.emplace_back(0.0f);
+            colors.emplace_back(posI); // r
+            colors.emplace_back(posJ); // g
+            colors.emplace_back(0.0f); // b
+        }
+    }
+
+    PointCloudMesh *pc = new PointCloudMesh("greatpointcloud",
+                                              Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, points, colors);
+
+    Ogre::Entity *pcEnt = mSceneMgr->createEntity("pointcloudentity", "yobitch");
+    pcEnt->setMaterialName("PointCloud");
+
+    auto sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    sceneNode->setPosition(0.0f, 1.5f, 0.2f);
+    sceneNode->attachObject(pcEnt);
 }

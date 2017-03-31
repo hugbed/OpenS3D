@@ -69,13 +69,13 @@ void BaseApplication::createCamera()
     mCamera = mSceneMgr->createCamera("PlayerCam");
 
     // Position it at 500 in Z direction
-    mCamera->setPosition(Ogre::Vector3(0,0,8));
+    mCamera->setPosition(Ogre::Vector3(0, 1.5f, 5.0f));
     // Look back along -Z
-    mCamera->lookAt(Ogre::Vector3(0,0,-300));
-    mCamera->setNearClipDistance(5);
+    mCamera->lookAt(Ogre::Vector3(0.0f, 0.5f, 0.0f));
+    mCamera->setNearClipDistance(1);
 
     mCameraMan = std::make_unique<OgreCookies::CameraMan>(mCamera);   // create a default camera controller
-    mCameraMan->setTopSpeed(2.0f);
+    mCameraMan->setTopSpeed(5.0f);
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::createFrameListener()

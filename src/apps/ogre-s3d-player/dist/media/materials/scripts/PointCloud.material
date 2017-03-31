@@ -1,0 +1,16 @@
+material PointCloudMesh
+{
+   technique
+   {
+      pass
+      {
+         lighting off
+         diffuse vertexcolour
+         specular vertexcolour
+         ambient vertexcolour
+         point_size 0.00001
+         point_sprites on
+         point_size_attenuation on
+      }
+   }
+}

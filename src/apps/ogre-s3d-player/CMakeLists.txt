@@ -79,7 +79,7 @@ set(SRCS
         src/utils/file_io.h
         src/utils/compression.h
 		src/utils/ProducerBarrierSync.h
-		src/utils/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h)
+		src/utils/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h src/point_cloud/PointCloudMesh.cpp src/point_cloud/PointCloudMesh.h)
  
 include_directories( ${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}
