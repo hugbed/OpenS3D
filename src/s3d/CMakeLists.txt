@@ -6,14 +6,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 find_package(OpenCV REQUIRED)
 
-#file(GLOB CPP_FILES src/*.cpp)
+file(GLOB SRC_FILES *.cpp)
 
 include_directories(include)
 
-add_executable(DisparityDemo ${PROJECT_SOURCE_DIR}/src/disparity_demo.cpp)
-target_link_libraries(DisparityDemo ${OpenCV_LIBS})
-
-# Expose project's public includes to other
-# subprojects through cache variable.
-set(${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
-    CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+add_library(${PROJECT_NAME} ${SRC_FILES} src/disparity/DisparityAlgorithmBM.cpp src/disparity/DisparityAlgorithmORB.cpp)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_include_directories(${PROJECT_NAME} PUBLIC include)

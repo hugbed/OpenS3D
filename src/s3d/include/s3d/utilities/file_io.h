@@ -44,6 +44,7 @@ std::vector<uint8_t> load_bytes(const std::string& filename)
 }
 
 template<class Container>
+
 bool write_bytes(const std::string& filename, Container c)
 {
     std::ofstream out{filename, std::ios::binary};

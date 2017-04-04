@@ -16,6 +16,6 @@ T clamp(const T &v, const T &lo, const T &hi) {
 }
 
 } // math
-} // s3d
+} // disparity
 
 #endif //PROJECT_MATH_H

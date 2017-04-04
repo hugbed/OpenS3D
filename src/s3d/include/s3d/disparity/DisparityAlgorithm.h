@@ -2,8 +2,8 @@
 // Created by jon on 06/03/17.
 //
 
-#ifndef OPENCVTESTS_DISPARITYALGORITHM_H
-#define OPENCVTESTS_DISPARITYALGORITHM_H
+#ifndef S3D_DISPARITY_DISPARITYALGORITHM_H
+#define S3D_DISPARITY_DISPARITYALGORITHM_H
 
 #include <vector>
 #include <memory>
@@ -53,4 +53,4 @@ public:
     virtual std::unique_ptr<Disparities> ComputeDisparities(Image left, Image right) = 0;
 };
 
-#endif //OPENCVTESTS_DISPARITYALGORITHM_H
+#endif //S3D_DISPARITY_DISPARITYALGORITHM_H

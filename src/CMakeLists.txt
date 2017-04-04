@@ -20,4 +20,7 @@ endif ()
 # When done tweaking common stuff, configure the components (subprojects).
 # NOTE: The order matters! The most independent ones should go first.
 add_subdirectory(s3d)
+add_subdirectory(s3d-cuda)
 add_subdirectory(apps/ogre-s3d-player)
+add_subdirectory(apps/s3d-demo)
+add_subdirectory(apps/s3d-cuda-demo)
