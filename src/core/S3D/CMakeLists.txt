@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 find_package(OpenCV REQUIRED)
 
-file(GLOB SRC_FILES *.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
 include_directories(include)
 

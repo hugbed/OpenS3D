@@ -10,7 +10,7 @@ include_directories(
     include
 )
 
-file(GLOB SRC_FILES
+file(GLOB_RECURSE SRC_FILES
         src/*.cu
         src/*.cpp)
 

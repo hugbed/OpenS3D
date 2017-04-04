@@ -1,22 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
 # Change this to your project's name
-set(PROJECT_NAME "ogre-s3d-player")
+project(OgreS3DPlayer)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-project(${PROJECT_NAME} CXX C)
-
-# This template purpose is for experimenting, so start from v0.0.1
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 0)
-set(VERSION_RELEASE 1)
-set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_RELEASE}")
-
-# Avoid source tree pollution
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-	message(FATAL_ERROR "In-source builds are not permitted. Make a separate folder for building:\nmkdir build; cd build; cmake ..\nBefore that, remove the files already created:\nrm -rf CMakeCache.txt CMakeFiles")
-endif(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 
 if(WIN32)
 	set(CMAKE_MODULE_PATH "$ENV{OGRE_HOME}/CMake/;${CMAKE_MODULE_PATH}")
@@ -62,24 +49,9 @@ if(NOT OIS_FOUND)
 	message(SEND_ERROR "Failed to find OIS.")
 endif()
 
-set(HDRS
-	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.hpp
-        ../../s3d/include/s3d/utilities/concurrency/ProducerBarrierSync.h
-        ../../s3d/include/s3d/utilities/concurrency/ConsumerBarrierSync.h)
- 
-set(SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-		src/video_texture/DynamicTexture.h
-		src/video_texture/DynamicTextureThreadSafe.h
-        ../../s3d/include/s3d/utilities/file_io.h
-        ../../s3d/include/s3d/utilities/concurrency/ProducerBarrierSync.h
-        ../../s3d/include/s3d/utilities/concurrency/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h src/point_cloud/PointCloudMesh.cpp src/point_cloud/PointCloudMesh.h)
- 
+file(GLOB_RECURSE HDRS src/*.hpp)
+file(GLOB_RECURSE SRCS src/*.cpp)
+
 include_directories(
 	${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}
@@ -104,7 +76,7 @@ add_executable(${PROJECT_NAME} WIN32 ${HDRS} ${SRCS})
  
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
  
-target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${Boost_LIBRARIES} -pthread)
+target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${Boost_LIBRARIES} -pthread S3D)
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
