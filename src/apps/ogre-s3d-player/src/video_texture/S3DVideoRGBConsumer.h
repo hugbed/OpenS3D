@@ -5,16 +5,16 @@
 #ifndef OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 #define OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 
-#include "../utils/ConsumerBarrierSync.h"
+#include "s3d/utilities/concurrency/ConsumerBarrierSync.h"
 #include "DynamicTextureThreadSafe.h"
 
-class S3DVideoRGBConsumer : public ConsumerBarrierSync<std::vector<uint8_t>>
+class S3DVideoRGBConsumer : public s3d::concurrency::ConsumerBarrierSync<std::vector<uint8_t>>
 {
 public:
     S3DVideoRGBConsumer(DynamicTextureThreadSafe* videoTextureL, DynamicTextureThreadSafe *videoTextureR,
         std::mutex &doneProducingMutex,
         std::condition_variable &shouldConsumeCV,
-        const std::vector<ProducerBarrierSync<std::vector<uint8_t>>*> producers)
+        const std::vector<s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>*> producers)
     : ConsumerBarrierSync(doneProducingMutex, shouldConsumeCV, producers)
     , videoTextureL{videoTextureL}
     , videoTextureR{videoTextureR}

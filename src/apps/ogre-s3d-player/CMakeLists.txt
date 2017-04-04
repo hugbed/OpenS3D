@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 
 # Change this to your project's name
 set(PROJECT_NAME "ogre-s3d-player")
@@ -66,8 +66,8 @@ set(HDRS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/Application.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CameraMan.hpp
-		src/utils/ProducerBarrierSync.h
-		src/utils/ConsumerBarrierSync.h)
+        ../../s3d/include/s3d/utilities/concurrency/ProducerBarrierSync.h
+        ../../s3d/include/s3d/utilities/concurrency/ConsumerBarrierSync.h)
  
 set(SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/BaseApplication.cpp
@@ -76,14 +76,15 @@ set(SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 		src/video_texture/DynamicTexture.h
 		src/video_texture/DynamicTextureThreadSafe.h
-        src/utils/file_io.h
-        src/utils/compression.h
-		src/utils/ProducerBarrierSync.h
-		src/utils/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h src/point_cloud/PointCloudMesh.cpp src/point_cloud/PointCloudMesh.h)
+        ../../s3d/include/s3d/utilities/file_io.h
+        ../../s3d/include/s3d/utilities/concurrency/ProducerBarrierSync.h
+        ../../s3d/include/s3d/utilities/concurrency/ConsumerBarrierSync.h src/video_texture/IfYUVToRGBProducer.h src/video_texture/S3DVideoRGBConsumer.h src/video_texture/TextureUpdateManager.h src/point_cloud/PointCloudMesh.cpp src/point_cloud/PointCloudMesh.h)
  
-include_directories( ${OGRE_INCLUDE_DIRS}
+include_directories(
+	${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+	${S3D_INCLUDE_DIRS}
 )
 
 # Specify build paths

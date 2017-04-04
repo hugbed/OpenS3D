@@ -6,7 +6,7 @@
 #define OPENCVTESTS_DISPARITYALGORITHMBM_H
 
 #include "DisparityAlgorithm.h"
-#include "../hb_utils.h"
+#include "s3d/utilities/time.h"
 
 #include "opencv2/cudastereo.hpp"
 #include "opencv2/cudafeatures2d.hpp"

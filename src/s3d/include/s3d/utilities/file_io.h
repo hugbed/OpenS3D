@@ -10,6 +10,9 @@
 #include <vector>
 #include <algorithm>
 
+namespace s3d {
+namespace file_io {
+
 template<class Size_t>
 static void push_back_n_bytes(std::istream& stream, Size_t n, std::vector<uint8_t>& v)
 {
@@ -89,5 +92,9 @@ public:
     size_t chunkSize_;
     std::ifstream stream_;
 };
+
+
+}
+}
 
 #endif //OGRE_SAMPLE_FILE_IO_H

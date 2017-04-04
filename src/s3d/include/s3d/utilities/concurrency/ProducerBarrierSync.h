@@ -2,9 +2,8 @@
 // Created by jon on 22/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_SYNCPROVIDER_H
-#define OGRE_S3D_PLAYER_SYNCPROVIDER_H
-
+#ifndef S3D_UTILITIES_CONCURRENCY_PRODUCERBARRIERSYNC_H
+#define S3D_UTILITIES_CONCURRENCY_PRODUCERBARRIERSYNC_H
 
 #include <iostream>
 #include <mutex>
@@ -12,6 +11,9 @@
 #include <thread>
 #include <vector>
 #include <algorithm>
+
+namespace s3d {
+namespace concurrency {
 
 template <class T>
 class ProducerBarrierSync {
@@ -91,5 +93,7 @@ private:
     std::mutex doneConsumingMutex;
 };
 
+}
+}
 
-#endif //OGRE_S3D_PLAYER_SYNCPROVIDER_H
+#endif //S3D_UTILITIES_CONCURRENCY_PRODUCERBARRIERSYNC_H

@@ -2,13 +2,16 @@
 // Created by jon on 22/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_SYNCCONSUMER_H
-#define OGRE_S3D_PLAYER_SYNCCONSUMER_H
+#ifndef S3D_UTILITIES_CONCURRENCY_CONSUMERBARRIERSYNC_H
+#define S3D_UTILITIES_CONCURRENCY_CONSUMERBARRIERSYNC_H
 
 #include "ProducerBarrierSync.h"
 
 #include <mutex>
 #include <vector>
+
+namespace s3d {
+namespace concurrency {
 
 template <class T>
 class ConsumerBarrierSync {
@@ -81,5 +84,7 @@ private:
     std::vector<ProducerBarrierSync<T>*> producers;
 };
 
+}
+}
 
-#endif //OGRE_S3D_PLAYER_SYNCCONSUMER_H
+#endif //S3D_UTILITIES_CONCURRENCY_CONSUMERBARRIERSYNC_H

@@ -10,7 +10,7 @@
 
 // Small useful tool functions
 
-namespace hb {
+namespace s3d {
     template<typename Predicate, typename... Params>
     auto mesure_time(Predicate f, Params&& ... params)
     {
@@ -18,13 +18,6 @@ namespace hb {
         f(std::forward<Params>(params)...);
         auto t2 = std::chrono::high_resolution_clock::now();
         return t2 - t1;
-    }
-
-    void displayInNewWindow(const std::string &name, cv::InputArray src)
-    {
-        cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
-        cv::imshow(name, src);
-        cv::waitKey(0);
     }
 }
 

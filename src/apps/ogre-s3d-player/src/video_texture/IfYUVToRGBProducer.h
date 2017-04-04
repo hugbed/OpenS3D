@@ -5,13 +5,13 @@
 #ifndef OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 #define OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 
-#include "../utils/ProducerBarrierSync.h"
-#include "../utils/file_io.h"
-#include "../utils/compression.h"
+#include "s3d/utilities/concurrency/ProducerBarrierSync.h"
+#include "s3d/utilities/file_io.h"
+#include "s3d/utilities/yuv.h"
 
 #include <fstream>
 
-class IfYUVToRGBProducer : public ProducerBarrierSync<std::vector<uint8_t>>
+class IfYUVToRGBProducer : public s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>
 {
 public:
     // image size, etc
@@ -41,8 +41,12 @@ private:
 
     virtual void produce() override
     {
+        using namespace s3d::file_io;
+        using namespace s3d::compression;
+
         read_n_bytes(fileStream, yuvBytes.size(), std::begin(yuvBytes));
-        yuv2rgb(std::begin(yuvBytes), std::end(yuvBytes), std::begin(rgbBytes));
+        color_conversion(std::begin(yuvBytes), std::end(yuvBytes), std::begin(rgbBytes),
+                         YUV422{}, RGB8{});
     }
 
     virtual const std::vector<uint8_t>& getProduct()

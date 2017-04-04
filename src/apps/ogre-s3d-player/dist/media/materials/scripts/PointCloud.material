@@ -1,4 +1,4 @@
-material PointCloudMesh
+material PointCloud
 {
    technique
    {

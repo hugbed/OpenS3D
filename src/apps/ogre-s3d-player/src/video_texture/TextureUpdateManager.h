@@ -38,9 +38,9 @@ public:
             IfYUVToRGBProducer fileProducerR(filenames.second, imageSizeBytesYUV, videoTextureR->getSizeInBytes(),
                                                     doneProducingMutex, shouldConsumeCV);
 
-            std::vector<ProducerBarrierSync<std::vector<uint8_t>>*> producers = {
-                    &fileProducerL,
-                    &fileProducerR
+            std::vector<s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>*> producers = {
+                &fileProducerL,
+                &fileProducerR
             };
 
             // start thread for each producer
@@ -62,8 +62,6 @@ public:
                 producerThread.join();
             }
 
-//            videoTextureL->clear();
-//            videoTextureR->clear();
         });
         textureHandlingThread.detach();
     }
