@@ -1,13 +1,20 @@
 //
-// Created by jon on 06/03/17.
+// Created by jon on 04/04/17.
 //
 
-#ifndef S3D_DISPARITY_DISPARITYALGORITHM_H
-#define S3D_DISPARITY_DISPARITYALGORITHM_H
+#ifndef PROJECT_DISPARITIES_H
+#define PROJECT_DISPARITIES_H
 
-#include <vector>
-#include <memory>
-#include <cv.h>
+#include <stddef.h>
+#include <cv.h> // todo: oh oh
+
+namespace s3d {
+
+struct ImageSize
+{
+    size_t rows;
+    size_t cols;
+};
 
 struct Image {
     Image(cv::Mat imgMat)
@@ -22,8 +29,8 @@ struct PixelPos{
 struct DisparityPoint
 {
     DisparityPoint(PixelPos leftLoc, PixelPos disparityValue)
-        : leftPos(leftLoc)
-        , disparity(disparityValue) {}
+            : leftPos(leftLoc)
+            , disparity(disparityValue) {}
 
     PixelPos leftPos;
     PixelPos disparity;
@@ -47,10 +54,7 @@ public:
     virtual DisparityPoint min() = 0;
 };
 
-class DisparityAlgorithm
-{
-public:
-    virtual std::unique_ptr<Disparities> ComputeDisparities(Image left, Image right) = 0;
-};
+}
 
-#endif //S3D_DISPARITY_DISPARITYALGORITHM_H
+
+#endif //PROJECT_DISPARITIES_H

@@ -19,8 +19,8 @@ endif ()
 
 # When done tweaking common stuff, configure the components (subprojects).
 # NOTE: The order matters! The most independent ones should go first.
-add_subdirectory(core/S3D)
-add_subdirectory(core/S3DCuda)
+add_subdirectory(core/s3d)
+add_subdirectory(core/s3dcuda)
 add_subdirectory(apps/OgreS3DPlayer)
 add_subdirectory(apps/S3DDemo)
 add_subdirectory(apps/S3DCudaDemo)

@@ -6,7 +6,7 @@
 #define OPENCVTESTS_DISPARITYALGORITHMBM_H
 
 #include "s3d/disparity/DisparityAlgorithmBM.h"
-
+#include "s3d/disparity/DisparitiesDense.h"
 #include "s3d/utilities/time.h"
 
 #include "opencv2/cudastereo.hpp"
@@ -14,9 +14,11 @@
 #include "opencv2/cudaarithm.hpp"
 
 #include <iostream>
+#include <memory>
 
-std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image leftImg, Image rightImg)
-{
+namespace s3d {
+
+std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image leftImg, Image rightImg) {
     auto left = leftImg.mat;
     auto right = rightImg.mat;
 
@@ -44,11 +46,14 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image left
 
     auto disparities = std::unique_ptr<Disparities>(
             std::make_unique<DisparitiesDense>(disp,
-                                               DisparityPoint{{minPos.y, minPos.x}, {0, int(minVal)}},
-                                               DisparityPoint{{maxPos.y, maxPos.x}, {0, int(maxVal)}}));
+                                               DisparityPoint{{minPos.y, minPos.x},
+                                                              {0,        int(minVal)}},
+                                               DisparityPoint{{maxPos.y, maxPos.x},
+                                                              {0,        int(maxVal)}}));
 
     return disparities;
 }
 
+}
 
 #endif //OPENCVTESTS_DISPARITYALGORITHMBM_H

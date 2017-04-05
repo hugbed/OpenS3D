@@ -3,9 +3,15 @@
 //
 
 #include <s3d/disparity/DisparityAlgorithmORB.h>
+#include <s3d/disparity/DisparitiesSparse.h>
 
-std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image leftImg, Image rightImg)
-{
+#include "opencv2/cudastereo.hpp"
+#include "opencv2/cudafeatures2d.hpp"
+#include "opencv2/cudaarithm.hpp"
+
+namespace s3d {
+
+std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image leftImg, Image rightImg) {
     auto left = leftImg.mat;
     auto right = rightImg.mat;
 
@@ -29,8 +35,8 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image lef
 
     std::vector<DisparityPoint> disparityPoints;
 
-    for(auto it = std::begin(knn_matches); it != std::end(knn_matches); ++it) {
-        if(it->size() > 1 && (*it)[0].distance/(*it)[1].distance < 0.8) {
+    for (auto it = std::begin(knn_matches); it != std::end(knn_matches); ++it) {
+        if (it->size() > 1 && (*it)[0].distance / (*it)[1].distance < 0.8) {
             matches.push_back((*it)[0]);
 
             auto img1Idx = (*it)[0].queryIdx;
@@ -51,4 +57,6 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image lef
             std::make_unique<DisparitiesSparse>(disparityPoints, ImageSize{size_t(left.rows), size_t(left.cols)}));
 
     return disparities;
+}
+
 }

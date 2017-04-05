@@ -9,6 +9,7 @@
 #include "s3d/disparity/DisparityAlgorithmORB.h"
 
 using namespace cv;
+using namespace s3d;
 
 void displayInNewWindow(const std::string &name, cv::InputArray src)
 {

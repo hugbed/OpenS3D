@@ -1,25 +1,15 @@
 //
-// Created by jon on 06/03/17.
+// Created by jon on 04/04/17.
 //
 
-#ifndef OPENCVTESTS_DISPARITYALGORITHMORB_H
-#define OPENCVTESTS_DISPARITYALGORITHMORB_H
+#ifndef PROJECT_DISPARITIESSPARSE_H
+#define PROJECT_DISPARITIESSPARSE_H
 
-#include "DisparityAlgorithm.h"
-#include "s3d/utilities/time.h"
+#include "Disparities.h"
 
-#include "opencv2/cudastereo.hpp"
-#include "opencv2/cudafeatures2d.hpp"
-#include "opencv2/cudaarithm.hpp"
+#include <vector>
 
-#include <iostream>
-#include <memory>
-
-struct ImageSize
-{
-    size_t rows;
-    size_t cols;
-};
+namespace s3d {
 
 class DisparitiesSparse : public Disparities
 {
@@ -67,11 +57,8 @@ private:
     Image disparityMap_;
 };
 
-class DisparityAlgorithmORB : public DisparityAlgorithm
-{
-public:
-    std::unique_ptr<Disparities> ComputeDisparities(Image leftImg, Image rightImg) override;
-};
+}
 
 
-#endif //OPENCVTESTS_DISPARITYALGORITHMORB_H
+
+#endif //PROJECT_DISPARITIESSPARSE_H

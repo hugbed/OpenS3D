@@ -1,4 +1,4 @@
-#include "init.h"
+#include "s3dcuda/init.h"
 
 int main()
 {
