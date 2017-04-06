@@ -11,6 +11,8 @@
 
 #include <fstream>
 
+class FileNotFoundException{};
+
 class IfYUVToRGBProducer : public s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>
 {
 public:
@@ -22,6 +24,7 @@ public:
         , rgbBytes{}
         , fileStream{filename, std::ios::binary}
     {
+        if (!fileStream.is_open()) throw FileNotFoundException{}; // todo no no, no exception here please
         // hardcoded for now
         yuvBytes.resize(imageSizeBytesYUV);
         rgbBytes.resize(imageSizeBytesRGB);

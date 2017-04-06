@@ -32,11 +32,11 @@ public:
             std::mutex doneProducingMutex;
             std::condition_variable shouldConsumeCV;
 
-            constexpr auto imageSizeBytesYUV = 1920*1080*2;
+            constexpr auto imageSizeBytesYUV = 1920 * 1080 * 2;
             IfYUVToRGBProducer fileProducerL(filenames.first, imageSizeBytesYUV, videoTextureL->getSizeInBytes(),
-                                                    doneProducingMutex, shouldConsumeCV);
+                                             doneProducingMutex, shouldConsumeCV);
             IfYUVToRGBProducer fileProducerR(filenames.second, imageSizeBytesYUV, videoTextureR->getSizeInBytes(),
-                                                    doneProducingMutex, shouldConsumeCV);
+                                             doneProducingMutex, shouldConsumeCV);
 
             std::vector<s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>*> producers = {
                 &fileProducerL,

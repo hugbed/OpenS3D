@@ -12,7 +12,19 @@ namespace math {
 
 template<typename T>
 T clamp(const T &v, const T &lo, const T &hi) {
-    return std::min(std::max(v, lo), hi);
+  return std::min(std::max(v, lo), hi);
+}
+
+int roundUp(int numToRound, int multiple)
+{
+  if (multiple == 0)
+    return numToRound;
+
+  int remainder = numToRound % multiple;
+  if (remainder == 0)
+    return numToRound;
+
+  return numToRound + multiple - remainder;
 }
 
 } // math
