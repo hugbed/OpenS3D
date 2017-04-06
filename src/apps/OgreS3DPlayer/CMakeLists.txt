@@ -56,7 +56,6 @@ include_directories(
 	${OGRE_INCLUDE_DIRS}
     ${OIS_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-	${S3D_INCLUDE_DIRS}
 )
 
 # Specify build paths
@@ -76,7 +75,7 @@ add_executable(${PROJECT_NAME} WIN32 ${HDRS} ${SRCS})
  
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
  
-target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${Boost_LIBRARIES} -pthread S3D)
+target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${Boost_LIBRARIES} -pthread s3d)
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)

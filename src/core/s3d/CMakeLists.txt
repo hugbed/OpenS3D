@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(S3D)
+project(s3d)
 
 find_package(OpenCV REQUIRED)
 

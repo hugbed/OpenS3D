@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(S3DCuda)
+project(s3dcuda)
 
 find_package(CUDA QUIET REQUIRED)
 
