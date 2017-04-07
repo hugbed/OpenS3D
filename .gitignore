@@ -38,3 +38,5 @@ src/apps/ogre-s3d-player/cmake-build-release/
 src/build/
 
 src/apps/OgreS3DPlayer/cmake-build-release/
+
+src/cmake-build-release/

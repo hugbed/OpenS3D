@@ -18,6 +18,8 @@
 #include "video_texture/TextureUpdateManager.h"
 #include "point_cloud/PointCloudMesh.h"
 
+#include "s3d/video/capture/FileVideoCaptureDevice.h"
+
 #include <future>
 
 //-------------------------------------------------------------------------------------
@@ -48,8 +50,16 @@ void Application::createScene() {
     createVideoPlane(m_videoTextures.first, "_plane");
     createVideoPlane(m_videoTextures.second, "_plane2");
 
+    // should delete this, this is only a test
+    VideoCaptureDevice* captureDevice = new FileVideoCaptureDevice(std::string("/home/jon/Videos/current-left.yuv"));
+    auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+            new TextureUpdateClient(m_videoTextures.first.get(), m_videoTextures.second.get()));
+
+    VideoCaptureFormat format;
+    captureDevice->AllocateAndStart(format, std::move(captureClient));
+
     // start texture update thread or something
-    m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(), m_videoTextures.second.get());
+//    m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(), m_videoTextures.second.get());
 
     addLights();
     createGroundPlane();

@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_VIDEO_TYPES_H_H
-#define PROJECT_VIDEO_TYPES_H_H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_TYPES_H
+#define S3D_VIDEO_CAPTURE_VIDEO_TYPES_H
 
 enum class VideoPixelFormat {
   UNKNOWN = 0,
@@ -11,4 +11,4 @@ enum class VideoPixelFormat {
   ARGB = 2
 };
 
-#endif //PROJECT_VIDEO_TYPES_H_H
+#endif //S3D_VIDEO_CAPTURE_VIDEO_TYPES_H

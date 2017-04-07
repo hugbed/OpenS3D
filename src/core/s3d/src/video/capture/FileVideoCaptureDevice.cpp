@@ -3,7 +3,6 @@
 //
 
 #include "s3d/video/capture/FileVideoCaptureDevice.h"
-#include "s3d/geometry/Size.h"
 #include "s3d/utilities/file_io.h"
 
 #include <chrono>
@@ -88,6 +87,7 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(cons
 
 FileVideoCaptureDevice::FileVideoCaptureDevice(const std::string &filePath)
     : filePath_(filePath)
+    , stopCaptureFlag_(false)
 {}
 
 FileVideoCaptureDevice::~FileVideoCaptureDevice() {
@@ -96,15 +96,18 @@ FileVideoCaptureDevice::~FileVideoCaptureDevice() {
 
 void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat &format,
                                               std::unique_ptr<VideoCaptureDevice::Client> client) {
+    client_ = std::move(client);
     stopCaptureFlag_ = false;
     fileParser_ = GetVideoFileParser(filePath_, captureFormat_);
     captureThread_.reset(new std::thread(&FileVideoCaptureDevice::OnAllocateAndStart, this));
+    captureThread_->detach(); // todo: detach for now
 }
 
 void FileVideoCaptureDevice::OnAllocateAndStart()
 {
     using namespace std::chrono;
-    auto loopDuration = duration_cast<milliseconds>(duration<float>(1.0f / captureFormat_.frameRate));
+    auto loopDuration = duration_cast<milliseconds>(duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));
+
     while (!stopCaptureFlag_) {
         auto t1 = high_resolution_clock::now();
         OnCaptureTask();

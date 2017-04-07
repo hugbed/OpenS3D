@@ -2,8 +2,8 @@
 // Created by jon on 19/03/17.
 //
 
-#ifndef OGRE_SAMPLE_FILE_IO_H
-#define OGRE_SAMPLE_FILE_IO_H
+#ifndef S3D_UTILITIES_FILE_IO_H
+#define S3D_UTILITIES_FILE_IO_H
 
 #include <stddef.h>
 #include <fstream>
@@ -33,18 +33,7 @@ static bool read_n_bytes(std::istream& stream, Size_t n, OIt it)
     return !stream.eof();
 }
 
-std::vector<uint8_t> load_bytes(const std::string& filename)
-{
-    auto bytes = std::vector<uint8_t>{};
-    std::ifstream in{filename, std::ios::binary};
-    std::copy(std::istreambuf_iterator<char>{in},
-              std::istreambuf_iterator<char>{},
-              back_inserter(bytes));
-    return bytes;
-}
-
 template<class Container>
-
 bool write_bytes(const std::string& filename, Container c)
 {
     std::ofstream out{filename, std::ios::binary};
@@ -98,4 +87,4 @@ public:
 }
 }
 
-#endif //OGRE_SAMPLE_FILE_IO_H
+#endif //S3D_UTILITIES_FILE_IO_H

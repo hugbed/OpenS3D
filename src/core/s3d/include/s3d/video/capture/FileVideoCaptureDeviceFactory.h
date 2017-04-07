@@ -7,8 +7,10 @@
 
 #include "VideoCaptureDeviceFactory.h"
 
-class FileVideoCaptureDeviceFactory : VideoCaptureDeviceFactory {
+class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
 public:
+    FileVideoCaptureDeviceFactory() = default;
+
     virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
         const VideoCaptureDeviceDescriptor& deviceDescriptor
     ) override;

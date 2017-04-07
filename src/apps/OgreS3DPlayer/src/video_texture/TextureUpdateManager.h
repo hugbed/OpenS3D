@@ -10,6 +10,8 @@
 #include "IfYUVToRGBProducer.h"
 #include "S3DVideoRGBConsumer.h"
 
+#include "s3d/video/capture/VideoCaptureDevice.h"
+
 class TextureUpdateManager
 {
 public:
@@ -68,6 +70,33 @@ public:
 
 private:
     std::pair<std::string, std::string> filenames;
+};
+
+class TextureUpdateClient : public VideoCaptureDevice::Client {
+public:
+    TextureUpdateClient(DynamicTextureThreadSafe* videoTexture, DynamicTextureThreadSafe* videoTextureR)
+        : videoTexture{videoTexture}
+        , videoTextureR{videoTextureR}
+    {
+        frameData.resize(1920*1080*3);
+    }
+
+    virtual void OnIncomingCapturedData(const std::vector<uint8_t> &data,
+                                        const VideoCaptureFormat& frameFormat) {
+        s3d::compression::color_conversion(std::begin(data), std::end(data), std::begin(frameData),
+                                           s3d::compression::YUV422{}, s3d::compression::RGB8{});
+        videoTexture->updateImage(frameData);
+        videoTextureR->updateImage(frameData);
+    }
+
+    virtual void OnError(const std::string& reason) override {}
+    virtual void OnLog(const std::string& message) override {}
+    virtual void OnStarted() override {}
+
+private:
+    std::vector<uint8_t> frameData;
+    DynamicTextureThreadSafe* videoTexture;
+    DynamicTextureThreadSafe* videoTextureR;
 };
 
 #endif //OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H

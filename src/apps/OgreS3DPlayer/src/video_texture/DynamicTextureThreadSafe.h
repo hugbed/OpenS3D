@@ -29,7 +29,7 @@ public:
         m_nextFrame.resize(getSizeInBytes());
     }
 
-    virtual void updateImage(const std::vector<uint8_t> &data) override
+    virtual void        updateImage(const std::vector<uint8_t> &data) override
     {
         std::unique_lock<std::mutex> mlock(m_frameMutex);
         assert(data.size() == m_nextFrame.size());

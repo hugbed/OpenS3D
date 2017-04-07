@@ -18,7 +18,7 @@ public:
     public:
         virtual ~Client() {}
 
-        virtual void OnIncomingCapturedData(std::vector<uint8_t> &data,
+        virtual void OnIncomingCapturedData(const std::vector<uint8_t> &data,
                                             const VideoCaptureFormat& frameFormat) = 0;
 
         virtual void OnError(const std::string& reason) = 0;

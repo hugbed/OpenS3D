@@ -6,10 +6,8 @@
 #define PROJECT_FILEVIDEOCAPTUREDEVICE_H
 
 #include "VideoCaptureDevice.h"
-#include "video_capture_types.h"
 
 #include <thread>
-#include <memory>
 #include <atomic>
 
 class VideoFileParser;
@@ -25,9 +23,10 @@ public:
 
     virtual void StopAndDeAllocate() override;
 
-private:
+    // todo: should be private
     static std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string &filePath, VideoCaptureFormat &format);
 
+private:
     // runs on capture thread
     void OnAllocateAndStart();
     void OnCaptureTask();
