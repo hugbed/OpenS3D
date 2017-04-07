@@ -1,5 +1,5 @@
-#include "s3d/capture/video_capture_types.h"
-#include "s3d/capture/VideoFrame.h"
+#include "s3d/video/capture/video_capture_types.h"
+#include "s3d/video/VideoFrame.h"
 
 VideoCaptureFormat::VideoCaptureFormat()
   : frameSize{}

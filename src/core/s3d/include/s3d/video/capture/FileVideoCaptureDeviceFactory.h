@@ -10,7 +10,8 @@
 class FileVideoCaptureDeviceFactory : VideoCaptureDeviceFactory {
 public:
     virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
-    const VideoCaptureDeviceDescriptor& deviceDescriptor) override;
+        const VideoCaptureDeviceDescriptor& deviceDescriptor
+    ) override;
 };
 
 #endif //PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H

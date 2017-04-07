@@ -7,20 +7,24 @@
 
 class Size {
 public:
-  constexpr Size() noexcept : width{}, height{} {}
-  constexpr Size(int width, int height) noexcept : width(width), height(height) {}
+    constexpr Size() noexcept : width_{}, height_{} {}
+    constexpr Size(int width, int height) noexcept : width_(width), height_(height) {}
 
-  constexpr int setWidth() const noexcept { return width; }
-  constexpr int setHeight() const noexcept { return height; }
+    constexpr int setWidth(int width) noexcept { height_ = width; }
+    constexpr int setHeight(int height) noexcept { height_ = height; }
+    constexpr int getWidth() const noexcept { return height_; }
+    constexpr int getHeight() const noexcept { return height_; }
 
-  void setSize(int width, int height) noexcept {
-    setWidth(width);
-    setHeight(height);
-  }
+    void setSize(int width, int height) noexcept {
+        setWidth(width);
+        setHeight(height);
+    }
+
+    int getArea() const noexcept { return width_ * height_; }
 
 private:
-  int width;
-  int height;
+    int width_;
+    int height_;
 };
 
 #endif //PROJECT_SIZE_H

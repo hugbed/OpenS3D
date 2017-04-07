@@ -5,13 +5,16 @@
 #ifndef PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
 #define PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
 
+class VideoCaptureDeviceDescriptor {};
+
 // todo: singleton?
 class VideoCaptureDeviceFactory {
 public:
   VideoCaptureDeviceFactory();
 
   virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
-    const VideoCaptureDeviceDescriptor& deviceDescriptor) = 0;
+    const VideoCaptureDeviceDescriptor& deviceDescriptor
+  ) = 0;
 };
 
 #endif //PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
