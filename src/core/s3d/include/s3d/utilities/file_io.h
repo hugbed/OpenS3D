@@ -16,8 +16,9 @@ namespace file_io {
 template <class Size_t>
 void push_back_n_bytes(std::istream& stream,
                        Size_t n,
-                       std::vector<uint8_t>& v) {
-  std::copy_n(std::istreambuf_iterator<char>{stream}, n, back_inserter(v));
+                       std::vector<uint8_t>& outContainer) {
+  std::copy_n(std::istreambuf_iterator<char>{stream}, n,
+              back_inserter(outContainer));
   stream.get();  // to prevent reading twice the last character
 }
 
@@ -66,10 +67,10 @@ class ifchunkstream {
     push_back_n_bytes(stream_, chunkSize_, v);
   }
 
-  size_t chunkSize_;
   std::ifstream stream_;
+  size_t chunkSize_;
 };
-}
-}
+}  // namespace file_io
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_FILE_IO_H

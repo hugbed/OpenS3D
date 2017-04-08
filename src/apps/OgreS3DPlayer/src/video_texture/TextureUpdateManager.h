@@ -2,8 +2,8 @@
 // Created by jon on 23/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
-#define OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
+#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
+#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
 
 #include "DynamicTextureThreadSafe.h"
 #include "IfYUVToRGBProducer.h"
@@ -26,9 +26,8 @@ class YUVFileTextureUpdateManager : public TextureUpdateManager {
       : filenames{leftVideoFilename, rightVideoFilename} {}
 
   // starts a thread so main thread can stop it maybe
-  virtual void handleTextureUpdate(
-      DynamicTextureThreadSafe* videoTextureL,
-      DynamicTextureThreadSafe* videoTextureR) override {
+  void handleTextureUpdate(DynamicTextureThreadSafe* videoTextureL,
+                           DynamicTextureThreadSafe* videoTextureR) override {
     auto textureHandlingThread = std::thread([this, videoTextureL,
                                               videoTextureR] {
       std::mutex doneProducingMutex;
@@ -79,18 +78,18 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
     frameData.resize(1920 * 1080 * 3);
   }
 
-  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& data,
+  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
                                       const VideoCaptureFormat& frameFormat) {
     s3d::compression::color_conversion(
-        std::begin(data), std::end(data), std::begin(frameData),
+        std::begin(imageBytes), std::end(imageBytes), std::begin(frameData),
         s3d::compression::YUV422{}, s3d::compression::RGB8{});
     videoTexture->updateImage(frameData);
     videoTextureR->updateImage(frameData);
   }
 
-  virtual void OnError(const std::string& reason) override {}
-  virtual void OnLog(const std::string& message) override {}
-  virtual void OnStarted() override {}
+  void OnError(const std::string&) override {}
+  void OnLog(const std::string&) override {}
+  void OnStarted() override {}
 
  private:
   std::vector<uint8_t> frameData;
@@ -98,4 +97,4 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
   DynamicTextureThreadSafe* videoTextureR;
 };
 
-#endif  // OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
+#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H

@@ -8,7 +8,6 @@
 #include "s3d/disparity/disparity_algorithm_bm.h"
 #include "s3d/disparity/disparity_algorithm_orb.h"
 
-using namespace cv;
 using namespace s3d;
 
 void displayInNewWindow(const std::string& name, cv::InputArray src) {
@@ -27,8 +26,8 @@ int main(int argc, char* argv[]) {
   path_left.append("left.jpg");
   path_right.append("left.jpg");
 
-  auto left = imread(path_left, CV_LOAD_IMAGE_GRAYSCALE);
-  auto right = imread(path_right, CV_LOAD_IMAGE_GRAYSCALE);
+  auto left = cv::imread(path_left, CV_LOAD_IMAGE_GRAYSCALE);
+  auto right = cv::imread(path_right, CV_LOAD_IMAGE_GRAYSCALE);
   assert(left.data);
   assert(right.data);
 
@@ -40,12 +39,13 @@ int main(int argc, char* argv[]) {
   // Compute disparities
   auto disparityAlgo = std::unique_ptr<DisparityAlgorithm>(
       std::make_unique<DisparityAlgorithmORB>());
-  auto disparities = disparityAlgo->ComputeDisparities({left}, {right});
+  auto disparities =
+      disparityAlgo->ComputeDisparities(Image{left}, Image{right});
 
   // Display disparity map
-  Mat cm_disp;
+  cv::Mat cm_disp;
   auto disp = disparities->getDisparityMap();
-  applyColorMap(disp.mat, cm_disp, COLORMAP_OCEAN);
+  applyColorMap(disp.mat, cm_disp, cv::COLORMAP_OCEAN);
   displayInNewWindow("dispMap", cm_disp);
 
   // Display disparity points

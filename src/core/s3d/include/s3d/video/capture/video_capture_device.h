@@ -12,11 +12,13 @@
 #include <string>
 #include <vector>
 
+// todo(hugbed): put in s3d namespace
+
 class VideoCaptureDevice {
  public:
   class Client {
    public:
-    virtual ~Client() {}
+    virtual ~Client() = default;
 
     virtual void OnIncomingCapturedData(
         const std::vector<uint8_t>& data,
@@ -27,7 +29,7 @@ class VideoCaptureDevice {
     virtual void OnStarted() = 0;
   };
 
-  virtual ~VideoCaptureDevice() {}
+  virtual ~VideoCaptureDevice() = default;
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,
                                 std::unique_ptr<Client> client) = 0;

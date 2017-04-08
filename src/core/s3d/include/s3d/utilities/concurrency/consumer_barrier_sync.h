@@ -16,9 +16,11 @@ namespace concurrency {
 template <class T>
 class ConsumerBarrierSync {
  public:
+  using Producers = std::vector<ProducerBarrierSync<T>*>;
+
   ConsumerBarrierSync(std::mutex& doneProducingMutex,
                       std::condition_variable& shouldConsumeCV,
-                      const std::vector<ProducerBarrierSync<T>*> producers)
+                      const Producers& producers)
       : doneProducingMutex(doneProducingMutex),
         shouldConsumeCV(shouldConsumeCV),
         producers(producers) {}
@@ -32,9 +34,7 @@ class ConsumerBarrierSync {
   }
 
  protected:
-  const std::vector<ProducerBarrierSync<T>*>& getProducers() {
-    return producers;
-  }
+  const Producers& getProducers() { return producers; }
 
  private:
   virtual void consume() = 0;  // use producer->getProduct()
@@ -73,9 +73,9 @@ class ConsumerBarrierSync {
 
   std::mutex& doneProducingMutex;
   std::condition_variable& shouldConsumeCV;
-  std::vector<ProducerBarrierSync<T>*> producers;
+  Producers producers;
 };
-}
-}
+}  // namespace concurrency
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H

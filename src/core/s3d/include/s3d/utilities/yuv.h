@@ -89,7 +89,7 @@ static void color_conversion(InputIt first,
     *d_first++ = R;
   }
 }
-}
-}
+}  // namespace compression
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_YUV_H

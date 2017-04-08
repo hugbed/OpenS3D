@@ -24,9 +24,10 @@
 
 //-------------------------------------------------------------------------------------
 Application::Application()
-    : m_textureUpdateManager(std::make_unique<YUVFileTextureUpdateManager>(
-          "../media/materials/textures/current-left.yuv",
-          "../media/materials/textures/current-right.yuv")) {}
+{
+  m_textureUpdateManager.reset(new YUVFileTextureUpdateManager("../media/materials/textures/current-left.yuv",
+                                                               "../media/materials/textures/current-right.yuv"));
+}
 
 //-------------------------------------------------------------------------------------
 Application::~Application() {}
@@ -94,8 +95,8 @@ void Application::createVideoRectangle(
     std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
     const std::string& id) {
   constexpr auto refreshRate = 1.0f / 60.0f;  // twice as fast as update to
-                                              // prevent aliasing (if this makes
-                                              // sense)
+  // prevent aliasing (if this makes
+  // sense)
 
   // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
   // todo: should probably create video textures outside to assign them to
@@ -136,8 +137,8 @@ void Application::createVideoPlane(
     std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
     const std::string& id) {
   constexpr auto refreshRate = 1.0f / 60.0f;  // twice as fast as update to
-                                              // prevent aliasing (if this makes
-                                              // sense)
+  // prevent aliasing (if this makes
+  // sense)
 
   // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
   videoTexture = std::make_unique<DynamicTextureThreadSafe>(

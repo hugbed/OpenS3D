@@ -2,8 +2,8 @@
 // Created by jon on 29/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_OVISEPOINTCLOUD_H
-#define OGRE_S3D_PLAYER_OVISEPOINTCLOUD_H
+#ifndef OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H
+#define OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H
 
 #include <OgreHardwareVertexBuffer.h>
 
@@ -33,4 +33,4 @@ class PointCloudMesh {
   Ogre::HardwareVertexBufferSharedPtr cbuf;
 };
 
-#endif  // OGRE_S3D_PLAYER_OVISEPOINTCLOUD_H
+#endif  // OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H

@@ -18,6 +18,6 @@ auto mesure_time(Predicate f, Params&&... params) {
   auto t2 = std::chrono::high_resolution_clock::now();
   return t2 - t1;
 }
-}
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_TIME_H

@@ -2,8 +2,8 @@
 // Created by jon on 23/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_VIDEOCONSUMER_H
-#define OGRE_S3D_PLAYER_VIDEOCONSUMER_H
+#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_S3D_VIDEO_RGB_CONSUMER_H
+#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_S3D_VIDEO_RGB_CONSUMER_H
 
 #include "DynamicTextureThreadSafe.h"
 #include "s3d/utilities/concurrency/consumer_barrier_sync.h"
@@ -47,4 +47,4 @@ class S3DVideoRGBConsumer
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 
-#endif  // OGRE_S3D_PLAYER_VIDEOCONSUMER_H
+#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_S3D_VIDEO_RGB_CONSUMER_H

@@ -1,5 +1,5 @@
-#ifndef __Application_hpp_
-#define __Application_hpp_
+#ifndef OGRE_S3D_PLAYER_APPLICATION_HPP
+#define OGRE_S3D_PLAYER_APPLICATION_HPP
 
 #include "BaseApplication.hpp"
 
@@ -12,12 +12,12 @@ class TextureUpdateManager;
 class Application : public BaseApplication {
  public:
   Application();
-  virtual ~Application();
+  ~Application() override;
 
  protected:
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent&) override;
+  bool frameRenderingQueued(const Ogre::FrameEvent&) override;
 
-  void createScene();
+  void createScene() override;
 
   void addLights();
 
@@ -47,4 +47,4 @@ class Application : public BaseApplication {
   std::vector<Ogre::FrameListener*> m_frameListeners;
 };
 
-#endif  // #ifndef __Application_h_
+#endif  // OGRE_S3D_PLAYER_APPLICATION_HPP

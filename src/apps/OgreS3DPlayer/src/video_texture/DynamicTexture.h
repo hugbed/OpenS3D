@@ -2,8 +2,8 @@
 // Created by jon on 18/03/17.
 //
 
-#ifndef OGRE_SAMPLE_DYNAMICMATERIAL_H
-#define OGRE_SAMPLE_DYNAMICMATERIAL_H
+#ifndef OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H
+#define OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H
 
 #include <Ogre.h>
 
@@ -15,25 +15,23 @@ class DynamicTexture {
                  Ogre::PixelFormat format,
                  ushort imgWidth,
                  ushort imgHeight)
-      : m_textureName{textureName},
-        m_imgWidth{imgWidth},
-        m_imgHeight{imgHeight} {
+      : m_textureName{textureName} {
     m_pDynamicTexture = Ogre::TextureManager::getSingleton().createManual(
         m_textureName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-        Ogre::TEX_TYPE_2D, m_imgWidth, m_imgHeight,  // w, h
-        0, Ogre::PF_R8G8B8, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+        Ogre::TEX_TYPE_2D, imgWidth, imgHeight,  // w, h
+        0, format, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
     clear();
   }
 
   // source: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-  virtual void updateImage(const std::vector<uint8_t>& data) {
+  virtual void updateImage(const std::vector<uint8_t>& imageBytes) {
     auto pixelBuffer = m_pDynamicTexture->getBuffer();
-    assert(data.size() == pixelBuffer->getSizeInBytes());
+    assert(imageBytes.size() == pixelBuffer->getSizeInBytes());
 
     pixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
 
     const auto& pixelBox = pixelBuffer->getCurrentLock();
-    std::copy(std::begin(data), std::end(data),
+    std::copy(std::begin(imageBytes), std::end(imageBytes),
               static_cast<uint8_t*>(pixelBox.data));
 
     pixelBuffer->unlock();
@@ -67,10 +65,7 @@ class DynamicTexture {
  private:
   std::string m_textureName;
 
-  ushort m_imgWidth;
-  ushort m_imgHeight;
-
   Ogre::SharedPtr<Ogre::Texture> m_pDynamicTexture;
 };
 
-#endif  // OGRE_SAMPLE_DYNAMICMATERIAL_H
+#endif  // OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H

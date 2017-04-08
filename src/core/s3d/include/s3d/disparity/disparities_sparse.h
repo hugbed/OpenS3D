@@ -13,20 +13,20 @@ namespace s3d {
 
 class DisparitiesSparse : public Disparities {
  public:
-  DisparitiesSparse(const std::vector<DisparityPoint>& disparities,
-                    ImageSize imageSize)
+  using DisparityPoints = std::vector<DisparityPoint>;
+
+  DisparitiesSparse(const DisparityPoints& disparities, ImageSize imageSize)
       : disparities_(disparities),
         disparityMap_(cv::Mat::zeros(static_cast<int>(imageSize.rows),
                                      static_cast<int>(imageSize.cols),
                                      CV_8U)) {}
 
-  virtual const std::vector<DisparityPoint>& getDisparities()
-      override  // const & ??
+  const std::vector<DisparityPoint>& getDisparities() override  // const & ??
   {
     return disparities_;
   }
 
-  virtual Image getDisparityMap() override {
+  Image getDisparityMap() override {
     auto minVal = min().disparity.col;
     auto maxVal = max().disparity.col;
 
@@ -43,18 +43,18 @@ class DisparitiesSparse : public Disparities {
     return disparityMap_;
   }
 
-  virtual DisparityPoint max() override {
+  DisparityPoint max() override {
     return *(std::max(std::begin(disparities_), std::end(disparities_)));
   }
 
-  virtual DisparityPoint min() override {
+  DisparityPoint min() override {
     return *(std::min(std::begin(disparities_), std::end(disparities_)));
   }
 
  private:
-  std::vector<DisparityPoint> disparities_;
+  DisparityPoints disparities_;
   Image disparityMap_;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_DISPARITIES_SPARSE_H

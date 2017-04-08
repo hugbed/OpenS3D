@@ -48,11 +48,13 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(
 
   auto disparities =
       std::unique_ptr<Disparities>(std::make_unique<DisparitiesDense>(
-          disp, DisparityPoint{{minPos.y, minPos.x}, {0, int(minVal)}},
-          DisparityPoint{{maxPos.y, maxPos.x}, {0, int(maxVal)}}));
+          Image(disp), DisparityPoint{PixelPos{minPos.y, minPos.x},
+                                      PixelPos{0, int(minVal)}},
+          DisparityPoint{PixelPos{maxPos.y, maxPos.x},
+                         PixelPos{0, int(maxVal)}}));
 
   return disparities;
 }
-}
+}  // namespace s3d
 
 #endif  // OPENCVTESTS_DISPARITYALGORITHMBM_H

@@ -66,4 +66,4 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
 
   return disparities;
 }
-}
+}  // namespace s3d

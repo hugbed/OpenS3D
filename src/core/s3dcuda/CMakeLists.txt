@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(s3dcuda)
+
+set(CUDA_TOOLKIT_ROOT_DIR /usr/local/cuda/)
 
 find_package(CUDA QUIET REQUIRED)
 

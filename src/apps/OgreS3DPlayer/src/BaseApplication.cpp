@@ -42,16 +42,14 @@ bool BaseApplication::configure() {
   // Show the configuration dialog and initialise the system
   // You can skip this and use root.restoreConfig() to load configuration
   // settings if you were sure there are valid ones saved in ogre.cfg
-  if (mRoot->showConfigDialog(nullptr)) {
-    // If returned true, user clicked OK so initialise
-    // Here we choose to let the system create a default rendering window by
-    // passing 'true'
-    mWindow = mRoot->initialise(true, "Ogre-Sample Application Render Window");
-
-    return true;
-  } else {
+  if (!mRoot->showConfigDialog(nullptr)) {
     return false;
   }
+  // If returned true, user clicked OK so initialise
+  // Here we choose to let the system create a default rendering window by
+  // passing 'true'
+  mWindow = mRoot->initialise(true, "Ogre-Sample Application Render Window");
+  return true;
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::chooseSceneManager() {
@@ -156,8 +154,9 @@ void BaseApplication::run() {
   mPluginsCfg = "plugins.cfg";
 #endif
 
-  if (!setup())
+  if (!setup()) {
     return;
+  }
 
   //    while(true)
   //    {
@@ -180,8 +179,9 @@ bool BaseApplication::setup() {
   setupResources();
 
   bool carryOn = configure();
-  if (!carryOn)
+  if (!carryOn) {
     return false;
+  }
 
   chooseSceneManager();
   createCamera();
@@ -204,11 +204,7 @@ bool BaseApplication::setup() {
 };
 //-------------------------------------------------------------------------------------
 bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt) {
-  if (mWindow->isClosed()) {
-    return false;
-  }
-
-  if (mShutDown) {
+  if (mWindow->isClosed() || mShutDown) {
     return false;
   }
 

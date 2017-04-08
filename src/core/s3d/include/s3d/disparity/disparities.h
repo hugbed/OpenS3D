@@ -16,7 +16,7 @@ struct ImageSize {
 };
 
 struct Image {
-  Image(cv::Mat imgMat) : mat(imgMat) {}
+  explicit Image(cv::Mat imgMat) : mat(std::move(imgMat)) {}
   cv::Mat mat;
 };
 
@@ -27,7 +27,7 @@ struct PixelPos {
 
 struct DisparityPoint {
   DisparityPoint(PixelPos leftLoc, PixelPos disparityValue)
-      : leftPos(leftLoc), disparity(disparityValue) {}
+      : leftPos(std::move(leftLoc)), disparity(std::move(disparityValue)) {}
 
   PixelPos leftPos;
   PixelPos disparity;
@@ -48,6 +48,6 @@ class Disparities {
   virtual DisparityPoint max() = 0;
   virtual DisparityPoint min() = 0;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_DISPARITIES_H

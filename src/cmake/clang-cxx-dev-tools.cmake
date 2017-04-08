@@ -22,17 +22,24 @@ if(CLANG_FORMAT)
     )
 endif()
 
-# Adding clang-tidy target if executable is found
-# todo(hugbed): does not really work (include errors)
 find_program(CLANG_TIDY "clang-tidy")
-if(CLANG_TIDY)
-    add_custom_target(
-        clang-tidy
-        COMMAND /usr/bin/clang-tidy
-        ${ALL_CXX_SOURCE_FILES}
-        -config=''
-        --
-        -std=c++11
-        -I${INCLUDE_DIRECTORIES}
-    )
-endif()
+function(target_add_clang_tidy target-name include-dirs source-files)
+    message(INFO ${source-files})
+
+    string(REPLACE ";" ";-I" include-dirs "${include-dirs}")
+    set(include-dirs-str "${include-dirs}")
+    message(${include-dirs-str})
+
+    # Adding clang-tidy target if executable is found
+    if(CLANG_TIDY)
+        add_custom_target(
+            ${target-name}-clang-tidy
+            COMMAND /usr/bin/clang-tidy
+            ${source-files}
+            -checks=*,clang-analyzer*,clang-analyzer-cplusplus*
+            --
+            -std=c++14
+            -I${include-dirs-str}
+        )
+    endif()
+endfunction()

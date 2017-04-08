@@ -16,6 +16,6 @@ class DisparityAlgorithm {
   virtual std::unique_ptr<Disparities> ComputeDisparities(Image left,
                                                           Image right) = 0;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_H

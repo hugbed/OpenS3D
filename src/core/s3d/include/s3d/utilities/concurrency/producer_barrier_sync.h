@@ -78,7 +78,7 @@ class ProducerBarrierSync {
   std::mutex& doneProducingMutex;
   std::mutex doneConsumingMutex;
 };
-}
-}
+}  // namespace concurrency
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_SYNC_H

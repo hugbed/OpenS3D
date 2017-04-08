@@ -9,9 +9,9 @@
 
 class VideoFileParser {
  public:
-  VideoFileParser(const std::string& filePath);
+  explicit VideoFileParser(const std::string& filePath);
 
-  virtual ~VideoFileParser();
+  virtual ~VideoFileParser() = default;
 
   virtual bool Initialize(VideoCaptureFormat& format) = 0;
   virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
@@ -25,12 +25,12 @@ class VideoFileParser {
 
 class RawUYVYFileParser : public VideoFileParser {
  public:
-  RawUYVYFileParser(const std::string& filePath);
+  explicit RawUYVYFileParser(const std::string& filePath);
 
-  virtual ~RawUYVYFileParser();
+  ~RawUYVYFileParser() override = default;
 
-  virtual bool Initialize(VideoCaptureFormat& format) override;
-  virtual bool GetNextFrame(std::vector<uint8_t>& frame) override;
+  bool Initialize(VideoCaptureFormat& format) override;
+  bool GetNextFrame(std::vector<uint8_t>& frame) override;
 
  private:
   std::unique_ptr<std::ifstream> fileStream;
@@ -40,12 +40,8 @@ class RawUYVYFileParser : public VideoFileParser {
 VideoFileParser::VideoFileParser(const std::string& filePath)
     : filePath(filePath), frameSize{}, currentByteIndex{}, firstFrameIndex{} {}
 
-VideoFileParser::~VideoFileParser() {}
-
 RawUYVYFileParser::RawUYVYFileParser(const std::string& filePath)
     : VideoFileParser(filePath) {}
-
-RawUYVYFileParser::~RawUYVYFileParser() {}
 
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat& format) {
   format.frameRate = 1.0f / 30.0f;
@@ -54,8 +50,9 @@ bool RawUYVYFileParser::Initialize(VideoCaptureFormat& format) {
 
   fileStream.reset(new std::ifstream{filePath, std::ios::binary});
 
-  if (!fileStream->is_open())
+  if (!fileStream->is_open()) {
     return false;
+  }
 
   frameSize = format.ImageAllocationSize();
   return true;
@@ -101,7 +98,11 @@ void FileVideoCaptureDevice::AllocateAndStart(
 }
 
 void FileVideoCaptureDevice::OnAllocateAndStart() {
-  using namespace std::chrono;
+  using std::chrono::duration;
+  using std::chrono::duration_cast;
+  using std::chrono::milliseconds;
+  using std::chrono::high_resolution_clock ;
+
   auto loopDuration = duration_cast<milliseconds>(
       duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));
 

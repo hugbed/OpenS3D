@@ -8,9 +8,11 @@
 #include <memory>
 #include <string>
 
+// todo(hugbed): put in s3d namespace
+
 // todo(hugbed): must elaborate
 struct VideoCaptureDeviceDescriptor {
-  VideoCaptureDeviceDescriptor(const std::string& name) : name(name) {}
+  explicit VideoCaptureDeviceDescriptor(const std::string& name) : name(name) {}
   std::string name;
 };
 

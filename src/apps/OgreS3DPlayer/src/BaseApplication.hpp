@@ -1,5 +1,5 @@
-#ifndef __BaseApplication_hpp_
-#define __BaseApplication_hpp_
+#ifndef OGRE_S3D_PLAYER_BASE_APPLICATION_HPP
+#define OGRE_S3D_PLAYER_BASE_APPLICATION_HPP
 
 #include <OgreCamera.h>
 #include <OgreConfigFile.h>
@@ -82,4 +82,4 @@ class BaseApplication : public Ogre::WindowEventListener,
       mCameraMan;  // basic camera controller
 };
 
-#endif  // #ifndef __BaseApplication_h_
+#endif  // OGRE_S3D_PLAYER_BASE_APPLICATION_HPP

@@ -18,6 +18,6 @@ class DisparityAlgorithmORB : public DisparityAlgorithm {
   std::unique_ptr<Disparities> ComputeDisparities(Image leftImg,
                                                   Image rightImg) override;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_ORB_H

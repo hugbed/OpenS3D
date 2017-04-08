@@ -1,5 +1,5 @@
-#ifndef __CameraMan_hpp__
-#define __CameraMan_hpp__
+#ifndef OGRE_S3D_PLAYER_CAMERA_MAN_HPP
+#define OGRE_S3D_PLAYER_CAMERA_MAN_HPP
 
 #include "Ogre.h"
 
@@ -21,7 +21,7 @@ enum CameraStyle  // enumerator values for different styles of camera movement
 =============================================================================*/
 class CameraMan {
  public:
-  CameraMan(Ogre::Camera* cam);
+  explicit CameraMan(Ogre::Camera* cam);
   virtual ~CameraMan();
 
   /*-----------------------------------------------------------------------------
@@ -120,6 +120,6 @@ class CameraMan {
   bool mGoingDown;
   bool mFastMove;
 };
-}
+}  // namespace OgreCookies
 
-#endif
+#endif  // OGRE_S3D_PLAYER_CAMERA_MAN_HPP

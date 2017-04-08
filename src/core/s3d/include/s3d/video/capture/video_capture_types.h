@@ -10,6 +10,8 @@
 
 #include <cstddef>
 
+// todo(hugbed): put in s3d namespace
+
 struct VideoCaptureFormat {
   VideoCaptureFormat();
   VideoCaptureFormat(Size& frameSize,

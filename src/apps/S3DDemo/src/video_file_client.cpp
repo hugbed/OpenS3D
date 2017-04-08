@@ -9,14 +9,14 @@
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
-  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& data,
-                                      const VideoCaptureFormat& frameFormat) {
-    std::cout << "received image, size: " << data.size() << std::endl;
+  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
+                                      const VideoCaptureFormat&) {
+    std::cout << "received image, size: " << imageBytes.size() << std::endl;
   }
 
-  virtual void OnError(const std::string& reason) override {}
-  virtual void OnLog(const std::string& message) override {}
-  virtual void OnStarted() override {}
+  void OnError(const std::string&) override {}
+  void OnLog(const std::string&) override {}
+  void OnStarted() override {}
 };
 
 std::unique_ptr<VideoCaptureDeviceFactory> createVideoCaptureDeviceFactory() {
@@ -35,6 +35,8 @@ int main() {
 
   device->AllocateAndStart({}, std::move(client));
 
-  while (1) {
+  while (true) {
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(1s);
   }
 }

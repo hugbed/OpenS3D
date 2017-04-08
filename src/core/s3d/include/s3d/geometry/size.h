@@ -5,14 +5,16 @@
 #ifndef S3D_GEOMETRY_SIZE_H
 #define S3D_GEOMETRY_SIZE_H
 
+// todo(hugbed): put in namespace s3d
+
 class Size {
  public:
   constexpr Size() noexcept : width_{}, height_{} {}
   constexpr Size(int width, int height) noexcept : width_(width),
                                                    height_(height) {}
 
-  constexpr int setWidth(int width) noexcept { height_ = width; }
-  constexpr int setHeight(int height) noexcept { height_ = height; }
+  void setWidth(int width) noexcept { height_ = width; }
+  void setHeight(int height) noexcept { height_ = height; }
   constexpr int getWidth() const noexcept { return width_; }
   constexpr int getHeight() const noexcept { return height_; }
 
@@ -28,4 +30,4 @@ class Size {
   int height_;
 };
 
-#endif  // PROJECT_SIZE_H
+#endif  // S3D_GEOMETRY_SIZE_H

@@ -10,6 +10,8 @@
 
 #include <cstddef>
 
+// todo(hugbed): put in s3d namespace
+
 class VideoFrame {
  public:
   static size_t AllocationSize(VideoPixelFormat format, const Size& size);

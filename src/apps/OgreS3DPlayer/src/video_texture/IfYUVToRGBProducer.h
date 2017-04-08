@@ -2,8 +2,8 @@
 // Created by jon on 23/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
-#define OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
+#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_IF_YUV_TO_RGB_PRODUCER_H
+#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_IF_YUV_TO_RGB_PRODUCER_H
 
 #include "s3d/utilities/concurrency/producer_barrier_sync.h"
 #include "s3d/utilities/file_io.h"
@@ -59,4 +59,4 @@ class IfYUVToRGBProducer
   std::ifstream fileStream;
 };
 
-#endif  // OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
+#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_IF_YUV_TO_RGB_PRODUCER_H

@@ -10,19 +10,21 @@
 #include <atomic>
 #include <thread>
 
+// todo(hugbed): put in s3d namespace
+
 class VideoFileParser;
 
 class FileVideoCaptureDevice : public VideoCaptureDevice {
  public:
-  FileVideoCaptureDevice(const std::string& filePath);
+  explicit FileVideoCaptureDevice(const std::string& filePath);
 
   ~FileVideoCaptureDevice() override;
 
-  virtual void AllocateAndStart(
+  void AllocateAndStart(
       const VideoCaptureFormat& format,
       std::unique_ptr<VideoCaptureDevice::Client> client) override;
 
-  virtual void StopAndDeAllocate() override;
+  void StopAndDeAllocate() override;
 
  private:
   static std::unique_ptr<VideoFileParser> GetVideoFileParser(

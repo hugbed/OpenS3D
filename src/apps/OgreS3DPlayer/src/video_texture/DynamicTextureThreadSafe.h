@@ -2,8 +2,8 @@
 // Created by jon on 18/03/17.
 //
 
-#ifndef OGRE_SAMPLE_VIDEOTEXTURE_H
-#define OGRE_SAMPLE_VIDEOTEXTURE_H
+#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
+#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
 
 #include "DynamicTexture.h"
 
@@ -29,10 +29,11 @@ class DynamicTextureThreadSafe : public DynamicTexture,
     m_nextFrame.resize(getSizeInBytes());
   }
 
-  virtual void updateImage(const std::vector<uint8_t>& data) override {
+  void updateImage(const std::vector<uint8_t>& imageBytes) override {
     std::unique_lock<std::mutex> mlock(m_frameMutex);
-    assert(data.size() == m_nextFrame.size());
-    std::copy(std::begin(data), std::end(data), std::begin(m_nextFrame));
+    assert(imageBytes.size() == m_nextFrame.size());
+    std::copy(std::begin(imageBytes), std::end(imageBytes),
+              std::begin(m_nextFrame));
     m_frameReady = true;
   }
 
@@ -57,4 +58,4 @@ class DynamicTextureThreadSafe : public DynamicTexture,
   float m_timeSinceLastUpdate;
 };
 
-#endif  // OGRE_SAMPLE_VIDEOTEXTURE_H
+#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H

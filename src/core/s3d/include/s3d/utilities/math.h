@@ -15,7 +15,7 @@ T clamp(const T& v, const T& lo, const T& hi) {
   return std::min(std::max(v, lo), hi);
 }
 
-}  // math
-}  // disparity
+}  // namespace math
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_MATH_H
