@@ -11,13 +11,15 @@
 #include <cstddef>
 
 struct VideoCaptureFormat {
-    VideoCaptureFormat();
-    VideoCaptureFormat(Size &frameSize, float frameRate, VideoPixelFormat pixelFormat);
-    size_t ImageAllocationSize() const;
+  VideoCaptureFormat();
+  VideoCaptureFormat(Size& frameSize,
+                     float frameRate,
+                     VideoPixelFormat pixelFormat);
+  size_t ImageAllocationSize() const;
 
-    Size frameSize;
-    float frameRate;
-    VideoPixelFormat pixelFormat;
+  Size frameSize;
+  float frameRate;
+  VideoPixelFormat pixelFormat;
 };
 
-#endif //PROJECT_VIDEO_CAPTURE_TYPES_H_H
+#endif  // PROJECT_VIDEO_CAPTURE_TYPES_H_H

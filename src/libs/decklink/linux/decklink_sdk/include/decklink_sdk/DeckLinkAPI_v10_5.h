@@ -37,10 +37,9 @@
 typedef uint32_t BMDDeckLinkAttributeID_v10_5;
 enum _BMDDeckLinkAttributeID_v10_5 {
 
-    /* Integers */
+  /* Integers */
 
-    BMDDeckLinkDeviceBusyState_v10_5                             = /* 'dbst' */ 0x64627374,
+  BMDDeckLinkDeviceBusyState_v10_5 = /* 'dbst' */ 0x64627374,
 };
 
 #endif /* defined(BMD_DECKLINKAPI_v10_5_H) */
-

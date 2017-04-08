@@ -37,9 +37,9 @@
 typedef uint32_t BMDDeckLinkConfigurationID_v10_4;
 enum _BMDDeckLinkConfigurationID_v10_4 {
 
-    /* Video output flags */
+  /* Video output flags */
 
-    bmdDeckLinkConfigSingleLinkVideoOutput_v10_4                       = /* 'sglo' */ 0x73676C6F,
+  bmdDeckLinkConfigSingleLinkVideoOutput_v10_4 = /* 'sglo' */ 0x73676C6F,
 };
 
 #endif /* defined(BMD_DECKLINKAPI_v10_4_H) */

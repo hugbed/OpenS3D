@@ -8,12 +8,11 @@
 #include "video_capture_device_factory.h"
 
 class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
-public:
-    FileVideoCaptureDeviceFactory() = default;
+ public:
+  FileVideoCaptureDeviceFactory() = default;
 
-    virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
-        const VideoCaptureDeviceDescriptor& deviceDescriptor
-    ) override;
+  virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
+      const VideoCaptureDeviceDescriptor& deviceDescriptor) override;
 };
 
-#endif //PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
+#endif  // PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H

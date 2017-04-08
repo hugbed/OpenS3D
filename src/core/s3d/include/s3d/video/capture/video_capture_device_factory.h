@@ -9,20 +9,17 @@
 #include <memory>
 
 struct VideoCaptureDeviceDescriptor {
-    VideoCaptureDeviceDescriptor(const std::string &name)
-      : name(name)
-    {}
-    std::string name;
+  VideoCaptureDeviceDescriptor(const std::string& name) : name(name) {}
+  std::string name;
 };
 
 class VideoCaptureDevice;
 
 // todo: singleton?
 class VideoCaptureDeviceFactory {
-public:
+ public:
   virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
-    const VideoCaptureDeviceDescriptor& deviceDescriptor
-  ) = 0;
+      const VideoCaptureDeviceDescriptor& deviceDescriptor) = 0;
 };
 
-#endif //PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
+#endif  // PROJECT_VIDEOCAPTUREDEVICEFACTORY_H

@@ -11,8 +11,8 @@
 #include <cstddef>
 
 class VideoFrame {
-public:
+ public:
   static size_t AllocationSize(VideoPixelFormat format, const Size& size);
 };
 
-#endif //PROJECT_VIDEOFRAME_H
+#endif  // PROJECT_VIDEOFRAME_H

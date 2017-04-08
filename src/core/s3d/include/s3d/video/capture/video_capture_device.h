@@ -13,31 +13,32 @@
 #include <memory>
 
 class VideoCaptureDevice {
-public:
-    class Client {
-    public:
-        virtual ~Client() {}
+ public:
+  class Client {
+   public:
+    virtual ~Client() {}
 
-        virtual void OnIncomingCapturedData(const std::vector<uint8_t> &data,
-                                            const VideoCaptureFormat& frameFormat) = 0;
+    virtual void OnIncomingCapturedData(
+        const std::vector<uint8_t>& data,
+        const VideoCaptureFormat& frameFormat) = 0;
 
-        virtual void OnError(const std::string& reason) = 0;
-        virtual void OnLog(const std::string& message) = 0;
-        virtual void OnStarted() = 0;
-    };
+    virtual void OnError(const std::string& reason) = 0;
+    virtual void OnLog(const std::string& message) = 0;
+    virtual void OnStarted() = 0;
+  };
 
-    virtual ~VideoCaptureDevice() {}
+  virtual ~VideoCaptureDevice() {}
 
-    virtual void AllocateAndStart(const VideoCaptureFormat& format,
-                                  std::unique_ptr<Client> client) = 0;
+  virtual void AllocateAndStart(const VideoCaptureFormat& format,
+                                std::unique_ptr<Client> client) = 0;
 
-    virtual void RequestRefreshFrame() {}
+  virtual void RequestRefreshFrame() {}
 
-    virtual void MaybeSuspend() {}
+  virtual void MaybeSuspend() {}
 
-    virtual void Resume() {}
+  virtual void Resume() {}
 
-    virtual void StopAndDeAllocate() = 0;
+  virtual void StopAndDeAllocate() = 0;
 };
 
-#endif //PROJECT_VIDEOCAPTUREDEVICE_H
+#endif  // PROJECT_VIDEOCAPTUREDEVICE_H

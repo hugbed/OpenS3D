@@ -13,43 +13,36 @@
 namespace s3d {
 
 class DisparitiesDense : public Disparities {
-public:
-    DisparitiesDense(Image disparityMap,
-                     DisparityPoint minDisparity,
-                     DisparityPoint maxDisparity)
-            : disparityMap_(disparityMap), min_(minDisparity), max_(maxDisparity) {
-    }
+ public:
+  DisparitiesDense(Image disparityMap,
+                   DisparityPoint minDisparity,
+                   DisparityPoint maxDisparity)
+      : disparityMap_(disparityMap), min_(minDisparity), max_(maxDisparity) {}
 
-    virtual const std::vector<DisparityPoint> &getDisparities() override {
-        if (disparities_.size() > 0) return disparities_;
-        for (int i = 0; i < disparityMap_.mat.rows; ++i) {
-            for (int j = 0; j < disparityMap_.mat.cols; ++j) {
-                auto dx = disparityMap_.mat.at<uint8_t>(i, j);
-                disparities_.emplace_back(DisparityPoint({i, j}, {0, dx}));
-            }
-        }
-        return disparities_;
+  virtual const std::vector<DisparityPoint>& getDisparities() override {
+    if (disparities_.size() > 0)
+      return disparities_;
+    for (int i = 0; i < disparityMap_.mat.rows; ++i) {
+      for (int j = 0; j < disparityMap_.mat.cols; ++j) {
+        auto dx = disparityMap_.mat.at<uint8_t>(i, j);
+        disparities_.emplace_back(DisparityPoint({i, j}, {0, dx}));
+      }
     }
+    return disparities_;
+  }
 
-    virtual Image getDisparityMap() override {
-        return disparityMap_;
-    }
+  virtual Image getDisparityMap() override { return disparityMap_; }
 
-    virtual DisparityPoint max() override {
-        return max_;
-    }
+  virtual DisparityPoint max() override { return max_; }
 
-    virtual DisparityPoint min() override {
-        return min_;
-    }
+  virtual DisparityPoint min() override { return min_; }
 
-private:
-    Image disparityMap_;
-    std::vector<DisparityPoint> disparities_;
-    DisparityPoint min_;
-    DisparityPoint max_;
+ private:
+  Image disparityMap_;
+  std::vector<DisparityPoint> disparities_;
+  DisparityPoint min_;
+  DisparityPoint max_;
 };
-
 }
 
-#endif //PROJECT_DISPARITIESDENSE_H
+#endif  // PROJECT_DISPARITIESDENSE_H

@@ -10,12 +10,12 @@
 namespace s3d {
 namespace math {
 
-template<typename T>
-T clamp(const T &v, const T &lo, const T &hi) {
-    return std::min(std::max(v, lo), hi);
+template <typename T>
+T clamp(const T& v, const T& lo, const T& hi) {
+  return std::min(std::max(v, lo), hi);
 }
 
-} // math
-} // disparity
+}  // math
+}  // disparity
 
-#endif //S3D_UTILITIES_MATH_H
+#endif  // S3D_UTILITIES_MATH_H

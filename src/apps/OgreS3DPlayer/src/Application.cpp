@@ -1,22 +1,22 @@
 #include "Application.hpp"
 #include "video_texture/DynamicTexture.h"
 
-#include <OgreSceneManager.h>
-#include <OgreViewport.h>
+#include <OISException.h>
 #include <OgreCamera.h>
-#include <OgreRoot.h>
-#include <OgreRenderWindow.h>
 #include <OgreColourValue.h>
 #include <OgreException.h>
-#include <OISException.h>
+#include <OgreRenderWindow.h>
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreViewport.h>
 
-#include <OgreRectangle2D.h>
 #include "video_texture/DynamicTextureThreadSafe.h"
+#include <OgreRectangle2D.h>
 
+#include "point_cloud/PointCloudMesh.h"
 #include "video_texture/IfYUVToRGBProducer.h"
 #include "video_texture/S3DVideoRGBConsumer.h"
 #include "video_texture/TextureUpdateManager.h"
-#include "point_cloud/PointCloudMesh.h"
 
 #include "s3d/video/capture/file_video_capture_device.h"
 

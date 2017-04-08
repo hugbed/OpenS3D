@@ -9,9 +9,9 @@
 #include "s3d/disparity/disparities_dense.h"
 #include "s3d/utilities/time.h"
 
-#include "opencv2/cudastereo.hpp"
-#include "opencv2/cudafeatures2d.hpp"
 #include "opencv2/cudaarithm.hpp"
+#include "opencv2/cudafeatures2d.hpp"
+#include "opencv2/cudastereo.hpp"
 
 #include <iostream>
 #include <memory>

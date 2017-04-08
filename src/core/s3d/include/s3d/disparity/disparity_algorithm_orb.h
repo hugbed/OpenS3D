@@ -14,10 +14,10 @@
 namespace s3d {
 
 class DisparityAlgorithmORB : public DisparityAlgorithm {
-public:
-    std::unique_ptr<Disparities> ComputeDisparities(Image leftImg, Image rightImg) override;
+ public:
+  std::unique_ptr<Disparities> ComputeDisparities(Image leftImg,
+                                                  Image rightImg) override;
 };
-
 }
 
-#endif //OPENCVTESTS_DISPARITYALGORITHMORB_H
+#endif  // OPENCVTESTS_DISPARITYALGORITHMORB_H

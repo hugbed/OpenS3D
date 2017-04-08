@@ -2,12 +2,12 @@
 // Created by jon on 29/03/17.
 //
 
-#include <OgreHardwareBufferManager.h>
 #include "PointCloudMesh.h"
-#include "OgreMeshManager.h"
-#include "OgreSubMesh.h"
 #include "OgreMesh.h"
+#include "OgreMeshManager.h"
 #include "OgreRoot.h"
+#include "OgreSubMesh.h"
+#include <OgreHardwareBufferManager.h>
 
 PointCloudMesh::PointCloudMesh(const std::string& name,
                                const std::string& resourcegroup,

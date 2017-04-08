@@ -9,15 +9,11 @@
 
 namespace s3d {
 
-class DisparityAlgorithmBM : public DisparityAlgorithm
-{
-public:
-    std::unique_ptr<Disparities> ComputeDisparities(Image leftImg, Image rightImg) override;
+class DisparityAlgorithmBM : public DisparityAlgorithm {
+ public:
+  std::unique_ptr<Disparities> ComputeDisparities(Image leftImg,
+                                                  Image rightImg) override;
 };
-
 }
 
-
-
-
-#endif //S3D_DISPARITY_DISPARITYALGORITHMBM_H
+#endif  // S3D_DISPARITY_DISPARITYALGORITHMBM_H

@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "s3d/utilities/time.h"
-#include "opencv2/cudastereo.hpp"
 #include "opencv2/cudafeatures2d.hpp"
+#include "opencv2/cudastereo.hpp"
+#include "s3d/utilities/time.h"
 #include <array>
 
 #include "s3d/disparity/disparity_algorithm_bm.h"

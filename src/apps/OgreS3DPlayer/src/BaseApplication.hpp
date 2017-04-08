@@ -1,23 +1,23 @@
 #ifndef __BaseApplication_hpp_
 #define __BaseApplication_hpp_
 
-#include <OgreWindowEventUtilities.h>
-#include <OgreFrameListener.h>
 #include <OgreCamera.h>
-#include <OgreEntity.h>
-#include <OgreLogManager.h>
-#include <OgreRoot.h>
-#include <OgreViewport.h>
-#include <OgreSceneManager.h>
-#include <OgreRenderWindow.h>
-#include <OgreFileSystemLayer.h>
 #include <OgreConfigFile.h>
+#include <OgreEntity.h>
+#include <OgreFileSystemLayer.h>
+#include <OgreFrameListener.h>
+#include <OgreLogManager.h>
+#include <OgreRenderWindow.h>
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreViewport.h>
+#include <OgreWindowEventUtilities.h>
 
+#include "CameraMan.hpp"
 #include <OISEvents.h>
 #include <OISInputManager.h>
 #include <OISKeyboard.h>
 #include <OISMouse.h>
-#include "CameraMan.hpp"
 
 class BaseApplication : public Ogre::WindowEventListener,
                         public Ogre::FrameListener,

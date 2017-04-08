@@ -2,12 +2,12 @@
 // Created by jon on 04/04/17.
 //
 
-#include <s3d/disparity/disparity_algorithm_orb.h>
 #include <s3d/disparity/disparities_sparse.h>
+#include <s3d/disparity/disparity_algorithm_orb.h>
 
-#include "opencv2/cudastereo.hpp"
-#include "opencv2/cudafeatures2d.hpp"
 #include "opencv2/cudaarithm.hpp"
+#include "opencv2/cudafeatures2d.hpp"
+#include "opencv2/cudastereo.hpp"
 
 namespace s3d {
 

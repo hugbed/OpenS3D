@@ -25,9 +25,9 @@
 ** -LICENSE-END-
 **/
 
-#include <stdio.h>
-#include <pthread.h>
 #include <dlfcn.h>
+#include <pthread.h>
+#include <stdio.h>
 
 #include "DeckLinkAPI_v7_6.h"
 

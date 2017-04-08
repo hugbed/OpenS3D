@@ -12,10 +12,10 @@
 namespace s3d {
 
 class DisparityAlgorithm {
-public:
-    virtual std::unique_ptr<Disparities> ComputeDisparities(Image left, Image right) = 0;
+ public:
+  virtual std::unique_ptr<Disparities> ComputeDisparities(Image left,
+                                                          Image right) = 0;
 };
-
 }
 
-#endif //S3D_DISPARITY_DISPARITYALGORITHM_H
+#endif  // S3D_DISPARITY_DISPARITYALGORITHM_H
