@@ -6,7 +6,7 @@
 #include "s3d/video/capture/FileVideoCaptureDevice.h"
 
 std::unique_ptr<VideoCaptureDevice> FileVideoCaptureDeviceFactory::CreateDevice(
-        const VideoCaptureDeviceDescriptor& deviceDescriptor)
-{
-    return std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice(deviceDescriptor.name));
+    const VideoCaptureDeviceDescriptor& deviceDescriptor) {
+  return std::unique_ptr<VideoCaptureDevice>(
+      new FileVideoCaptureDevice(deviceDescriptor.name));
 }

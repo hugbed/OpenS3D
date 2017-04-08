@@ -9,40 +9,42 @@ class DynamicTexture;
 class DynamicTextureThreadSafe;
 class TextureUpdateManager;
 
-class Application : public BaseApplication
-{
-public:
-	Application();
-    virtual ~Application();
+class Application : public BaseApplication {
+ public:
+  Application();
+  virtual ~Application();
 
-protected:
+ protected:
+  virtual bool frameRenderingQueued(const Ogre::FrameEvent&) override;
 
-    virtual bool frameRenderingQueued(const Ogre::FrameEvent &) override;
+  void createScene();
 
-    void createScene();
+  void addLights();
 
-    void addLights();
+  void createGroundPlane();
 
-    void createGroundPlane();
+  void createVideoRectangle(
+      std::unique_ptr<Ogre::Rectangle2D>& rect,
+      std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
+      const std::string& id);
 
-    void createVideoRectangle(
-        std::unique_ptr<Ogre::Rectangle2D> &rect,
-        std::unique_ptr<DynamicTextureThreadSafe> &videoTexture,
-        const std::string &id
-    );
+  void createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
+                        const std::string& id);
 
-    void createVideoPlane(std::unique_ptr<DynamicTextureThreadSafe> &videoTexture, const std::string &id);
+  void createPointCloud();
 
-    void createPointCloud();
+  // to stream image to texture (L, R)
+  std::pair<std::unique_ptr<DynamicTextureThreadSafe>,
+            std::unique_ptr<DynamicTextureThreadSafe>>
+      m_videoTextures;
+  std::pair<std::unique_ptr<Ogre::Rectangle2D>,
+            std::unique_ptr<Ogre::Rectangle2D>>
+      m_Rectangles;
 
-    // to stream image to texture (L, R)
-    std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>> m_videoTextures;
-    std::pair<std::unique_ptr<Ogre::Rectangle2D>, std::unique_ptr<Ogre::Rectangle2D>> m_Rectangles;
+  std::unique_ptr<TextureUpdateManager> m_textureUpdateManager;
 
-    std::unique_ptr<TextureUpdateManager> m_textureUpdateManager;
-
-    // frame request listeners
-    std::vector<Ogre::FrameListener*> m_frameListeners;
+  // frame request listeners
+  std::vector<Ogre::FrameListener*> m_frameListeners;
 };
 
-#endif // #ifndef __Application_h_
+#endif  // #ifndef __Application_h_
