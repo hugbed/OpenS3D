@@ -1,9 +1,14 @@
 # Additional targets to perform clang-format/clang-tidy
 # Get all project files
+
+set(SRC_DIRS "apps;core")
+set(ALL_CXX_SOURCE_FILES "")
+foreach("dir" ${SRC_DIRS})
 file(GLOB_RECURSE
     ALL_CXX_SOURCE_FILES
-    *.[chi]pp *.[chi]xx *.cc *.hh *.ii *.[CHI] *.[chi]
-    )
+    ${ALL_CXX_SOURCE_FILES} ${dir}/*.[chi]pp ${dir}/*.[chi]xx ${dir}/*.cc ${dir}/*.hh ${dir}/*.ii ${dir}/*.[CHI] ${dir}/*.[chi]
+)
+endforeach()
 
 # Adding clang-format target if executable is found
 find_program(CLANG_FORMAT "clang-format")
@@ -18,6 +23,7 @@ if(CLANG_FORMAT)
 endif()
 
 # Adding clang-tidy target if executable is found
+# todo(hugbed): does not really work (include errors)
 find_program(CLANG_TIDY "clang-tidy")
 if(CLANG_TIDY)
     add_custom_target(
@@ -27,6 +33,6 @@ if(CLANG_TIDY)
         -config=''
         --
         -std=c++11
-        ${INCLUDE_DIRECTORIES}
+        -I${INCLUDE_DIRECTORIES}
     )
 endif()
