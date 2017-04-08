@@ -2,8 +2,8 @@
 // Created by jon on 04/04/17.
 //
 
-#ifndef PROJECT_DISPARITIESDENSE_H
-#define PROJECT_DISPARITIESDENSE_H
+#ifndef S3D_DISPARITY_DISPARITIES_DENSE_H
+#define S3D_DISPARITY_DISPARITIES_DENSE_H
 
 #include "disparities.h"
 
@@ -45,4 +45,4 @@ class DisparitiesDense : public Disparities {
 };
 }
 
-#endif  // PROJECT_DISPARITIESDENSE_H
+#endif  // S3D_DISPARITY_DISPARITIES_DENSE_H

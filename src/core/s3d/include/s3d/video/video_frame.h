@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_VIDEOFRAME_H
-#define PROJECT_VIDEOFRAME_H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_FRAME_H
+#define S3D_VIDEO_CAPTURE_VIDEO_FRAME_H
 
 #include "s3d/geometry/size.h"
 #include "s3d/video/video_types.h"
@@ -13,6 +13,9 @@
 class VideoFrame {
  public:
   static size_t AllocationSize(VideoPixelFormat format, const Size& size);
+
+ private:
+  static size_t NumBytesPerPixel(VideoPixelFormat format);
 };
 
-#endif  // PROJECT_VIDEOFRAME_H
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_FRAME_H

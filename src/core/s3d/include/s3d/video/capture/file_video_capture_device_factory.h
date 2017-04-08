@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
-#define PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
+#ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FACTORY_H
+#define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FACTORY_H
 
 #include "video_capture_device_factory.h"
 
@@ -15,4 +15,4 @@ class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
       const VideoCaptureDeviceDescriptor& deviceDescriptor) override;
 };
 
-#endif  // PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
+#endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FACTORY_H

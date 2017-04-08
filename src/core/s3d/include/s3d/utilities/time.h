@@ -2,8 +2,8 @@
 // Created by jon on 18/02/17.
 //
 
-#ifndef OPENCVTESTS_CV_HB_H_H
-#define OPENCVTESTS_CV_HB_H_H
+#ifndef S3D_UTILITIES_TIME_H
+#define S3D_UTILITIES_TIME_H
 
 #include <chrono>
 #include <opencv/cv.hpp>
@@ -20,4 +20,4 @@ auto mesure_time(Predicate f, Params&&... params) {
 }
 }
 
-#endif  // OPENCVTESTS_CV_HB_H_H
+#endif  // S3D_UTILITIES_TIME_H

@@ -2,8 +2,8 @@
 // Created by jon on 04/04/17.
 //
 
-#ifndef PROJECT_DISPARITIESSPARSE_H
-#define PROJECT_DISPARITIESSPARSE_H
+#ifndef S3D_DISPARITY_DISPARITIES_SPARSE_H
+#define S3D_DISPARITY_DISPARITIES_SPARSE_H
 
 #include "disparities.h"
 
@@ -57,4 +57,4 @@ class DisparitiesSparse : public Disparities {
 };
 }
 
-#endif  // PROJECT_DISPARITIESSPARSE_H
+#endif  // S3D_DISPARITY_DISPARITIES_SPARSE_H

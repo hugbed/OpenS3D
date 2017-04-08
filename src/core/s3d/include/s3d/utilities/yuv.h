@@ -1,3 +1,6 @@
+#ifndef S3D_UTILITIES_YUV_H
+#define S3D_UTILITIES_YUV_H
+
 #include "s3d/utilities/math.h"
 
 namespace s3d {
@@ -88,3 +91,5 @@ static void color_conversion(InputIt first,
 }
 }
 }
+
+#endif  // S3D_UTILITIES_YUV_H

@@ -2,8 +2,8 @@
 // Created by jon on 06/03/17.
 //
 
-#ifndef OPENCVTESTS_DISPARITYALGORITHMORB_H
-#define OPENCVTESTS_DISPARITYALGORITHMORB_H
+#ifndef S3D_DISPARITY_DISPARITY_ALGORITHM_ORB_H
+#define S3D_DISPARITY_DISPARITY_ALGORITHM_ORB_H
 
 #include "disparity_algorithm.h"
 #include "s3d/utilities/time.h"
@@ -20,4 +20,4 @@ class DisparityAlgorithmORB : public DisparityAlgorithm {
 };
 }
 
-#endif  // OPENCVTESTS_DISPARITYALGORITHMORB_H
+#endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_ORB_H

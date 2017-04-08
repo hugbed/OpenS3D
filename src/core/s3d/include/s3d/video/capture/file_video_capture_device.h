@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_FILEVIDEOCAPTUREDEVICE_H
-#define PROJECT_FILEVIDEOCAPTUREDEVICE_H
+#ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_H
+#define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_H
 
 #include "video_capture_device.h"
 
@@ -24,12 +24,11 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
 
   virtual void StopAndDeAllocate() override;
 
-  // todo: should be private
+ private:
   static std::unique_ptr<VideoFileParser> GetVideoFileParser(
       const std::string& filePath,
       VideoCaptureFormat& format);
 
- private:
   // runs on capture thread
   void OnAllocateAndStart();
   void OnCaptureTask();
@@ -44,4 +43,4 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   std::atomic<bool> stopCaptureFlag_;
 };
 
-#endif  // PROJECT_FILEVIDEOCAPTUREDEVICE_H
+#endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_H

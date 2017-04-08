@@ -14,15 +14,15 @@ namespace s3d {
 namespace file_io {
 
 template <class Size_t>
-static void push_back_n_bytes(std::istream& stream,
-                              Size_t n,
-                              std::vector<uint8_t>& v) {
+void push_back_n_bytes(std::istream& stream,
+                       Size_t n,
+                       std::vector<uint8_t>& v) {
   std::copy_n(std::istreambuf_iterator<char>{stream}, n, back_inserter(v));
   stream.get();  // to prevent reading twice the last character
 }
 
 template <class OIt, typename Size_t>
-static bool read_n_bytes(std::istream& stream, Size_t n, OIt it) {
+bool read_n_bytes(std::istream& stream, Size_t n, OIt it) {
   if (stream.peek() == EOF)
     return false;
   std::copy_n(std::istreambuf_iterator<char>{stream}, n, it);

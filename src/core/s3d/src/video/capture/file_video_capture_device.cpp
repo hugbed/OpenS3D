@@ -67,6 +67,7 @@ bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
                                     std::begin(frame));
 }
 
+// static
 std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
     const std::string& filePath,
     VideoCaptureFormat& format) {

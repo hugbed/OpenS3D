@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_VIDEO_CAPTURE_TYPES_H_H
-#define PROJECT_VIDEO_CAPTURE_TYPES_H_H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H
+#define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H
 
 #include "s3d/geometry/size.h"
 #include "s3d/video/video_types.h"
@@ -15,11 +15,16 @@ struct VideoCaptureFormat {
   VideoCaptureFormat(Size& frameSize,
                      float frameRate,
                      VideoPixelFormat pixelFormat);
+  VideoCaptureFormat(Size& frameSize,
+                     float frameRate,
+                     VideoPixelFormat pixelFormat,
+                     bool stereo3D);
   size_t ImageAllocationSize() const;
 
   Size frameSize;
   float frameRate;
   VideoPixelFormat pixelFormat;
+  bool stereo3D;
 };
 
-#endif  // PROJECT_VIDEO_CAPTURE_TYPES_H_H
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H

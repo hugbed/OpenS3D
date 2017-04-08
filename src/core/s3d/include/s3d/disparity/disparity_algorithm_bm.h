@@ -2,8 +2,8 @@
 // Created by jon on 06/03/17.
 //
 
-#ifndef S3D_DISPARITY_DISPARITYALGORITHMBM_H
-#define S3D_DISPARITY_DISPARITYALGORITHMBM_H
+#ifndef S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H
+#define S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H
 
 #include "disparity_algorithm.h"
 
@@ -16,4 +16,4 @@ class DisparityAlgorithmBM : public DisparityAlgorithm {
 };
 }
 
-#endif  // S3D_DISPARITY_DISPARITYALGORITHMBM_H
+#endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H

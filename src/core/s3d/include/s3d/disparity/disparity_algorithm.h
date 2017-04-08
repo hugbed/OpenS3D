@@ -2,8 +2,8 @@
 // Created by jon on 06/03/17.
 //
 
-#ifndef S3D_DISPARITY_DISPARITYALGORITHM_H
-#define S3D_DISPARITY_DISPARITYALGORITHM_H
+#ifndef S3D_DISPARITY_DISPARITY_ALGORITHM_H
+#define S3D_DISPARITY_DISPARITY_ALGORITHM_H
 
 #include "disparities.h"
 
@@ -18,4 +18,4 @@ class DisparityAlgorithm {
 };
 }
 
-#endif  // S3D_DISPARITY_DISPARITYALGORITHM_H
+#endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_H

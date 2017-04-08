@@ -2,12 +2,13 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
-#define PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H
+#define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H
 
 #include <memory>
 #include <string>
 
+// todo(hugbed): must elaborate
 struct VideoCaptureDeviceDescriptor {
   VideoCaptureDeviceDescriptor(const std::string& name) : name(name) {}
   std::string name;
@@ -15,11 +16,10 @@ struct VideoCaptureDeviceDescriptor {
 
 class VideoCaptureDevice;
 
-// todo: singleton?
 class VideoCaptureDeviceFactory {
  public:
   virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
       const VideoCaptureDeviceDescriptor& deviceDescriptor) = 0;
 };
 
-#endif  // PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H

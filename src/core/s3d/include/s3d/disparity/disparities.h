@@ -2,8 +2,8 @@
 // Created by jon on 04/04/17.
 //
 
-#ifndef PROJECT_DISPARITIES_H
-#define PROJECT_DISPARITIES_H
+#ifndef S3D_DISPARITY_DISPARITIES_H
+#define S3D_DISPARITY_DISPARITIES_H
 
 #include <cv.h>  // todo: oh oh
 #include <stddef.h>
@@ -50,4 +50,4 @@ class Disparities {
 };
 }
 
-#endif  // PROJECT_DISPARITIES_H
+#endif  // S3D_DISPARITY_DISPARITIES_H

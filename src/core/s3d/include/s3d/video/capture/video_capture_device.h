@@ -2,8 +2,8 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#ifndef PROJECT_VIDEOCAPTUREDEVICE_H
-#define PROJECT_VIDEOCAPTUREDEVICE_H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H
+#define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H
 
 #include "video_capture_types.h"
 
@@ -41,4 +41,4 @@ class VideoCaptureDevice {
   virtual void StopAndDeAllocate() = 0;
 };
 
-#endif  // PROJECT_VIDEOCAPTUREDEVICE_H
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H
