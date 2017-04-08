@@ -5,10 +5,10 @@
 #ifndef S3D_UTILITIES_FILE_IO_H
 #define S3D_UTILITIES_FILE_IO_H
 
-#include <stddef.h>
-#include <fstream>
-#include <vector>
 #include <algorithm>
+#include <fstream>
+#include <stddef.h>
+#include <vector>
 
 namespace s3d {
 namespace file_io {

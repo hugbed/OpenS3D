@@ -7,10 +7,10 @@
 
 #include "video_capture_types.h"
 
-#include <vector>
-#include <string>
-#include <stdint.h>
 #include <memory>
+#include <stdint.h>
+#include <string>
+#include <vector>
 
 class VideoCaptureDevice {
  public:

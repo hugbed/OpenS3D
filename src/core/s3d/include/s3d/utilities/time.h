@@ -5,8 +5,8 @@
 #ifndef OPENCVTESTS_CV_HB_H_H
 #define OPENCVTESTS_CV_HB_H_H
 
-#include <opencv/cv.hpp>
 #include <chrono>
+#include <opencv/cv.hpp>
 
 // Small useful tool functions
 

@@ -5,8 +5,8 @@
 #ifndef PROJECT_DISPARITIES_H
 #define PROJECT_DISPARITIES_H
 
-#include <stddef.h>
 #include <cv.h>  // todo: oh oh
+#include <stddef.h>
 
 namespace s3d {
 

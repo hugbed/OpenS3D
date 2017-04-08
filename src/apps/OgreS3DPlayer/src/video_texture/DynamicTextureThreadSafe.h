@@ -7,9 +7,9 @@
 
 #include "DynamicTexture.h"
 
-#include <mutex>
-#include <chrono>
 #include <atomic>
+#include <chrono>
+#include <mutex>
 
 // DynamicTexture with frame rate checks and thread safe texture update
 class DynamicTextureThreadSafe : public DynamicTexture,

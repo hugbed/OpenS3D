@@ -7,8 +7,8 @@
 
 #include "disparities.h"
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 namespace s3d {
 

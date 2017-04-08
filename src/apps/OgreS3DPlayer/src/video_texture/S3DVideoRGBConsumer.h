@@ -5,8 +5,8 @@
 #ifndef OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 #define OGRE_S3D_PLAYER_VIDEOCONSUMER_H
 
-#include "s3d/utilities/concurrency/consumer_barrier_sync.h"
 #include "DynamicTextureThreadSafe.h"
+#include "s3d/utilities/concurrency/consumer_barrier_sync.h"
 
 class S3DVideoRGBConsumer
     : public s3d::concurrency::ConsumerBarrierSync<std::vector<uint8_t>> {

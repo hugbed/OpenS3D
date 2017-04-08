@@ -5,12 +5,12 @@
 #ifndef S3D_UTILITIES_CONCURRENCY_PRODUCERBARRIERSYNC_H
 #define S3D_UTILITIES_CONCURRENCY_PRODUCERBARRIERSYNC_H
 
+#include <algorithm>
+#include <condition_variable>
 #include <iostream>
 #include <mutex>
-#include <condition_variable>
 #include <thread>
 #include <vector>
-#include <algorithm>
 
 namespace s3d {
 namespace concurrency {

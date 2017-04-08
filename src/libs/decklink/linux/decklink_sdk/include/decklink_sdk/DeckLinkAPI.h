@@ -38,14 +38,14 @@
 
 /* DeckLink API */
 
-#include <stdint.h>
 #include "LinuxCOM.h"
+#include <stdint.h>
 
-#include "DeckLinkAPITypes.h"
-#include "DeckLinkAPIModes.h"
-#include "DeckLinkAPIDiscovery.h"
 #include "DeckLinkAPIConfiguration.h"
 #include "DeckLinkAPIDeckControl.h"
+#include "DeckLinkAPIDiscovery.h"
+#include "DeckLinkAPIModes.h"
+#include "DeckLinkAPITypes.h"
 
 #define BLACKMAGIC_DECKLINK_API_MAGIC 1
 

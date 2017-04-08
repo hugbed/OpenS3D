@@ -5,10 +5,10 @@
 #ifndef OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
 #define OGRE_S3D_PLAYER_TEXTUREUPDATEMANAGER_H
 
-#include <condition_variable>
 #include "DynamicTextureThreadSafe.h"
 #include "IfYUVToRGBProducer.h"
 #include "S3DVideoRGBConsumer.h"
+#include <condition_variable>
 
 #include "s3d/video/capture/video_capture_device.h"
 

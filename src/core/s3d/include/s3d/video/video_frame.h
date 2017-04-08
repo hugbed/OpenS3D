@@ -5,8 +5,8 @@
 #ifndef PROJECT_VIDEOFRAME_H
 #define PROJECT_VIDEOFRAME_H
 
-#include "s3d/video/video_types.h"
 #include "s3d/geometry/size.h"
+#include "s3d/video/video_types.h"
 
 #include <cstddef>
 

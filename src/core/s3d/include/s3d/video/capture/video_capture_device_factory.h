@@ -5,8 +5,8 @@
 #ifndef PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
 #define PROJECT_VIDEOCAPTUREDEVICEFACTORY_H
 
-#include <string>
 #include <memory>
+#include <string>
 
 struct VideoCaptureDeviceDescriptor {
   VideoCaptureDeviceDescriptor(const std::string& name) : name(name) {}

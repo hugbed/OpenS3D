@@ -7,8 +7,8 @@
 
 #include "video_capture_device.h"
 
-#include <thread>
 #include <atomic>
+#include <thread>
 
 class VideoFileParser;
 
