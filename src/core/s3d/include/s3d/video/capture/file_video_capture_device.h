@@ -5,7 +5,7 @@
 #ifndef PROJECT_FILEVIDEOCAPTUREDEVICE_H
 #define PROJECT_FILEVIDEOCAPTUREDEVICE_H
 
-#include "VideoCaptureDevice.h"
+#include "video_capture_device.h"
 
 #include <thread>
 #include <atomic>

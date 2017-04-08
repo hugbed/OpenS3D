@@ -6,7 +6,7 @@
 #define PROJECT_VIDEO_CAPTURE_TYPES_H_H
 
 #include "s3d/video/video_types.h"
-#include "s3d/geometry/Size.h"
+#include "s3d/geometry/size.h"
 
 #include <cstddef>
 

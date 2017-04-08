@@ -5,7 +5,7 @@
 #ifndef PROJECT_DISPARITIESSPARSE_H
 #define PROJECT_DISPARITIESSPARSE_H
 
-#include "Disparities.h"
+#include "disparities.h"
 
 #include <vector>
 

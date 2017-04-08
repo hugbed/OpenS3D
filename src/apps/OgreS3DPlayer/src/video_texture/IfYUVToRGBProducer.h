@@ -5,7 +5,7 @@
 #ifndef OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 #define OGRE_S3D_PLAYER_FILEBYTESPROVIDER_H
 
-#include "s3d/utilities/concurrency/ProducerBarrierSync.h"
+#include "s3d/utilities/concurrency/producer_barrier_sync.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/yuv.h"
 

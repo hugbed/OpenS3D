@@ -5,7 +5,7 @@
 #ifndef S3D_DISPARITY_DISPARITYALGORITHMBM_H
 #define S3D_DISPARITY_DISPARITYALGORITHMBM_H
 
-#include "DisparityAlgorithm.h"
+#include "disparity_algorithm.h"
 
 namespace s3d {
 

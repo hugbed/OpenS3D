@@ -5,7 +5,7 @@
 #ifndef S3D_UTILITIES_CONCURRENCY_CONSUMERBARRIERSYNC_H
 #define S3D_UTILITIES_CONCURRENCY_CONSUMERBARRIERSYNC_H
 
-#include "ProducerBarrierSync.h"
+#include "producer_barrier_sync.h"
 
 #include <mutex>
 #include <vector>

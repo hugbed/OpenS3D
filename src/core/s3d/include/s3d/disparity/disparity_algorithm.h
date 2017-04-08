@@ -5,7 +5,7 @@
 #ifndef S3D_DISPARITY_DISPARITYALGORITHM_H
 #define S3D_DISPARITY_DISPARITYALGORITHM_H
 
-#include "Disparities.h"
+#include "disparities.h"
 
 #include <memory>
 

@@ -18,7 +18,7 @@
 #include "video_texture/TextureUpdateManager.h"
 #include "point_cloud/PointCloudMesh.h"
 
-#include "s3d/video/capture/FileVideoCaptureDevice.h"
+#include "s3d/video/capture/file_video_capture_device.h"
 
 #include <future>
 

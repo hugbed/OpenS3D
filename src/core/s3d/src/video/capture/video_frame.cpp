@@ -2,7 +2,7 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#include "s3d/video/VideoFrame.h"
+#include "s3d/video/video_frame.h"
 
 size_t VideoFrame::AllocationSize(VideoPixelFormat format, const Size& size) {
   switch (format) {

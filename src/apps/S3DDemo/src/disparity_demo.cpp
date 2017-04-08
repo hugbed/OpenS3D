@@ -5,8 +5,8 @@
 #include "opencv2/cudafeatures2d.hpp"
 #include <array>
 
-#include "s3d/disparity/DisparityAlgorithmBM.h"
-#include "s3d/disparity/DisparityAlgorithmORB.h"
+#include "s3d/disparity/disparity_algorithm_bm.h"
+#include "s3d/disparity/disparity_algorithm_orb.h"
 
 using namespace cv;
 using namespace s3d;

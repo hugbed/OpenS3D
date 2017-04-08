@@ -10,7 +10,7 @@
 #include "IfYUVToRGBProducer.h"
 #include "S3DVideoRGBConsumer.h"
 
-#include "s3d/video/capture/VideoCaptureDevice.h"
+#include "s3d/video/capture/video_capture_device.h"
 
 class TextureUpdateManager
 {

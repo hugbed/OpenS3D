@@ -2,7 +2,7 @@
 // Created by bedh2102 on 06/04/17.
 //
 
-#include "s3d/video/capture/FileVideoCaptureDevice.h"
+#include "s3d/video/capture/file_video_capture_device.h"
 #include "s3d/utilities/file_io.h"
 
 #include <chrono>

@@ -5,7 +5,7 @@
 #ifndef PROJECT_DISPARITIESDENSE_H
 #define PROJECT_DISPARITIESDENSE_H
 
-#include "Disparities.h"
+#include "disparities.h"
 
 #include <vector>
 #include <cstdint>

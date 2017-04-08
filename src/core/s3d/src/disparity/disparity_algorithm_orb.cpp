@@ -2,8 +2,8 @@
 // Created by jon on 04/04/17.
 //
 
-#include <s3d/disparity/DisparityAlgorithmORB.h>
-#include <s3d/disparity/DisparitiesSparse.h>
+#include <s3d/disparity/disparity_algorithm_orb.h>
+#include <s3d/disparity/disparities_sparse.h>
 
 #include "opencv2/cudastereo.hpp"
 #include "opencv2/cudafeatures2d.hpp"

@@ -5,7 +5,7 @@
 #ifndef PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
 #define PROJECT_FILEVIDEOCAPTUREDEVICEFACTORY_H
 
-#include "VideoCaptureDeviceFactory.h"
+#include "video_capture_device_factory.h"
 
 class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
 public:

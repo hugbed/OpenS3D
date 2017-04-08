@@ -5,7 +5,7 @@
 #ifndef OPENCVTESTS_DISPARITYALGORITHMORB_H
 #define OPENCVTESTS_DISPARITYALGORITHMORB_H
 
-#include "DisparityAlgorithm.h"
+#include "disparity_algorithm.h"
 #include "s3d/utilities/time.h"
 
 #include <iostream>
