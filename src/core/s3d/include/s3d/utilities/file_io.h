@@ -6,8 +6,8 @@
 #define S3D_UTILITIES_FILE_IO_H
 
 #include <algorithm>
+#include <cstddef>
 #include <fstream>
-#include <stddef.h>
 #include <vector>
 
 namespace s3d {

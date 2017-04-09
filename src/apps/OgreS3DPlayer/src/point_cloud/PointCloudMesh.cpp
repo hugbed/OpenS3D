@@ -2,7 +2,7 @@
 // Created by jon on 29/03/17.
 //
 
-#include "PointCloudMesh.h"
+#include "PointCloudMesh.hpp"
 #include "OgreMesh.h"
 #include "OgreMeshManager.h"
 #include "OgreRoot.h"

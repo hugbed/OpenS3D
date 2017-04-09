@@ -14,10 +14,10 @@
 
 struct VideoCaptureFormat {
   VideoCaptureFormat();
-  VideoCaptureFormat(Size& frameSize,
+  VideoCaptureFormat(Size frameSize,
                      float frameRate,
                      VideoPixelFormat pixelFormat);
-  VideoCaptureFormat(Size& frameSize,
+  VideoCaptureFormat(Size frameSize,
                      float frameRate,
                      VideoPixelFormat pixelFormat,
                      bool stereo3D);

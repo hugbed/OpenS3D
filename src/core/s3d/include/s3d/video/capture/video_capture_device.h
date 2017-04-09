@@ -7,8 +7,8 @@
 
 #include "video_capture_types.h"
 
+#include <cstdint>
 #include <memory>
-#include <stdint.h>
 #include <string>
 #include <vector>
 

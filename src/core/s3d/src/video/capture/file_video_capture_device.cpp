@@ -9,11 +9,11 @@
 
 class VideoFileParser {
  public:
-  explicit VideoFileParser(const std::string& filePath);
+  explicit VideoFileParser(std::string filePath);
 
   virtual ~VideoFileParser() = default;
 
-  virtual bool Initialize(VideoCaptureFormat& format) = 0;
+  virtual bool Initialize(VideoCaptureFormat* format) = 0;
   virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
 
  protected:
@@ -25,11 +25,11 @@ class VideoFileParser {
 
 class RawUYVYFileParser : public VideoFileParser {
  public:
-  explicit RawUYVYFileParser(const std::string& filePath);
+  explicit RawUYVYFileParser(std::string filePath);
 
   ~RawUYVYFileParser() override = default;
 
-  bool Initialize(VideoCaptureFormat& format) override;
+  bool Initialize(VideoCaptureFormat* format) override;
   bool GetNextFrame(std::vector<uint8_t>& frame) override;
 
  private:
@@ -37,37 +37,39 @@ class RawUYVYFileParser : public VideoFileParser {
   std::vector<uint8_t> videoFrame;
 };
 
-VideoFileParser::VideoFileParser(const std::string& filePath)
-    : filePath(filePath), frameSize{}, currentByteIndex{}, firstFrameIndex{} {}
+VideoFileParser::VideoFileParser(std::string filePath)
+    : filePath(std::move(filePath)),
+      frameSize{},
+      currentByteIndex{},
+      firstFrameIndex{} {}
 
-RawUYVYFileParser::RawUYVYFileParser(const std::string& filePath)
-    : VideoFileParser(filePath) {}
+RawUYVYFileParser::RawUYVYFileParser(std::string filePath)
+    : VideoFileParser(std::move(filePath)) {}
 
-bool RawUYVYFileParser::Initialize(VideoCaptureFormat& format) {
-  format.frameRate = 1.0f / 30.0f;
-  format.frameSize = Size{1920, 1080};
-  format.pixelFormat = VideoPixelFormat::UYVY;
+bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
+  format->frameRate = 1.0f / 30.0f;
+  format->frameSize = Size{1920, 1080};
+  format->pixelFormat = VideoPixelFormat::UYVY;
 
-  fileStream.reset(new std::ifstream{filePath, std::ios::binary});
+  fileStream = std::make_unique<std::ifstream>(filePath, std::ios::binary);
 
   if (!fileStream->is_open()) {
     return false;
   }
 
-  frameSize = format.ImageAllocationSize();
+  frameSize = format->ImageAllocationSize();
   return true;
 }
 
 bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
   frame.resize(frameSize);
-  return s3d::file_io::read_n_bytes(*fileStream.get(), frameSize,
-                                    std::begin(frame));
+  return s3d::file_io::read_n_bytes(*fileStream, frameSize, std::begin(frame));
 }
 
 // static
 std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
     const std::string& filePath,
-    VideoCaptureFormat& format) {
+    VideoCaptureFormat* format) {
   // currently only RawUYVY supported
   auto fileParser = std::unique_ptr<VideoFileParser>(
       std::make_unique<RawUYVYFileParser>(filePath));
@@ -79,21 +81,21 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
   return fileParser;
 }
 
-FileVideoCaptureDevice::FileVideoCaptureDevice(const std::string& filePath)
-    : filePath_(filePath), stopCaptureFlag_(false) {}
+FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
+    : filePath_(std::move(filePath)), stopCaptureFlag_(false) {}
 
 FileVideoCaptureDevice::~FileVideoCaptureDevice() {
   // check that thread is not still runing
 }
 
 void FileVideoCaptureDevice::AllocateAndStart(
-    const VideoCaptureFormat& format,
+    const VideoCaptureFormat& /*format*/,
     std::unique_ptr<VideoCaptureDevice::Client> client) {
   client_ = std::move(client);
   stopCaptureFlag_ = false;
-  fileParser_ = GetVideoFileParser(filePath_, captureFormat_);
-  captureThread_.reset(
-      new std::thread(&FileVideoCaptureDevice::OnAllocateAndStart, this));
+  fileParser_ = GetVideoFileParser(filePath_, &captureFormat_);
+  captureThread_ = std::make_unique<std::thread>(
+      &FileVideoCaptureDevice::OnAllocateAndStart, this);
   captureThread_->detach();  // todo: detach for now
 }
 
@@ -101,7 +103,7 @@ void FileVideoCaptureDevice::OnAllocateAndStart() {
   using std::chrono::duration;
   using std::chrono::duration_cast;
   using std::chrono::milliseconds;
-  using std::chrono::high_resolution_clock ;
+  using std::chrono::high_resolution_clock;
 
   auto loopDuration = duration_cast<milliseconds>(
       duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));

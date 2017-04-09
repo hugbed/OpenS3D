@@ -12,6 +12,7 @@ set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11 -arch=sm_52" )
 include_directories(include)
 
 file(GLOB_RECURSE SRC_FILES
+        include/*.h
         src/*.cu
         src/*.cpp)
 

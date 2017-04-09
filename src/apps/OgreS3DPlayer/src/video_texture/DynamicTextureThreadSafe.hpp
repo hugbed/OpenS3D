@@ -5,7 +5,7 @@
 #ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
 #define OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
 
-#include "DynamicTexture.h"
+#include "DynamicTexture.hpp"
 
 #include <atomic>
 #include <chrono>
@@ -37,7 +37,7 @@ class DynamicTextureThreadSafe : public DynamicTexture,
     m_frameReady = true;
   }
 
-  bool frameRenderingQueued(const Ogre::FrameEvent& evt) {
+  bool frameRenderingQueued(const Ogre::FrameEvent& evt) override {
     m_timeSinceLastUpdate += evt.timeSinceLastFrame;
     if (m_timeSinceLastUpdate > m_secPerFrame) {
       if (m_frameReady) {
@@ -47,6 +47,7 @@ class DynamicTextureThreadSafe : public DynamicTexture,
         m_frameReady = false;
       }
     }
+    return true;
   }
 
  private:

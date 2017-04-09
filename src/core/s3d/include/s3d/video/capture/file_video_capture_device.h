@@ -16,7 +16,7 @@ class VideoFileParser;
 
 class FileVideoCaptureDevice : public VideoCaptureDevice {
  public:
-  explicit FileVideoCaptureDevice(const std::string& filePath);
+  explicit FileVideoCaptureDevice(std::string filePath);
 
   ~FileVideoCaptureDevice() override;
 
@@ -29,7 +29,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
  private:
   static std::unique_ptr<VideoFileParser> GetVideoFileParser(
       const std::string& filePath,
-      VideoCaptureFormat& format);
+      VideoCaptureFormat* format);
 
   // runs on capture thread
   void OnAllocateAndStart();

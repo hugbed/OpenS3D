@@ -20,8 +20,8 @@ class IfYUVToRGBProducer
   IfYUVToRGBProducer(const std::string& filename,
                      size_t imageSizeBytesYUV,
                      size_t imageSizeBytesRGB,
-                     std::mutex& doneProducingMutex,
-                     std::condition_variable& shouldConsumeCV)
+                     std::mutex* doneProducingMutex,
+                     std::condition_variable* shouldConsumeCV)
       : ProducerBarrierSync(doneProducingMutex, shouldConsumeCV),
         yuvBytes{},
         rgbBytes{},
@@ -52,7 +52,7 @@ class IfYUVToRGBProducer
                      std::begin(rgbBytes), YUV422{}, RGB8{});
   }
 
-  virtual const std::vector<uint8_t>& getProduct() { return rgbBytes; }
+  const std::vector<uint8_t>& getProduct() override { return rgbBytes; }
 
   std::vector<uint8_t> yuvBytes;
   std::vector<uint8_t> rgbBytes;

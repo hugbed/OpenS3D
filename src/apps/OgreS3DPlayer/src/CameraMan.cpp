@@ -3,7 +3,7 @@
 namespace OgreCookies {
 
 //-------------------------------------------------------------------------------------
-CameraMan::CameraMan(Ogre::Camera *cam)
+CameraMan::CameraMan(Ogre::Camera* cam)
     : mCamera(0),
       mTarget(0),
       mOrbiting(false),
@@ -26,18 +26,18 @@ CameraMan::~CameraMan() {}
 /*-----------------------------------------------------------------------------
 | Swaps the camera on our camera man for another camera.
 -----------------------------------------------------------------------------*/
-void CameraMan::setCamera(Ogre::Camera *cam) {
+void CameraMan::setCamera(Ogre::Camera* cam) {
   mCamera = cam;
 }
 
-Ogre::Camera *CameraMan::getCamera() {
+Ogre::Camera* CameraMan::getCamera() {
   return mCamera;
 }
 
 /*-----------------------------------------------------------------------------
 | Sets the target we will revolve around. Only applies for orbit style.
 -----------------------------------------------------------------------------*/
-void CameraMan::setTarget(Ogre::SceneNode *target) {
+void CameraMan::setTarget(Ogre::SceneNode* target) {
   if (target != mTarget) {
     mTarget = target;
     if (target) {
@@ -49,7 +49,7 @@ void CameraMan::setTarget(Ogre::SceneNode *target) {
   }
 }
 
-Ogre::SceneNode *CameraMan::getTarget() {
+Ogre::SceneNode* CameraMan::getTarget() {
   return mTarget;
 }
 
@@ -116,7 +116,7 @@ void CameraMan::manualStop() {
   }
 }
 
-bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent &evt) {
+bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   if (mStyle == CS_FREELOOK) {
     // build our acceleration vector based on keyboard input composite
     Ogre::Vector3 accel = Ogre::Vector3::ZERO;
@@ -139,7 +139,7 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent &evt) {
       accel.normalise();
       mVelocity += accel * topSpeed * evt.timeSinceLastFrame * 10;
     }
-      // if not accelerating, try to stop in a certain time
+    // if not accelerating, try to stop in a certain time
     else
       mVelocity -= mVelocity * evt.timeSinceLastFrame * 10;
 
@@ -162,7 +162,7 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 /*-----------------------------------------------------------------------------
 | Processes key presses for free-look style movement.
 -----------------------------------------------------------------------------*/
-void CameraMan::injectKeyDown(const OIS::KeyEvent &evt) {
+void CameraMan::injectKeyDown(const OIS::KeyEvent& evt) {
   if (mStyle == CS_FREELOOK) {
     if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP)
       mGoingForward = true;
@@ -184,7 +184,7 @@ void CameraMan::injectKeyDown(const OIS::KeyEvent &evt) {
 /*-----------------------------------------------------------------------------
 | Processes key releases for free-look style movement.
 -----------------------------------------------------------------------------*/
-void CameraMan::injectKeyUp(const OIS::KeyEvent &evt) {
+void CameraMan::injectKeyUp(const OIS::KeyEvent& evt) {
   if (mStyle == CS_FREELOOK) {
     if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP)
       mGoingForward = false;
@@ -210,7 +210,7 @@ void CameraMan::injectKeyUp(const OIS::KeyEvent &evt) {
     (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
 void CameraMan::injectMouseMove(const OIS::MultiTouchEvent& evt)
 #else
-void CameraMan::injectMouseMove(const OIS::MouseEvent &evt)
+void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
 #endif
 {
   if (mStyle == CS_ORBIT) {
@@ -233,7 +233,7 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent &evt)
       mCamera->moveRelative(
           Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
     } else if (evt.state.Z.rel !=
-        0)  // move the camera toward or away from the target
+               0)  // move the camera toward or away from the target
     {
       // the further the camera is, the faster it moves
       mCamera->moveRelative(
@@ -257,7 +257,7 @@ void CameraMan::injectMouseDown(const OIS::MultiTouchEvent& evt) {
   }
 }
 #else
-void CameraMan::injectMouseDown(const OIS::MouseEvent &evt,
+void CameraMan::injectMouseDown(const OIS::MouseEvent& evt,
                                 OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left)
@@ -280,7 +280,7 @@ void CameraMan::injectMouseUp(const OIS::MultiTouchEvent& evt) {
   }
 }
 #else
-void CameraMan::injectMouseUp(const OIS::MouseEvent &evt,
+void CameraMan::injectMouseUp(const OIS::MouseEvent& evt,
                               OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left)

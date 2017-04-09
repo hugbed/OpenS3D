@@ -5,7 +5,7 @@
 #ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_S3D_VIDEO_RGB_CONSUMER_H
 #define OGRE_S3D_PLAYER_VIDEO_TEXTURE_S3D_VIDEO_RGB_CONSUMER_H
 
-#include "DynamicTextureThreadSafe.h"
+#include "DynamicTextureThreadSafe.hpp"
 #include "s3d/utilities/concurrency/consumer_barrier_sync.h"
 
 class S3DVideoRGBConsumer
@@ -13,16 +13,15 @@ class S3DVideoRGBConsumer
  public:
   S3DVideoRGBConsumer(DynamicTextureThreadSafe* videoTextureL,
                       DynamicTextureThreadSafe* videoTextureR,
-                      std::mutex& doneProducingMutex,
-                      std::condition_variable& shouldConsumeCV,
-                      const std::vector<s3d::concurrency::ProducerBarrierSync<
-                          std::vector<uint8_t>>*> producers)
+                      std::mutex* doneProducingMutex,
+                      std::condition_variable* shouldConsumeCV,
+                      const Producers producers)
       : ConsumerBarrierSync(doneProducingMutex, shouldConsumeCV, producers),
         videoTextureL{videoTextureL},
         videoTextureR{videoTextureR} {}
 
  private:
-  virtual void consume() override {
+  void consume() override {
     sleepUntilNextFrame();
     const auto& producers = getProducers();
     auto& leftImage = producers[0]->getProduct();

@@ -69,7 +69,7 @@ static void color_conversion(InputIt first,
   static_assert(
       is_same<typename iterator_traits<InputIt>::value_type, uint8_t>::value,
       "only byte sequences are supported");
-  assert(distance(first, last) % 4 == 0);
+//  assert(distance(first, last) % 4 == 0);
 
   uint8_t R, G, B;
   for (; first != last; first += 4) {

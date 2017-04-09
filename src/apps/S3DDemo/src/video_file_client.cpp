@@ -9,8 +9,8 @@
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
-  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
-                                      const VideoCaptureFormat&) {
+  void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
+                              const VideoCaptureFormat&) override {
     std::cout << "received image, size: " << imageBytes.size() << std::endl;
   }
 
@@ -29,7 +29,7 @@ int main() {
 
   auto deviceFactory = createVideoCaptureDeviceFactory();
   auto device = deviceFactory->CreateDevice(
-      std::string("/home/jon/Videos/current-left.yuv"));
+      VideoCaptureDeviceDescriptor("/home/jon/Videos/current-left.yuv"));
   auto client =
       std::unique_ptr<VideoCaptureDevice::Client>(new VideoTestClient);
 

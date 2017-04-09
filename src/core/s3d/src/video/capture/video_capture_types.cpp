@@ -1,13 +1,15 @@
 #include "s3d/video/capture/video_capture_types.h"
 #include "s3d/video/video_frame.h"
 
+#include <algorithm>
+
 VideoCaptureFormat::VideoCaptureFormat()
     : frameSize{},
       frameRate{0.0f},
       pixelFormat{VideoPixelFormat::UNKNOWN},
       stereo3D{false} {}
 
-VideoCaptureFormat::VideoCaptureFormat(Size& frameSize,
+VideoCaptureFormat::VideoCaptureFormat(Size frameSize,
                                        float frameRate,
                                        VideoPixelFormat pixelFormat)
     : frameSize{frameSize},
@@ -15,7 +17,7 @@ VideoCaptureFormat::VideoCaptureFormat(Size& frameSize,
       pixelFormat{pixelFormat},
       stereo3D{false} {}
 
-VideoCaptureFormat::VideoCaptureFormat(Size& frameSize,
+VideoCaptureFormat::VideoCaptureFormat(Size frameSize,
                                        float frameRate,
                                        VideoPixelFormat pixelFormat,
                                        bool stereo3D)

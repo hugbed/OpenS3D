@@ -5,10 +5,11 @@
 #ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
 #define OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
 
-#include "DynamicTextureThreadSafe.h"
-#include "IfYUVToRGBProducer.h"
-#include "S3DVideoRGBConsumer.h"
+#include "DynamicTextureThreadSafe.hpp"
+#include "IfYUVToRGBProducer.hpp"
+#include "S3DVideoRGBConsumer.hpp"
 #include <condition_variable>
+#include <s3d/video/video_frame.h>
 
 #include "s3d/video/capture/video_capture_device.h"
 
@@ -36,10 +37,10 @@ class YUVFileTextureUpdateManager : public TextureUpdateManager {
       constexpr auto imageSizeBytesYUV = 1920 * 1080 * 2;
       IfYUVToRGBProducer fileProducerL(filenames.first, imageSizeBytesYUV,
                                        videoTextureL->getSizeInBytes(),
-                                       doneProducingMutex, shouldConsumeCV);
+                                       &doneProducingMutex, &shouldConsumeCV);
       IfYUVToRGBProducer fileProducerR(filenames.second, imageSizeBytesYUV,
                                        videoTextureR->getSizeInBytes(),
-                                       doneProducingMutex, shouldConsumeCV);
+                                       &doneProducingMutex, &shouldConsumeCV);
 
       std::vector<s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>*>
           producers = {&fileProducerL, &fileProducerR};
@@ -52,9 +53,10 @@ class YUVFileTextureUpdateManager : public TextureUpdateManager {
       }
 
       S3DVideoRGBConsumer consumer(videoTextureL, videoTextureR,
-                                   doneProducingMutex, shouldConsumeCV,
+                                   &doneProducingMutex, &shouldConsumeCV,
                                    producers);
 
+      // blocking
       consumer.startConsuming();
 
       // join all producers threads
@@ -74,21 +76,27 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
  public:
   TextureUpdateClient(DynamicTextureThreadSafe* videoTexture,
                       DynamicTextureThreadSafe* videoTextureR)
-      : videoTexture{videoTexture}, videoTextureR{videoTextureR} {
+      : frameData{}, videoTexture{videoTexture}, videoTextureR{videoTextureR} {
     frameData.resize(1920 * 1080 * 3);
   }
 
-  virtual void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
-                                      const VideoCaptureFormat& frameFormat) {
+  void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
+                              const VideoCaptureFormat& frameFormat) override {
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(3s);
+
+    std::vector<uint8_t> testYUVData;
+    testYUVData.resize(imageBytes.size());
+    std::copy(std::begin(imageBytes), std::end(imageBytes), std::begin(testYUVData));
     s3d::compression::color_conversion(
-        std::begin(imageBytes), std::end(imageBytes), std::begin(frameData),
+        std::begin(testYUVData), std::end(testYUVData), std::begin(frameData),
         s3d::compression::YUV422{}, s3d::compression::RGB8{});
-    videoTexture->updateImage(frameData);
-    videoTextureR->updateImage(frameData);
+    //    videoTexture->updateImage(frameData);
+    //    videoTextureR->updateImage(frameData);
   }
 
-  void OnError(const std::string&) override {}
-  void OnLog(const std::string&) override {}
+  void OnError(const std::string& /*unused*/) override {}
+  void OnLog(const std::string& /*unused*/) override {}
   void OnStarted() override {}
 
  private:

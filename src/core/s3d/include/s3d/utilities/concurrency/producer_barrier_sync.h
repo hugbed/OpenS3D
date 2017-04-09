@@ -18,12 +18,15 @@ namespace concurrency {
 template <class T>
 class ProducerBarrierSync {
  public:
-  ProducerBarrierSync(std::mutex& doneProducingMutex,
-                      std::condition_variable& shouldConsumeCV)
-      : doneProducingCondition{false},
-        doneConsumingCondition{false},
-        shouldConsumeCV{shouldConsumeCV},
-        doneProducingMutex{doneProducingMutex} {}
+  ProducerBarrierSync() = delete;
+  ProducerBarrierSync(std::mutex* doneProducingMutex,
+                      std::condition_variable* shouldConsumeCV)
+      : doneProducingCondition_{false},
+        doneConsumingCondition_{false},
+        shouldProduceCV_{},
+        shouldConsumeCV_{shouldConsumeCV},
+        doneProducingMutex_{doneProducingMutex},
+        doneConsumingMutex_{} {}
 
   virtual const T& getProduct() = 0;
 
@@ -35,18 +38,18 @@ class ProducerBarrierSync {
     }
   }
 
-  void acknowledgeDoneProducing() { doneProducingCondition = false; }
+  void acknowledgeDoneProducing() { doneProducingCondition_ = false; }
 
-  bool isDoneProducing() { return doneProducingCondition; }
+  bool isDoneProducing() { return doneProducingCondition_; }
 
   void notifyDoneConsuming() {
-    std::unique_lock<std::mutex> lk(doneConsumingMutex);
-    doneConsumingCondition = true;
+    std::unique_lock<std::mutex> lk(doneConsumingMutex_);
+    doneConsumingCondition_ = true;
   }
 
-  std::mutex& getDoneConsumingMutex() { return doneConsumingMutex; }
+  std::mutex& getDoneConsumingMutex() { return doneConsumingMutex_; }
 
-  void notifyShouldProduce() { shouldProduceCV.notify_one(); }
+  void notifyShouldProduce() { shouldProduceCV_.notify_one(); }
 
   virtual bool shouldStopProducing() { return false; }
 
@@ -55,28 +58,28 @@ class ProducerBarrierSync {
 
   void notifyDoneProducing() {
     {
-      std::unique_lock<std::mutex> lk(doneProducingMutex);
-      doneProducingCondition = true;
+      std::unique_lock<std::mutex> lk(*doneProducingMutex_);
+      doneProducingCondition_ = true;
     }
-    shouldConsumeCV.notify_one();
+    shouldConsumeCV_->notify_one();
   }
 
   void waitUntilProductIsConsumed() {
     // wait until doneConsuming
-    std::unique_lock<std::mutex> lk(doneConsumingMutex);
-    while (!(doneConsumingCondition))
-      shouldProduceCV.wait(lk, [this] { return doneConsumingCondition; });
+    std::unique_lock<std::mutex> lk(doneConsumingMutex_);
+    while (!(doneConsumingCondition_))
+      shouldProduceCV_.wait(lk, [this] { return doneConsumingCondition_; });
 
     // we acknowledged it, set it back to default state
-    doneConsumingCondition = false;
+    doneConsumingCondition_ = false;
   }
 
-  bool doneProducingCondition;
-  bool doneConsumingCondition;
-  std::condition_variable shouldProduceCV;
-  std::condition_variable& shouldConsumeCV;
-  std::mutex& doneProducingMutex;
-  std::mutex doneConsumingMutex;
+  bool doneProducingCondition_;
+  bool doneConsumingCondition_;
+  std::condition_variable shouldProduceCV_;
+  std::condition_variable* shouldConsumeCV_;
+  std::mutex* doneProducingMutex_;
+  std::mutex doneConsumingMutex_;
 };
 }  // namespace concurrency
 }  // namespace s3d

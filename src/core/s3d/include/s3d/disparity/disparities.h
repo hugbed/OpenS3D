@@ -5,8 +5,8 @@
 #ifndef S3D_DISPARITY_DISPARITIES_H
 #define S3D_DISPARITY_DISPARITIES_H
 
+#include <cstddef>
 #include <cv.h>  // todo: oh oh
-#include <stddef.h>
 
 namespace s3d {
 
@@ -29,8 +29,8 @@ struct DisparityPoint {
   DisparityPoint(PixelPos leftLoc, PixelPos disparityValue)
       : leftPos(std::move(leftLoc)), disparity(std::move(disparityValue)) {}
 
-  PixelPos leftPos;
-  PixelPos disparity;
+  PixelPos leftPos{};
+  PixelPos disparity{};
 
   bool operator<(const DisparityPoint& d2) {
     return disparity.col < d2.disparity.col;

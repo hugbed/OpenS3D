@@ -16,6 +16,8 @@
 #include <iostream>
 #include <memory>
 
+// todo(hugbed): move this to s3dcuda
+
 namespace s3d {
 
 std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(

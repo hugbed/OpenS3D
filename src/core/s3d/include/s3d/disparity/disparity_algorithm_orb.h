@@ -11,6 +11,8 @@
 #include <iostream>
 #include <memory>
 
+// todo(hugbed): move this to s3dcuda
+
 namespace s3d {
 
 class DisparityAlgorithmORB : public DisparityAlgorithm {

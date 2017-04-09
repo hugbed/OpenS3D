@@ -35,8 +35,10 @@ function(target_add_clang_tidy target-name include-dirs source-files)
         add_custom_target(
             ${target-name}-clang-tidy
             COMMAND /usr/bin/clang-tidy
+#            COMMAND /usr/bin/clang-tidy-4.0
+            -checks='*,-misc-unused-parameters'
+            -p=${CMAKE_BINARY_DIR}/
             ${source-files}
-            -checks=*,clang-analyzer*,clang-analyzer-cplusplus*
             --
             -std=c++14
             -I${include-dirs-str}

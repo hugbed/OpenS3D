@@ -1,5 +1,5 @@
 #include "Application.hpp"
-#include "video_texture/DynamicTexture.h"
+#include "video_texture/DynamicTexture.hpp"
 
 #include <OISException.h>
 #include <OgreCamera.h>
@@ -10,13 +10,13 @@
 #include <OgreSceneManager.h>
 #include <OgreViewport.h>
 
-#include "video_texture/DynamicTextureThreadSafe.h"
+#include "video_texture/DynamicTextureThreadSafe.hpp"
 #include <OgreRectangle2D.h>
 
-#include "point_cloud/PointCloudMesh.h"
-#include "video_texture/IfYUVToRGBProducer.h"
-#include "video_texture/S3DVideoRGBConsumer.h"
-#include "video_texture/TextureUpdateManager.h"
+#include "point_cloud/PointCloudMesh.hpp"
+#include "video_texture/IfYUVToRGBProducer.hpp"
+#include "video_texture/S3DVideoRGBConsumer.hpp"
+#include "video_texture/TextureUpdateManager.hpp"
 
 #include "s3d/video/capture/file_video_capture_device.h"
 
@@ -24,10 +24,9 @@
 
 //-------------------------------------------------------------------------------------
 Application::Application()
-{
-  m_textureUpdateManager.reset(new YUVFileTextureUpdateManager("../media/materials/textures/current-left.yuv",
-                                                               "../media/materials/textures/current-right.yuv"));
-}
+    : m_textureUpdateManager(std::make_unique<YUVFileTextureUpdateManager>(
+          "../media/materials/textures/current-left.yuv",
+          "../media/materials/textures/current-right.yuv")) {}
 
 //-------------------------------------------------------------------------------------
 Application::~Application() {}
@@ -40,8 +39,8 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-  //    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
-  //    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
+//    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
+//    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
   createVideoPlane(m_videoTextures.first, "_plane");
   createVideoPlane(m_videoTextures.second, "_plane2");
@@ -49,20 +48,21 @@ void Application::createScene() {
   // should delete this, this is only a test
   VideoCaptureDevice* captureDevice = new FileVideoCaptureDevice(
       std::string("/home/jon/Videos/current-left.yuv"));
-  auto captureClient =
-      std::unique_ptr<VideoCaptureDevice::Client>(new TextureUpdateClient(
-          m_videoTextures.first.get(), m_videoTextures.second.get()));
+  auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+      std::make_unique<TextureUpdateClient>(m_videoTextures.first.get(),
+                                            m_videoTextures.second.get()));
 
   VideoCaptureFormat format;
-  captureDevice->AllocateAndStart(format, std::move(captureClient));
+  captureDevice->AllocateAndStart(format,
+                                  std::move(captureClient));
 
   // start texture update thread or something
-  //    m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(),
-  //    m_videoTextures.second.get());
+  //  m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(),
+  //  m_videoTextures.second.get());
 
-  addLights();
-  createGroundPlane();
-  createPointCloud();
+//  addLights();
+//  createGroundPlane();
+//  createPointCloud();
 }
 
 void Application::addLights() {

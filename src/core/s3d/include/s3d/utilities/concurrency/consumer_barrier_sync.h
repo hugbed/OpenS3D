@@ -18,12 +18,12 @@ class ConsumerBarrierSync {
  public:
   using Producers = std::vector<ProducerBarrierSync<T>*>;
 
-  ConsumerBarrierSync(std::mutex& doneProducingMutex,
-                      std::condition_variable& shouldConsumeCV,
+  ConsumerBarrierSync(std::mutex* doneProducingMutex,
+                      std::condition_variable* shouldConsumeCV,
                       const Producers& producers)
-      : doneProducingMutex(doneProducingMutex),
-        shouldConsumeCV(shouldConsumeCV),
-        producers(producers) {}
+      : doneProducingMutex_(doneProducingMutex),
+        shouldConsumeCV_(shouldConsumeCV),
+        producers_(producers) {}
 
   void startConsuming() {
     while (!shouldStopConsuming()) {
@@ -34,46 +34,46 @@ class ConsumerBarrierSync {
   }
 
  protected:
-  const Producers& getProducers() { return producers; }
+  const Producers& getProducers() { return producers_; }
 
  private:
   virtual void consume() = 0;  // use producer->getProduct()
 
   virtual bool shouldStopConsuming() {
     return std::any_of(
-        std::begin(producers), std::end(producers),
+        std::begin(producers_), std::end(producers_),
         [](const auto& producer) { return producer->shouldStopProducing(); });
   }
 
   bool allAreDoneProducing() {
-    return std::all_of(std::begin(producers), std::end(producers),
+    return std::all_of(std::begin(producers_), std::end(producers_),
                        [](auto& p) { return p->isDoneProducing(); });
   }
 
   void waitUntilAllDoneProducing() {
     // wait until all producers are done producing
-    std::unique_lock<std::mutex> lk(doneProducingMutex);
+    std::unique_lock<std::mutex> lk(*doneProducingMutex_);
     while (!allAreDoneProducing()) {
-      shouldConsumeCV.wait(lk, [this] { return allAreDoneProducing(); });
+      shouldConsumeCV_->wait(lk, [this] { return allAreDoneProducing(); });
     }
 
     // acknowledge done producing, set it back to default state
-    for (auto& producer : producers)
+    for (auto& producer : producers_)
       producer->acknowledgeDoneProducing();
   }
 
   void notifyShouldProduce() {
-    for (auto& producer : producers) {
+    for (auto& producer : producers_) {
       producer->notifyDoneConsuming();
     }
-    for (auto& producer : producers) {
+    for (auto& producer : producers_) {
       producer->notifyShouldProduce();
     }
   }
 
-  std::mutex& doneProducingMutex;
-  std::condition_variable& shouldConsumeCV;
-  Producers producers;
+  std::mutex* doneProducingMutex_;
+  std::condition_variable* shouldConsumeCV_;
+  Producers producers_;
 };
 }  // namespace concurrency
 }  // namespace s3d
