@@ -9,12 +9,12 @@
     │   ├── include
     │   │   └── libsomething
     │   │       ├── some_helper_stuff.h
-    │   │       └── GreatClassHere.h
+    │   │       └── great_class_here.h
     │   ├── src
-    │   │   └── GreatClassHere.cpp
+    │   │   └── great_class_here.cpp
     │   ├── test
     │   │   ├── test_some_helper_stuff.cpp
-    │   │   └── test_GreatClassHere.cpp
+    │   │   └── test_great_class_here.cpp
     │   └── CMakeLists.txt
     ├── AppDemo
     │   ├── CMakeLists.txt
