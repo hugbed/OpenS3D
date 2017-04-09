@@ -39,8 +39,8 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-//    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
-//    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
+  //    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
+  //    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
   createVideoPlane(m_videoTextures.first, "_plane");
   createVideoPlane(m_videoTextures.second, "_plane2");
@@ -53,16 +53,15 @@ void Application::createScene() {
                                             m_videoTextures.second.get()));
 
   VideoCaptureFormat format;
-  captureDevice->AllocateAndStart(format,
-                                  std::move(captureClient));
+  captureDevice->AllocateAndStart(format, std::move(captureClient));
 
   // start texture update thread or something
   //  m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(),
-  //  m_videoTextures.second.get());
+  //                                              m_videoTextures.second.get());
 
-//  addLights();
-//  createGroundPlane();
-//  createPointCloud();
+  addLights();
+  createGroundPlane();
+  createPointCloud();
 }
 
 void Application::addLights() {

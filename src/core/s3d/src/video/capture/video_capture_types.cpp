@@ -28,5 +28,5 @@ VideoCaptureFormat::VideoCaptureFormat(Size frameSize,
 
 size_t VideoCaptureFormat::ImageAllocationSize() const {
   auto sizeInBytes = VideoFrame::AllocationSize(pixelFormat, frameSize);
-  return stereo3D ? sizeInBytes : 2 * sizeInBytes;
+  return stereo3D ? 2 * sizeInBytes : sizeInBytes;
 }

@@ -28,9 +28,9 @@ std::tuple<uint8_t, uint8_t, uint8_t> yuv_to_rgb(uint8_t Y,
   return std::tuple<uint8_t, uint8_t, uint8_t>{R, G, B};
 }
 
-static std::vector<uint8_t> color_conversion(const std::vector<uint8_t>& in,
-                                             YUV422,
-                                             RGB8) {
+std::vector<uint8_t> color_conversion(const std::vector<uint8_t>& in,
+                                      YUV422,
+                                      RGB8) {
   uint8_t R, G, B;
   uint8_t y0, cb0, y1, cr0;
   std::vector<uint8_t> imageRGBA;
@@ -57,19 +57,50 @@ static std::vector<uint8_t> color_conversion(const std::vector<uint8_t>& in,
   return imageRGBA;
 }
 
+// todo(hugbed) : not sure which API to choose (lots of function names, or using types instead?)
+
 template <class InputIt, class OutputIt>
-static void color_conversion(InputIt first,
-                             InputIt last,
-                             OutputIt d_first,
-                             YUV422,
-                             RGB8) {
+void color_conversion(InputIt first,
+                      InputIt last,
+                      OutputIt d_first,
+                      YUV422,
+                      RGB8) {
   using std::is_same;
   using std::distance;
   using std::iterator_traits;
   static_assert(
       is_same<typename iterator_traits<InputIt>::value_type, uint8_t>::value,
       "only byte sequences are supported");
-//  assert(distance(first, last) % 4 == 0);
+  assert(distance(first, last) % 4 == 0);
+
+  uint8_t R, G, B;
+  for (; first != last; first += 4) {
+    auto y1 = *(first + 3);
+    auto cr0 = *(first + 2);
+    auto y0 = *(first + 1);
+    auto cb0 = *first;
+
+    std::tie(R, G, B) = yuv_to_rgb(y0, cb0, cr0);
+    *d_first++ = B;
+    *d_first++ = G;
+    *d_first++ = R;
+
+    std::tie(R, G, B) = yuv_to_rgb(y1, cb0, cr0);
+    *d_first++ = B;
+    *d_first++ = G;
+    *d_first++ = R;
+  }
+}
+
+template <class InputIt, class OutputIt>
+void yuv_to_rgb(InputIt first, InputIt last, OutputIt d_first) {
+  using std::is_same;
+  using std::distance;
+  using std::iterator_traits;
+  static_assert(
+      is_same<typename iterator_traits<InputIt>::value_type, uint8_t>::value,
+      "only byte sequences are supported");
+  assert(distance(first, last) % 4 == 0);
 
   uint8_t R, G, B;
   for (; first != last; first += 4) {

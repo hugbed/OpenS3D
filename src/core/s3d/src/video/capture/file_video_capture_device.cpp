@@ -34,7 +34,6 @@ class RawUYVYFileParser : public VideoFileParser {
 
  private:
   std::unique_ptr<std::ifstream> fileStream;
-  std::vector<uint8_t> videoFrame;
 };
 
 VideoFileParser::VideoFileParser(std::string filePath)

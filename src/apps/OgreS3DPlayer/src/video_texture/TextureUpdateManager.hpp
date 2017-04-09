@@ -82,17 +82,10 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
   void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
                               const VideoCaptureFormat& frameFormat) override {
-    using namespace std::chrono_literals;
-    std::this_thread::sleep_for(3s);
-
-    std::vector<uint8_t> testYUVData;
-    testYUVData.resize(imageBytes.size());
-    std::copy(std::begin(imageBytes), std::end(imageBytes), std::begin(testYUVData));
-    s3d::compression::color_conversion(
-        std::begin(testYUVData), std::end(testYUVData), std::begin(frameData),
-        s3d::compression::YUV422{}, s3d::compression::RGB8{});
-    //    videoTexture->updateImage(frameData);
-    //    videoTextureR->updateImage(frameData);
+    s3d::compression::yuv_to_rgb(std::begin(imageBytes), std::end(imageBytes),
+                                 std::begin(frameData));
+    videoTexture->updateImage(frameData);
+    videoTextureR->updateImage(frameData);
   }
 
   void OnError(const std::string& /*unused*/) override {}
