@@ -10,12 +10,12 @@
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
   void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
-                              const VideoCaptureFormat&) override {
+                              const VideoCaptureFormat& /*frameFormat*/) override {
     std::cout << "received image, size: " << imageBytes.size() << std::endl;
   }
 
-  void OnError(const std::string&) override {}
-  void OnLog(const std::string&) override {}
+  void OnError(const std::string& /*reason*/) override {}
+  void OnLog(const std::string& /*reason*/) override {}
   void OnStarted() override {}
 };
 
@@ -36,7 +36,7 @@ int main() {
   device->AllocateAndStart({}, std::move(client));
 
   while (true) {
-    using namespace std::chrono_literals;
+    using std::literals::chrono_literals::operator""s;
     std::this_thread::sleep_for(1s);
   }
 }

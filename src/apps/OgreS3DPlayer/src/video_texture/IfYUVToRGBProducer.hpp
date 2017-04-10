@@ -7,7 +7,7 @@
 
 #include "s3d/utilities/concurrency/producer_barrier_sync.h"
 #include "s3d/utilities/file_io.h"
-#include "s3d/utilities/yuv.h"
+#include "s3d/video/compression/yuv.h"
 
 #include <fstream>
 

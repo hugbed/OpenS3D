@@ -31,7 +31,7 @@ BaseApplication::~BaseApplication() {
   }
 
   // Remove ourself as a Window listener
-  if (mWindow) {
+  if (mWindow != nullptr) {
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
   }
@@ -338,7 +338,7 @@ void BaseApplication::windowResized(Ogre::RenderWindow* rw) {
 void BaseApplication::windowClosed(Ogre::RenderWindow* rw) {
   // Only close for window that created OIS (the main window in these demos)
   if (rw == mWindow) {
-    if (mInputManager) {
+    if (mInputManager != nullptr) {
       mInputManager->destroyInputObject(mMouse);
       mInputManager->destroyInputObject(mKeyboard);
 

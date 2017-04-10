@@ -9,7 +9,7 @@
 #include "OgreSubMesh.h"
 #include <OgreHardwareBufferManager.h>
 
-PointCloudMesh::PointCloudMesh(const std::string& name,
+PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
                                const std::string& resourcegroup,
                                const std::vector<float>& points,
                                const std::vector<float>& colors) {
@@ -37,7 +37,7 @@ PointCloudMesh::PointCloudMesh(const std::string& name,
   /// Upload the vertex data to the card
   vbuf->writeData(0, vbuf->getSizeInBytes(), &points[0], true);
 
-  if (colors.size() > 0) {
+  if (!colors.empty()) {
     // Create 2nd buffer for colors
     decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
     cbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -65,7 +65,7 @@ PointCloudMesh::PointCloudMesh(const std::string& name,
   Ogre::VertexBufferBinding* bind = msh->sharedVertexData->vertexBufferBinding;
   bind->setBinding(0, vbuf);
 
-  if (colors.size() > 0) {
+  if (!colors.empty()) {
     // Set colour binding so buffer 1 is bound to colour buffer
     bind->setBinding(1, cbuf);
   }
@@ -94,8 +94,8 @@ void PointCloudMesh::updateVertexPositions(int size,
   vbuf->unlock();
 }
 
-void PointCloudMesh::updateVertexColours(int size,
-                                         const std::vector<float>& colours) {
+void PointCloudMesh::updateVertexColors(int size,
+                                        const std::vector<float> &colours) {
   float* pCArray =
       static_cast<float*>(cbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 

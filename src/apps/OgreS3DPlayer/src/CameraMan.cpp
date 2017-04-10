@@ -4,11 +4,11 @@ namespace OgreCookies {
 
 //-------------------------------------------------------------------------------------
 CameraMan::CameraMan(Ogre::Camera* cam)
-    : mCamera(0),
-      mTarget(0),
+    : mCamera(nullptr),
+      mTarget(nullptr),
       mOrbiting(false),
       mZooming(false),
-      mTopSpeed(150),
+      mTopSpeed(0),
       mVelocity(Ogre::Vector3::ZERO),
       mGoingForward(false),
       mGoingBack(false),
@@ -20,8 +20,6 @@ CameraMan::CameraMan(Ogre::Camera* cam)
   setCamera(cam);
   setStyle(CS_FREELOOK);
 }
-
-CameraMan::~CameraMan() {}
 
 /*-----------------------------------------------------------------------------
 | Swaps the camera on our camera man for another camera.
@@ -40,7 +38,7 @@ Ogre::Camera* CameraMan::getCamera() {
 void CameraMan::setTarget(Ogre::SceneNode* target) {
   if (target != mTarget) {
     mTarget = target;
-    if (target) {
+    if (target != nullptr) {
       setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
       mCamera->setAutoTracking(true, mTarget);
     } else {
@@ -120,18 +118,24 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   if (mStyle == CS_FREELOOK) {
     // build our acceleration vector based on keyboard input composite
     Ogre::Vector3 accel = Ogre::Vector3::ZERO;
-    if (mGoingForward)
+    if (mGoingForward) {
       accel += mCamera->getDirection();
-    if (mGoingBack)
+    }
+    if (mGoingBack) {
       accel -= mCamera->getDirection();
-    if (mGoingRight)
+    }
+    if (mGoingRight) {
       accel += mCamera->getRight();
-    if (mGoingLeft)
+    }
+    if (mGoingLeft) {
       accel -= mCamera->getRight();
-    if (mGoingUp)
+    }
+    if (mGoingUp) {
       accel += mCamera->getUp();
-    if (mGoingDown)
+    }
+    if (mGoingDown) {
       accel -= mCamera->getUp();
+    }
 
     // if accelerating, try to reach top speed in a certain time
     Ogre::Real topSpeed = mFastMove ? mTopSpeed * 20 : mTopSpeed;
@@ -139,9 +143,10 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
       accel.normalise();
       mVelocity += accel * topSpeed * evt.timeSinceLastFrame * 10;
     }
-    // if not accelerating, try to stop in a certain time
-    else
+      // if not accelerating, try to stop in a certain time
+    else {
       mVelocity -= mVelocity * evt.timeSinceLastFrame * 10;
+    }
 
     Ogre::Real tooSmall = std::numeric_limits<Ogre::Real>::epsilon();
 
@@ -233,7 +238,7 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
       mCamera->moveRelative(
           Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
     } else if (evt.state.Z.rel !=
-               0)  // move the camera toward or away from the target
+        0)  // move the camera toward or away from the target
     {
       // the further the camera is, the faster it moves
       mCamera->moveRelative(
@@ -257,7 +262,7 @@ void CameraMan::injectMouseDown(const OIS::MultiTouchEvent& evt) {
   }
 }
 #else
-void CameraMan::injectMouseDown(const OIS::MouseEvent& evt,
+void CameraMan::injectMouseDown(const OIS::MouseEvent& /*evt*/,
                                 OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left)
@@ -280,7 +285,7 @@ void CameraMan::injectMouseUp(const OIS::MultiTouchEvent& evt) {
   }
 }
 #else
-void CameraMan::injectMouseUp(const OIS::MouseEvent& evt,
+void CameraMan::injectMouseUp(const OIS::MouseEvent& /*evt*/,
                               OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left)

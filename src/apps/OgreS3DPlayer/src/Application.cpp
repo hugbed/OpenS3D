@@ -29,7 +29,7 @@ Application::Application()
           "../media/materials/textures/current-right.yuv")) {}
 
 //-------------------------------------------------------------------------------------
-Application::~Application() {}
+Application::~Application() = default;
 
 bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   for (auto& listeners : m_frameListeners)
@@ -45,8 +45,8 @@ void Application::createScene() {
   createVideoPlane(m_videoTextures.first, "_plane");
   createVideoPlane(m_videoTextures.second, "_plane2");
 
-  // should delete this, this is only a test
-  VideoCaptureDevice* captureDevice = new FileVideoCaptureDevice(
+  // should delete this pointer, this is only a test
+  auto captureDevice = new FileVideoCaptureDevice(
       std::string("/home/jon/Videos/current-left.yuv"));
   auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
       std::make_unique<TextureUpdateClient>(m_videoTextures.first.get(),

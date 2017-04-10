@@ -23,7 +23,7 @@ class PointCloudMesh {
   void updateVertexPositions(int size, const std::vector<float>& points);
 
   /// Update vertex colours
-  void updateVertexColours(int size, const std::vector<float>& colors);
+  void updateVertexColors(int size, const std::vector<float> &colors);
 
   virtual ~PointCloudMesh();
 

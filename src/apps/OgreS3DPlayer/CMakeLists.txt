@@ -77,8 +77,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POS
  
 target_link_libraries(${PROJECT_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES} ${Boost_LIBRARIES} -pthread s3d)
 
-target_add_clang_tidy(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/src" "${HDRS};${SRCS}")
-
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)

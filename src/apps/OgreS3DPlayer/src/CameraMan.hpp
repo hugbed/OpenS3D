@@ -22,7 +22,7 @@ enum CameraStyle  // enumerator values for different styles of camera movement
 class CameraMan {
  public:
   explicit CameraMan(Ogre::Camera* cam);
-  virtual ~CameraMan();
+  virtual ~CameraMan() = default;
 
   /*-----------------------------------------------------------------------------
   | Swaps the camera on our camera man for another camera.

@@ -1,5 +1,5 @@
-#ifndef S3D_UTILITIES_YUV_H
-#define S3D_UTILITIES_YUV_H
+#ifndef S3D_VIDEO_COMPRESSION_YUV_H
+#define S3D_VIDEO_COMPRESSION_YUV_H
 
 #include "s3d/utilities/math.h"
 
@@ -123,4 +123,4 @@ void yuv_to_rgb(InputIt first, InputIt last, OutputIt d_first) {
 }  // namespace compression
 }  // namespace s3d
 
-#endif  // S3D_UTILITIES_YUV_H
+#endif  // S3D_VIDEO_COMPRESSION_YUV_H

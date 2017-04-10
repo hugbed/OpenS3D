@@ -15,6 +15,5 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_add_clang_tidy(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/include/" "${SRC_FILES}")
 
 # ${OpenCV_INCLUDE_DIRS};/usr/include/c++/5.4.0"
