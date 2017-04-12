@@ -1,7 +1,8 @@
-#ifndef OGRE_S3D_PLAYER_CAMERA_MAN_HPP
-#define OGRE_S3D_PLAYER_CAMERA_MAN_HPP
+#ifndef CAMERAMAN_HPP
+#define CAMERAMAN_HPP
 
-#include "Ogre.h"
+#include <Ogre.h>
+#include <OgreVector3.h>
 
 #include <OISEvents.h>
 #include <OISInputManager.h>
@@ -22,7 +23,12 @@ enum CameraStyle  // enumerator values for different styles of camera movement
 class CameraMan {
  public:
   explicit CameraMan(Ogre::Camera* cam);
-  virtual ~CameraMan() = default;
+
+  // rule of five, this class should not be copied
+  CameraMan(const CameraMan&) = delete;
+  CameraMan& operator=(const CameraMan&) = delete;
+  CameraMan(CameraMan&& /*unused*/) noexcept;
+  CameraMan& operator=(CameraMan&& /*unused*/) noexcept;
 
   /*-----------------------------------------------------------------------------
   | Swaps the camera on our camera man for another camera.
@@ -105,21 +111,21 @@ class CameraMan {
 #endif
 
  protected:
-  Ogre::Camera* mCamera;
-  CameraStyle mStyle;
-  Ogre::SceneNode* mTarget;
-  bool mOrbiting;
-  bool mZooming;
-  Ogre::Real mTopSpeed;
-  Ogre::Vector3 mVelocity;
-  bool mGoingForward;
-  bool mGoingBack;
-  bool mGoingLeft;
-  bool mGoingRight;
-  bool mGoingUp;
-  bool mGoingDown;
-  bool mFastMove;
+  Ogre::Camera* mCamera{};
+  CameraStyle mStyle{};
+  Ogre::SceneNode* mTarget{};
+  bool mOrbiting{false};
+  bool mZooming{false};
+  Ogre::Real mTopSpeed{0};
+  Ogre::Vector3 mVelocity{0, 0, 0};
+  bool mGoingForward{false};
+  bool mGoingBack{false};
+  bool mGoingLeft{false};
+  bool mGoingRight{false};
+  bool mGoingUp{false};
+  bool mGoingDown{false};
+  bool mFastMove{false};
 };
 }  // namespace OgreCookies
 
-#endif  // OGRE_S3D_PLAYER_CAMERA_MAN_HPP
+#endif  // CAMERAMAN_HPP

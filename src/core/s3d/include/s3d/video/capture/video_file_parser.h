@@ -5,17 +5,17 @@
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H
 #define S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H
 
+#include "s3d/utilities/rule_of_five.h"
+
 #include <memory>
 #include <string>
 #include <vector>
 
 class VideoCaptureFormat;
 
-class VideoFileParser {
+class VideoFileParser : rule_of_five_interface<VideoFileParser> {
  public:
   explicit VideoFileParser(std::string filePath);
-
-  virtual ~VideoFileParser();
 
   virtual bool Initialize(VideoCaptureFormat* format) = 0;
   virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
@@ -32,7 +32,9 @@ class RawUYVYFileParser : public VideoFileParser {
  public:
   explicit RawUYVYFileParser(std::string filePath);
 
-  ~RawUYVYFileParser() override;
+  gsl::owner<RawUYVYFileParser*> clone() override {
+    return new RawUYVYFileParser(filePath_);
+  }
 
   bool Initialize(VideoCaptureFormat* format) override;
   bool GetNextFrame(std::vector<uint8_t>& frame) override;

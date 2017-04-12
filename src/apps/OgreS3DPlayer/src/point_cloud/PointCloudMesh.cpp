@@ -30,17 +30,17 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
   Ogre::VertexDeclaration* decl = msh->sharedVertexData->vertexDeclaration;
   decl->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
 
-  vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+  vbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
       Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3),
       msh->sharedVertexData->vertexCount,
       Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
   /// Upload the vertex data to the card
-  vbuf->writeData(0, vbuf->getSizeInBytes(), &points[0], true);
+  vbuf_->writeData(0, vbuf_->getSizeInBytes(), &points[0], true);
 
   if (!colors.empty()) {
     // Create 2nd buffer for colors
     decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-    cbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+    cbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
         Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
         msh->sharedVertexData->vertexCount,
         Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
@@ -50,7 +50,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
     std::vector<Ogre::RGBA> colorsRGBA;
     colorsRGBA.resize(numpoints);
 
-    for (int i = 0, k = 0; k < numpoints; i += 3, k++) {
+    for (size_t i = 0, k = 0; k < numpoints; i += 3, k++) {
       // Use render system to convert colour value since colour packing varies
       rs->convertColourValue(
           Ogre::ColourValue(colors[i], colors[i + 1], colors[i + 2]),
@@ -58,16 +58,16 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
     }
 
     // Upload colour data
-    cbuf->writeData(0, cbuf->getSizeInBytes(), &colorsRGBA[0], true);
+    cbuf_->writeData(0, cbuf_->getSizeInBytes(), &colorsRGBA[0], true);
   }
 
   /// Set vertex buffer binding so buffer 0 is bound to our vertex buffer
   Ogre::VertexBufferBinding* bind = msh->sharedVertexData->vertexBufferBinding;
-  bind->setBinding(0, vbuf);
+  bind->setBinding(0, vbuf_);
 
   if (!colors.empty()) {
     // Set colour binding so buffer 1 is bound to colour buffer
-    bind->setBinding(1, cbuf);
+    bind->setBinding(1, cbuf_);
   }
 
   sub->useSharedVertices = true;
@@ -80,32 +80,30 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
   msh->load();
 }
 
-void PointCloudMesh::updateVertexPositions(int size,
-                                           const std::vector<float>& points) {
-  float* pPArray =
-      static_cast<float*>(vbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+void PointCloudMesh::updateVertexPositions(const std::vector<float>& points) {
+  assert(vbuf_->getSizeInBytes() == points.size());
 
-  // std::copy(std::begin(points), std::end(points), std::begin(pPArray));
-  for (int i = 0; i < size * 3; i += 3) {
-    pPArray[i] = points[i];
-    pPArray[i + 1] = points[i + 1];
-    pPArray[i + 2] = points[i + 2];
-  }
-  vbuf->unlock();
+  auto pPArray =
+      static_cast<float*>(vbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+
+  std::copy(std::begin(points), std::end(points), pPArray);
+  //  for (size_t i = 0; i < size * 3; i += 3) {
+  //    pPArray[i] = points[i];
+  //    pPArray[i + 1] = points[i + 1];
+  //    pPArray[i + 2] = points[i + 2];
+  //  }
+  vbuf_->unlock();
 }
 
-void PointCloudMesh::updateVertexColors(int size,
-                                        const std::vector<float>& colors) {
-  float* pCArray =
-      static_cast<float*>(cbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-
-  // std::copy(std::begin(colors), std::end(colors), std::begin(pCArray));
-  for (int i = 0; i < size * 3; i += 3) {
-    pCArray[i] = colors[i];
-    pCArray[i + 1] = colors[i + 1];
-    pCArray[i + 2] = colors[i + 2];
-  }
-  cbuf->unlock();
+void PointCloudMesh::updateVertexColors(const std::vector<float>& colors) {
+  assert(cbuf_->getSizeInBytes() == colors.size());
+  auto pCArray =
+      static_cast<float*>(cbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+  std::copy(std::begin(colors), std::end(colors), pCArray);
+  //  for (size_t i = 0; i < colors.size() * 3; i += 3) {
+  //    pCArray[i] = colors[i];
+  //    pCArray[i + 1] = colors[i + 1];
+  //    pCArray[i + 2] = colors[i + 2];
+  //  }
+  cbuf_->unlock();
 }
-
-PointCloudMesh::~PointCloudMesh() = default;

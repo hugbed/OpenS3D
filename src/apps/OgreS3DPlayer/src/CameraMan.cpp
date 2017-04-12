@@ -3,22 +3,60 @@
 namespace OgreCookies {
 
 //-------------------------------------------------------------------------------------
-CameraMan::CameraMan(Ogre::Camera* cam)
-    : mCamera(nullptr),
-      mTarget(nullptr),
-      mOrbiting(false),
-      mZooming(false),
-      mTopSpeed(0),
-      mVelocity(Ogre::Vector3::ZERO),
-      mGoingForward(false),
-      mGoingBack(false),
-      mGoingLeft(false),
-      mGoingRight(false),
-      mGoingUp(false),
-      mGoingDown(false),
-      mFastMove(false) {
+CameraMan::CameraMan(Ogre::Camera* cam) {
   CameraMan::setCamera(cam);
   CameraMan::setStyle(CS_FREELOOK);
+}
+
+// implement move construction to make it noexcept
+CameraMan::CameraMan(CameraMan&& other) noexcept
+    : mCamera{other.mCamera},
+      mStyle{other.mStyle},
+      mTarget{other.mTarget},
+      mOrbiting{other.mOrbiting},
+      mZooming{other.mZooming},
+      mTopSpeed{other.mTopSpeed},
+      mVelocity{other.mVelocity.x, other.mVelocity.y, other.mVelocity.z},
+      mGoingForward{other.mGoingForward},
+      mGoingBack{other.mGoingBack},
+      mGoingLeft{other.mGoingLeft},
+      mGoingRight{other.mGoingRight},
+      mGoingUp{other.mGoingUp},
+      mGoingDown{other.mGoingDown},
+      mFastMove{other.mFastMove} {
+  other.mCamera = {};
+  other.mStyle = {};
+  other.mTarget = {};
+  other.mOrbiting = {};
+  other.mZooming = {};
+  other.mTopSpeed = {};
+  other.mVelocity = {};
+  other.mGoingForward = {};
+  other.mGoingBack = {};
+  other.mGoingLeft = {};
+  other.mGoingRight = {};
+  other.mGoingUp = {};
+  other.mGoingDown = {};
+  other.mFastMove = {};
+}
+
+// implement move assignment to make it noexcept
+CameraMan& CameraMan::operator=(CameraMan&& other) noexcept {
+  std::swap(mCamera, other.mCamera);
+  std::swap(mStyle, other.mStyle);
+  std::swap(mTarget, other.mTarget);
+  std::swap(mOrbiting, other.mOrbiting);
+  std::swap(mZooming, other.mZooming);
+  std::swap(mTopSpeed, other.mTopSpeed);
+  std::swap(mVelocity, other.mVelocity);
+  std::swap(mGoingForward, other.mGoingForward);
+  std::swap(mGoingBack, other.mGoingBack);
+  std::swap(mGoingLeft, other.mGoingLeft);
+  std::swap(mGoingRight, other.mGoingRight);
+  std::swap(mGoingUp, other.mGoingUp);
+  std::swap(mGoingDown, other.mGoingDown);
+  std::swap(mFastMove, other.mFastMove);
+  return *this;
 }
 
 /*-----------------------------------------------------------------------------
@@ -237,14 +275,13 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
       mCamera->moveRelative(Ogre::Vector3(0, 0, dist));
 
       // don't let the camera go over the top or around the bottom of the target
-    } else if (mZooming)  // move the camera toward or away from the target
-    {
+    } else if (mZooming) {
+      // move the camera toward or away from the target
       // the further the camera is, the faster it moves
       mCamera->moveRelative(
           Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
-    } else if (evt.state.Z.rel !=
-               0)  // move the camera toward or away from the target
-    {
+    } else if (evt.state.Z.rel != 0) {
+      // move the camera toward or away from the target
       // the further the camera is, the faster it moves
       mCamera->moveRelative(
           Ogre::Vector3(0, 0, -evt.state.Z.rel * 0.0008f * dist));

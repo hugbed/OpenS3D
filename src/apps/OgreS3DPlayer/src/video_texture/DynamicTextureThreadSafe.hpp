@@ -2,8 +2,8 @@
 // Created by jon on 18/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
-#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
+#ifndef VIDEO_TEXTURE_DYNAMICTEXTURETHREADSAFE_H
+#define VIDEO_TEXTURE_DYNAMICTEXTURETHREADSAFE_H
 
 #include "DynamicTexture.hpp"
 
@@ -20,8 +20,6 @@ class DynamicTextureThreadSafe : public DynamicTexture,
                            ushort imgHeight,
                            float timePerFrame)
       : DynamicTexture(textureName, format, imgWidth, imgHeight),
-        m_frameMutex{},
-        m_nextFrame{},
         m_frameReady{false},
         m_secPerFrame(timePerFrame),
         m_timeSinceLastUpdate{} {
@@ -58,4 +56,4 @@ class DynamicTextureThreadSafe : public DynamicTexture,
   float m_timeSinceLastUpdate;
 };
 
-#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_DYNAMIC_TEXTURE_THREAD_SAFE_H
+#endif  // VIDEO_TEXTURE_DYNAMICTEXTURETHREADSAFE_H

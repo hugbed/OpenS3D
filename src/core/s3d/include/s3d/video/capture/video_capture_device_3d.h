@@ -9,12 +9,10 @@
 
 #include <cstdint>
 
-class VideoCaptureDevice3D {
+class VideoCaptureDevice3D : rule_of_five_interface<VideoCaptureDevice3D> {
  public:
-  class Client {
+  class Client : rule_of_five_interface<VideoCaptureDevice3D::Client> {
    public:
-    virtual ~Client() = default;
-
     virtual void OnIncomingCapturedData(
         const std::vector<uint8_t>& leftImage,
         const std::vector<uint8_t>& rightImage,
@@ -24,8 +22,6 @@ class VideoCaptureDevice3D {
     virtual void OnLog(const std::string& message) = 0;
     virtual void OnStarted() = 0;
   };
-
-  virtual ~VideoCaptureDevice3D() = default;
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,
                                 std::unique_ptr<Client> client) = 0;

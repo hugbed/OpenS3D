@@ -15,8 +15,8 @@ class DisparitiesSparse : public Disparities {
  public:
   using DisparityPoints = std::vector<DisparityPoint>;
 
-  DisparitiesSparse(const DisparityPoints& disparities, ImageSize imageSize)
-      : disparities_(disparities),
+  DisparitiesSparse(DisparityPoints disparities, ImageSize imageSize)
+      : disparities_(std::move(disparities)),
         disparityMap_(cv::Mat::zeros(static_cast<int>(imageSize.rows),
                                      static_cast<int>(imageSize.cols),
                                      CV_8U)) {}

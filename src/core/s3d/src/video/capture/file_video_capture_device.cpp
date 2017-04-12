@@ -24,9 +24,8 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
 FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
     : filePath_(std::move(filePath)), stopCaptureFlag_(false) {}
 
-FileVideoCaptureDevice::~FileVideoCaptureDevice() {
-  // check that thread is not still runing
-}
+// todo(hugbed): check that thread is not still runing
+// FileVideoCaptureDevice::~FileVideoCaptureDevice()  = default;
 
 void FileVideoCaptureDevice::AllocateAndStart(
     const VideoCaptureFormat& /*format*/,

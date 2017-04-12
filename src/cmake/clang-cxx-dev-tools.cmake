@@ -22,14 +22,22 @@ if(CLANG_FORMAT)
     )
 endif()
 
+## Why some checks are removed
+#
+# -clang-analyzer-alpha*        : until more stable
+# -google-runtime-references*   : there are a lot of output by reference that will remain this way for now
+# -modernize-pass-by-value*     : false positives for trivially copiable types.
+#                                 Can be re-enabled to look for true positives
+
 find_program(CLANG_TIDY "clang-tidy")
 # Adding clang-tidy target if executable is found
 if(CLANG_TIDY)
     add_custom_target(
         clang-tidy
         COMMAND ${CMAKE_SOURCE_DIR}/scripts/run-clang-tidy.py
-        -checks='*,-clang-analyzer-alpha*'
-        -header-filter='OpenS3D/src/.*'
+#        -clang-tidy-binary='/home/jon/Downloads/clang-4.0/bin/clang-tidy'
+        -checks='*,-clang-analyzer-alpha*,-google-runtime-references*,-modernize-pass-by-value*'
+        -header-filter='\(${CMAKE_SOURCE_DIR}/core/.*|${CMAKE_SOURCE_DIR}/apps/.*\)'
         -p='${CMAKE_BINARY_DIR}'
         -j='4'
     )

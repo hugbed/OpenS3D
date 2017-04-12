@@ -2,8 +2,8 @@
 // Created by jon on 23/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
-#define OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
+#ifndef VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H
+#define VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H
 
 #include "DynamicTextureThreadSafe.hpp"
 
@@ -13,13 +13,18 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
  public:
   using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
+  gsl::owner<VideoCaptureDevice3D::Client*> clone() override {
+    return new TextureUpdateClient(videoTexture, videoTextureR);
+  }
+
   TextureUpdateClient(DynamicTextureThreadSafe* videoTexture,
                       DynamicTextureThreadSafe* videoTextureR)
       : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
 
-  void OnIncomingCapturedData(const std::vector<uint8_t>& leftImage,
-                              const std::vector<uint8_t>& rightImage,
-                              const VideoCaptureFormat& frameFormat) override {
+  void OnIncomingCapturedData(
+      const std::vector<uint8_t>& leftImage,
+      const std::vector<uint8_t>& rightImage,
+      const VideoCaptureFormat& /*frameFormat*/) override {
     //    auto now = std::chrono::high_resolution_clock::now();
     //    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
     //                     now - lastTimeMesure)
@@ -40,4 +45,4 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
   DynamicTextureThreadSafe* videoTextureR;
 };
 
-#endif  // OGRE_S3D_PLAYER_VIDEO_TEXTURE_TEXTURE_UPDATE_MANAGER_H
+#endif  // VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H

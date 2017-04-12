@@ -23,10 +23,8 @@ class ProducerBarrierSync {
                       std::condition_variable* shouldConsumeCV)
       : doneProducingCondition_{false},
         doneConsumingCondition_{false},
-        shouldProduceCV_{},
         shouldConsumeCV_{shouldConsumeCV},
-        doneProducingMutex_{doneProducingMutex},
-        doneConsumingMutex_{} {}
+        doneProducingMutex_{doneProducingMutex} {}
 
   virtual const T& getProduct() = 0;
 
@@ -69,9 +67,9 @@ class ProducerBarrierSync {
   void waitUntilProductIsConsumed() {
     // wait until doneConsuming
     std::unique_lock<std::mutex> lk(doneConsumingMutex_);
-    while (!(doneConsumingCondition_))
+    while (!(doneConsumingCondition_)) {
       shouldProduceCV_.wait(lk, [this] { return doneConsumingCondition_; });
-
+    }
     // we acknowledged it, set it back to default state
     doneConsumingCondition_ = false;
   }

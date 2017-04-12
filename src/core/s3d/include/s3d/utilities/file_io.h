@@ -52,7 +52,7 @@ std::vector<uint8_t> load_n_bytes(const std::string& filename, Size_t n) {
 
 class ifchunkstream {
  public:
-  ifchunkstream(std::string filename, size_t chunkSize)
+  ifchunkstream(const std::string& filename, size_t chunkSize)
       : stream_{filename, std::ios::binary}, chunkSize_{chunkSize} {}
 
   friend ifchunkstream& operator>>(ifchunkstream& input,
@@ -61,7 +61,7 @@ class ifchunkstream {
     return input;
   }
 
-  operator bool() const { return stream_.eof(); }
+  explicit operator bool() const { return stream_.eof(); }
 
   // private:
   void push_back_chunk(std::vector<uint8_t>& v) {

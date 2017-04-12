@@ -27,7 +27,7 @@ struct PixelPos {
 
 struct DisparityPoint {
   DisparityPoint(PixelPos leftLoc, PixelPos disparityValue)
-      : leftPos(std::move(leftLoc)), disparity(std::move(disparityValue)) {}
+      : leftPos(leftLoc), disparity(disparityValue) {}
 
   PixelPos leftPos{};
   PixelPos disparity{};

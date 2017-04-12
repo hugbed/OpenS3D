@@ -5,10 +5,10 @@
 #ifndef S3D_UTILITIES_STRINGS_H
 #define S3D_UTILITIES_STRINGS_H
 
-#include <string>
-#include <sstream>
-#include <vector>
 #include <iterator>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace s3d {
 

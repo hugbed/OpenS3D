@@ -1,5 +1,5 @@
-#ifndef OGRE_S3D_PLAYER_APPLICATION_HPP
-#define OGRE_S3D_PLAYER_APPLICATION_HPP
+#ifndef APPLICATION_HPP
+#define APPLICATION_HPP
 
 #include "BaseApplication.hpp"
 
@@ -13,7 +13,7 @@ class Application : public BaseApplication {
   ~Application() override;
 
  protected:
-  bool frameRenderingQueued(const Ogre::FrameEvent&) override;
+  bool frameRenderingQueued(const Ogre::FrameEvent& /*evt*/) override;
 
   void createScene() override;
 
@@ -46,4 +46,4 @@ class Application : public BaseApplication {
   std::vector<Ogre::FrameListener*> m_frameListeners;
 };
 
-#endif  // OGRE_S3D_PLAYER_APPLICATION_HPP
+#endif  // APPLICATION_HPP

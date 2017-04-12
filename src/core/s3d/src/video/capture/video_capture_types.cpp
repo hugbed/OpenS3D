@@ -4,8 +4,7 @@
 #include <algorithm>
 
 VideoCaptureFormat::VideoCaptureFormat()
-    : frameSize{},
-      frameRate{0.0f},
+    : frameRate{0.0f},
       pixelFormat{VideoPixelFormat::UNKNOWN},
       stereo3D{false} {}
 

@@ -2,10 +2,9 @@
 // Created by jon on 11/04/17.
 //
 
-#include <s3d/video/capture/video_file_parser.h>
 #include "s3d/utilities/concurrency/consumer_barrier_sync.h"
 #include "s3d/utilities/file_io.h"
-#include "s3d/utilities/strings_util.h"
+#include "s3d/utilities/strings.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 #include "s3d/video/capture/video_file_parser.h"
 #include "s3d/video/compression/yuv.h"
@@ -77,7 +76,7 @@ class RawUYVY3DFileParserConsumer
                               VideoCaptureFormat outputFormat,
                               std::mutex* doneProducingMutex,
                               std::condition_variable* shouldConsumeCV,
-                              const Producers producers)
+                              const Producers& producers)
       : ConsumerBarrierSync(doneProducingMutex, shouldConsumeCV, producers),
         format_(outputFormat),
         delayBetweenFrames(1.0f / outputFormat.frameRate),
@@ -107,7 +106,8 @@ class RawUYVY3DFileParserConsumer
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 
-FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(std::string filePathsStr)
+FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(
+    const std::string& filePathsStr)
     : stopCaptureFlag_(false) {
   std::vector<std::string> filePaths;
   s3d::split(filePathsStr, ';', std::back_inserter(filePaths));
@@ -117,10 +117,6 @@ FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(std::string filePathsStr)
   } else {
     // todo: oh oh
   }
-}
-
-FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() {
-  // check that thread is not still running
 }
 
 void FileVideoCaptureDevice3D::AllocateAndStart(
@@ -144,8 +140,7 @@ void FileVideoCaptureDevice3D::AllocateAndStart(
     // start thread for each producer
     std::vector<std::thread> producerThreads;
     for (auto& producer : producers) {
-      producerThreads.push_back(
-          std::thread([&producer] { producer->startProducing(); }));
+      producerThreads.emplace_back([&producer] { producer->startProducing(); });
     }
 
     VideoCaptureFormat outputFormat(fileFormat.frameSize, fileFormat.frameRate,

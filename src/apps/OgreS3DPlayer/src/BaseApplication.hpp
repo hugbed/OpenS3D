@@ -1,5 +1,5 @@
-#ifndef OGRE_S3D_PLAYER_BASE_APPLICATION_HPP
-#define OGRE_S3D_PLAYER_BASE_APPLICATION_HPP
+#ifndef BASEAPPLICATION_HPP
+#define BASEAPPLICATION_HPP
 
 #include <OgreCamera.h>
 #include <OgreConfigFile.h>
@@ -25,7 +25,13 @@ class BaseApplication : public Ogre::WindowEventListener,
                         public OIS::MouseListener {
  public:
   BaseApplication();
-  virtual ~BaseApplication();
+  ~BaseApplication() override;
+
+  // rule of five, not logical for this class to be copied or moved
+  BaseApplication(const BaseApplication&) = delete;
+  BaseApplication& operator=(const BaseApplication&) = delete;
+  BaseApplication(BaseApplication&& /*unused*/) = delete;
+  BaseApplication& operator=(BaseApplication&& /*unused*/) = delete;
 
   virtual void run();
 
@@ -43,43 +49,47 @@ class BaseApplication : public Ogre::WindowEventListener,
   virtual void loadResources();
 
   // Ogre::FrameListener
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent&);
+  bool frameRenderingQueued(const Ogre::FrameEvent& /*evt*/) override;
 
   // OIS::KeyListener
-  virtual bool keyPressed(const OIS::KeyEvent&);
-  virtual bool keyReleased(const OIS::KeyEvent&);
+  bool keyPressed(const OIS::KeyEvent& /*arg*/) override;
+  bool keyReleased(const OIS::KeyEvent& /*arg*/) override;
   // OIS::MouseListener
-  virtual bool mouseMoved(const OIS::MouseEvent&);
-  virtual bool mousePressed(const OIS::MouseEvent&, OIS::MouseButtonID);
-  virtual bool mouseReleased(const OIS::MouseEvent&, OIS::MouseButtonID);
+  bool mouseMoved(const OIS::MouseEvent& /*arg*/) override;
+  bool mousePressed(const OIS::MouseEvent& /*arg*/,
+                    OIS::MouseButtonID /*id*/) override;
+  bool mouseReleased(const OIS::MouseEvent& /*arg*/,
+                     OIS::MouseButtonID /*id*/) override;
 
   // Ogre::WindowEventListener
-  virtual void windowResized(Ogre::RenderWindow*);  // Adjust mouse clipping
-                                                    // area
-  virtual void windowClosed(Ogre::RenderWindow*);  // Unattach OIS before window
-                                                   // shutdown (very important
-                                                   // under Linux)
+  void windowResized(
+      Ogre::RenderWindow* /*rw*/) override;  // Adjust mouse clipping
+                                             // area
+  void windowClosed(
+      Ogre::RenderWindow* /*rw*/) override;  // Unattach OIS before window
+                                             // shutdown (very important
+                                             // under Linux)
 
   std::unique_ptr<Ogre::FileSystemLayer, void (*)(Ogre::FileSystemLayer*)>
       mFSLayer;  // File system abstraction layer
-  Ogre::String mResourcesCfg;
-  Ogre::String mPluginsCfg;
+  Ogre::String mResourcesCfg{Ogre::BLANKSTRING};
+  Ogre::String mPluginsCfg{Ogre::BLANKSTRING};
 
   std::unique_ptr<Ogre::Root> mRoot;
-  Ogre::Camera* mCamera;
-  Ogre::SceneManager* mSceneMgr;
-  Ogre::RenderWindow* mWindow;
-  char mPolygonRenderingMode;
-  bool mShutDown;
+  Ogre::Camera* mCamera{};
+  Ogre::SceneManager* mSceneMgr{};
+  Ogre::RenderWindow* mWindow{};
+  char mPolygonRenderingMode{'B'};
+  bool mShutDown{false};
 
   // OIS Input devices
-  OIS::InputManager* mInputManager;
-  OIS::Mouse* mMouse;
-  OIS::Keyboard* mKeyboard;
+  OIS::InputManager* mInputManager{};
+  OIS::Mouse* mMouse{};
+  OIS::Keyboard* mKeyboard{};
 
   // OgreCookies
   std::unique_ptr<OgreCookies::CameraMan>
       mCameraMan;  // basic camera controller
 };
 
-#endif  // OGRE_S3D_PLAYER_BASE_APPLICATION_HPP
+#endif  // BASEAPPLICATION_HPP

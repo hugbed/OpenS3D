@@ -6,19 +6,7 @@ BaseApplication::BaseApplication()
                           Ogre::MEMCATEGORY_GENERAL)(OGRE_VERSION_NAME),
                [](Ogre::FileSystemLayer* fsl) {
                  OGRE_DELETE_T(fsl, FileSystemLayer, Ogre::MEMCATEGORY_GENERAL);
-               }),
-      mRoot{},
-      mCamera(nullptr),
-      mSceneMgr(nullptr),
-      mWindow(nullptr),
-      mResourcesCfg(Ogre::BLANKSTRING),
-      mPluginsCfg(Ogre::BLANKSTRING),
-      mPolygonRenderingMode('B'),
-      mShutDown(false),
-      mInputManager(nullptr),
-      mMouse(nullptr),
-      mKeyboard(nullptr),
-      mCameraMan{} {}
+               }) {}
 
 //-------------------------------------------------------------------------------------
 BaseApplication::~BaseApplication() {

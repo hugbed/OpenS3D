@@ -17,13 +17,14 @@ class DisparitiesDense : public Disparities {
   DisparitiesDense(Image disparityMap,
                    DisparityPoint minDisparity,
                    DisparityPoint maxDisparity)
-      : disparityMap_(disparityMap),
-        min_(std::move(minDisparity)),
-        max_(std::move(maxDisparity)) {}
+      : disparityMap_(std::move(disparityMap)),
+        min_(minDisparity),
+        max_(maxDisparity) {}
 
-  virtual const std::vector<DisparityPoint>& getDisparities() override {
-    if (disparities_.size() > 0)
+  const std::vector<DisparityPoint>& getDisparities() override {
+    if (!disparities_.empty()) {
       return disparities_;
+    }
     for (int i = 0; i < disparityMap_.mat.rows; ++i) {
       for (int j = 0; j < disparityMap_.mat.cols; ++j) {
         auto dx = disparityMap_.mat.at<uint8_t>(i, j);
@@ -33,11 +34,11 @@ class DisparitiesDense : public Disparities {
     return disparities_;
   }
 
-  virtual Image getDisparityMap() override { return disparityMap_; }
+  Image getDisparityMap() override { return disparityMap_; }
 
-  virtual DisparityPoint max() override { return max_; }
+  DisparityPoint max() override { return max_; }
 
-  virtual DisparityPoint min() override { return min_; }
+  DisparityPoint min() override { return min_; }
 
  private:
   Image disparityMap_;

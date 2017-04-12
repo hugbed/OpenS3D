@@ -2,8 +2,8 @@
 // Created by jon on 29/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H
-#define OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H
+#ifndef POINT_CLOUD_POINTCLOUDMESH_H
+#define POINT_CLOUD_POINTCLOUDMESH_H
 
 #include <OgreHardwareVertexBuffer.h>
 
@@ -20,17 +20,14 @@ class PointCloudMesh {
                  const std::vector<float>& colors);
 
   /// Update a created pointcloud with size points.
-  void updateVertexPositions(int size, const std::vector<float>& points);
+  void updateVertexPositions(const std::vector<float>& points);
 
   /// Update vertex colours
-  void updateVertexColors(int size, const std::vector<float>& colors);
-
-  virtual ~PointCloudMesh();
+  void updateVertexColors(const std::vector<float>& colors);
 
  private:
-  int mSize;
-  Ogre::HardwareVertexBufferSharedPtr vbuf;
-  Ogre::HardwareVertexBufferSharedPtr cbuf;
+  Ogre::HardwareVertexBufferSharedPtr vbuf_;
+  Ogre::HardwareVertexBufferSharedPtr cbuf_;
 };
 
-#endif  // OGRE_S3D_PLAYER_POINT_CLOUD_POINT_CLOUD_MESH_H
+#endif  // POINT_CLOUD_POINTCLOUDMESH_H

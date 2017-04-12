@@ -20,10 +20,10 @@ class ConsumerBarrierSync {
 
   ConsumerBarrierSync(std::mutex* doneProducingMutex,
                       std::condition_variable* shouldConsumeCV,
-                      const Producers& producers)
+                      Producers producers)
       : doneProducingMutex_(doneProducingMutex),
         shouldConsumeCV_(shouldConsumeCV),
-        producers_(producers) {}
+        producers_(std::move(producers)) {}
 
   void startConsuming() {
     while (!shouldStopConsuming()) {
@@ -58,8 +58,9 @@ class ConsumerBarrierSync {
     }
 
     // acknowledge done producing, set it back to default state
-    for (auto& producer : producers_)
+    for (auto& producer : producers_) {
       producer->acknowledgeDoneProducing();
+    }
   }
 
   void notifyShouldProduce() {

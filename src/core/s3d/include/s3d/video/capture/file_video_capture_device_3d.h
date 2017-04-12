@@ -10,18 +10,17 @@
 #include <atomic>
 #include <utility>
 
-namespace std {
-class thread;
-}
-
 class RawUYVY3DFileParserProducer;
 class RawUYVY3DFileParserConsumer;
 
 class FileVideoCaptureDevice3D : public VideoCaptureDevice3D {
  public:
-  explicit FileVideoCaptureDevice3D(std::string filePathsStr);
+  gsl::owner<FileVideoCaptureDevice3D*> clone() override {
+    auto& combinedPath = filePaths_.first.append(filePaths_.second);
+    return new FileVideoCaptureDevice3D(combinedPath);
+  }
 
-  ~FileVideoCaptureDevice3D() override;
+  explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
 
   void AllocateAndStart(const VideoCaptureFormat& format,
                         std::unique_ptr<Client> client) override;

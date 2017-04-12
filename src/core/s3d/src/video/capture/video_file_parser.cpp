@@ -1,11 +1,10 @@
 //
 // Created by jon on 11/04/17.
 //
-
+#include "s3d/utilities/file_io.h"
 #include "s3d/video/capture/video_capture_types.h"
 #include "s3d/video/capture/video_file_parser.h"
 #include "s3d/video/compression/yuv.h"
-#include "s3d/utilities/file_io.h"
 #include "s3d/video/video_frame.h"
 
 VideoFileParser::VideoFileParser(std::string filePath)
@@ -14,12 +13,8 @@ VideoFileParser::VideoFileParser(std::string filePath)
       currentByteIndex_{},
       firstFrameIndex_{} {}
 
-VideoFileParser::~VideoFileParser() = default;
-
 RawUYVYFileParser::RawUYVYFileParser(std::string filePath)
     : VideoFileParser(std::move(filePath)) {}
-
-RawUYVYFileParser::~RawUYVYFileParser() = default;
 
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
   format->frameRate = 1.0f / 30.0f;

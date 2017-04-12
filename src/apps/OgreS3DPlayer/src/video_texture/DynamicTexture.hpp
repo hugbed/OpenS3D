@@ -2,8 +2,8 @@
 // Created by jon on 18/03/17.
 //
 
-#ifndef OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H
-#define OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H
+#ifndef VIDEO_TEXTURE_DYNAMICTEXTURE_H
+#define VIDEO_TEXTURE_DYNAMICTEXTURE_H
 
 #include <Ogre.h>
 
@@ -11,11 +11,11 @@
 
 class DynamicTexture {
  public:
-  DynamicTexture(const std::string& textureName,
+  DynamicTexture(std::string textureName,
                  Ogre::PixelFormat format,
                  ushort imgWidth,
                  ushort imgHeight)
-      : m_textureName{textureName} {
+      : m_textureName{std::move(textureName)} {
     m_pDynamicTexture = Ogre::TextureManager::getSingleton().createManual(
         m_textureName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
         Ogre::TEX_TYPE_2D, imgWidth, imgHeight,  // w, h
@@ -68,4 +68,4 @@ class DynamicTexture {
   Ogre::SharedPtr<Ogre::Texture> m_pDynamicTexture;
 };
 
-#endif  // OGRE_S3D_PLAYER_OGRE_SAMPLE_DYNAMIC_TEXTURE_H
+#endif  // VIDEO_TEXTURE_DYNAMICTEXTURE_H
