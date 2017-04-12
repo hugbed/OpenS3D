@@ -8,7 +8,6 @@
 #include "DynamicTexture.hpp"
 
 #include <atomic>
-#include <chrono>
 #include <mutex>
 
 // DynamicTexture with frame rate checks and thread safe texture update

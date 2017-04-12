@@ -31,6 +31,7 @@ class ProducerBarrierSync {
   virtual const T& getProduct() = 0;
 
   void startProducing() {
+    onStartProducing();
     while (!shouldStopProducing()) {
       waitUntilProductIsConsumed();
       produce();
@@ -55,6 +56,7 @@ class ProducerBarrierSync {
 
  private:
   virtual void produce() = 0;  // where the work happens : set product
+  virtual void onStartProducing() {}
 
   void notifyDoneProducing() {
     {

@@ -1,39 +1,25 @@
 #include "Application.hpp"
-#include "video_texture/DynamicTexture.hpp"
-
-#include <OISException.h>
-#include <OgreCamera.h>
-#include <OgreColourValue.h>
-#include <OgreException.h>
-#include <OgreRenderWindow.h>
-#include <OgreRoot.h>
-#include <OgreSceneManager.h>
-#include <OgreViewport.h>
-
-#include "video_texture/DynamicTextureThreadSafe.hpp"
-#include <OgreRectangle2D.h>
 
 #include "point_cloud/PointCloudMesh.hpp"
-#include "video_texture/IfYUVToRGBProducer.hpp"
-#include "video_texture/S3DVideoRGBConsumer.hpp"
-#include "video_texture/TextureUpdateManager.hpp"
+#include "video_texture/DynamicTexture.hpp"
+#include "video_texture/DynamicTextureThreadSafe.hpp"
+#include "video_texture/TextureUpdateClient.hpp"
 
-#include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/file_video_capture_device_3d.h"
 
-#include <future>
-
-//-------------------------------------------------------------------------------------
-Application::Application()
-    : m_textureUpdateManager(std::make_unique<YUVFileTextureUpdateManager>(
-          "../media/materials/textures/current-left.yuv",
-          "../media/materials/textures/current-right.yuv")) {}
+#include <OgreRectangle2D.h>
 
 //-------------------------------------------------------------------------------------
+
+Application::Application() = default;
 Application::~Application() = default;
 
+//-------------------------------------------------------------------------------------
+
 bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
-  for (auto& listeners : m_frameListeners)
+  for (auto& listeners : m_frameListeners) {
     listeners->frameRenderingQueued(evt);
+  }
   return BaseApplication::frameRenderingQueued(evt);
 }
 
@@ -46,18 +32,15 @@ void Application::createScene() {
   createVideoPlane(m_videoTextures.second, "_plane2");
 
   // should delete this pointer, this is only a test
-  auto captureDevice = new FileVideoCaptureDevice(
-      std::string("/home/jon/Videos/current-left.yuv"));
-  auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+  auto captureDevice = new FileVideoCaptureDevice3D(
+      "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv");
+
+  auto captureClient = std::unique_ptr<VideoCaptureDevice3D::Client>(
       std::make_unique<TextureUpdateClient>(m_videoTextures.first.get(),
                                             m_videoTextures.second.get()));
 
   VideoCaptureFormat format;
   captureDevice->AllocateAndStart(format, std::move(captureClient));
-
-  // start texture update thread or something
-  //  m_textureUpdateManager->handleTextureUpdate(m_videoTextures.first.get(),
-  //                                              m_videoTextures.second.get());
 
   addLights();
   createGroundPlane();
@@ -171,28 +154,31 @@ void Application::createVideoPlane(
 void Application::createPointCloud() {
   // try to create a 16x9 point cloud with 1920x1080 resolution
   // naive version, just to test the point cloud
-  const auto rW = 1.6f, rH = 0.9f, iW = 1920.0f, iH = 1080.0f;
-  std::vector<float> points, colors;
+  constexpr auto rectangleW = 1.6f, rectangleH = 0.9f;
+  constexpr auto imageWidth = 1920, imageHeight = 1080;
+  constexpr auto worldPixelHeight = rectangleH / imageHeight;
+  constexpr auto worldPixelWidth = rectangleW / imageWidth;
+  constexpr auto jOffset = -imageWidth / 2.0f * worldPixelWidth;
+  constexpr auto iOffset = -imageHeight / 2.0f * worldPixelHeight;
+  constexpr auto samplingRatio = 10;
 
-  auto worldPixelHeight = rH / iH;
-  auto worldPixelWidth = rW / iW;
-
-  for (auto i = -1080.0f / 2.0f + worldPixelHeight;
-       i < 1080.0f / 2.0f - worldPixelHeight; i += 8) {
-    auto posI = 0.5f * worldPixelHeight + i * worldPixelHeight;
-    for (auto j = -1920.0f / 2.0f + worldPixelWidth;
-         j < 1920.0f / 2.0f - worldPixelWidth; j += 8) {
-      auto posJ = 0.5f * worldPixelWidth + j * worldPixelWidth;
-      points.emplace_back(posJ);
-      points.emplace_back(posI);
+  constexpr auto nbVertices = imageHeight * imageWidth / samplingRatio;
+  std::vector<float> points(static_cast<size_t>(nbVertices)),
+      colors(static_cast<size_t>(nbVertices));
+  for (auto i = 0; i < imageHeight; i += samplingRatio) {
+    auto posY = 0.5f * worldPixelHeight + i * worldPixelHeight + iOffset;
+    for (auto j = 0; j < imageWidth; j += samplingRatio) {
+      auto posX = 0.5f * worldPixelWidth + j * worldPixelWidth + jOffset;
+      points.emplace_back(posX);
+      points.emplace_back(posY);
       points.emplace_back(0.0f);
-      colors.emplace_back(posI);  // r
-      colors.emplace_back(posJ);  // g
+      colors.emplace_back(posX);  // r
+      colors.emplace_back(posY);  // g
       colors.emplace_back(0.0f);  // b
     }
   }
 
-  PointCloudMesh* pc = new PointCloudMesh(
+  m_pointCloudMesh = std::make_unique<PointCloudMesh>(
       "greatpointcloud",
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, points, colors);
 

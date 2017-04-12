@@ -3,11 +3,9 @@
 
 #include "BaseApplication.hpp"
 
-#include <thread>
-
 class DynamicTexture;
 class DynamicTextureThreadSafe;
-class TextureUpdateManager;
+class PointCloudMesh;
 
 class Application : public BaseApplication {
  public:
@@ -37,11 +35,12 @@ class Application : public BaseApplication {
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>,
             std::unique_ptr<DynamicTextureThreadSafe>>
       m_videoTextures;
+
   std::pair<std::unique_ptr<Ogre::Rectangle2D>,
             std::unique_ptr<Ogre::Rectangle2D>>
       m_Rectangles;
 
-  std::unique_ptr<TextureUpdateManager> m_textureUpdateManager;
+  std::unique_ptr<PointCloudMesh> m_pointCloudMesh;
 
   // frame request listeners
   std::vector<Ogre::FrameListener*> m_frameListeners;

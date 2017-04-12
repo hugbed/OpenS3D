@@ -1,9 +1,5 @@
 #include "BaseApplication.hpp"
 
-//#include <OgreRoot.h>
-//#include <OgreRenderWindow.h>
-//#include <OIS/OIS.h>
-
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication()
     : mFSLayer(OGRE_NEW_T(Ogre::FileSystemLayer,
@@ -33,7 +29,7 @@ BaseApplication::~BaseApplication() {
   // Remove ourself as a Window listener
   if (mWindow != nullptr) {
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
-    windowClosed(mWindow);
+    BaseApplication::windowClosed(mWindow);
   }
 }
 
@@ -105,9 +101,9 @@ void BaseApplication::createFrameListener() {
 
   mInputManager = OIS::InputManager::createInputSystem(pl);
 
-  mKeyboard = static_cast<OIS::Keyboard*>(
+  mKeyboard = dynamic_cast<OIS::Keyboard*>(
       mInputManager->createInputObject(OIS::OISKeyboard, true));
-  mMouse = static_cast<OIS::Mouse*>(
+  mMouse = dynamic_cast<OIS::Mouse*>(
       mInputManager->createInputObject(OIS::OISMouse, true));
 
   mMouse->setEventCallback(this);

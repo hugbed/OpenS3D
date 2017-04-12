@@ -24,8 +24,9 @@ void push_back_n_bytes(std::istream& stream,
 
 template <class OIt, typename Size_t>
 bool read_n_bytes(std::istream& stream, Size_t n, OIt it) {
-  if (stream.peek() == EOF)
+  if (stream.peek() == EOF || n == 0) {
     return false;
+  }
   std::copy_n(std::istreambuf_iterator<char>{stream}, n, it);
   stream.get();
   return !stream.eof();

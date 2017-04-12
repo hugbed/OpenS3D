@@ -1,0 +1,45 @@
+//
+// Created by jon on 11/04/17.
+//
+
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H
+#define S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H
+
+#include <memory>
+#include <string>
+#include <vector>
+
+class VideoCaptureFormat;
+
+class VideoFileParser {
+ public:
+  explicit VideoFileParser(std::string filePath);
+
+  virtual ~VideoFileParser();
+
+  virtual bool Initialize(VideoCaptureFormat* format) = 0;
+  virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
+
+ protected:
+  std::string filePath_;
+  size_t frameSize_;
+  size_t currentByteIndex_;
+  size_t firstFrameIndex_;
+};
+
+// Reads UYVY, outputs RGB
+class RawUYVYFileParser : public VideoFileParser {
+ public:
+  explicit RawUYVYFileParser(std::string filePath);
+
+  ~RawUYVYFileParser() override;
+
+  bool Initialize(VideoCaptureFormat* format) override;
+  bool GetNextFrame(std::vector<uint8_t>& frame) override;
+
+ private:
+  std::unique_ptr<std::ifstream> fileStream_;
+  std::vector<uint8_t> frameUYVY_;
+};
+
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H

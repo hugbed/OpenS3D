@@ -1,14 +1,13 @@
-#include <iostream>
-
 #include "opencv2/cudafeatures2d.hpp"
 #include "opencv2/cudastereo.hpp"
-#include "s3d/utilities/time.h"
-#include <array>
-
 #include "s3d/disparity/disparity_algorithm_bm.h"
 #include "s3d/disparity/disparity_algorithm_orb.h"
 
-using namespace s3d;
+#include <gsl/gsl>
+
+using s3d::DisparityAlgorithm;
+using s3d::DisparityAlgorithmORB;
+using s3d::Image;
 
 void displayInNewWindow(const std::string& name, cv::InputArray src) {
   cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
@@ -16,20 +15,25 @@ void displayInNewWindow(const std::string& name, cv::InputArray src) {
   cv::waitKey(0);
 }
 
+class BadNumberOfArgumentsException {};
+class FileNotFoundException {};
+
 int main(int argc, char* argv[]) {
-  std::cout << "Hello, World!" << std::endl;
+  auto input_args = gsl::span<char*>(argv, argc);
+  if (input_args.size() == 2) {
+    throw BadNumberOfArgumentsException{};
+  }
 
-  assert(argc == 2);
-
-  auto path_left = std::string(argv[1]);
-  auto path_right = std::string(argv[1]);
+  auto path_left = std::string(input_args[1]);
+  auto path_right = std::string(input_args[1]);
   path_left.append("left.jpg");
   path_right.append("left.jpg");
 
   auto left = cv::imread(path_left, CV_LOAD_IMAGE_GRAYSCALE);
   auto right = cv::imread(path_right, CV_LOAD_IMAGE_GRAYSCALE);
-  assert(left.data);
-  assert(right.data);
+  if (left.data == nullptr || right.data == nullptr) {
+    throw FileNotFoundException{};
+  }
 
   // debugging
   cv::Mat combined(left.rows, left.cols * 2, left.type());

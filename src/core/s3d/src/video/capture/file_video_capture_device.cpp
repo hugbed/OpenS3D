@@ -3,67 +3,8 @@
 //
 
 #include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/video_file_parser.h"
 #include "s3d/utilities/file_io.h"
-
-#include <chrono>
-
-class VideoFileParser {
- public:
-  explicit VideoFileParser(std::string filePath);
-
-  virtual ~VideoFileParser() = default;
-
-  virtual bool Initialize(VideoCaptureFormat* format) = 0;
-  virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
-
- protected:
-  std::string filePath;
-  size_t frameSize;
-  size_t currentByteIndex;
-  size_t firstFrameIndex;
-};
-
-class RawUYVYFileParser : public VideoFileParser {
- public:
-  explicit RawUYVYFileParser(std::string filePath);
-
-  ~RawUYVYFileParser() override = default;
-
-  bool Initialize(VideoCaptureFormat* format) override;
-  bool GetNextFrame(std::vector<uint8_t>& frame) override;
-
- private:
-  std::unique_ptr<std::ifstream> fileStream;
-};
-
-VideoFileParser::VideoFileParser(std::string filePath)
-    : filePath(std::move(filePath)),
-      frameSize{},
-      currentByteIndex{},
-      firstFrameIndex{} {}
-
-RawUYVYFileParser::RawUYVYFileParser(std::string filePath)
-    : VideoFileParser(std::move(filePath)) {}
-
-bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
-  format->frameRate = 1.0f / 30.0f;
-  format->frameSize = Size{1920, 1080};
-  format->pixelFormat = VideoPixelFormat::UYVY;
-
-  fileStream = std::make_unique<std::ifstream>(filePath, std::ios::binary);
-
-  if (!fileStream->is_open()) {
-    return false;
-  }
-
-  frameSize = format->ImageAllocationSize();
-  return true;
-}
-
-bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
-  frame.resize(frameSize);
-  return s3d::file_io::read_n_bytes(*fileStream, frameSize, std::begin(frame));
-}
 
 // static
 std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(

@@ -17,8 +17,8 @@ CameraMan::CameraMan(Ogre::Camera* cam)
       mGoingUp(false),
       mGoingDown(false),
       mFastMove(false) {
-  setCamera(cam);
-  setStyle(CS_FREELOOK);
+  CameraMan::setCamera(cam);
+  CameraMan::setStyle(CS_FREELOOK);
 }
 
 /*-----------------------------------------------------------------------------
@@ -39,7 +39,7 @@ void CameraMan::setTarget(Ogre::SceneNode* target) {
   if (target != mTarget) {
     mTarget = target;
     if (target != nullptr) {
-      setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
+      CameraMan::setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
       mCamera->setAutoTracking(true, mTarget);
     } else {
       mCamera->setAutoTracking(false);
@@ -80,17 +80,18 @@ Ogre::Real CameraMan::getTopSpeed() {
 -----------------------------------------------------------------------------*/
 void CameraMan::setStyle(CameraStyle style) {
   if (mStyle != CS_ORBIT && style == CS_ORBIT) {
-    setTarget(mTarget ? mTarget
-                      : mCamera->getSceneManager()->getRootSceneNode());
+    CameraMan::setTarget(mTarget != nullptr
+                             ? mTarget
+                             : mCamera->getSceneManager()->getRootSceneNode());
     mCamera->setFixedYawAxis(true);
-    manualStop();
-    setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
+    CameraMan::manualStop();
+    CameraMan::setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
   } else if (mStyle != CS_FREELOOK && style == CS_FREELOOK) {
     mCamera->setAutoTracking(false);
     mCamera->setFixedYawAxis(true);
   } else if (mStyle != CS_MANUAL && style == CS_MANUAL) {
     mCamera->setAutoTracking(false);
-    manualStop();
+    CameraMan::manualStop();
   }
   mStyle = style;
 }
@@ -143,7 +144,7 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
       accel.normalise();
       mVelocity += accel * topSpeed * evt.timeSinceLastFrame * 10;
     }
-      // if not accelerating, try to stop in a certain time
+    // if not accelerating, try to stop in a certain time
     else {
       mVelocity -= mVelocity * evt.timeSinceLastFrame * 10;
     }
@@ -154,11 +155,13 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     if (mVelocity.squaredLength() > topSpeed * topSpeed) {
       mVelocity.normalise();
       mVelocity *= topSpeed;
-    } else if (mVelocity.squaredLength() < tooSmall * tooSmall)
+    } else if (mVelocity.squaredLength() < tooSmall * tooSmall) {
       mVelocity = Ogre::Vector3::ZERO;
+    }
 
-    if (mVelocity != Ogre::Vector3::ZERO)
+    if (mVelocity != Ogre::Vector3::ZERO) {
       mCamera->move(mVelocity * evt.timeSinceLastFrame);
+    }
   }
 
   return true;
@@ -169,20 +172,21 @@ bool CameraMan::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 -----------------------------------------------------------------------------*/
 void CameraMan::injectKeyDown(const OIS::KeyEvent& evt) {
   if (mStyle == CS_FREELOOK) {
-    if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP)
+    if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP) {
       mGoingForward = true;
-    else if (evt.key == OIS::KC_S || evt.key == OIS::KC_DOWN)
+    } else if (evt.key == OIS::KC_S || evt.key == OIS::KC_DOWN) {
       mGoingBack = true;
-    else if (evt.key == OIS::KC_A || evt.key == OIS::KC_LEFT)
+    } else if (evt.key == OIS::KC_A || evt.key == OIS::KC_LEFT) {
       mGoingLeft = true;
-    else if (evt.key == OIS::KC_D || evt.key == OIS::KC_RIGHT)
+    } else if (evt.key == OIS::KC_D || evt.key == OIS::KC_RIGHT) {
       mGoingRight = true;
-    else if (evt.key == OIS::KC_PGUP)
+    } else if (evt.key == OIS::KC_PGUP) {
       mGoingUp = true;
-    else if (evt.key == OIS::KC_PGDOWN)
+    } else if (evt.key == OIS::KC_PGDOWN) {
       mGoingDown = true;
-    else if (evt.key == OIS::KC_LSHIFT)
+    } else if (evt.key == OIS::KC_LSHIFT) {
       mFastMove = true;
+    }
   }
 }
 
@@ -191,20 +195,21 @@ void CameraMan::injectKeyDown(const OIS::KeyEvent& evt) {
 -----------------------------------------------------------------------------*/
 void CameraMan::injectKeyUp(const OIS::KeyEvent& evt) {
   if (mStyle == CS_FREELOOK) {
-    if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP)
+    if (evt.key == OIS::KC_W || evt.key == OIS::KC_UP) {
       mGoingForward = false;
-    else if (evt.key == OIS::KC_S || evt.key == OIS::KC_DOWN)
+    } else if (evt.key == OIS::KC_S || evt.key == OIS::KC_DOWN) {
       mGoingBack = false;
-    else if (evt.key == OIS::KC_A || evt.key == OIS::KC_LEFT)
+    } else if (evt.key == OIS::KC_A || evt.key == OIS::KC_LEFT) {
       mGoingLeft = false;
-    else if (evt.key == OIS::KC_D || evt.key == OIS::KC_RIGHT)
+    } else if (evt.key == OIS::KC_D || evt.key == OIS::KC_RIGHT) {
       mGoingRight = false;
-    else if (evt.key == OIS::KC_PGUP)
+    } else if (evt.key == OIS::KC_PGUP) {
       mGoingUp = false;
-    else if (evt.key == OIS::KC_PGDOWN)
+    } else if (evt.key == OIS::KC_PGDOWN) {
       mGoingDown = false;
-    else if (evt.key == OIS::KC_LSHIFT)
+    } else if (evt.key == OIS::KC_LSHIFT) {
       mFastMove = false;
+    }
   }
 }
 
@@ -238,7 +243,7 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
       mCamera->moveRelative(
           Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
     } else if (evt.state.Z.rel !=
-        0)  // move the camera toward or away from the target
+               0)  // move the camera toward or away from the target
     {
       // the further the camera is, the faster it moves
       mCamera->moveRelative(
@@ -265,10 +270,11 @@ void CameraMan::injectMouseDown(const OIS::MultiTouchEvent& evt) {
 void CameraMan::injectMouseDown(const OIS::MouseEvent& /*evt*/,
                                 OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
-    if (id == OIS::MB_Left)
+    if (id == OIS::MB_Left) {
       mOrbiting = true;
-    else if (id == OIS::MB_Right)
+    } else if (id == OIS::MB_Right) {
       mZooming = true;
+    }
   }
 }
 #endif
@@ -288,10 +294,11 @@ void CameraMan::injectMouseUp(const OIS::MultiTouchEvent& evt) {
 void CameraMan::injectMouseUp(const OIS::MouseEvent& /*evt*/,
                               OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
-    if (id == OIS::MB_Left)
+    if (id == OIS::MB_Left) {
       mOrbiting = false;
-    else if (id == OIS::MB_Right)
+    } else if (id == OIS::MB_Right) {
       mZooming = false;
+    }
   }
 }
 #endif

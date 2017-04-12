@@ -28,7 +28,9 @@ if(CLANG_TIDY)
     add_custom_target(
         clang-tidy
         COMMAND ${CMAKE_SOURCE_DIR}/scripts/run-clang-tidy.py
-        -checks='*'
+        -checks='*,-clang-analyzer-alpha*'
+        -header-filter='OpenS3D/src/.*'
         -p='${CMAKE_BINARY_DIR}'
+        -j='4'
     )
 endif()

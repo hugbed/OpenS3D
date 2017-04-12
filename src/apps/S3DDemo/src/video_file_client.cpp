@@ -9,8 +9,9 @@
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
-  void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
-                              const VideoCaptureFormat& /*frameFormat*/) override {
+  void OnIncomingCapturedData(
+      const std::vector<uint8_t>& imageBytes,
+      const VideoCaptureFormat& /*frameFormat*/) override {
     std::cout << "received image, size: " << imageBytes.size() << std::endl;
   }
 

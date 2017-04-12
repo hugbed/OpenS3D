@@ -50,7 +50,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
     std::vector<Ogre::RGBA> colorsRGBA;
     colorsRGBA.resize(numpoints);
 
-    for (int i = 0, k = 0; i < numpoints * 3, k < numpoints; i += 3, k++) {
+    for (int i = 0, k = 0; k < numpoints; i += 3, k++) {
       // Use render system to convert colour value since colour packing varies
       rs->convertColourValue(
           Ogre::ColourValue(colors[i], colors[i + 1], colors[i + 2]),
@@ -95,17 +95,17 @@ void PointCloudMesh::updateVertexPositions(int size,
 }
 
 void PointCloudMesh::updateVertexColors(int size,
-                                        const std::vector<float> &colours) {
+                                        const std::vector<float>& colors) {
   float* pCArray =
       static_cast<float*>(cbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
   // std::copy(std::begin(colors), std::end(colors), std::begin(pCArray));
   for (int i = 0; i < size * 3; i += 3) {
-    pCArray[i] = colours[i];
-    pCArray[i + 1] = colours[i + 1];
-    pCArray[i + 2] = colours[i + 2];
+    pCArray[i] = colors[i];
+    pCArray[i + 1] = colors[i + 1];
+    pCArray[i + 2] = colors[i + 2];
   }
   cbuf->unlock();
 }
 
-PointCloudMesh::~PointCloudMesh() {}
+PointCloudMesh::~PointCloudMesh() = default;
