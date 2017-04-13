@@ -4,26 +4,18 @@
 #include <algorithm>
 
 VideoCaptureFormat::VideoCaptureFormat()
-    : frameRate{0.0f},
-      pixelFormat{VideoPixelFormat::UNKNOWN},
-      stereo3D{false} {}
+    : frameRate{0.0f}, pixelFormat{VideoPixelFormat::UNKNOWN}, stereo3D{false} {}
 
 VideoCaptureFormat::VideoCaptureFormat(Size frameSize,
                                        float frameRate,
                                        VideoPixelFormat pixelFormat)
-    : frameSize{frameSize},
-      frameRate{frameRate},
-      pixelFormat{pixelFormat},
-      stereo3D{false} {}
+    : frameSize{frameSize}, frameRate{frameRate}, pixelFormat{pixelFormat}, stereo3D{false} {}
 
 VideoCaptureFormat::VideoCaptureFormat(Size frameSize,
                                        float frameRate,
                                        VideoPixelFormat pixelFormat,
                                        bool stereo3D)
-    : frameSize{frameSize},
-      frameRate{frameRate},
-      pixelFormat{pixelFormat},
-      stereo3D{stereo3D} {}
+    : frameSize{frameSize}, frameRate{frameRate}, pixelFormat{pixelFormat}, stereo3D{stereo3D} {}
 
 size_t VideoCaptureFormat::ImageAllocationSize() const {
   auto sizeInBytes = VideoFrame::AllocationSize(pixelFormat, frameSize);

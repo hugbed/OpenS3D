@@ -20,9 +20,8 @@
 
 namespace s3d {
 
-std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(
-    Image leftImg,
-    Image rightImg) {
+std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image leftImg,
+                                                                      Image rightImg) {
   auto left = leftImg.mat;
   auto right = rightImg.mat;
 
@@ -48,12 +47,9 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(
 
   d_disp.download(disp);
 
-  auto disparities =
-      std::unique_ptr<Disparities>(std::make_unique<DisparitiesDense>(
-          Image(disp), DisparityPoint{PixelPos{minPos.y, minPos.x},
-                                      PixelPos{0, int(minVal)}},
-          DisparityPoint{PixelPos{maxPos.y, maxPos.x},
-                         PixelPos{0, int(maxVal)}}));
+  auto disparities = std::unique_ptr<Disparities>(std::make_unique<DisparitiesDense>(
+      Image(disp), DisparityPoint{PixelPos{minPos.y, minPos.x}, PixelPos{0, int(minVal)}},
+      DisparityPoint{PixelPos{maxPos.y, maxPos.x}, PixelPos{0, int(maxVal)}}));
 
   return disparities;
 }

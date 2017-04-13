@@ -32,13 +32,9 @@ struct DisparityPoint {
   PixelPos leftPos{};
   PixelPos disparity{};
 
-  bool operator<(const DisparityPoint& d2) {
-    return disparity.col < d2.disparity.col;
-  }
+  bool operator<(const DisparityPoint& d2) { return disparity.col < d2.disparity.col; }
 
-  bool operator>(const DisparityPoint& d2) {
-    return disparity.col > d2.disparity.col;
-  }
+  bool operator>(const DisparityPoint& d2) { return disparity.col > d2.disparity.col; }
 };
 
 class Disparities {

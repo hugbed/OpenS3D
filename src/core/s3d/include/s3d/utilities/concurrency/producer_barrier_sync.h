@@ -19,8 +19,7 @@ template <class T>
 class ProducerBarrierSync {
  public:
   ProducerBarrierSync() = delete;
-  ProducerBarrierSync(std::mutex* doneProducingMutex,
-                      std::condition_variable* shouldConsumeCV)
+  ProducerBarrierSync(std::mutex* doneProducingMutex, std::condition_variable* shouldConsumeCV)
       : doneProducingCondition_{false},
         doneConsumingCondition_{false},
         shouldConsumeCV_{shouldConsumeCV},

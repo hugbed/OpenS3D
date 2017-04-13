@@ -1,0 +1,56 @@
+vertex_program Basic_VS glsl
+{
+    // Look in this source file for shader code
+    source Basic.glsl.vert
+}
+
+vertex_program Shift_VS glsl
+{
+    // Look in this source file for shader code
+    source Shift.glsl.vert
+}
+
+fragment_program Anaglyph_PS glsl
+{
+    // Look in this source file for shader code
+    source Anaglyph.glsl.frag
+}
+
+fragment_program Basic_PS glsl
+{
+    // Look in this source file for shader code
+    source Anaglyph.glsl.frag
+}
+
+material Anaglyph
+{
+    // Material has one technique
+    technique
+    {
+        // anaglyph
+        pass
+        {
+            vertex_program_ref Basic_VS
+            {
+                param_named_auto worldViewProj worldviewproj_matrix
+            }
+            // Make this pass use the pixel shader defined above
+            fragment_program_ref Anaglyph_PS
+            {
+                param_named leftEyeTexture int 0
+                param_named rightEyeTexture int 1
+            }
+
+            //texture_unit
+            //{
+                // This pass will use this 2D texture as its input
+            //    texture leftImage.png 2d
+            //}
+            //texture_unit
+            //{
+                // This pass will use this 2D texture as its input
+            //    texture rightImage.png 2d
+            //}
+        }
+    }
+}

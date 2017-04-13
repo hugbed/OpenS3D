@@ -14,13 +14,8 @@
 
 struct VideoCaptureFormat {
   VideoCaptureFormat();
-  VideoCaptureFormat(Size frameSize,
-                     float frameRate,
-                     VideoPixelFormat pixelFormat);
-  VideoCaptureFormat(Size frameSize,
-                     float frameRate,
-                     VideoPixelFormat pixelFormat,
-                     bool stereo3D);
+  VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat);
+  VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat, bool stereo3D);
   size_t ImageAllocationSize() const;
 
   Size frameSize;

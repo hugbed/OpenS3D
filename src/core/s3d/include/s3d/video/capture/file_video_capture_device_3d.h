@@ -22,8 +22,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice3D {
 
   explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
 
-  void AllocateAndStart(const VideoCaptureFormat& format,
-                        std::unique_ptr<Client> client) override;
+  void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
 
   void StopAndDeAllocate() override;
 

@@ -21,18 +21,20 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
                       DynamicTextureThreadSafe* videoTextureR)
       : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
 
-  void OnIncomingCapturedData(
-      const std::vector<uint8_t>& leftImage,
-      const std::vector<uint8_t>& rightImage,
-      const VideoCaptureFormat& /*frameFormat*/) override {
-    //    auto now = std::chrono::high_resolution_clock::now();
-    //    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
-    //                     now - lastTimeMesure)
-    //                     .count()
-    //              << std::endl;
-    //    lastTimeMesure = now;
+  void OnIncomingCapturedData(const std::vector<uint8_t>& leftImage,
+                              const std::vector<uint8_t>& rightImage,
+                              const VideoCaptureFormat& /*frameFormat*/) override {
+    outputPerformanceMetrics(std::cout);
     videoTexture->updateImage(leftImage);
     videoTextureR->updateImage(rightImage);
+  }
+
+  void outputPerformanceMetrics(std::ostream& outStream) {
+    using std::chrono::milliseconds;
+    using std::chrono::duration_cast;
+    auto now = std::chrono::high_resolution_clock::now();
+    outStream << duration_cast<milliseconds>(now - lastTimeMesure).count() << std::endl;
+    lastTimeMesure = now;
   }
 
   void OnError(const std::string& /*unused*/) override {}
@@ -40,7 +42,7 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
   void OnStarted() override {}
 
  private:
-  //  time_point lastTimeMesure;
+  time_point lastTimeMesure;
   DynamicTextureThreadSafe* videoTexture;
   DynamicTextureThreadSafe* videoTextureR;
 };

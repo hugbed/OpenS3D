@@ -11,8 +11,7 @@
 #include <mutex>
 
 // DynamicTexture with frame rate checks and thread safe texture update
-class DynamicTextureThreadSafe : public DynamicTexture,
-                                 public Ogre::FrameListener {
+class DynamicTextureThreadSafe : public DynamicTexture, public Ogre::FrameListener {
  public:
   DynamicTextureThreadSafe(const std::string& textureName,
                            Ogre::PixelFormat format,
@@ -29,8 +28,7 @@ class DynamicTextureThreadSafe : public DynamicTexture,
   void updateImage(const std::vector<uint8_t>& imageBytes) override {
     std::unique_lock<std::mutex> mlock(m_frameMutex);
     assert(imageBytes.size() == m_nextFrame.size());
-    std::copy(std::begin(imageBytes), std::end(imageBytes),
-              std::begin(m_nextFrame));
+    std::copy(std::begin(imageBytes), std::end(imageBytes), std::begin(m_nextFrame));
     m_frameReady = true;
   }
 

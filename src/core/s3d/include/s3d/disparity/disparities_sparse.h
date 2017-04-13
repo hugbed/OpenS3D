@@ -31,8 +31,7 @@ class DisparitiesSparse : public Disparities {
     auto maxVal = max().disparity.col;
 
     // this seems so inefficient
-    for (auto d_it = std::begin(disparities_); d_it != std::end(disparities_);
-         ++d_it) {
+    for (auto d_it = std::begin(disparities_); d_it != std::end(disparities_); ++d_it) {
       auto i = (*d_it).leftPos.row;
       auto j = (*d_it).leftPos.col;
       auto d = (*d_it).disparity.col;

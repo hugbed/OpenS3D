@@ -2,8 +2,7 @@
 
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication()
-    : mFSLayer(OGRE_NEW_T(Ogre::FileSystemLayer,
-                          Ogre::MEMCATEGORY_GENERAL)(OGRE_VERSION_NAME),
+    : mFSLayer(OGRE_NEW_T(Ogre::FileSystemLayer, Ogre::MEMCATEGORY_GENERAL)(OGRE_VERSION_NAME),
                [](Ogre::FileSystemLayer* fsl) {
                  OGRE_DELETE_T(fsl, FileSystemLayer, Ogre::MEMCATEGORY_GENERAL);
                }) {}
@@ -51,8 +50,8 @@ void BaseApplication::createCamera() {
   mCamera->lookAt(Ogre::Vector3(0.0f, 0.5f, 0.0f));
   mCamera->setNearClipDistance(1);
 
-  mCameraMan = std::make_unique<OgreCookies::CameraMan>(
-      mCamera);  // create a default camera controller
+  mCameraMan =
+      std::make_unique<OgreCookies::CameraMan>(mCamera);  // create a default camera controller
   mCameraMan->setTopSpeed(5.0f);
 }
 //-------------------------------------------------------------------------------------
@@ -69,30 +68,22 @@ void BaseApplication::createFrameListener() {
 // mouse does not work well like that but to debug it's fine for now
 // prevent OIS from keeping control of your mouse when debugging
 #if defined OIS_WIN32_PLATFORM
-  paramList.insert(std::make_pair(std::string("w32_mouse"),
-                                  std::string("DISCL_FOREGROUND")));
-  paramList.insert(std::make_pair(std::string("w32_mouse"),
-                                  std::string("DISCL_NONEXCLUSIVE")));
-  paramList.insert(std::make_pair(std::string("w32_keyboard"),
-                                  std::string("DISCL_FOREGROUND")));
-  paramList.insert(std::make_pair(std::string("w32_keyboard"),
-                                  std::string("DISCL_NONEXCLUSIVE")));
+  paramList.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
+  paramList.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+  paramList.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+  paramList.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
 #elif defined OIS_LINUX_PLATFORM
-  pl.insert(
-      std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
-  pl.insert(
-      std::make_pair(std::string("x11_mouse_hide"), std::string("false")));
-  pl.insert(
-      std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
+  pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
+  pl.insert(std::make_pair(std::string("x11_mouse_hide"), std::string("false")));
+  pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
   pl.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
 #endif
 
   mInputManager = OIS::InputManager::createInputSystem(pl);
 
-  mKeyboard = dynamic_cast<OIS::Keyboard*>(
-      mInputManager->createInputObject(OIS::OISKeyboard, true));
-  mMouse = dynamic_cast<OIS::Mouse*>(
-      mInputManager->createInputObject(OIS::OISMouse, true));
+  mKeyboard =
+      dynamic_cast<OIS::Keyboard*>(mInputManager->createInputObject(OIS::OISKeyboard, true));
+  mMouse = dynamic_cast<OIS::Mouse*>(mInputManager->createInputObject(OIS::OISMouse, true));
 
   mMouse->setEventCallback(this);
   mKeyboard->setEventCallback(this);
@@ -114,8 +105,7 @@ void BaseApplication::createViewports() {
   vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
 
   // Alter the camera aspect ratio to match the viewport
-  mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) /
-                          Ogre::Real(vp->getActualHeight()));
+  mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
   //    mWindow->setFullscreen(true, vp->getActualWidth(),
   //    vp->getActualHeight());
 }
@@ -130,16 +120,13 @@ void BaseApplication::setupResources() {
 
   Ogre::String secName, typeName, archName;
 
-  for (auto sec_it = std::begin(settingsSec); sec_it != std::end(settingsSec);
-       ++sec_it) {
+  for (auto sec_it = std::begin(settingsSec); sec_it != std::end(settingsSec); ++sec_it) {
     secName = (*sec_it).first;
     auto settings = (*sec_it).second;
-    for (auto config_it = std::begin(settings); config_it != std::end(settings);
-         ++config_it) {
+    for (auto config_it = std::begin(settings); config_it != std::end(settings); ++config_it) {
       typeName = config_it->first;
       archName = config_it->second;
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-          archName, typeName, secName);
+      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
     }
   }
 }
@@ -177,8 +164,7 @@ void BaseApplication::run() {
 }
 //-------------------------------------------------------------------------------------
 bool BaseApplication::setup() {
-  mRoot = std::make_unique<Ogre::Root>(mPluginsCfg,
-                                       mFSLayer->getWritablePath("ogre.cfg"),
+  mRoot = std::make_unique<Ogre::Root>(mPluginsCfg, mFSLayer->getWritablePath("ogre.cfg"),
                                        mFSLayer->getWritablePath("ogre.log"));
 
   setupResources();
@@ -218,8 +204,7 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   mMouse->capture();
 
   // could have a list of frame listeners
-  mCameraMan->frameRenderingQueued(
-      evt);  // if dialog isn't up, then update the camera
+  mCameraMan->frameRenderingQueued(evt);  // if dialog isn't up, then update the camera
 
   return true;
 }
@@ -295,14 +280,12 @@ bool BaseApplication::mouseMoved(const OIS::MouseEvent& arg) {
   return true;
 }
 
-bool BaseApplication::mousePressed(const OIS::MouseEvent& arg,
-                                   OIS::MouseButtonID id) {
+bool BaseApplication::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id) {
   mCameraMan->injectMouseDown(arg, id);
   return true;
 }
 
-bool BaseApplication::mouseReleased(const OIS::MouseEvent& arg,
-                                    OIS::MouseButtonID id) {
+bool BaseApplication::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id) {
   mCameraMan->injectMouseUp(arg, id);
   return true;
 }

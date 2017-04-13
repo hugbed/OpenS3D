@@ -17,8 +17,8 @@ class DynamicTexture {
                  ushort imgHeight)
       : m_textureName{std::move(textureName)} {
     m_pDynamicTexture = Ogre::TextureManager::getSingleton().createManual(
-        m_textureName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-        Ogre::TEX_TYPE_2D, imgWidth, imgHeight,  // w, h
+        m_textureName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
+        imgWidth, imgHeight,  // w, h
         0, format, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
     clear();
   }
@@ -31,8 +31,7 @@ class DynamicTexture {
     pixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
 
     const auto& pixelBox = pixelBuffer->getCurrentLock();
-    std::copy(std::begin(imageBytes), std::end(imageBytes),
-              static_cast<uint8_t*>(pixelBox.data));
+    std::copy(std::begin(imageBytes), std::end(imageBytes), static_cast<uint8_t*>(pixelBox.data));
 
     pixelBuffer->unlock();
   }
@@ -45,8 +44,7 @@ class DynamicTexture {
   }
 
   size_t getSizeInBytes() const {
-    return m_pDynamicTexture->getBuffer()
-        ->getSizeInBytes();  // could be nullptr?
+    return m_pDynamicTexture->getBuffer()->getSizeInBytes();  // could be nullptr?
   }
 
   const std::string& getTextureName() { return m_textureName; }

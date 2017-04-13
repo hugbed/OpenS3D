@@ -8,21 +8,16 @@
 #include "s3d/video/video_frame.h"
 
 VideoFileParser::VideoFileParser(std::string filePath)
-    : filePath_(std::move(filePath)),
-      frameSize_{},
-      currentByteIndex_{},
-      firstFrameIndex_{} {}
+    : filePath_(std::move(filePath)), frameSize_{}, currentByteIndex_{}, firstFrameIndex_{} {}
 
-RawUYVYFileParser::RawUYVYFileParser(std::string filePath)
-    : VideoFileParser(std::move(filePath)) {}
+RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : VideoFileParser(std::move(filePath)) {}
 
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
   format->frameRate = 1.0f / 30.0f;
   format->frameSize = Size{1920, 1080};
   format->pixelFormat = VideoPixelFormat::RGB;
 
-  frameUYVY_.resize(
-      VideoFrame::AllocationSize(VideoPixelFormat::UYVY, format->frameSize));
+  frameUYVY_.resize(VideoFrame::AllocationSize(VideoPixelFormat::UYVY, format->frameSize));
 
   fileStream_ = std::make_unique<std::ifstream>(filePath_, std::ios::binary);
 
@@ -36,8 +31,7 @@ bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
 
 bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
   frame.resize(frameSize_);
-  auto res = s3d::file_io::read_n_bytes(*fileStream_, frameUYVY_.size(),
-                                        std::begin(frameUYVY_));
+  auto res = s3d::file_io::read_n_bytes(*fileStream_, frameUYVY_.size(), std::begin(frameUYVY_));
   if (res) {
     using s3d::compression::YUV422;
     using s3d::compression::RGB8;

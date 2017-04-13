@@ -16,8 +16,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
   const auto numpoints = points.size() / 3;
 
   /// Create the mesh via the MeshManager
-  Ogre::MeshPtr msh =
-      Ogre::MeshManager::getSingleton().createManual("yobitch", resourcegroup);
+  Ogre::MeshPtr msh = Ogre::MeshManager::getSingleton().createManual("yobitch", resourcegroup);
 
   /// Create one submesh
   Ogre::SubMesh* sub = msh->createSubMesh();
@@ -31,8 +30,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
   decl->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
 
   vbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-      Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3),
-      msh->sharedVertexData->vertexCount,
+      Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3), msh->sharedVertexData->vertexCount,
       Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
   /// Upload the vertex data to the card
   vbuf_->writeData(0, vbuf_->getSizeInBytes(), &points[0], true);
@@ -41,8 +39,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
     // Create 2nd buffer for colors
     decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
     cbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
-        msh->sharedVertexData->vertexCount,
+        Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR), msh->sharedVertexData->vertexCount,
         Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 
     Ogre::RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
@@ -52,9 +49,8 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
 
     for (size_t i = 0, k = 0; k < numpoints; i += 3, k++) {
       // Use render system to convert colour value since colour packing varies
-      rs->convertColourValue(
-          Ogre::ColourValue(colors[i], colors[i + 1], colors[i + 2]),
-          &colorsRGBA[k]);
+      rs->convertColourValue(Ogre::ColourValue(colors[i], colors[i + 1], colors[i + 2]),
+                             &colorsRGBA[k]);
     }
 
     // Upload colour data
@@ -83,8 +79,7 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
 void PointCloudMesh::updateVertexPositions(const std::vector<float>& points) {
   assert(vbuf_->getSizeInBytes() == points.size());
 
-  auto pPArray =
-      static_cast<float*>(vbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+  auto pPArray = static_cast<float*>(vbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
 
   std::copy(std::begin(points), std::end(points), pPArray);
   //  for (size_t i = 0; i < size * 3; i += 3) {
@@ -97,8 +92,7 @@ void PointCloudMesh::updateVertexPositions(const std::vector<float>& points) {
 
 void PointCloudMesh::updateVertexColors(const std::vector<float>& colors) {
   assert(cbuf_->getSizeInBytes() == colors.size());
-  auto pCArray =
-      static_cast<float*>(cbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+  auto pCArray = static_cast<float*>(cbuf_->lock(Ogre::HardwareBuffer::HBL_DISCARD));
   std::copy(std::begin(colors), std::end(colors), pCArray);
   //  for (size_t i = 0; i < colors.size() * 3; i += 3) {
   //    pCArray[i] = colors[i];

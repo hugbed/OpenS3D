@@ -17,16 +17,14 @@ using s3d::concurrency::ConsumerBarrierSync;
 class RawUYVY3DFileParserProducer
     : public s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>> {
  public:
-  using ProducerType =
-      s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>;
+  using ProducerType = s3d::concurrency::ProducerBarrierSync<std::vector<uint8_t>>;
 
   // image size, etc
   RawUYVY3DFileParserProducer(std::string filename,
                               VideoCaptureFormat imageFileFormat,
                               std::mutex* doneProducingMutex,
                               std::condition_variable* shouldConsumeCV)
-      : ProducerBarrierSync(doneProducingMutex, shouldConsumeCV),
-        filePath_{std::move(filename)} {
+      : ProducerBarrierSync(doneProducingMutex, shouldConsumeCV), filePath_{std::move(filename)} {
     imageFileFormat.pixelFormat = VideoPixelFormat::RGB;
     rgbBytes.resize(imageFileFormat.ImageAllocationSize());
   }
@@ -44,13 +42,10 @@ class RawUYVY3DFileParserProducer
   }
 
  private:
-  void produce() override {
-    readingFile_ = fileParser_->GetNextFrame(rgbBytes);
-  }
+  void produce() override { readingFile_ = fileParser_->GetNextFrame(rgbBytes); }
 
   void onStartProducing() override {
-    fileParser_ = std::unique_ptr<VideoFileParser>(
-        std::make_unique<RawUYVYFileParser>(filePath_));
+    fileParser_ = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath_));
 
     VideoCaptureFormat fileFormat;
     if (!fileParser_->Initialize(&fileFormat)) {
@@ -94,8 +89,7 @@ class RawUYVY3DFileParserConsumer
   void sleepUntilNextFrame() {
     auto t2 = std::chrono::high_resolution_clock::now();
     auto sleepTime = delayBetweenFrames -
-                     std::chrono::duration_cast<std::chrono::microseconds>(
-                         t2 - lastConsumeTime);
+                     std::chrono::duration_cast<std::chrono::microseconds>(t2 - lastConsumeTime);
     std::this_thread::sleep_for(sleepTime);
     lastConsumeTime = std::chrono::high_resolution_clock::now();
   }
@@ -106,8 +100,7 @@ class RawUYVY3DFileParserConsumer
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 
-FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(
-    const std::string& filePathsStr)
+FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(const std::string& filePathsStr)
     : stopCaptureFlag_(false) {
   std::vector<std::string> filePaths;
   s3d::split(filePathsStr, ';', std::back_inserter(filePaths));
@@ -119,23 +112,21 @@ FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(
   }
 }
 
-void FileVideoCaptureDevice3D::AllocateAndStart(
-    const VideoCaptureFormat& /*format*/,
-    std::unique_ptr<Client> client) {
+void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*format*/,
+                                                std::unique_ptr<Client> client) {
   client_ = std::move(client);
   auto captureThread = std::thread([this] {
     std::mutex doneProducingMutex;
     std::condition_variable shouldConsumeCV;
 
-    VideoCaptureFormat fileFormat(Size(1920, 1080), 30.0f,
-                                  VideoPixelFormat::UNKNOWN);
+    VideoCaptureFormat fileFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::UNKNOWN);
     producers_.first = std::make_unique<RawUYVY3DFileParserProducer>(
         filePaths_.first, fileFormat, &doneProducingMutex, &shouldConsumeCV);
     producers_.second = std::make_unique<RawUYVY3DFileParserProducer>(
         filePaths_.second, fileFormat, &doneProducingMutex, &shouldConsumeCV);
 
-    std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {
-        producers_.first.get(), producers_.second.get()};
+    std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {producers_.first.get(),
+                                                                         producers_.second.get()};
 
     // start thread for each producer
     std::vector<std::thread> producerThreads;
@@ -146,8 +137,7 @@ void FileVideoCaptureDevice3D::AllocateAndStart(
     VideoCaptureFormat outputFormat(fileFormat.frameSize, fileFormat.frameRate,
                                     VideoPixelFormat::RGB);
     consumer_ = std::make_unique<RawUYVY3DFileParserConsumer>(
-        client_.get(), outputFormat, &doneProducingMutex, &shouldConsumeCV,
-        producers);
+        client_.get(), outputFormat, &doneProducingMutex, &shouldConsumeCV, producers);
 
     // blocking
     consumer_->startConsuming();

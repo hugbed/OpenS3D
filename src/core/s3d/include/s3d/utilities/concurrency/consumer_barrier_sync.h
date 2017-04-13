@@ -40,9 +40,8 @@ class ConsumerBarrierSync {
   virtual void consume() = 0;  // use producer->getProduct()
 
   virtual bool shouldStopConsuming() {
-    return std::any_of(
-        std::begin(producers_), std::end(producers_),
-        [](const auto& producer) { return producer->shouldStopProducing(); });
+    return std::any_of(std::begin(producers_), std::end(producers_),
+                       [](const auto& producer) { return producer->shouldStopProducing(); });
   }
 
   bool allAreDoneProducing() {

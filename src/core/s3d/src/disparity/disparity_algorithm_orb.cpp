@@ -11,9 +11,8 @@
 
 namespace s3d {
 
-std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
-    Image leftImg,
-    Image rightImg) {
+std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image leftImg,
+                                                                       Image rightImg) {
   auto left = leftImg.mat;
   auto right = rightImg.mat;
 
@@ -24,15 +23,12 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
   std::vector<cv::KeyPoint> keypoints1, keypoints2;
   std::vector<cv::DMatch> matches;
 
-  auto orb =
-      cv::cuda::ORB::create();  // 200, 1.2f, 8, 31, 0, 2, 0, 31, 20, true);
+  auto orb = cv::cuda::ORB::create();  // 200, 1.2f, 8, 31, 0, 2, 0, 31, 20, true);
 
   cv::cuda::GpuMat d_keypoints1, d_descriptors1, d_descriptors2;
-  orb->detectAndComputeAsync(d_left, cv::cuda::GpuMat(), d_keypoints1,
-                             d_descriptors1);
+  orb->detectAndComputeAsync(d_left, cv::cuda::GpuMat(), d_keypoints1, d_descriptors1);
   orb->convert(d_keypoints1, keypoints1);
-  orb->detectAndCompute(d_right, cv::cuda::GpuMat(), keypoints2,
-                        d_descriptors2);
+  orb->detectAndCompute(d_right, cv::cuda::GpuMat(), keypoints2, d_descriptors2);
 
   std::vector<std::vector<cv::DMatch>> knn_matches;
   auto matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_HAMMING);
@@ -50,8 +46,7 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
       auto pt2 = keypoints2[img2Idx].pt;
       auto d = pt2 - pt1;
 
-      disparityPoints.emplace_back(
-          DisparityPoint({int(pt1.y), int(pt1.x)}, {int(d.y), int(d.x)}));
+      disparityPoints.emplace_back(DisparityPoint({int(pt1.y), int(pt1.x)}, {int(d.y), int(d.x)}));
     }
   }
 
@@ -60,9 +55,8 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
   //        imgRes);
   //        cv::imshow("imgRes", imgRes);
 
-  auto disparities =
-      std::unique_ptr<Disparities>(std::make_unique<DisparitiesSparse>(
-          disparityPoints, ImageSize{size_t(left.rows), size_t(left.cols)}));
+  auto disparities = std::unique_ptr<Disparities>(std::make_unique<DisparitiesSparse>(
+      disparityPoints, ImageSize{size_t(left.rows), size_t(left.cols)}));
 
   return disparities;
 }

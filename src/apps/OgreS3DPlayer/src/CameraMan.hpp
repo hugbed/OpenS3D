@@ -45,9 +45,7 @@ class CameraMan {
   /*-----------------------------------------------------------------------------
   | Sets the spatial offset from the target. Only applies for orbit style.
   -----------------------------------------------------------------------------*/
-  virtual void setYawPitchDist(Ogre::Radian yaw,
-                               Ogre::Radian pitch,
-                               Ogre::Real dist);
+  virtual void setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist);
 
   /*-----------------------------------------------------------------------------
   | Sets the camera's top speed. Only applies for free-look style.
@@ -80,8 +78,7 @@ class CameraMan {
 /*-----------------------------------------------------------------------------
 | Processes mouse movement differently for each style.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
   virtual void injectMouseMove(const OIS::MultiTouchEvent& evt);
 #else
   virtual void injectMouseMove(const OIS::MouseEvent& evt);
@@ -91,20 +88,17 @@ class CameraMan {
 | Processes mouse presses. Only applies for orbit style.
 | Left button is for orbiting, and right button is for zooming.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
   virtual void injectMouseDown(const OIS::MultiTouchEvent& evt);
 #else
-  virtual void injectMouseDown(const OIS::MouseEvent& evt,
-                               OIS::MouseButtonID id);
+  virtual void injectMouseDown(const OIS::MouseEvent& evt, OIS::MouseButtonID id);
 #endif
 
 /*-----------------------------------------------------------------------------
 | Processes mouse releases. Only applies for orbit style.
 | Left button is for orbiting, and right button is for zooming.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
   virtual void injectMouseUp(const OIS::MultiTouchEvent& evt);
 #else
   virtual void injectMouseUp(const OIS::MouseEvent& evt, OIS::MouseButtonID id);

@@ -14,11 +14,8 @@ namespace s3d {
 namespace file_io {
 
 template <class Size_t>
-void push_back_n_bytes(std::istream& stream,
-                       Size_t n,
-                       std::vector<uint8_t>& outContainer) {
-  std::copy_n(std::istreambuf_iterator<char>{stream}, n,
-              back_inserter(outContainer));
+void push_back_n_bytes(std::istream& stream, Size_t n, std::vector<uint8_t>& outContainer) {
+  std::copy_n(std::istreambuf_iterator<char>{stream}, n, back_inserter(outContainer));
   stream.get();  // to prevent reading twice the last character
 }
 
@@ -55,8 +52,7 @@ class ifchunkstream {
   ifchunkstream(const std::string& filename, size_t chunkSize)
       : stream_{filename, std::ios::binary}, chunkSize_{chunkSize} {}
 
-  friend ifchunkstream& operator>>(ifchunkstream& input,
-                                   std::vector<uint8_t>& v) {
+  friend ifchunkstream& operator>>(ifchunkstream& input, std::vector<uint8_t>& v) {
     input.push_back_chunk(v);
     return input;
   }
@@ -64,9 +60,7 @@ class ifchunkstream {
   explicit operator bool() const { return stream_.eof(); }
 
   // private:
-  void push_back_chunk(std::vector<uint8_t>& v) {
-    push_back_n_bytes(stream_, chunkSize_, v);
-  }
+  void push_back_chunk(std::vector<uint8_t>& v) { push_back_n_bytes(stream_, chunkSize_, v); }
 
   std::ifstream stream_;
   size_t chunkSize_;

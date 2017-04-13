@@ -11,8 +11,7 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
     const std::string& filePath,
     VideoCaptureFormat* format) {
   // currently only RawUYVY supported
-  auto fileParser = std::unique_ptr<VideoFileParser>(
-      std::make_unique<RawUYVYFileParser>(filePath));
+  auto fileParser = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
 
   if (!fileParser->Initialize(format)) {
     fileParser.reset();
@@ -27,14 +26,12 @@ FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
 // todo(hugbed): check that thread is not still runing
 // FileVideoCaptureDevice::~FileVideoCaptureDevice()  = default;
 
-void FileVideoCaptureDevice::AllocateAndStart(
-    const VideoCaptureFormat& /*format*/,
-    std::unique_ptr<VideoCaptureDevice::Client> client) {
+void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& /*format*/,
+                                              std::unique_ptr<VideoCaptureDevice::Client> client) {
   client_ = std::move(client);
   stopCaptureFlag_ = false;
   fileParser_ = GetVideoFileParser(filePath_, &captureFormat_);
-  captureThread_ = std::make_unique<std::thread>(
-      &FileVideoCaptureDevice::OnAllocateAndStart, this);
+  captureThread_ = std::make_unique<std::thread>(&FileVideoCaptureDevice::OnAllocateAndStart, this);
   captureThread_->detach();  // todo: detach for now
 }
 
@@ -44,8 +41,8 @@ void FileVideoCaptureDevice::OnAllocateAndStart() {
   using std::chrono::milliseconds;
   using std::chrono::high_resolution_clock;
 
-  auto loopDuration = duration_cast<milliseconds>(
-      duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));
+  auto loopDuration =
+      duration_cast<milliseconds>(duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));
 
   while (!stopCaptureFlag_) {
     auto t1 = high_resolution_clock::now();

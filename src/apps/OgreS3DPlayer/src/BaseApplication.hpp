@@ -56,19 +56,15 @@ class BaseApplication : public Ogre::WindowEventListener,
   bool keyReleased(const OIS::KeyEvent& /*arg*/) override;
   // OIS::MouseListener
   bool mouseMoved(const OIS::MouseEvent& /*arg*/) override;
-  bool mousePressed(const OIS::MouseEvent& /*arg*/,
-                    OIS::MouseButtonID /*id*/) override;
-  bool mouseReleased(const OIS::MouseEvent& /*arg*/,
-                     OIS::MouseButtonID /*id*/) override;
+  bool mousePressed(const OIS::MouseEvent& /*arg*/, OIS::MouseButtonID /*id*/) override;
+  bool mouseReleased(const OIS::MouseEvent& /*arg*/, OIS::MouseButtonID /*id*/) override;
 
   // Ogre::WindowEventListener
-  void windowResized(
-      Ogre::RenderWindow* /*rw*/) override;  // Adjust mouse clipping
-                                             // area
-  void windowClosed(
-      Ogre::RenderWindow* /*rw*/) override;  // Unattach OIS before window
-                                             // shutdown (very important
-                                             // under Linux)
+  void windowResized(Ogre::RenderWindow* /*rw*/) override;  // Adjust mouse clipping
+                                                            // area
+  void windowClosed(Ogre::RenderWindow* /*rw*/) override;   // Unattach OIS before window
+                                                            // shutdown (very important
+                                                            // under Linux)
 
   std::unique_ptr<Ogre::FileSystemLayer, void (*)(Ogre::FileSystemLayer*)>
       mFSLayer;  // File system abstraction layer
@@ -88,8 +84,7 @@ class BaseApplication : public Ogre::WindowEventListener,
   OIS::Keyboard* mKeyboard{};
 
   // OgreCookies
-  std::unique_ptr<OgreCookies::CameraMan>
-      mCameraMan;  // basic camera controller
+  std::unique_ptr<OgreCookies::CameraMan> mCameraMan;  // basic camera controller
 };
 
 #endif  // BASEAPPLICATION_HPP

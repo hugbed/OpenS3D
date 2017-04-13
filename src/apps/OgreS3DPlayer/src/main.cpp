@@ -23,12 +23,10 @@ int main(int /*argc*/, char* /*argv*/ [])
     app.run();
   } catch (Ogre::Exception& e) {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-    MessageBox(NULL, e.getFullDescription().c_str(),
-               "An OGRE exception has occured!",
+    MessageBox(NULL, e.getFullDescription().c_str(), "An OGRE exception has occured!",
                MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
-    std::cerr << "An OGRE exception has occured: "
-              << e.getFullDescription().c_str() << std::endl;
+    std::cerr << "An OGRE exception has occured: " << e.getFullDescription().c_str() << std::endl;
 #endif
   } catch (OIS::Exception& e) {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

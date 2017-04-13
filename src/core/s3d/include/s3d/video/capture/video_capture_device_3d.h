@@ -13,10 +13,9 @@ class VideoCaptureDevice3D : rule_of_five_interface<VideoCaptureDevice3D> {
  public:
   class Client : rule_of_five_interface<VideoCaptureDevice3D::Client> {
    public:
-    virtual void OnIncomingCapturedData(
-        const std::vector<uint8_t>& leftImage,
-        const std::vector<uint8_t>& rightImage,
-        const VideoCaptureFormat& frameFormat) = 0;
+    virtual void OnIncomingCapturedData(const std::vector<uint8_t>& leftImage,
+                                        const std::vector<uint8_t>& rightImage,
+                                        const VideoCaptureFormat& frameFormat) = 0;
 
     virtual void OnError(const std::string& reason) = 0;
     virtual void OnLog(const std::string& message) = 0;

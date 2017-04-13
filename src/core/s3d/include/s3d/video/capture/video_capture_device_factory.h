@@ -12,8 +12,7 @@
 
 // todo(hugbed): must elaborate
 struct VideoCaptureDeviceDescriptor {
-  explicit VideoCaptureDeviceDescriptor(std::string name)
-      : name(std::move(name)) {}
+  explicit VideoCaptureDeviceDescriptor(std::string name) : name(std::move(name)) {}
   std::string name;
 };
 

@@ -10,8 +10,7 @@
 class Size {
  public:
   constexpr Size() noexcept : width_{}, height_{} {}
-  constexpr Size(int width, int height) noexcept : width_(width),
-                                                   height_(height) {}
+  constexpr Size(int width, int height) noexcept : width_(width), height_(height) {}
 
   void setWidth(int width) noexcept { height_ = width; }
   void setHeight(int height) noexcept { height_ = height; }

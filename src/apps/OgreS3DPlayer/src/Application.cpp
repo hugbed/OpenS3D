@@ -6,6 +6,8 @@
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/file_video_capture_device_3d.h"
+#include "dynamic_assets/VideoPlayer3DEntity.h"
+#include "dynamic_assets/VideoPlayerEntity.h"
 
 #include <OgreRectangle2D.h>
 
@@ -25,26 +27,62 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-  //    createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
-  //    createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
+  //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
+  //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
-  createVideoPlane(m_videoTextures.first, "_plane");
-  createVideoPlane(m_videoTextures.second, "_plane2");
+  constexpr auto textureNameLeft = "DynamicTextureL";
+  constexpr auto textureNameRight = "DynamicTextureR";
+  m_videoTextures.first = createDynamicTexture(textureNameLeft);
+  m_videoTextures.second = createDynamicTexture(textureNameRight);
+  m_frameListeners.push_back(m_videoTextures.first.get());
+  m_frameListeners.push_back(m_videoTextures.second.get());
+
+  //  constexpr auto materialNameLeft = "DynamicMaterialL";
+  //  constexpr auto materialNameRight = "DynamicMaterialR";
+  //  DynamicTexture::createImageMaterial(std::string(materialNameLeft), textureNameLeft);
+  //  DynamicTexture::createImageMaterial(std::string(materialNameRight), textureNameRight);
+
+  // anaglyph material
+  auto material = static_cast<Ogre::MaterialPtr>(
+      Ogre::MaterialManager::getSingleton().getByName("Anaglyph", "General"));
+  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameRight);
+  material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
+  material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+  material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+
+  //  material->getTechnique(0)->getPass(1)->createTextureUnitState(textureNameRight);
+  //  material->getTechnique(0)->getPass(1)->setDepthCheckEnabled(false);
+  //  material->getTechnique(0)->getPass(1)->setDepthWriteEnabled(false);
+  //  material->getTechnique(0)->getPass(1)->setLightingEnabled(false);
+  //
+  //  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+  //  material->getTechnique(0)->getPass(2)->createTextureUnitState(textureNameRight);
+  //  material->getTechnique(0)->getPass(2)->setDepthCheckEnabled(false);
+  //  material->getTechnique(0)->getPass(2)->setDepthWriteEnabled(false);
+  //  material->getTechnique(0)->getPass(2)->setLightingEnabled(false);
+
+  // todo: delete that
+  VideoPlayerEntity* entity = new VideoPlayerEntity("entititi", "Anaglyph");
+  mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
+
+  //  createVideoRectangle(materialNameLeft, materialNameRight);
+  //  createVideoPlane("PointCloud");
 
   // should delete this pointer, this is only a test
   auto captureDevice = new FileVideoCaptureDevice3D(
       "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv");
 
-  auto captureClient = std::unique_ptr<VideoCaptureDevice3D::Client>(
-      std::make_unique<TextureUpdateClient>(m_videoTextures.first.get(),
-                                            m_videoTextures.second.get()));
+  auto captureClient =
+      std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient>(
+          m_videoTextures.first.get(), m_videoTextures.second.get()));
 
-  VideoCaptureFormat format;
+  VideoCaptureFormat format;  // todo(hugbed): could be used to init texture size
   captureDevice->AllocateAndStart(format, std::move(captureClient));
 
-  addLights();
-  createGroundPlane();
-  createPointCloud();
+  //  addLights();
+  //  createGroundPlane();
+  //  createPointCloud();
 }
 
 void Application::addLights() {
@@ -63,88 +101,46 @@ void Application::addLights() {
 void Application::createGroundPlane() {
   Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(
-      "ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane,
-      1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+      "ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20,
+      true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
   Ogre::Entity* groundEntity = mSceneMgr->createEntity("ground");
-  mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(
-      groundEntity);
+  mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
   groundEntity->setCastShadows(false);
   groundEntity->setMaterialName("Rockwall");
+
+  groundEntity->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
 }
 
-void Application::createVideoRectangle(
-    std::unique_ptr<Ogre::Rectangle2D>& rect,
-    std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
-    const std::string& id) {
-  constexpr auto refreshRate = 1.0f / 60.0f;  // twice as fast as update to
-  // prevent aliasing (if this makes
-  // sense)
+std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
+    const std::string& name) {
+  // twice as fast as update to prevent aliasing (if this makes sense)
+  constexpr auto refreshRate = 1.0f / 60.0f;
+  return std::make_unique<DynamicTextureThreadSafe>(name, Ogre::PixelFormat::PF_R8G8B8, 1920, 1080,
+                                                    refreshRate);
+}
 
-  // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-  // todo: should probably create video textures outside to assign them to
-  // multiple places without recreating them
-  videoTexture = std::make_unique<DynamicTextureThreadSafe>(
-      std::string("DynamicTexture").append(id), Ogre::PixelFormat::PF_R8G8B8,
-      1920, 1080, refreshRate);
-  auto material = DynamicTexture::createImageMaterial(
-      std::string("BackgroundMaterial").append(id),
-      videoTexture->getTextureName());
-
-  m_frameListeners.push_back(videoTexture.get());
-
-  // Create background rectangles covering the whole screen
-  std::pair<float, float> boundaries{-1.0f, 0.0f};
-  if (id == "R") {
-    boundaries = {0.0f, 1.0f};
-  }
-  rect = std::make_unique<Ogre::Rectangle2D>(true);
-  rect->setCorners(boundaries.first, 1.0f, boundaries.second, -1.0f);
-  rect->setMaterial(material->getName());
-
-  // Render the background before everything else
-  rect->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-
-  // Use infinite AAB to always stay visible
-  Ogre::AxisAlignedBox aabInf;
-  aabInf.setInfinite();
-  rect->setBoundingBox(aabInf);
-
-  // Attach background to the scene
+void Application::createVideoRectangle(const std::string& materialNameLeft,
+                                       const std::string& materialNameRight) {
+  constexpr auto videoPlayerName = "VideoPlayerEntity";
+  videoPlayer3DEntity_ =
+      std::make_unique<VideoPlayer3DEntity>(videoPlayerName, materialNameLeft, materialNameRight);
   mSceneMgr->getRootSceneNode()
-      ->createChildSceneNode(std::string("Background").append(id))
-      ->attachObject(rect.get());
+      ->createChildSceneNode(videoPlayerName)
+      ->attachObject(videoPlayer3DEntity_.get());
 }
 
-void Application::createVideoPlane(
-    std::unique_ptr<DynamicTextureThreadSafe>& videoTexture,
-    const std::string& id) {
-  constexpr auto refreshRate = 1.0f / 60.0f;  // twice as fast as update to
-  // prevent aliasing (if this makes
-  // sense)
-
-  // Using: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-  videoTexture = std::make_unique<DynamicTextureThreadSafe>(
-      std::string("DynamicTexture").append(id), Ogre::PixelFormat::PF_R8G8B8,
-      1920, 1080, refreshRate);
-  auto material = Ogre::MaterialManager::getSingleton().create(
-      std::string("BackgroundMaterial").append(id), "General");
-  material->getTechnique(0)->getPass(0)->createTextureUnitState(
-      std::string("DynamicTexture").append(id));
-  material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-
-  m_frameListeners.push_back(videoTexture.get());
+void Application::createVideoPlane(const std::string& materialName) {
+  constexpr auto videoPlaneStr = "VideoPlane";
 
   // instead let's create a cube
   Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
   Ogre::MeshManager::getSingleton().createPlane(
-      std::string("ground").append(id),
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1.6f,
+      videoPlaneStr, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1.6f,
       0.9f,  // w, h
       1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
 
-  Ogre::Entity* groundEntity =
-      mSceneMgr->createEntity(std::string("ground").append(id));
-  groundEntity->setMaterial(material);
+  Ogre::Entity* groundEntity = mSceneMgr->createEntity(videoPlaneStr);
+  groundEntity->setMaterialName(materialName);
 
   auto sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
   sceneNode->setPosition(0.0f, 1.5f, 0.0f);
@@ -179,11 +175,13 @@ void Application::createPointCloud() {
   }
 
   m_pointCloudMesh = std::make_unique<PointCloudMesh>(
-      "greatpointcloud",
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, points, colors);
+      "greatpointcloud", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, points, colors);
 
   Ogre::Entity* pcEnt = mSceneMgr->createEntity("pointcloudentity", "yobitch");
   pcEnt->setMaterialName("PointCloud");
+
+  // todo(hugbed): weird that I have to set this to background
+  //  pcEnt->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
 
   auto sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
   sceneNode->setPosition(0.0f, 1.5f, 0.2f);

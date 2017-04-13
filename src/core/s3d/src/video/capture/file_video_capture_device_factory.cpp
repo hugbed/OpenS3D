@@ -7,6 +7,5 @@
 
 std::unique_ptr<VideoCaptureDevice> FileVideoCaptureDeviceFactory::CreateDevice(
     const VideoCaptureDeviceDescriptor& deviceDescriptor) {
-  return std::unique_ptr<VideoCaptureDevice>(
-      new FileVideoCaptureDevice(deviceDescriptor.name));
+  return std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice(deviceDescriptor.name));
 }

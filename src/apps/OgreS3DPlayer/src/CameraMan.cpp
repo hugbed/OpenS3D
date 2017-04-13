@@ -92,9 +92,7 @@ Ogre::SceneNode* CameraMan::getTarget() {
 /*-----------------------------------------------------------------------------
 | Sets the spatial offset from the target. Only applies for orbit style.
 -----------------------------------------------------------------------------*/
-void CameraMan::setYawPitchDist(Ogre::Radian yaw,
-                                Ogre::Radian pitch,
-                                Ogre::Real dist) {
+void CameraMan::setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist) {
   mCamera->setPosition(mTarget->_getDerivedPosition());
   mCamera->setOrientation(mTarget->_getDerivedOrientation());
   mCamera->yaw(yaw);
@@ -118,9 +116,8 @@ Ogre::Real CameraMan::getTopSpeed() {
 -----------------------------------------------------------------------------*/
 void CameraMan::setStyle(CameraStyle style) {
   if (mStyle != CS_ORBIT && style == CS_ORBIT) {
-    CameraMan::setTarget(mTarget != nullptr
-                             ? mTarget
-                             : mCamera->getSceneManager()->getRootSceneNode());
+    CameraMan::setTarget(mTarget != nullptr ? mTarget
+                                            : mCamera->getSceneManager()->getRootSceneNode());
     mCamera->setFixedYawAxis(true);
     CameraMan::manualStop();
     CameraMan::setYawPitchDist(Ogre::Degree(0), Ogre::Degree(15), 150);
@@ -254,16 +251,14 @@ void CameraMan::injectKeyUp(const OIS::KeyEvent& evt) {
 /*-----------------------------------------------------------------------------
 | Processes mouse movement differently for each style.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
 void CameraMan::injectMouseMove(const OIS::MultiTouchEvent& evt)
 #else
 void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
 #endif
 {
   if (mStyle == CS_ORBIT) {
-    Ogre::Real dist =
-        (mCamera->getPosition() - mTarget->_getDerivedPosition()).length();
+    Ogre::Real dist = (mCamera->getPosition() - mTarget->_getDerivedPosition()).length();
 
     if (mOrbiting)  // yaw around the target, and pitch locally
     {
@@ -278,13 +273,11 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
     } else if (mZooming) {
       // move the camera toward or away from the target
       // the further the camera is, the faster it moves
-      mCamera->moveRelative(
-          Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
+      mCamera->moveRelative(Ogre::Vector3(0, 0, evt.state.Y.rel * 0.004f * dist));
     } else if (evt.state.Z.rel != 0) {
       // move the camera toward or away from the target
       // the further the camera is, the faster it moves
-      mCamera->moveRelative(
-          Ogre::Vector3(0, 0, -evt.state.Z.rel * 0.0008f * dist));
+      mCamera->moveRelative(Ogre::Vector3(0, 0, -evt.state.Z.rel * 0.0008f * dist));
     }
   } else if (mStyle == CS_FREELOOK) {
     mCamera->yaw(Ogre::Degree(-evt.state.X.rel * 0.15f));
@@ -296,16 +289,14 @@ void CameraMan::injectMouseMove(const OIS::MouseEvent& evt)
 | Processes mouse presses. Only applies for orbit style.
 | Left button is for orbiting, and right button is for zooming.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
 void CameraMan::injectMouseDown(const OIS::MultiTouchEvent& evt) {
   if (mStyle == CS_ORBIT) {
     mOrbiting = true;
   }
 }
 #else
-void CameraMan::injectMouseDown(const OIS::MouseEvent& /*evt*/,
-                                OIS::MouseButtonID id) {
+void CameraMan::injectMouseDown(const OIS::MouseEvent& /*evt*/, OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left) {
       mOrbiting = true;
@@ -320,16 +311,14 @@ void CameraMan::injectMouseDown(const OIS::MouseEvent& /*evt*/,
 | Processes mouse releases. Only applies for orbit style.
 | Left button is for orbiting, and right button is for zooming.
 -----------------------------------------------------------------------------*/
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || \
-    (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS) || (OGRE_PLATFORM == OGRE_PLATFORM_ANDROID)
 void CameraMan::injectMouseUp(const OIS::MultiTouchEvent& evt) {
   if (mStyle == CS_ORBIT) {
     mOrbiting = false;
   }
 }
 #else
-void CameraMan::injectMouseUp(const OIS::MouseEvent& /*evt*/,
-                              OIS::MouseButtonID id) {
+void CameraMan::injectMouseUp(const OIS::MouseEvent& /*evt*/, OIS::MouseButtonID id) {
   if (mStyle == CS_ORBIT) {
     if (id == OIS::MB_Left) {
       mOrbiting = false;

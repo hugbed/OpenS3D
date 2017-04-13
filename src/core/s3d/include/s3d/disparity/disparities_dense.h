@@ -14,12 +14,8 @@ namespace s3d {
 
 class DisparitiesDense : public Disparities {
  public:
-  DisparitiesDense(Image disparityMap,
-                   DisparityPoint minDisparity,
-                   DisparityPoint maxDisparity)
-      : disparityMap_(std::move(disparityMap)),
-        min_(minDisparity),
-        max_(maxDisparity) {}
+  DisparitiesDense(Image disparityMap, DisparityPoint minDisparity, DisparityPoint maxDisparity)
+      : disparityMap_(std::move(disparityMap)), min_(minDisparity), max_(maxDisparity) {}
 
   const std::vector<DisparityPoint>& getDisparities() override {
     if (!disparities_.empty()) {

@@ -41,10 +41,9 @@ int main(int argc, char* argv[]) {
   displayInNewWindow("before", combined);
 
   // Compute disparities
-  auto disparityAlgo = std::unique_ptr<DisparityAlgorithm>(
-      std::make_unique<DisparityAlgorithmORB>());
-  auto disparities =
-      disparityAlgo->ComputeDisparities(Image{left}, Image{right});
+  auto disparityAlgo =
+      std::unique_ptr<DisparityAlgorithm>(std::make_unique<DisparityAlgorithmORB>());
+  auto disparities = disparityAlgo->ComputeDisparities(Image{left}, Image{right});
 
   // Display disparity map
   cv::Mat cm_disp;
@@ -63,10 +62,9 @@ int main(int argc, char* argv[]) {
   for (auto& d : disparityPoints) {
     //        auto rowColor = static_cast<uchar>((d.disparity.row -
     //        minVal)*255/(maxVal-minVal));
-    auto colColor = static_cast<uchar>((d.disparity.col - minVal) * 255 /
-                                       (maxVal - minVal));
-    cv::circle(coloredMap, cv::Point(d.leftPos.col, d.leftPos.row), 2,
-               cv::Scalar(colColor, 0, 0), -1);
+    auto colColor = static_cast<uchar>((d.disparity.col - minVal) * 255 / (maxVal - minVal));
+    cv::circle(coloredMap, cv::Point(d.leftPos.col, d.leftPos.row), 2, cv::Scalar(colColor, 0, 0),
+               -1);
   }
   displayInNewWindow("disp", coloredMap);
 
