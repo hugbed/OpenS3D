@@ -37,34 +37,82 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  //  constexpr auto materialNameLeft = "DynamicMaterialL";
-  //  constexpr auto materialNameRight = "DynamicMaterialR";
-  //  DynamicTexture::createImageMaterial(std::string(materialNameLeft), textureNameLeft);
-  //  DynamicTexture::createImageMaterial(std::string(materialNameRight), textureNameRight);
+  // default texture creation
+  {
+    //  constexpr auto materialNameLeft = "DynamicMaterialL";
+    //  constexpr auto materialNameRight = "DynamicMaterialR";
+    //  DynamicTexture::createImageMaterial(std::string(materialNameLeft), textureNameLeft);
+    //  DynamicTexture::createImageMaterial(std::string(materialNameRight), textureNameRight);
 
-  // anaglyph material
-  auto material = static_cast<Ogre::MaterialPtr>(
-      Ogre::MaterialManager::getSingleton().getByName("Anaglyph", "General"));
-  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameRight);
-  material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
-  material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-  material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+    //  material->getTechnique(0)->getPass(1)->createTextureUnitState(textureNameRight);
+    //  material->getTechnique(0)->getPass(1)->setDepthCheckEnabled(false);
+    //  material->getTechnique(0)->getPass(1)->setDepthWriteEnabled(false);
+    //  material->getTechnique(0)->getPass(1)->setLightingEnabled(false);
+    //
+    //  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+    //  material->getTechnique(0)->getPass(2)->createTextureUnitState(textureNameRight);
+    //  material->getTechnique(0)->getPass(2)->setDepthCheckEnabled(false);
+    //  material->getTechnique(0)->getPass(2)->setDepthWriteEnabled(false);
+    //  material->getTechnique(0)->getPass(2)->setLightingEnabled(false);
+  }
 
-  //  material->getTechnique(0)->getPass(1)->createTextureUnitState(textureNameRight);
-  //  material->getTechnique(0)->getPass(1)->setDepthCheckEnabled(false);
-  //  material->getTechnique(0)->getPass(1)->setDepthWriteEnabled(false);
-  //  material->getTechnique(0)->getPass(1)->setLightingEnabled(false);
-  //
-  //  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-  //  material->getTechnique(0)->getPass(2)->createTextureUnitState(textureNameRight);
-  //  material->getTechnique(0)->getPass(2)->setDepthCheckEnabled(false);
-  //  material->getTechnique(0)->getPass(2)->setDepthWriteEnabled(false);
-  //  material->getTechnique(0)->getPass(2)->setLightingEnabled(false);
+  // anaglyph
+  if (false) {
+    // anaglyph material
+    auto material = static_cast<Ogre::MaterialPtr>(
+        Ogre::MaterialManager::getSingleton().getByName("Anaglyph", "General"));
+    auto textureUnit =
+        material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+    textureUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnit->setTextureBorderColour(Ogre::ColourValue::Black);
+    textureUnit = material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameRight);
+    textureUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnit->setTextureBorderColour(Ogre::ColourValue::Black);
+    material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
+    material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+    material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
 
-  // todo: delete that
-  VideoPlayerEntity* entity = new VideoPlayerEntity("entititi", "Anaglyph");
-  mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
+    // set horizontal shift (%)
+    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
+        "horizontalShift", Ogre::Real(0.02));
+
+    // todo: delete that
+    VideoPlayerEntity* entity = new VideoPlayerEntity("entititi", "Anaglyph");
+    mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
+  }
+
+  // side by side
+  {
+    auto materialLeft = static_cast<Ogre::MaterialPtr>(
+        Ogre::MaterialManager::getSingleton().getByName("StereoSide", "General"));
+    materialLeft->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
+    materialLeft->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+    materialLeft->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+
+    auto textureUnitLeft =
+        materialLeft->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+    textureUnitLeft->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnitLeft->setTextureBorderColour(Ogre::ColourValue::Black);
+
+    auto materialRight = materialLeft->clone("StereoSideRight");
+
+    auto textureUnitRight =
+        materialRight->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+    textureUnitRight->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnitRight->setTextureBorderColour(Ogre::ColourValue::Black);
+
+    constexpr Ogre::Real horizontalShift = 0.015;
+
+    materialLeft->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
+        "horizontalShift", horizontalShift);
+    materialRight->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
+        "horizontalShift", -horizontalShift);
+
+    // todo: delete that
+    VideoPlayer3DEntity* entity =
+        new VideoPlayer3DEntity("entititi", "StereoSide", "StereoSideRight");
+    mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
+  }
 
   //  createVideoRectangle(materialNameLeft, materialNameRight);
   //  createVideoPlane("PointCloud");

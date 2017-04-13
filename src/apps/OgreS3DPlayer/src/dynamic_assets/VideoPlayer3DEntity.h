@@ -23,6 +23,8 @@ class VideoPlayer3DEntity : public Ogre::MovableObject {
         materialNames_{std::move(materialNameLeft), std::move(materialNameRight)} {
     rectangles_.first = createRectangle({-1.0f, 0.0f}, materialNames_.first);
     rectangles_.second = createRectangle({0.0f, 1.0f}, materialNames_.second);
+    //    rectangles_.first->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
+    //    rectangles_.second->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
   }
 
   /** Returns the type name of this object. */

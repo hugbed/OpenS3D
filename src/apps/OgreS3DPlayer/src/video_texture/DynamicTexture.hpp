@@ -53,10 +53,13 @@ class DynamicTexture {
                                                const std::string& textureName) {
     Ogre::MaterialPtr material =
         Ogre::MaterialManager::getSingleton().create(materialName, "General");
-    material->getTechnique(0)->getPass(0)->createTextureUnitState(textureName);
+    auto textureUnit = material->getTechnique(0)->getPass(0)->createTextureUnitState(textureName);
+    textureUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnit->setTextureBorderColour(Ogre::ColourValue::Black);
     material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
     material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
     material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+
     return material;
   }
 

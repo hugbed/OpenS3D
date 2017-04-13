@@ -1,9 +1,11 @@
 #version 130
 
 in vec2 vTexCoord;
-uniform sampler2D texture;
+uniform sampler2D textureSampler;
+
+out vec4 color;
 
 void main(void)
 {
-    gl_FragColor = texture(texture, vTexCoord);
+    color = texture(textureSampler, vTexCoord);
 }
