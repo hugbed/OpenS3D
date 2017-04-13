@@ -5,6 +5,11 @@ These tools should be sufficient to create 3D content either for stereoscopic ci
 
 This codebase is a work in process and work has just been started. It should get bigger as days go by.
 
+### Features
+
+Up to now: 
+* 3D video player (side-by-side/anaglyph) with Ogre. To produce 3D content. You need to be able to visualize it.
+
 ### Build Instructions
 
 This project uses C++14 and CMake:
