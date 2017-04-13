@@ -37,6 +37,7 @@
 #endif
 
 // Type Declarations
+#include "DeckLinkAPITypes.h"
 
 // Interface ID Declarations
 
