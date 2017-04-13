@@ -18,6 +18,8 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
  public:
   explicit FileVideoCaptureDevice(std::string filePath);
 
+  ~FileVideoCaptureDevice() override;
+
   void AllocateAndStart(const VideoCaptureFormat& format,
                         std::unique_ptr<VideoCaptureDevice::Client> client) override;
 

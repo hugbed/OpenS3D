@@ -2,7 +2,7 @@
 #define APPLICATION_HPP
 
 #include "BaseApplication.hpp"
-#include "dynamic_assets/VideoPlayer3DEntity.h"
+#include "s3d/video/capture/video_capture_device_3d.h"
 
 class DynamicTexture;
 class DynamicTextureThreadSafe;
@@ -24,19 +24,17 @@ class Application : public BaseApplication {
 
   static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(const std::string& name);
 
-  void createVideoRectangle(const std::string& materialNameLeft,
-                            const std::string& materialNameRight);
   void createVideoPlane(const std::string& materialName);
 
   void createPointCloud();
 
-  std::unique_ptr<VideoPlayer3DEntity> videoPlayer3DEntity_;
+  std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
+
+  std::unique_ptr<VideoCaptureDevice3D> videoCaptureDevice_;
 
   // to stream image to texture (L, R)
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>>
       m_videoTextures;
-
-  std::pair<std::unique_ptr<Ogre::Rectangle2D>, std::unique_ptr<Ogre::Rectangle2D>> m_Rectangles;
 
   std::unique_ptr<PointCloudMesh> m_pointCloudMesh;
 

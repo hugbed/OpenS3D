@@ -100,6 +100,8 @@ class RawUYVY3DFileParserConsumer
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 
+FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() = default;
+
 FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(const std::string& filePathsStr)
     : stopCaptureFlag_(false) {
   std::vector<std::string> filePaths;

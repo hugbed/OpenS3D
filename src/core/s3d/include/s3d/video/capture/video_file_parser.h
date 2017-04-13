@@ -32,6 +32,8 @@ class RawUYVYFileParser : public VideoFileParser {
  public:
   explicit RawUYVYFileParser(std::string filePath);
 
+  ~RawUYVYFileParser() override;
+
   gsl::owner<RawUYVYFileParser*> clone() override { return new RawUYVYFileParser(filePath_); }
 
   bool Initialize(VideoCaptureFormat* format) override;

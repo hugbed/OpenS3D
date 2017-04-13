@@ -20,6 +20,8 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
   return fileParser;
 }
 
+FileVideoCaptureDevice::~FileVideoCaptureDevice() = default;
+
 FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
     : filePath_(std::move(filePath)), stopCaptureFlag_(false) {}
 

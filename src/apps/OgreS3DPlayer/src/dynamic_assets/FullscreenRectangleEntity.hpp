@@ -2,21 +2,31 @@
 // Created by jon on 13/04/17.
 //
 
-#ifndef PROJECT_VIDEOPLAYERENTITY_H
-#define PROJECT_VIDEOPLAYERENTITY_H
+#ifndef DYNAMIC_ASSETS_FULLSCREENRECTANGLEENTITY_H
+#define DYNAMIC_ASSETS_FULLSCREENRECTANGLEENTITY_H
 
 #include "../video_texture/DynamicTexture.hpp"
+#include "RectangleFactory.hpp"
 
 #include <OgreRectangle2D.h>
 #include <OgreRenderable.h>
 
 #include <memory>
 
-class VideoPlayerEntity : public Ogre::MovableObject {
+class FullscreenRectangleEntity : public Ogre::MovableObject {
  public:
-  VideoPlayerEntity(std::string entityName, std::string materialName)
+  explicit FullscreenRectangleEntity(std::string entityName) : Ogre::MovableObject(entityName) {
+    rectangle_ = RectangleFactory::createRectangle({-1.0f, 1.0f});
+  }
+
+  FullscreenRectangleEntity(std::string entityName, std::string materialName)
       : Ogre::MovableObject(entityName), materialName_{std::move(materialName)} {
-    rectangle_ = createRectangle({-1.0f, 1.0f}, materialName_);
+    rectangle_ = RectangleFactory::createRectangle({-1.0f, 1.0f}, materialName_);
+  }
+
+  const void setMaterialName(std::string name) {
+    materialName_ = std::move(name);
+    rectangle_->setMaterial(materialName_);
   }
 
   /** Returns the type name of this object. */
@@ -38,28 +48,10 @@ class VideoPlayerEntity : public Ogre::MovableObject {
     visitor->visit(rectangle_.get(), 0, debugRenderables);
   }
 
-  // todo(hugbed): code repetition with VideoPlayer3DEntity
-  static std::unique_ptr<Ogre::Rectangle2D> createRectangle(std::pair<float, float> boundaries,
-                                                            const std::string& materialName) {
-    auto rect = std::make_unique<Ogre::Rectangle2D>(true);
-    rect->setCorners(boundaries.first, 1.0f, boundaries.second, -1.0f);
-    rect->setMaterial(materialName);
-
-    // Render the background before everything else
-    rect->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
-
-    // Use infinite AAB to always stay visible
-    Ogre::AxisAlignedBox aabInf;
-    aabInf.setInfinite();
-    rect->setBoundingBox(aabInf);
-
-    return rect;
-  }
-
   static std::string movableType_;
 
   std::string materialName_;
   std::unique_ptr<Ogre::Rectangle2D> rectangle_;
 };
 
-#endif  // PROJECT_VIDEOPLAYERENTITY_H
+#endif  // DYNAMIC_ASSETS_FULLSCREENRECTANGLEENTITY_H

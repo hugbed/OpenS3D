@@ -20,6 +20,8 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice3D {
     return new FileVideoCaptureDevice3D(combinedPath);
   }
 
+  ~FileVideoCaptureDevice3D() override;
+
   explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
 
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;

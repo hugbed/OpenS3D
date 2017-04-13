@@ -12,6 +12,8 @@ VideoFileParser::VideoFileParser(std::string filePath)
 
 RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : VideoFileParser(std::move(filePath)) {}
 
+RawUYVYFileParser::~RawUYVYFileParser() = default;
+
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
   format->frameRate = 1.0f / 30.0f;
   format->frameSize = Size{1920, 1080};

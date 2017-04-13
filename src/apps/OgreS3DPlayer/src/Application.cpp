@@ -1,15 +1,11 @@
 #include "Application.hpp"
 
+#include "dynamic_assets/VideoPlayer3DEntityFactory.hpp"
 #include "point_cloud/PointCloudMesh.hpp"
-#include "video_texture/DynamicTexture.hpp"
 #include "video_texture/DynamicTextureThreadSafe.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/file_video_capture_device_3d.h"
-#include "dynamic_assets/VideoPlayer3DEntity.h"
-#include "dynamic_assets/VideoPlayerEntity.h"
-
-#include <OgreRectangle2D.h>
 
 //-------------------------------------------------------------------------------------
 
@@ -30,6 +26,7 @@ void Application::createScene() {
   //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
   //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
+  // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
   constexpr auto textureNameRight = "DynamicTextureR";
   m_videoTextures.first = createDynamicTexture(textureNameLeft);
@@ -37,97 +34,26 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  // default texture creation
-  {
-    //  constexpr auto materialNameLeft = "DynamicMaterialL";
-    //  constexpr auto materialNameRight = "DynamicMaterialR";
-    //  DynamicTexture::createImageMaterial(std::string(materialNameLeft), textureNameLeft);
-    //  DynamicTexture::createImageMaterial(std::string(materialNameRight), textureNameRight);
+  // create video player entity and add it to the scene
+  videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
+      VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
+  mSceneMgr->getRootSceneNode()
+      ->createChildSceneNode("entititiNode")
+      ->attachObject(videoPlayer3DEntity_.get());
 
-    //  material->getTechnique(0)->getPass(1)->createTextureUnitState(textureNameRight);
-    //  material->getTechnique(0)->getPass(1)->setDepthCheckEnabled(false);
-    //  material->getTechnique(0)->getPass(1)->setDepthWriteEnabled(false);
-    //  material->getTechnique(0)->getPass(1)->setLightingEnabled(false);
-    //
-    //  material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-    //  material->getTechnique(0)->getPass(2)->createTextureUnitState(textureNameRight);
-    //  material->getTechnique(0)->getPass(2)->setDepthCheckEnabled(false);
-    //  material->getTechnique(0)->getPass(2)->setDepthWriteEnabled(false);
-    //  material->getTechnique(0)->getPass(2)->setLightingEnabled(false);
-  }
-
-  // anaglyph
-  if (false) {
-    // anaglyph material
-    auto material = static_cast<Ogre::MaterialPtr>(
-        Ogre::MaterialManager::getSingleton().getByName("Anaglyph", "General"));
-    auto textureUnit =
-        material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-    textureUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-    textureUnit->setTextureBorderColour(Ogre::ColourValue::Black);
-    textureUnit = material->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameRight);
-    textureUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-    textureUnit->setTextureBorderColour(Ogre::ColourValue::Black);
-    material->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
-    material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-    material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-
-    // set horizontal shift (%)
-    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
-        "horizontalShift", Ogre::Real(0.02));
-
-    // todo: delete that
-    VideoPlayerEntity* entity = new VideoPlayerEntity("entititi", "Anaglyph");
-    mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
-  }
-
-  // side by side
-  {
-    auto materialLeft = static_cast<Ogre::MaterialPtr>(
-        Ogre::MaterialManager::getSingleton().getByName("StereoSide", "General"));
-    materialLeft->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
-    materialLeft->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-    materialLeft->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-
-    auto textureUnitLeft =
-        materialLeft->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-    textureUnitLeft->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-    textureUnitLeft->setTextureBorderColour(Ogre::ColourValue::Black);
-
-    auto materialRight = materialLeft->clone("StereoSideRight");
-
-    auto textureUnitRight =
-        materialRight->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-    textureUnitRight->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-    textureUnitRight->setTextureBorderColour(Ogre::ColourValue::Black);
-
-    constexpr Ogre::Real horizontalShift = 0.015;
-
-    materialLeft->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
-        "horizontalShift", horizontalShift);
-    materialRight->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
-        "horizontalShift", -horizontalShift);
-
-    // todo: delete that
-    VideoPlayer3DEntity* entity =
-        new VideoPlayer3DEntity("entititi", "StereoSide", "StereoSideRight");
-    mSceneMgr->getRootSceneNode()->createChildSceneNode("entititiNode")->attachObject(entity);
-  }
-
-  //  createVideoRectangle(materialNameLeft, materialNameRight);
-  //  createVideoPlane("PointCloud");
-
-  // should delete this pointer, this is only a test
-  auto captureDevice = new FileVideoCaptureDevice3D(
-      "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv");
+  // create video capture device and client
+  videoCaptureDevice_ =
+      std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
+          "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
 
   auto captureClient =
       std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient>(
           m_videoTextures.first.get(), m_videoTextures.second.get()));
 
   VideoCaptureFormat format;  // todo(hugbed): could be used to init texture size
-  captureDevice->AllocateAndStart(format, std::move(captureClient));
+  videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
 
+  //  createVideoPlane("PointCloud");
   //  addLights();
   //  createGroundPlane();
   //  createPointCloud();
@@ -165,16 +91,6 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
   constexpr auto refreshRate = 1.0f / 60.0f;
   return std::make_unique<DynamicTextureThreadSafe>(name, Ogre::PixelFormat::PF_R8G8B8, 1920, 1080,
                                                     refreshRate);
-}
-
-void Application::createVideoRectangle(const std::string& materialNameLeft,
-                                       const std::string& materialNameRight) {
-  constexpr auto videoPlayerName = "VideoPlayerEntity";
-  videoPlayer3DEntity_ =
-      std::make_unique<VideoPlayer3DEntity>(videoPlayerName, materialNameLeft, materialNameRight);
-  mSceneMgr->getRootSceneNode()
-      ->createChildSceneNode(videoPlayerName)
-      ->attachObject(videoPlayer3DEntity_.get());
 }
 
 void Application::createVideoPlane(const std::string& materialName) {

@@ -2,29 +2,38 @@
 // Created by jon on 12/04/17.
 //
 
-#ifndef DYNAMIC_ASSETS_VIDEOPLAYERENTITY_H
-#define DYNAMIC_ASSETS_VIDEOPLAYERENTITY_H
+#ifndef DYNAMIC_ASSETS_SPLITSCREENRECTANGLEENTITY_H
+#define DYNAMIC_ASSETS_SPLITSCREENRECTANGLEENTITY_H
 
 #include "../video_texture/DynamicTexture.hpp"
+#include "RectangleFactory.hpp"
 
 #include <OgreRectangle2D.h>
 #include <OgreRenderable.h>
 
 #include <memory>
 
-// todo(hugbed): do VideoPlayerEntity (for rectangle and plane)
-
-class VideoPlayer3DEntity : public Ogre::MovableObject {
+class SplitscreenRectangleEntity : public Ogre::MovableObject {
  public:
-  VideoPlayer3DEntity(std::string entityName,
-                      std::string materialNameLeft,
-                      std::string materialNameRight)
+  explicit SplitscreenRectangleEntity(std::string entityName) : Ogre::MovableObject(entityName) {
+    rectangles_.first = RectangleFactory::createRectangle({-1.0f, 0.0f});
+    rectangles_.second = RectangleFactory::createRectangle({0.0f, 1.0f});
+  }
+
+  SplitscreenRectangleEntity(std::string entityName,
+                             std::string materialNameLeft,
+                             std::string materialNameRight)
       : Ogre::MovableObject(entityName),
         materialNames_{std::move(materialNameLeft), std::move(materialNameRight)} {
-    rectangles_.first = createRectangle({-1.0f, 0.0f}, materialNames_.first);
-    rectangles_.second = createRectangle({0.0f, 1.0f}, materialNames_.second);
-    //    rectangles_.first->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND);
-    //    rectangles_.second->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
+    rectangles_.first = RectangleFactory::createRectangle({-1.0f, 0.0f}, materialNames_.first);
+    rectangles_.second = RectangleFactory::createRectangle({0.0f, 1.0f}, materialNames_.second);
+  }
+
+  const void setMaterialNames(std::string materialNameLeft, std::string materialNameRight) {
+    materialNames_.first = std::move(materialNameLeft);
+    materialNames_.second = std::move(materialNameRight);
+    rectangles_.first->setMaterial(materialNames_.first);
+    rectangles_.second->setMaterial(materialNames_.second);
   }
 
   /** Returns the type name of this object. */
@@ -71,4 +80,4 @@ class VideoPlayer3DEntity : public Ogre::MovableObject {
   std::pair<std::unique_ptr<Ogre::Rectangle2D>, std::unique_ptr<Ogre::Rectangle2D>> rectangles_;
 };
 
-#endif  // DYNAMIC_ASSETS_VIDEOPLAYERENTITY_H
+#endif  // DYNAMIC_ASSETS_SPLITSCREENRECTANGLEENTITY_H
