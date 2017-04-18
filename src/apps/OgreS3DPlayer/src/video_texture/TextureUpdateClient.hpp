@@ -21,8 +21,8 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
                       DynamicTextureThreadSafe* videoTextureR)
       : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
 
-  void OnIncomingCapturedData(const std::vector<uint8_t>& leftImage,
-                              const std::vector<uint8_t>& rightImage,
+  void OnIncomingCapturedData(gsl::span<const uint8_t> leftImage,
+                              gsl::span<const uint8_t> rightImage,
                               const VideoCaptureFormat& /*frameFormat*/) override {
     outputPerformanceMetrics(std::cout);
     videoTexture->updateImage(leftImage);

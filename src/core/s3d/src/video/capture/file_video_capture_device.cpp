@@ -1,6 +1,6 @@
-//
-// Created by bedh2102 on 06/04/17.
-//
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #include "s3d/video/capture/file_video_capture_device.h"
 #include "s3d/video/capture/video_file_parser.h"
@@ -59,7 +59,7 @@ void FileVideoCaptureDevice::StopAndDeAllocate() {
 }
 
 void FileVideoCaptureDevice::OnCaptureTask() {
-  if (fileParser_->GetNextFrame(videoFrame_)) {
+  if (fileParser_->GetNextFrame(videoFrame_) || client_) {
     client_->OnIncomingCapturedData(videoFrame_, captureFormat_);
   } else {
     stopCaptureFlag_ = true;

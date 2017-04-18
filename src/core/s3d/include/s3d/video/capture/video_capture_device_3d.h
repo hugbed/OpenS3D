@@ -1,6 +1,6 @@
-//
-// Created by jon on 11/04/17.
-//
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_3D_H
 #define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_3D_H
@@ -13,8 +13,8 @@ class VideoCaptureDevice3D : rule_of_five_interface<VideoCaptureDevice3D> {
  public:
   class Client : rule_of_five_interface<VideoCaptureDevice3D::Client> {
    public:
-    virtual void OnIncomingCapturedData(const std::vector<uint8_t>& leftImage,
-                                        const std::vector<uint8_t>& rightImage,
+    virtual void OnIncomingCapturedData(const gsl::span<const uint8_t> leftImage,
+                                        const gsl::span<const uint8_t> rightImage,
                                         const VideoCaptureFormat& frameFormat) = 0;
 
     virtual void OnError(const std::string& reason) = 0;

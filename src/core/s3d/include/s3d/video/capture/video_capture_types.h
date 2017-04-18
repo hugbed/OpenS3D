@@ -1,6 +1,6 @@
-//
-// Created by bedh2102 on 06/04/17.
-//
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H
 #define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H

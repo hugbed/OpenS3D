@@ -1,6 +1,7 @@
-//
-// Created by jon on 11/04/17.
-//
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
+
 #include "s3d/utilities/file_io.h"
 #include "s3d/video/capture/video_capture_types.h"
 #include "s3d/video/capture/video_file_parser.h"

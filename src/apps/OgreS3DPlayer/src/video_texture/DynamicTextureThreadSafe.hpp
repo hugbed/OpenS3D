@@ -25,7 +25,7 @@ class DynamicTextureThreadSafe : public DynamicTexture, public Ogre::FrameListen
     m_nextFrame.resize(getSizeInBytes());
   }
 
-  void updateImage(const std::vector<uint8_t>& imageBytes) override {
+  void updateImage(gsl::span<const uint8_t> imageBytes) override {
     std::unique_lock<std::mutex> mlock(m_frameMutex);
     assert(imageBytes.size() == m_nextFrame.size());
     std::copy(std::begin(imageBytes), std::end(imageBytes), std::begin(m_nextFrame));

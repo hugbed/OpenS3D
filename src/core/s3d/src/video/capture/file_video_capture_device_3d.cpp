@@ -1,6 +1,6 @@
-//
-// Created by jon on 11/04/17.
-//
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #include "s3d/utilities/concurrency/consumer_barrier_sync.h"
 #include "s3d/utilities/file_io.h"
@@ -83,7 +83,9 @@ class RawUYVY3DFileParserConsumer
     const auto& producers = getProducers();
     auto& leftImage = producers[0]->getProduct();
     auto& rightImage = producers[1]->getProduct();
-    client_->OnIncomingCapturedData(leftImage, rightImage, format_);
+    if (client_) {
+      client_->OnIncomingCapturedData(leftImage, rightImage, format_);
+    }
   }
 
   void sleepUntilNextFrame() {

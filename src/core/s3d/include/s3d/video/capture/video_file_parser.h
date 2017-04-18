@@ -1,6 +1,6 @@
-//
-// Created by jon on 11/04/17.
-//
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H
 #define S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H

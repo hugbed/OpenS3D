@@ -17,6 +17,9 @@ if (WIN32)
   set(CMAKE_SHARED_LIBRARY_PREFIX "")
 endif ()
 
+# cmake modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 # clang-tidy and clang-format
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(cmake/clang-cxx-dev-tools.cmake)
@@ -25,7 +28,7 @@ include(cmake/clang-cxx-dev-tools.cmake)
 # NOTE: The order matters! The most independent ones should go first.
 add_subdirectory(core/s3d)
 add_subdirectory(core/s3dcuda)
-#add_subdirectory(libs/decklink)
+add_subdirectory(libs/decklink)
 add_subdirectory(libs/gsl)
 add_subdirectory(apps/OgreS3DPlayer)
 add_subdirectory(apps/S3DDemo)

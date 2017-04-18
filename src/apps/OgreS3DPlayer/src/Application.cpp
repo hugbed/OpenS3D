@@ -37,6 +37,7 @@ void Application::createScene() {
   // create video player entity and add it to the scene
   videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
       VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
+
   mSceneMgr->getRootSceneNode()
       ->createChildSceneNode("entititiNode")
       ->attachObject(videoPlayer3DEntity_.get());
