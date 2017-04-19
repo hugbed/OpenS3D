@@ -18,6 +18,7 @@ class DeckLinkCaptureDelegate;
 class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
  public:
   explicit VideoCaptureDeviceDecklink(const VideoCaptureDeviceDescriptor& deviceDescriptor);
+  gsl::owner<VideoCaptureDevice*> clone() override;
 
   ~VideoCaptureDeviceDecklink() override;
 
@@ -26,11 +27,10 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
 
   void StopAndDeAllocate() override;
 
-  gsl::owner<VideoCaptureDevice*> clone() override;
-
-  // called from delagate
-  void OnIncomingCapturedData(gsl::span<const uint8_t> data, const VideoCaptureFormat& frameFormat);
-  //                              std::chrono::time_point timestamp); // todo: include timestamp
+  // called from delegate
+  void OnIncomingCapturedData(gsl::span<const uint8_t> data,
+                              const VideoCaptureFormat& frameFormat);
+  //std::chrono::high_resolution_clock::duration<std::chrono::high_resolution_clok::microseconds> timestamp);  // todo: include timestamp
 
   void SendErrorString(const std::string& /*reason*/);
   void SendLogString(const std::string& /*message*/);
