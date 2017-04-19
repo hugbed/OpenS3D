@@ -28,9 +28,9 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   void StopAndDeAllocate() override;
 
   // called from delegate
-  void OnIncomingCapturedData(gsl::span<const uint8_t> data,
-                              const VideoCaptureFormat& frameFormat);
-  //std::chrono::high_resolution_clock::duration<std::chrono::high_resolution_clok::microseconds> timestamp);  // todo: include timestamp
+  void OnIncomingCapturedData(gsl::span<const uint8_t> data, const VideoCaptureFormat& frameFormat);
+  // std::chrono::high_resolution_clock::duration<std::chrono::high_resolution_clok::microseconds>
+  // timestamp);  // todo: include timestamp
 
   void SendErrorString(const std::string& /*reason*/);
   void SendLogString(const std::string& /*message*/);
@@ -38,6 +38,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
  private:
   std::unique_ptr<VideoCaptureDevice::Client> client_{};
   std::unique_ptr<DeckLinkCaptureDelegate> captureDelegate_;
+  std::vector<uint8_t> rgbFrame_;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H

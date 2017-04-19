@@ -22,15 +22,24 @@ class Application : public BaseApplication {
 
   void createGroundPlane();
 
-  static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(const std::string& name);
+  static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(
+      const std::string& name,
+      const VideoCaptureFormat& format);
 
   void createVideoPlane(const std::string& materialName);
 
   void createPointCloud();
 
-  std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
 
-  std::unique_ptr<VideoCaptureDevice3D> videoCaptureDevice_;
+  // todo: have better solution than 3D and 2D mode at the same time, 1 without initialization
+
+  // 3D mode
+  std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
+  std::unique_ptr<VideoCaptureDevice3D> videoCaptureDevice3D_;
+
+  // 2D mode
+  std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
+  std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;
 
   // to stream image to texture (L, R)
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>>
