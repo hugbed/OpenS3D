@@ -21,7 +21,7 @@ if len(sys.argv) < 4:
     print ("oh oh, should be: %s in out_L out_R")%(sys.argv[0])
     exit(0)
 
-in_fn = sys.argv[1] 
+in_fn = sys.argv[1]
 outL_fn = sys.argv[2]
 outR_fn = sys.argv[3]
 
