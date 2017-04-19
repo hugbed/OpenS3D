@@ -32,7 +32,13 @@ void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& /*format
                                               std::unique_ptr<VideoCaptureDevice::Client> client) {
   client_ = std::move(client);
   stopCaptureFlag_ = false;
+
   fileParser_ = GetVideoFileParser(filePath_, &captureFormat_);
+  if (fileParser_ == nullptr) {
+    client_->OnError("File not found.");
+    return;
+  }
+
   captureThread_ = std::make_unique<std::thread>(&FileVideoCaptureDevice::OnAllocateAndStart, this);
   captureThread_->detach();  // todo: detach for now
 }

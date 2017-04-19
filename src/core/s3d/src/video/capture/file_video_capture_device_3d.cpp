@@ -30,8 +30,6 @@ class RawUYVY3DFileParserProducer
   }
 
   bool shouldStopProducing() override {
-    // read in loop :D
-
     return !readingFile_;
 
     //    if (fileStream.eof()) {
@@ -41,24 +39,24 @@ class RawUYVY3DFileParserProducer
     //    return fileStream.eof();
   }
 
- private:
-  void produce() override { readingFile_ = fileParser_->GetNextFrame(rgbBytes); }
-
-  void onStartProducing() override {
+  bool allocate() {
     fileParser_ = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath_));
 
     VideoCaptureFormat fileFormat;
     if (!fileParser_->Initialize(&fileFormat)) {
       fileParser_.reset();
-      return;
+      readingFile_ = false;
     }
-
     readingFile_ = true;
+    return readingFile_;
   }
+
+ private:
+  void produce() override { readingFile_ = fileParser_->GetNextFrame(rgbBytes); }
 
   const std::vector<uint8_t>& getProduct() override { return rgbBytes; }
 
-  bool readingFile_{true};
+  bool readingFile_{false};
   std::unique_ptr<VideoFileParser> fileParser_;
   std::vector<uint8_t> rgbBytes;
   std::string filePath_;
@@ -119,6 +117,7 @@ FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(const std::string& filePathsS
 void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*format*/,
                                                 std::unique_ptr<Client> client) {
   client_ = std::move(client);
+
   auto captureThread = std::thread([this] {
     std::mutex doneProducingMutex;
     std::condition_variable shouldConsumeCV;
@@ -128,6 +127,10 @@ void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*form
         filePaths_.first, fileFormat, &doneProducingMutex, &shouldConsumeCV);
     producers_.second = std::make_unique<RawUYVY3DFileParserProducer>(
         filePaths_.second, fileFormat, &doneProducingMutex, &shouldConsumeCV);
+
+    if (!producers_.first->allocate() || !producers_.second->allocate()) {
+      client_->OnError("Cannot open requested file(s)");
+    }
 
     std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {producers_.first.get(),
                                                                          producers_.second.get()};
@@ -143,6 +146,7 @@ void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*form
     consumer_ = std::make_unique<RawUYVY3DFileParserConsumer>(
         client_.get(), outputFormat, &doneProducingMutex, &shouldConsumeCV, producers);
 
+    // todo: maybe a deadlock if producers are not ready to produce yet
     // blocking
     consumer_->startConsuming();
 

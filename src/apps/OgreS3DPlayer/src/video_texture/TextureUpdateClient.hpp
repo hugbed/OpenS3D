@@ -24,7 +24,7 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
   void OnIncomingCapturedData(gsl::span<const uint8_t> leftImage,
                               gsl::span<const uint8_t> rightImage,
                               const VideoCaptureFormat& /*frameFormat*/) override {
-    outputPerformanceMetrics(std::cout);
+//    outputPerformanceMetrics(std::cout);
     videoTexture->updateImage(leftImage);
     videoTextureR->updateImage(rightImage);
   }
@@ -37,7 +37,9 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
     lastTimeMesure = now;
   }
 
-  void OnError(const std::string& /*unused*/) override {}
+  void OnError(const std::string& reason) override {
+    std::cerr << "Video Capture Error: " << reason << std::endl;
+  }
   void OnLog(const std::string& /*unused*/) override {}
   void OnStarted() override {}
 
