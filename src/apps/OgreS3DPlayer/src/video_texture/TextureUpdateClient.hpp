@@ -1,32 +1,24 @@
-//
-// Created by jon on 23/03/17.
-//
-
-#ifndef VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H
-#define VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H
+#ifndef VIDEO_TEXTURE_TEXTUREUPDATECLIENT_HPP
+#define VIDEO_TEXTURE_TEXTUREUPDATECLIENT_HPP
 
 #include "DynamicTextureThreadSafe.hpp"
 
 #include "s3d/video/capture/video_capture_device_3d.h"
 
-class TextureUpdateClient : public VideoCaptureDevice3D::Client {
+class TextureUpdateClient : public VideoCaptureDevice::Client {
  public:
-  using time_point = std::chrono::time_point<std::chrono::system_clock>;
+  using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
-  gsl::owner<VideoCaptureDevice3D::Client*> clone() override {
-    return new TextureUpdateClient(videoTexture, videoTextureR);
+  gsl::owner<VideoCaptureDevice::Client*> clone() override {
+    return new TextureUpdateClient(videoTexture);
   }
 
-  TextureUpdateClient(DynamicTextureThreadSafe* videoTexture,
-                      DynamicTextureThreadSafe* videoTextureR)
-      : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
+  TextureUpdateClient(DynamicTextureThreadSafe* videoTexture) : videoTexture{videoTexture} {}
 
-  void OnIncomingCapturedData(gsl::span<const uint8_t> leftImage,
-                              gsl::span<const uint8_t> rightImage,
-                              const VideoCaptureFormat& /*frameFormat*/) override {
-    outputPerformanceMetrics(std::cout);
-    videoTexture->updateImage(leftImage);
-    videoTextureR->updateImage(rightImage);
+  void OnIncomingCapturedData(gsl::span<const uint8_t> image,
+                              const VideoCaptureFormat& frameFormat) override {
+//    outputPerformanceMetrics(std::cout);
+    videoTexture->updateImage(image);
   }
 
   void outputPerformanceMetrics(std::ostream& outStream) {
@@ -37,14 +29,15 @@ class TextureUpdateClient : public VideoCaptureDevice3D::Client {
     lastTimeMesure = now;
   }
 
-  void OnError(const std::string& /*unused*/) override {}
+  void OnError(const std::string& reason) override {
+    std::cerr << "Video Capture Error: " << reason << std::endl;
+  }
   void OnLog(const std::string& /*unused*/) override {}
   void OnStarted() override {}
 
  private:
   time_point lastTimeMesure;
   DynamicTextureThreadSafe* videoTexture;
-  DynamicTextureThreadSafe* videoTextureR;
 };
 
-#endif  // VIDEO_TEXTURE_TEXTUREUPDATECLIENT_H
+#endif  // VIDEO_TEXTURE_TEXTUREUPDATECLIENT_HPP

@@ -38,7 +38,4 @@ mark_as_advanced(
     DECKLINKAPI_LIBRARY
 )
 
-# handle the QUIETLY and REQUIRED arguments and set DECKLINKAPI_FOUND to TRUE
-# if all listed variables are TRUE
-find_package_handle_standard_args(DecklinkAPI  DEFAULT_MSG
-    DECKLINKAPI_LIBRARY DECKLINKAPI_INCLUDE_DIR)
+

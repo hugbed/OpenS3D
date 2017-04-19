@@ -18,32 +18,40 @@ struct DecklinkPtrDeleter {
   }
 };
 
-template <typename T>
-struct decklink_iid {
-  // general case not defined
+namespace DecklinkHelpers {
+template <class T>
+struct decklink_iid_t {
+  using type = T;
+  constexpr decklink_iid_t(){};
 };
+template <class T>
+constexpr decklink_iid_t<T> decklink_iid{};
 
-template <>
-struct decklink_iid<IDeckLinkInput> {
-  constexpr static const REFIID value = IID_IDeckLinkInput;
-};
+template <class T>
+constexpr void get_iid(decklink_iid_t<T>) = delete;  // overload this for your particular types
 
-template <>
-struct decklink_iid<IDeckLink> {
-  constexpr static const REFIID value = IID_IDeckLink;
-};
+template <class T>
+constexpr REFIID interface_iid = get_iid(decklink_iid<T>);
+}
 
-template <>
-struct decklink_iid<IDeckLinkConfiguration> {
-  constexpr static const REFIID value = IID_IDeckLinkConfiguration;
-};
+constexpr REFIID get_iid(DecklinkHelpers::decklink_iid_t<IDeckLinkInput>) {
+  return IID_IDeckLinkInput;
+}
+
+constexpr REFIID get_iid(DecklinkHelpers::decklink_iid_t<IDeckLink>) {
+  return IID_IDeckLink;
+}
+
+constexpr REFIID get_iid(DecklinkHelpers::decklink_iid_t<IDeckLinkConfiguration>) {
+  return IID_IDeckLinkConfiguration;
+}
 
 template <class U, class T>
 std::unique_ptr<U, DecklinkPtrDeleter> make_decklink_ptr(T const& src) {
   if (!src)
     return {};
   U* r = nullptr;
-  if (src->QueryInterface(decklink_iid<U>::value, (void**)&r) != S_OK)
+  if (src->QueryInterface(DecklinkHelpers::interface_iid<U>, (void**)&r) != S_OK)
     return {};
   return {r, {}};
 }
@@ -54,4 +62,4 @@ using SmartDecklinkPtr = std::unique_ptr<T, DecklinkPtrDeleter>;
 // use it this way
 // auto decklLink = make_decklink_ptr<IDeckLinkInput>(deckLink);
 
-#endif //PROJECT_DECKLINK_H
+#endif  // PROJECT_DECKLINK_H

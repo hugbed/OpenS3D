@@ -3,9 +3,11 @@
 #include "dynamic_assets/VideoPlayer3DEntityFactory.hpp"
 #include "point_cloud/PointCloudMesh.hpp"
 #include "video_texture/DynamicTextureThreadSafe.hpp"
+#include "video_texture/TextureUpdateClient3D.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/file_video_capture_device_3d.h"
+#include "s3d/video/capture/video_capture_device_decklink.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -26,33 +28,75 @@ void Application::createScene() {
   //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
   //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
+  constexpr bool MODE_3D_ENABLED = false;
+
+  // todo: this should be chosen from possible input formats
+  // todo: it's actually BGRA, I think?
+  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB);
+
+  // DEBUG FLAG ONLY. todo: better incorporation of 3D vs 2D
+  if (MODE_3D_ENABLED) {
+    // todo: this should be set from VideoCaptureDevice format
+    format.pixelFormat = VideoPixelFormat::RGB;
+  }
+
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
   constexpr auto textureNameRight = "DynamicTextureR";
-  m_videoTextures.first = createDynamicTexture(textureNameLeft);
-  m_videoTextures.second = createDynamicTexture(textureNameRight);
+  // todo: this should be created from VideoCaptureDevice format
+  m_videoTextures.first = createDynamicTexture(textureNameLeft, format);
+  m_videoTextures.second = createDynamicTexture(textureNameRight, format);
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  // create video player entity and add it to the scene
-  videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
-      VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
-
-  mSceneMgr->getRootSceneNode()
-      ->createChildSceneNode("entititiNode")
-      ->attachObject(videoPlayer3DEntity_.get());
-
-  // create video capture device and client
-  videoCaptureDevice_ =
+  // FOR DEBUG PURPOSES
+  if (MODE_3D_ENABLED) {
+    // todo : let the user choose the file
+    videoCaptureDevice3D_ =
       std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-          "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
+        "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
 
-  auto captureClient =
-      std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient>(
-          m_videoTextures.first.get(), m_videoTextures.second.get()));
+    // create video player entity and add it to the scene
+    videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
+        VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
 
-  VideoCaptureFormat format;  // todo(hugbed): could be used to init texture size
-  videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+    mSceneMgr->getRootSceneNode()
+        ->createChildSceneNode("entititiNode")
+        ->attachObject(videoPlayer3DEntity_.get());
+
+    auto captureClient =
+        std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient3D>(
+            m_videoTextures.first.get(), m_videoTextures.second.get()));
+    videoCaptureDevice3D_->AllocateAndStart(format, std::move(captureClient));
+  } else {
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+        std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor{""}));
+
+    auto materialLeft = static_cast<Ogre::MaterialPtr>(
+        Ogre::MaterialManager::getSingleton().getByName("StereoSide", "General"));
+    materialLeft->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
+    materialLeft->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+    materialLeft->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+
+    auto textureUnitLeft =
+        materialLeft->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
+    textureUnitLeft->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
+    textureUnitLeft->setTextureBorderColour(Ogre::ColourValue::Black);
+
+    materialLeft->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
+        "horizontalShift", Ogre::Real(0.0f));
+
+    videoPlayerEntity_ =
+        std::make_unique<FullscreenRectangleEntity>("VideoEntity", materialLeft->getName());
+
+    mSceneMgr->getRootSceneNode()
+        ->createChildSceneNode("entititiNode")
+        ->attachObject(videoPlayerEntity_.get());  // start capture
+
+    auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+        std::make_unique<TextureUpdateClient>(m_videoTextures.first.get()));
+    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+  }
 
   //  createVideoPlane("PointCloud");
   //  addLights();
@@ -87,11 +131,26 @@ void Application::createGroundPlane() {
 }
 
 std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
-    const std::string& name) {
-  // twice as fast as update to prevent aliasing (if this makes sense)
-  constexpr auto refreshRate = 1.0f / 60.0f;
-  return std::make_unique<DynamicTextureThreadSafe>(name, Ogre::PixelFormat::PF_R8G8B8, 1920, 1080,
-                                                    refreshRate);
+    const std::string& name,
+    const VideoCaptureFormat& format) {
+  Ogre::PixelFormat pixelFormat = Ogre::PixelFormat::PF_UNKNOWN;
+
+  switch (format.pixelFormat) {
+    case VideoPixelFormat::RGB:
+      pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
+      break;
+    case VideoPixelFormat::ARGB:
+      //todo : ARGB or BGRA!!
+      pixelFormat = Ogre::PixelFormat::PF_B8G8R8A8;
+      break;
+    default:
+      break;
+  }
+
+  // more than twice as fast as update to prevent aliasing (if this makes sense)
+  return std::make_unique<DynamicTextureThreadSafe>(name, pixelFormat, format.frameSize.getWidth(),
+                                                    format.frameSize.getHeight(),
+                                                    1.0f / (4.0f * format.frameRate));
 }
 
 void Application::createVideoPlane(const std::string& materialName) {

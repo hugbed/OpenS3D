@@ -11,4 +11,4 @@ add_library(${PROJECT_NAME}
         src/DeckLinkAPIDispatch.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-#target_link_libraries(${PROJECT_NAME} ${DECKLINKAPI_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${DECKLINKAPI_LIBRARY} -ldl)
