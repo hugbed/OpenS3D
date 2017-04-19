@@ -2,7 +2,6 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include <s3d/video/compression/yuv.h>
 #include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/video_capture_device_factory.h"
 #include "s3d/video/capture/video_capture_types.h"
@@ -223,7 +222,6 @@ HRESULT DeckLinkCaptureDelegate::VideoInputFormatChanged(
 HRESULT DeckLinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrame,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
-  //  videoFrame->GetBytes(reinterpret_cast<void**>(&video_data));
   rgbFrame_->resize(videoFrame->GetWidth(), videoFrame->GetHeight());
   videoConversion_->ConvertFrame(videoFrame, static_cast<IDeckLinkVideoFrame*>(rgbFrame_.get()));
   uint8_t* video_data = nullptr;
