@@ -14,6 +14,7 @@
 #include <vector>
 
 // todo(hugbed): put in s3d namespace
+// todo: merge with VideoCaptureDevice3D
 
 class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
  public:
