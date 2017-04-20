@@ -5,7 +5,7 @@
 #include "video_texture/DynamicTextureThreadSafe.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
-#include "s3d/video/capture/video_capture_device_decklink_3d.h"
+#include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 #include "s3d/video/capture/video_capture_types.h"
 

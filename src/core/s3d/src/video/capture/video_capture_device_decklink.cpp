@@ -2,7 +2,7 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include "s3d/video/capture/video_capture_device_decklink_3d.h"
+#include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/decklink.h"
 
 // inspiration: https://forum.blackmagicdesign.com/viewtopic.php?f=12&t=33269
@@ -93,18 +93,17 @@ HRESULT RGB8VideoFrame::GetBytes(/* out */ void** buffer) {
 }
 
 // todo: better consistency between DeckLink and decklink (camel case?)
-// todo: this could be shared with VideoCaptureDevice3D and could have either a 3D or 2D
-class DecklinkCaptureDelegate3D : public IDeckLinkInputCallback {
+class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
  public:
-  DecklinkCaptureDelegate3D(const VideoCaptureDeviceDescriptor& device_descriptor,
-                            VideoCaptureDeviceDecklink* frameReceiver)
+  DecklinkCaptureDelegate(const VideoCaptureDeviceDescriptor& device_descriptor,
+                          VideoCaptureDeviceDecklink* frameReceiver)
       : device_descriptor_{device_descriptor},
         captureFormat_{{0, 0}, 0.0f, VideoPixelFormat::UNKNOWN},
         frameReceiver_{frameReceiver},
         rgbFrameLeft_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)},
         rgbFrameRight_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)} {}
 
-  ~DecklinkCaptureDelegate3D() override = default;
+  ~DecklinkCaptureDelegate() override = default;
 
   void AllocateAndStart(const VideoCaptureFormat& params);
   void StopAndDeAllocate();
@@ -151,7 +150,7 @@ class DecklinkCaptureDelegate3D : public IDeckLinkInputCallback {
   std::chrono::high_resolution_clock::time_point firstRefTime_;
 };
 
-void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& params) {
+void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params) {
   // Only 1920x1080, 30fps, BGRA, 2D or 3D supported
   // todo: is it BGRA or ARGB?
   if (params.frameSize != Size(1920, 1080) || params.frameRate != 30.0f ||
@@ -195,7 +194,7 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
     return;
   }
 
-  // 3D settings for VideoCapture3D
+  // 3D settings for VideoCapture
   if (params.stereo3D) {
     auto decklinkConfiguration = make_decklink_ptr<IDeckLinkConfiguration>(deckLink);
     if (decklinkConfiguration == nullptr) {
@@ -227,13 +226,13 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
     return;
   }
 }
-HRESULT DecklinkCaptureDelegate3D::VideoInputFormatChanged(
+HRESULT DecklinkCaptureDelegate::VideoInputFormatChanged(
     BMDVideoInputFormatChangedEvents /*notification_events*/,
     IDeckLinkDisplayMode* /*new_display_mode*/,
     BMDDetectedVideoInputFormatFlags /*detected_signal_flags*/) {
   return S_OK;
 }
-HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
+HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
   if (videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) {
@@ -329,7 +328,7 @@ HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
   return S_OK;
 }
 
-void DecklinkCaptureDelegate3D::StopAndDeAllocate() {
+void DecklinkCaptureDelegate::StopAndDeAllocate() {
   if (!deckLinkInput_.get())
     return;
   if (deckLinkInput_->StopStreams() != S_OK)
@@ -340,13 +339,13 @@ void DecklinkCaptureDelegate3D::StopAndDeAllocate() {
   deckLink_.reset(nullptr);
 }
 
-void DecklinkCaptureDelegate3D::SendErrorString(const std::string& reason) {
+void DecklinkCaptureDelegate::SendErrorString(const std::string& reason) {
   if (frameReceiver_ != nullptr) {
     frameReceiver_->SendErrorString(reason);
   }
 }
 
-void DecklinkCaptureDelegate3D::SendLogString(const std::string& message) {
+void DecklinkCaptureDelegate::SendLogString(const std::string& message) {
   if (frameReceiver_ != nullptr) {
     frameReceiver_->SendLogString(message);
   }
@@ -362,7 +361,7 @@ void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
 
 VideoCaptureDeviceDecklink::VideoCaptureDeviceDecklink(
     const VideoCaptureDeviceDescriptor& deviceDescriptor)
-    : captureDelegate_{new DecklinkCaptureDelegate3D{deviceDescriptor, this}} {}
+    : captureDelegate_{new DecklinkCaptureDelegate{deviceDescriptor, this}} {}
 
 gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink::clone() {
   return new VideoCaptureDeviceDecklink(captureDelegate_->getDeviceDescriptor());

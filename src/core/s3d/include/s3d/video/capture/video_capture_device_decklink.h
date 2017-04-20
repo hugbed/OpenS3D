@@ -12,7 +12,7 @@
 #include <gsl/gsl>
 #include <chrono>
 
-class DecklinkCaptureDelegate3D;
+class DecklinkCaptureDelegate;
 
 // todo: this is mock implementation, implement it for real
 class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
@@ -38,7 +38,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
 
  private:
   std::unique_ptr<VideoCaptureDevice::Client> client_{};
-  std::unique_ptr<DecklinkCaptureDelegate3D> captureDelegate_;  // todo:reuse delegate
+  std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;  // todo:reuse delegate
 };
 
 #endif  // S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
