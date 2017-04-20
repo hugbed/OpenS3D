@@ -10,21 +10,23 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
   gsl::owner<VideoCaptureDevice::Client*> clone() override {
-    return new TextureUpdateClient(videoTexture);
+    return new TextureUpdateClient(videoTextures_);
   }
 
-  TextureUpdateClient(DynamicTextureThreadSafe* videoTexture) : videoTexture{videoTexture} {}
+  TextureUpdateClient(const std::vector<DynamicTextureThreadSafe*>& videoTextures)
+      : videoTextures_{videoTextures} {}
 
   void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat) override {
     //    outputPerformanceMetrics(std::cout);
 
-    if (images.size() < 1) {
-      std::cerr << "No image provided to texture update client" << std::endl;
+    if (images.size() > 0 && videoTextures_.size() > 0) {
+      videoTextures_[0]->updateImage(images[0]);
     }
 
-    // todo: problematic if images.size() == 0
-    videoTexture->updateImage(images[0]);
+    if (frameFormat.stereo3D && images.size() == 2 && videoTextures_.size() == 2) {
+      videoTextures_[1]->updateImage(images[1]);
+    }
   }
 
   void outputPerformanceMetrics(std::ostream& outStream) {
@@ -43,7 +45,7 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
  private:
   time_point lastTimeMesure;
-  DynamicTextureThreadSafe* videoTexture;
+  std::vector<DynamicTextureThreadSafe*> videoTextures_;
 };
 
 #endif  // VIDEO_TEXTURE_TEXTUREUPDATECLIENT_HPP

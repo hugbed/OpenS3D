@@ -15,12 +15,12 @@
 class DecklinkCaptureDelegate3D;
 
 // todo: this is mock implementation, implement it for real
-class VideoCaptureDeviceDecklink3D : public VideoCaptureDevice {
+class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
  public:
-  explicit VideoCaptureDeviceDecklink3D(const VideoCaptureDeviceDescriptor& deviceDescriptor);
+  explicit VideoCaptureDeviceDecklink(const VideoCaptureDeviceDescriptor& deviceDescriptor);
   gsl::owner<VideoCaptureDevice*> clone() override;
 
-  ~VideoCaptureDeviceDecklink3D() override;
+  ~VideoCaptureDeviceDecklink() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
                         std::unique_ptr<VideoCaptureDevice::Client> client) override;
@@ -28,8 +28,7 @@ class VideoCaptureDeviceDecklink3D : public VideoCaptureDevice {
   void StopAndDeAllocate() override;
 
   // called from delegate
-  void OnIncomingCapturedData(gsl::span<const uint8_t> imageLeft,
-                              gsl::span<const uint8_t> imageRight,
+  void OnIncomingCapturedData(const VideoCaptureDevice::Client::Images& images,
                               const VideoCaptureFormat& frameFormat);
   // std::chrono::high_resolution_clock::duration<std::chrono::high_resolution_clok::microseconds>
   // timestamp);  // todo: include timestamp

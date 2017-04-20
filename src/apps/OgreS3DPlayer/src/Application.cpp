@@ -3,12 +3,10 @@
 #include "dynamic_assets/VideoPlayer3DEntityFactory.hpp"
 #include "point_cloud/PointCloudMesh.hpp"
 #include "video_texture/DynamicTextureThreadSafe.hpp"
-#include "video_texture/TextureUpdateClient3D.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/video_capture_device_decklink_3d.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
-#include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/video_capture_types.h"
 
 //-------------------------------------------------------------------------------------
@@ -30,17 +28,9 @@ void Application::createScene() {
   //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
   //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
-  constexpr bool MODE_3D_ENABLED = true;
-
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB);
-
-  // DEBUG FLAG ONLY. todo: better incorporation of 3D vs 2D
-  //  if (MODE_3D_ENABLED) {
-  //     todo: this should be set from VideoCaptureDevice format
-  //    format.pixelFormat = VideoPixelFormat::RGB;
-  //  }
+  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB, false);
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -51,58 +41,37 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  // FOR DEBUG PURPOSES
-  if (MODE_3D_ENABLED) {
-    // todo : let the user choose the file
-    //    videoCaptureDevice3D_ =
-    //        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-    //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+  auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+      std::make_unique<TextureUpdateClient>(std::vector<DynamicTextureThreadSafe*>{
+          m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-        std::make_unique<VideoCaptureDeviceDecklink3D>(VideoCaptureDeviceDescriptor(
-            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv")));
+  videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+      std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
+
+  // choose the appropriate video player (should be a factory)
+  if (format.stereo3D) {
+    // todo : let the user choose the file
+    //    videoCaptureDevice_ =
+    //        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+    //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+    //    format.pixelFormat = VideoPixelFormat::RGB;
 
     // create video player entity and add it to the scene
     videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
         VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
-
     mSceneMgr->getRootSceneNode()
         ->createChildSceneNode("entititiNode")
         ->attachObject(videoPlayerEntity_.get());
-
-    auto captureClient =
-        std::unique_ptr<VideoCaptureDevice::Client>(std::make_unique<TextureUpdateClient3D>(
-            m_videoTextures.first.get(), m_videoTextures.second.get()));
-    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
   } else {
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-        std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor{""}));
-
-    auto materialLeft = static_cast<Ogre::MaterialPtr>(
-        Ogre::MaterialManager::getSingleton().getByName("StereoSide", "General"));
-    materialLeft->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);
-    materialLeft->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-    materialLeft->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-
-    auto textureUnitLeft =
-        materialLeft->getTechnique(0)->getPass(0)->createTextureUnitState(textureNameLeft);
-    textureUnitLeft->setTextureAddressingMode(Ogre::TextureUnitState::TAM_BORDER);
-    textureUnitLeft->setTextureBorderColour(Ogre::ColourValue::Black);
-
-    materialLeft->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
-        "horizontalShift", Ogre::Real(0.0f));
-
+    auto videoMaterial = DynamicTexture::createImageMaterial("VideoMaterial", textureNameLeft);
     videoPlayerEntity_ =
-        std::make_unique<FullscreenRectangleEntity>("VideoEntity", materialLeft->getName());
-
+        std::make_unique<FullscreenRectangleEntity>("VideoEntity", videoMaterial->getName());
     mSceneMgr->getRootSceneNode()
         ->createChildSceneNode("entititiNode")
-        ->attachObject(videoPlayerEntity_.get());  // start capture
-
-    auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
-        std::make_unique<TextureUpdateClient>(m_videoTextures.first.get()));
-    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+        ->attachObject(videoPlayerEntity_.get());
   }
+
+  videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
 
   //  createVideoPlane("PointCloud");
   //  addLights();

@@ -1,4 +1,3 @@
-
 // Copyright 2014 The Chromium Authors. All rights reserved.
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
@@ -8,7 +7,6 @@
 
 // inspiration: https://forum.blackmagicdesign.com/viewtopic.php?f=12&t=33269
 // todo: should verify which pixel format we need (BGRA or RGBA)
-// todo: reuse this from not 3D
 class RGB8VideoFrame : public IDeckLinkVideoFrame {
  public:
   constexpr static const int kNbBytesPixel = 4;
@@ -99,8 +97,9 @@ HRESULT RGB8VideoFrame::GetBytes(/* out */ void** buffer) {
 class DecklinkCaptureDelegate3D : public IDeckLinkInputCallback {
  public:
   DecklinkCaptureDelegate3D(const VideoCaptureDeviceDescriptor& device_descriptor,
-                            VideoCaptureDeviceDecklink3D* frameReceiver)
+                            VideoCaptureDeviceDecklink* frameReceiver)
       : device_descriptor_{device_descriptor},
+        captureFormat_{{0, 0}, 0.0f, VideoPixelFormat::UNKNOWN},
         frameReceiver_{frameReceiver},
         rgbFrameLeft_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)},
         rgbFrameRight_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)} {}
@@ -132,11 +131,12 @@ class DecklinkCaptureDelegate3D : public IDeckLinkInputCallback {
   void SendLogString(const std::string& message);
 
   const VideoCaptureDeviceDescriptor device_descriptor_;
+  VideoCaptureFormat captureFormat_;
 
   // Weak reference to the captured frames client, used also for error messages
   // and logging. Initialized on construction and used until cleared by calling
   // ResetVideoCaptureDeviceReference().
-  VideoCaptureDeviceDecklink3D* frameReceiver_;
+  VideoCaptureDeviceDecklink* frameReceiver_;
   // This is used to control the video capturing device input interface.
   SmartDecklinkPtr<IDeckLinkInput> deckLinkInput_;
   // |decklink_| represents a physical device attached to the host.
@@ -152,6 +152,14 @@ class DecklinkCaptureDelegate3D : public IDeckLinkInputCallback {
 };
 
 void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& params) {
+  // Only 1920x1080, 30fps, BGRA, 2D or 3D supported
+  // todo: is it BGRA or ARGB?
+  if (params.frameSize != Size(1920, 1080) || params.frameRate != 30.0f ||
+      params.pixelFormat != VideoPixelFormat::ARGB) {
+    SendErrorString("Requested format not supported");
+    return;
+  }
+
   IDeckLinkIterator* deckLinkIterator = CreateDeckLinkIteratorInstance();
   if (deckLinkIterator == nullptr) {
     SendErrorString("Error creating DeckLink iterator");
@@ -177,8 +185,8 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
   // todo: set from capture format
   BMDDisplayMode displayMode = bmdModeHD1080p30;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
-  //  BMDVideoInputFlags videoInputFlag = bmdVideoInputFlagDefault;  // 2D only
-  BMDVideoInputFlags videoInputFlag = bmdVideoInputDualStream3D;  // enable 3D
+  BMDVideoInputFlags videoInputFlag =
+      params.stereo3D ? bmdVideoInputDualStream3D : bmdVideoInputFlagDefault;
 
   HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,
                                                        &displayModeSupported, NULL);
@@ -187,15 +195,17 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
     return;
   }
 
-  // todo: 3D settings for VideoCapture3D
-  auto decklinkConfiguration = make_decklink_ptr<IDeckLinkConfiguration>(deckLink);
-  if (decklinkConfiguration == nullptr) {
-    SendErrorString("Error creating configuration interface");
-    return;
-  }
-  if (decklinkConfiguration->SetFlag(bmdDeckLinkConfigSDIInput3DPayloadOverride, true) != S_OK) {
-    SendErrorString("Cannot set 3D payload override flag");
-    return;
+  // 3D settings for VideoCapture3D
+  if (params.stereo3D) {
+    auto decklinkConfiguration = make_decklink_ptr<IDeckLinkConfiguration>(deckLink);
+    if (decklinkConfiguration == nullptr) {
+      SendErrorString("Error creating configuration interface");
+      return;
+    }
+    if (decklinkConfiguration->SetFlag(bmdDeckLinkConfigSDIInput3DPayloadOverride, true) != S_OK) {
+      SendErrorString("Cannot set 3D payload override flag");
+      return;
+    }
   }
 
   // create decklink conversion for YUV -> RGB
@@ -207,13 +217,15 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
     return;
   }
 
-  if (deckLinkInput->StartStreams() != S_OK) {
+  // todo: now it's hardcoded to 1080p, 30fps, BGRA
+  captureFormat_ = {params.frameSize, params.frameRate, params.pixelFormat, params.stereo3D};
+  deckLink_.reset(deckLink);
+  deckLinkInput_.swap(deckLinkInput);
+
+  if (deckLinkInput_->StartStreams() != S_OK) {
     SendErrorString("Cannot start capture stream");
     return;
   }
-
-  deckLink_.reset(deckLink);
-  deckLinkInput_.swap(deckLinkInput);
 }
 HRESULT DecklinkCaptureDelegate3D::VideoInputFormatChanged(
     BMDVideoInputFormatChangedEvents /*notification_events*/,
@@ -224,39 +236,41 @@ HRESULT DecklinkCaptureDelegate3D::VideoInputFormatChanged(
 HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
-  // 3D extension
-  auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
-  if (threeDExtension == nullptr) {
-    SendErrorString("Error creating 3D extension");
-    return S_FALSE;
-  }
-
   if (videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) {
     SendErrorString("Left frame, no input signal");
     return S_FALSE;
   }
 
+  uint8_t* video_data_left = nullptr;
+  uint8_t* video_data_right = nullptr;
+
   // get left frame
   rgbFrameLeft_->resize(videoFrameLeft->GetWidth(), videoFrameLeft->GetHeight());
   videoConversion_->ConvertFrame(videoFrameLeft,
                                  static_cast<IDeckLinkVideoFrame*>(rgbFrameLeft_.get()));
-  uint8_t* video_data_left = nullptr;
   rgbFrameLeft_->GetBytes(reinterpret_cast<void**>(&video_data_left));
 
-  // get right frame
-  IDeckLinkVideoFrame* rightEyeFrameRaw = NULL;
-  threeDExtension->GetFrameForRightEye(&rightEyeFrameRaw);
-  SmartDecklinkPtr<IDeckLinkVideoFrame> videoFrameRight{rightEyeFrameRaw};
+  if (captureFormat_.stereo3D) {
+    auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
 
-  if (videoFrameRight == nullptr) {
-    SendErrorString("No right frame detected");
+    if (threeDExtension == nullptr) {
+      SendErrorString("Error creating 3D extension");
+      return S_FALSE;
+    }
+    // get right frame
+    IDeckLinkVideoFrame* rightEyeFrameRaw = NULL;
+    threeDExtension->GetFrameForRightEye(&rightEyeFrameRaw);
+    SmartDecklinkPtr<IDeckLinkVideoFrame> videoFrameRight{rightEyeFrameRaw};
+
+    if (videoFrameRight == nullptr) {
+      SendErrorString("No right frame detected");
+    }
+
+    rgbFrameRight_->resize(videoFrameRight->GetWidth(), videoFrameRight->GetHeight());
+    videoConversion_->ConvertFrame(videoFrameRight.get(),
+                                   static_cast<IDeckLinkVideoFrame*>(rgbFrameRight_.get()));
+    rgbFrameRight_->GetBytes(reinterpret_cast<void**>(&video_data_right));
   }
-
-  rgbFrameRight_->resize(videoFrameRight->GetWidth(), videoFrameRight->GetHeight());
-  videoConversion_->ConvertFrame(videoFrameRight.get(),
-                                 static_cast<IDeckLinkVideoFrame*>(rgbFrameRight_.get()));
-  uint8_t* video_data_right = nullptr;
-  rgbFrameRight_->GetBytes(reinterpret_cast<void**>(&video_data_right));
 
   VideoPixelFormat pixelFormat = VideoPixelFormat::UNKNOWN;
   switch (rgbFrameLeft_->GetPixelFormat()) {
@@ -275,8 +289,10 @@ HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
       Size(rgbFrameLeft_->GetWidth(),
            rgbFrameLeft_->GetHeight()),  // todo: cast or something (long -> int)
       0.0f,                              // Frame rate is not needed for captured data callback.
-      pixelFormat);  // todo: 3D flag on capture_format is redundant since there are 2 interfaces
-                     // now
+      pixelFormat,
+      captureFormat_
+          .stereo3D);  // todo: 3D flag on capture_format is redundant since there are 2 interfaces
+                       // now
   //  auto now = std::chrono::high_resolution_clock::now();
   //  if (firstRefTime_ == 0ms)
   //  firstRefTime_ = now;
@@ -296,10 +312,16 @@ HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
     //      timestamp = now - firstRefTime_;
     //    }
 
-    frameReceiver_->OnIncomingCapturedData(
-        {video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()},
-        {video_data_right, rgbFrameRight_->GetRowBytes() * rgbFrameRight_->GetHeight()},
-        capture_format);
+    if (captureFormat_.stereo3D) {
+      frameReceiver_->OnIncomingCapturedData(
+          {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()},
+           {video_data_right, rgbFrameRight_->GetRowBytes() * rgbFrameRight_->GetHeight()}},
+          capture_format);
+    } else {
+      frameReceiver_->OnIncomingCapturedData(
+          {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()}},
+          capture_format);
+    }
     // std::chrono::duration_cast<std::chrono::microseconds>(now - firstRefTime_));  // todo:
     // include timestamp
   }
@@ -330,27 +352,27 @@ void DecklinkCaptureDelegate3D::SendLogString(const std::string& message) {
   }
 }
 
-void VideoCaptureDeviceDecklink3D::OnIncomingCapturedData(gsl::span<const uint8_t> imageLeft,
-                                                          gsl::span<const uint8_t> imageRight,
-                                                          const VideoCaptureFormat& frameFormat) {
+void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
+    const VideoCaptureDevice::Client::Images& images,
+    const VideoCaptureFormat& frameFormat) {
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData({imageRight, imageLeft}, frameFormat);
+    client_->OnIncomingCapturedData(images, frameFormat);
   }
 }
 
-VideoCaptureDeviceDecklink3D::VideoCaptureDeviceDecklink3D(
+VideoCaptureDeviceDecklink::VideoCaptureDeviceDecklink(
     const VideoCaptureDeviceDescriptor& deviceDescriptor)
     : captureDelegate_{new DecklinkCaptureDelegate3D{deviceDescriptor, this}} {}
 
-gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink3D::clone() {
-  return new VideoCaptureDeviceDecklink3D(captureDelegate_->getDeviceDescriptor());
+gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink::clone() {
+  return new VideoCaptureDeviceDecklink(captureDelegate_->getDeviceDescriptor());
 }
 
-VideoCaptureDeviceDecklink3D::~VideoCaptureDeviceDecklink3D() {
-  VideoCaptureDeviceDecklink3D::StopAndDeAllocate();
+VideoCaptureDeviceDecklink::~VideoCaptureDeviceDecklink() {
+  VideoCaptureDeviceDecklink::StopAndDeAllocate();
 }
 
-void VideoCaptureDeviceDecklink3D::AllocateAndStart(
+void VideoCaptureDeviceDecklink::AllocateAndStart(
     const VideoCaptureFormat& format,
     std::unique_ptr<VideoCaptureDevice::Client> client) {
   client_ = std::move(client);
@@ -359,17 +381,17 @@ void VideoCaptureDeviceDecklink3D::AllocateAndStart(
   captureDelegate_->AllocateAndStart(format);
 }
 
-void VideoCaptureDeviceDecklink3D::StopAndDeAllocate() {
+void VideoCaptureDeviceDecklink::StopAndDeAllocate() {
   captureDelegate_->StopAndDeAllocate();
 }
 
-void VideoCaptureDeviceDecklink3D::SendErrorString(const std::string& reason) {
+void VideoCaptureDeviceDecklink::SendErrorString(const std::string& reason) {
   if (client_ != nullptr) {
     client_->OnError(reason);
   }
 }
 
-void VideoCaptureDeviceDecklink3D::SendLogString(const std::string& message) {
+void VideoCaptureDeviceDecklink::SendLogString(const std::string& message) {
   if (client_ != nullptr) {
     client_->OnLog(message);
   }
