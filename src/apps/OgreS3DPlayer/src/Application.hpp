@@ -30,13 +30,6 @@ class Application : public BaseApplication {
 
   void createPointCloud();
 
-
-  // todo: have better solution than 3D and 2D mode at the same time, 1 without initialization
-
-  // 3D mode
-  std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
-  std::unique_ptr<VideoCaptureDevice> videoCaptureDevice3D_;
-
   // 2D mode
   std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
   std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;

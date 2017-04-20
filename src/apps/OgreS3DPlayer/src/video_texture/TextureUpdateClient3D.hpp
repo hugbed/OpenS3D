@@ -17,9 +17,9 @@ class TextureUpdateClient3D : public VideoCaptureDevice::Client {
                         DynamicTextureThreadSafe* videoTextureR)
       : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
 
-  void OnIncomingCapturedData(const Images &images,
+  void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& /*frameFormat*/) override {
-//    outputPerformanceMetrics(std::cout);
+    //    outputPerformanceMetrics(std::cout);
 
     if (images.size() < 2) {
       std::cerr << "Number of images < 2 for 3D texture update" << std::endl;

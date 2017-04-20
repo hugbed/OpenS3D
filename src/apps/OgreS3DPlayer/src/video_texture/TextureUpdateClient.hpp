@@ -15,9 +15,9 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
   TextureUpdateClient(DynamicTextureThreadSafe* videoTexture) : videoTexture{videoTexture} {}
 
-  void OnIncomingCapturedData(const Images &images,
+  void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat) override {
-//    outputPerformanceMetrics(std::cout);
+    //    outputPerformanceMetrics(std::cout);
 
     if (images.size() < 1) {
       std::cerr << "No image provided to texture update client" << std::endl;

@@ -177,7 +177,7 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
   // todo: set from capture format
   BMDDisplayMode displayMode = bmdModeHD1080p30;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
-//  BMDVideoInputFlags videoInputFlag = bmdVideoInputFlagDefault;  // 2D only
+  //  BMDVideoInputFlags videoInputFlag = bmdVideoInputFlagDefault;  // 2D only
   BMDVideoInputFlags videoInputFlag = bmdVideoInputDualStream3D;  // enable 3D
 
   HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,

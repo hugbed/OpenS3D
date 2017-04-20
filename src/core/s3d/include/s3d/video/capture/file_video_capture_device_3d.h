@@ -13,7 +13,7 @@
 class RawUYVY3DFileParserProducer;
 class RawUYVY3DFileParserConsumer;
 
-class FileVideoCaptureDevice3D: public VideoCaptureDevice {
+class FileVideoCaptureDevice3D : public VideoCaptureDevice {
  public:
   gsl::owner<FileVideoCaptureDevice3D*> clone() override {
     auto& combinedPath = filePaths_.first.append(filePaths_.second);

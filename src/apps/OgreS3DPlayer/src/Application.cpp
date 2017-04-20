@@ -37,10 +37,10 @@ void Application::createScene() {
   VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB);
 
   // DEBUG FLAG ONLY. todo: better incorporation of 3D vs 2D
-//  if (MODE_3D_ENABLED) {
-//     todo: this should be set from VideoCaptureDevice format
-//    format.pixelFormat = VideoPixelFormat::RGB;
-//  }
+  //  if (MODE_3D_ENABLED) {
+  //     todo: this should be set from VideoCaptureDevice format
+  //    format.pixelFormat = VideoPixelFormat::RGB;
+  //  }
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -54,26 +54,26 @@ void Application::createScene() {
   // FOR DEBUG PURPOSES
   if (MODE_3D_ENABLED) {
     // todo : let the user choose the file
-//    videoCaptureDevice3D_ =
-//        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-//            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+    //    videoCaptureDevice3D_ =
+    //        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
+    //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
 
-    videoCaptureDevice3D_ =
-        std::unique_ptr<VideoCaptureDevice>(std::make_unique<VideoCaptureDeviceDecklink3D>(
-            VideoCaptureDeviceDescriptor("/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv")));
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+        std::make_unique<VideoCaptureDeviceDecklink3D>(VideoCaptureDeviceDescriptor(
+            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv")));
 
     // create video player entity and add it to the scene
-    videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
+    videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
         VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
 
     mSceneMgr->getRootSceneNode()
         ->createChildSceneNode("entititiNode")
-        ->attachObject(videoPlayer3DEntity_.get());
+        ->attachObject(videoPlayerEntity_.get());
 
     auto captureClient =
         std::unique_ptr<VideoCaptureDevice::Client>(std::make_unique<TextureUpdateClient3D>(
             m_videoTextures.first.get(), m_videoTextures.second.get()));
-    videoCaptureDevice3D_->AllocateAndStart(format, std::move(captureClient));
+    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
   } else {
     videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
         std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor{""}));
