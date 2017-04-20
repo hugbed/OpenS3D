@@ -334,7 +334,7 @@ void VideoCaptureDeviceDecklink3D::OnIncomingCapturedData(gsl::span<const uint8_
                                                           gsl::span<const uint8_t> imageRight,
                                                           const VideoCaptureFormat& frameFormat) {
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData(imageRight, imageLeft, frameFormat);
+    client_->OnIncomingCapturedData({imageRight, imageLeft}, frameFormat);
   }
 }
 
@@ -342,7 +342,7 @@ VideoCaptureDeviceDecklink3D::VideoCaptureDeviceDecklink3D(
     const VideoCaptureDeviceDescriptor& deviceDescriptor)
     : captureDelegate_{new DecklinkCaptureDelegate3D{deviceDescriptor, this}} {}
 
-gsl::owner<VideoCaptureDevice3D*> VideoCaptureDeviceDecklink3D::clone() {
+gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink3D::clone() {
   return new VideoCaptureDeviceDecklink3D(captureDelegate_->getDeviceDescriptor());
 }
 
@@ -352,7 +352,7 @@ VideoCaptureDeviceDecklink3D::~VideoCaptureDeviceDecklink3D() {
 
 void VideoCaptureDeviceDecklink3D::AllocateAndStart(
     const VideoCaptureFormat& format,
-    std::unique_ptr<VideoCaptureDevice3D::Client> client) {
+    std::unique_ptr<VideoCaptureDevice::Client> client) {
   client_ = std::move(client);
   // todo: should verify that format is supported
   // todo: should get image size from capture delegate

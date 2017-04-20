@@ -65,7 +65,7 @@ class RawUYVY3DFileParserProducer
 class RawUYVY3DFileParserConsumer
     : public s3d::concurrency::ConsumerBarrierSync<std::vector<uint8_t>> {
  public:
-  RawUYVY3DFileParserConsumer(VideoCaptureDevice3D::Client* client,
+  RawUYVY3DFileParserConsumer(VideoCaptureDevice::Client* client,
                               VideoCaptureFormat outputFormat,
                               std::mutex* doneProducingMutex,
                               std::condition_variable* shouldConsumeCV,
@@ -82,7 +82,7 @@ class RawUYVY3DFileParserConsumer
     auto& leftImage = producers[0]->getProduct();
     auto& rightImage = producers[1]->getProduct();
     if (client_) {
-      client_->OnIncomingCapturedData(leftImage, rightImage, format_);
+      client_->OnIncomingCapturedData({leftImage, rightImage}, format_);
     }
   }
 
@@ -96,7 +96,7 @@ class RawUYVY3DFileParserConsumer
 
   std::chrono::duration<float> delayBetweenFrames;
   VideoCaptureFormat format_;
-  VideoCaptureDevice3D::Client* client_;
+  VideoCaptureDevice::Client* client_;
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
 

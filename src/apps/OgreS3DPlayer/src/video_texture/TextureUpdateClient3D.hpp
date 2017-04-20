@@ -3,13 +3,13 @@
 
 #include "DynamicTextureThreadSafe.hpp"
 
-#include "s3d/video/capture/video_capture_device_3d.h"
+#include "s3d/video/capture/video_capture_device.h"
 
-class TextureUpdateClient3D : public VideoCaptureDevice3D::Client {
+class TextureUpdateClient3D : public VideoCaptureDevice::Client {
  public:
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
-  gsl::owner<VideoCaptureDevice3D::Client*> clone() override {
+  gsl::owner<VideoCaptureDevice::Client*> clone() override {
     return new TextureUpdateClient3D(videoTexture, videoTextureR);
   }
 
@@ -17,12 +17,17 @@ class TextureUpdateClient3D : public VideoCaptureDevice3D::Client {
                         DynamicTextureThreadSafe* videoTextureR)
       : videoTexture{videoTexture}, videoTextureR{videoTextureR} {}
 
-  void OnIncomingCapturedData(gsl::span<const uint8_t> leftImage,
-                              gsl::span<const uint8_t> rightImage,
+  void OnIncomingCapturedData(const Images &images,
                               const VideoCaptureFormat& /*frameFormat*/) override {
 //    outputPerformanceMetrics(std::cout);
-    videoTexture->updateImage(leftImage);
-    videoTextureR->updateImage(rightImage);
+
+    if (images.size() < 2) {
+      std::cerr << "Number of images < 2 for 3D texture update" << std::endl;
+      return;
+    }
+
+    videoTexture->updateImage(images[0]);
+    videoTextureR->updateImage(images[1]);
   }
 
   void outputPerformanceMetrics(std::ostream& outStream) {

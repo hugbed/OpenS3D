@@ -2,10 +2,10 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_3D_H
-#define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_3D_H
+#ifndef S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
+#define S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
 
-#include "video_capture_device_3d.h"
+#include "video_capture_device.h"
 #include "video_capture_types.h"
 #include "video_capture_device_factory.h"
 
@@ -15,15 +15,15 @@
 class DecklinkCaptureDelegate3D;
 
 // todo: this is mock implementation, implement it for real
-class VideoCaptureDeviceDecklink3D : public VideoCaptureDevice3D {
+class VideoCaptureDeviceDecklink3D : public VideoCaptureDevice {
  public:
   explicit VideoCaptureDeviceDecklink3D(const VideoCaptureDeviceDescriptor& deviceDescriptor);
-  gsl::owner<VideoCaptureDevice3D*> clone() override;
+  gsl::owner<VideoCaptureDevice*> clone() override;
 
   ~VideoCaptureDeviceDecklink3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
-                        std::unique_ptr<VideoCaptureDevice3D::Client> client) override;
+                        std::unique_ptr<VideoCaptureDevice::Client> client) override;
 
   void StopAndDeAllocate() override;
 
@@ -38,8 +38,8 @@ class VideoCaptureDeviceDecklink3D : public VideoCaptureDevice3D {
   void SendLogString(const std::string& /*message*/);
 
  private:
-  std::unique_ptr<VideoCaptureDevice3D::Client> client_{};
+  std::unique_ptr<VideoCaptureDevice::Client> client_{};
   std::unique_ptr<DecklinkCaptureDelegate3D> captureDelegate_;  // todo:reuse delegate
 };
 
-#endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_3D_H
+#endif  // S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H

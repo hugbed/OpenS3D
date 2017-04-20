@@ -59,7 +59,7 @@ void Application::createScene() {
 //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
 
     videoCaptureDevice3D_ =
-        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<VideoCaptureDeviceDecklink3D>(
+        std::unique_ptr<VideoCaptureDevice>(std::make_unique<VideoCaptureDeviceDecklink3D>(
             VideoCaptureDeviceDescriptor("/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv")));
 
     // create video player entity and add it to the scene
@@ -71,7 +71,7 @@ void Application::createScene() {
         ->attachObject(videoPlayer3DEntity_.get());
 
     auto captureClient =
-        std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient3D>(
+        std::unique_ptr<VideoCaptureDevice::Client>(std::make_unique<TextureUpdateClient3D>(
             m_videoTextures.first.get(), m_videoTextures.second.get()));
     videoCaptureDevice3D_->AllocateAndStart(format, std::move(captureClient));
   } else {

@@ -66,7 +66,7 @@ void FileVideoCaptureDevice::StopAndDeAllocate() {
 
 void FileVideoCaptureDevice::OnCaptureTask() {
   if (fileParser_->GetNextFrame(videoFrame_) || client_) {
-    client_->OnIncomingCapturedData(videoFrame_, captureFormat_);
+    client_->OnIncomingCapturedData({videoFrame_}, captureFormat_);
   } else {
     stopCaptureFlag_ = true;
   }

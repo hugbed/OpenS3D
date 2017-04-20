@@ -5,7 +5,7 @@
 #ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 #define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 
-#include "video_capture_device_3d.h"
+#include "video_capture_device.h"
 
 #include <atomic>
 #include <utility>
@@ -13,7 +13,7 @@
 class RawUYVY3DFileParserProducer;
 class RawUYVY3DFileParserConsumer;
 
-class FileVideoCaptureDevice3D : public VideoCaptureDevice3D {
+class FileVideoCaptureDevice3D: public VideoCaptureDevice {
  public:
   gsl::owner<FileVideoCaptureDevice3D*> clone() override {
     auto& combinedPath = filePaths_.first.append(filePaths_.second);

@@ -3,7 +3,7 @@
 
 #include "DynamicTextureThreadSafe.hpp"
 
-#include "s3d/video/capture/video_capture_device_3d.h"
+#include "s3d/video/capture/video_capture_device.h"
 
 class TextureUpdateClient : public VideoCaptureDevice::Client {
  public:
@@ -15,10 +15,16 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
   TextureUpdateClient(DynamicTextureThreadSafe* videoTexture) : videoTexture{videoTexture} {}
 
-  void OnIncomingCapturedData(gsl::span<const uint8_t> image,
+  void OnIncomingCapturedData(const Images &images,
                               const VideoCaptureFormat& frameFormat) override {
 //    outputPerformanceMetrics(std::cout);
-    videoTexture->updateImage(image);
+
+    if (images.size() < 1) {
+      std::cerr << "No image provided to texture update client" << std::endl;
+    }
+
+    // todo: problematic if images.size() == 0
+    videoTexture->updateImage(images[0]);
   }
 
   void outputPerformanceMetrics(std::ostream& outStream) {

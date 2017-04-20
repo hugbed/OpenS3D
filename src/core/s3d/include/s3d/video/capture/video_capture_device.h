@@ -20,7 +20,10 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
  public:
   class Client : rule_of_five_interface<Client> {
    public:
-    virtual void OnIncomingCapturedData(gsl::span<const uint8_t> data,
+    using Images = std::vector<gsl::span<const uint8_t>>;
+
+    // can accept multiple images (mono/stereo cameras)
+    virtual void OnIncomingCapturedData(const Images &data,
                                         const VideoCaptureFormat& frameFormat) = 0;
 
     virtual void OnError(const std::string& reason) = 0;

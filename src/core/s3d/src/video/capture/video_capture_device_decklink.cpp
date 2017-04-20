@@ -298,7 +298,7 @@ void DeckLinkCaptureDelegate::SendLogString(const std::string& message) {
 void VideoCaptureDeviceDecklink::OnIncomingCapturedData(gsl::span<const uint8_t> data,
                                                         const VideoCaptureFormat& frameFormat) {
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData(data, frameFormat);
+    client_->OnIncomingCapturedData({data}, frameFormat);
   }
 }
 

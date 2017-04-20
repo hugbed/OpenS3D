@@ -2,7 +2,7 @@
 #define APPLICATION_HPP
 
 #include "BaseApplication.hpp"
-#include "s3d/video/capture/video_capture_device_3d.h"
+#include "s3d/video/capture/video_capture_device.h"
 
 class DynamicTexture;
 class DynamicTextureThreadSafe;
@@ -35,7 +35,7 @@ class Application : public BaseApplication {
 
   // 3D mode
   std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
-  std::unique_ptr<VideoCaptureDevice3D> videoCaptureDevice3D_;
+  std::unique_ptr<VideoCaptureDevice> videoCaptureDevice3D_;
 
   // 2D mode
   std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
