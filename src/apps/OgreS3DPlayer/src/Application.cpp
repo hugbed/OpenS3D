@@ -53,8 +53,8 @@ void Application::createScene() {
   if (MODE_3D_ENABLED) {
     // todo : let the user choose the file
     videoCaptureDevice3D_ =
-      std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-        "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
+            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
 
     // create video player entity and add it to the scene
     videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
@@ -140,7 +140,7 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
       pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
       break;
     case VideoPixelFormat::ARGB:
-      //todo : ARGB or BGRA!!
+      // todo : ARGB or BGRA!!
       pixelFormat = Ogre::PixelFormat::PF_B8G8R8A8;
       break;
     default:

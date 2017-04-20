@@ -38,7 +38,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
  private:
   std::unique_ptr<VideoCaptureDevice::Client> client_{};
   std::unique_ptr<DeckLinkCaptureDelegate> captureDelegate_;
-  std::vector<uint8_t> rgbFrame_;
+  std::vector<uint8_t> rgbFrame_;  // todo: don't need this anymore
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H

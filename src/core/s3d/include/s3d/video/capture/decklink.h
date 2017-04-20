@@ -46,6 +46,10 @@ constexpr REFIID get_iid(DecklinkHelpers::decklink_iid_t<IDeckLinkConfiguration>
   return IID_IDeckLinkConfiguration;
 }
 
+constexpr REFIID get_iid(DecklinkHelpers::decklink_iid_t<IDeckLinkVideoFrame3DExtensions>) {
+  return IID_IDeckLinkVideoFrame3DExtensions;
+}
+
 template <class U, class T>
 std::unique_ptr<U, DecklinkPtrDeleter> make_decklink_ptr(T const& src) {
   if (!src)
