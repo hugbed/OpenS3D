@@ -177,8 +177,8 @@ void DecklinkCaptureDelegate3D::AllocateAndStart(const VideoCaptureFormat& param
   // todo: set from capture format
   BMDDisplayMode displayMode = bmdModeHD1080p30;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
-  BMDVideoInputFlags videoInputFlag = bmdVideoInputFlagDefault;  // 2D only
-  //  BMDVideoInputFlags videoInputFlag = bmdVideoInputDualStream3D;  // enable 3D
+//  BMDVideoInputFlags videoInputFlag = bmdVideoInputFlagDefault;  // 2D only
+  BMDVideoInputFlags videoInputFlag = bmdVideoInputDualStream3D;  // enable 3D
 
   HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,
                                                        &displayModeSupported, NULL);
@@ -225,10 +225,15 @@ HRESULT DecklinkCaptureDelegate3D::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
   // 3D extension
-  auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(deckLink_);
-
+  auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
   if (threeDExtension == nullptr) {
     SendErrorString("Error creating 3D extension");
+    return S_FALSE;
+  }
+
+  if (videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) {
+    SendErrorString("Left frame, no input signal");
+    return S_FALSE;
   }
 
   // get left frame

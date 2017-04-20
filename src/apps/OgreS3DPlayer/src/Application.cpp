@@ -6,6 +6,7 @@
 #include "video_texture/TextureUpdateClient3D.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
+#include "s3d/video/capture/video_capture_device_decklink_3d.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 #include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/video_capture_types.h"
@@ -29,17 +30,17 @@ void Application::createScene() {
   //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
   //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
-  constexpr bool MODE_3D_ENABLED = false;
+  constexpr bool MODE_3D_ENABLED = true;
 
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
   VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB);
 
   // DEBUG FLAG ONLY. todo: better incorporation of 3D vs 2D
-  if (MODE_3D_ENABLED) {
-    // todo: this should be set from VideoCaptureDevice format
-    format.pixelFormat = VideoPixelFormat::RGB;
-  }
+//  if (MODE_3D_ENABLED) {
+//     todo: this should be set from VideoCaptureDevice format
+//    format.pixelFormat = VideoPixelFormat::RGB;
+//  }
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -53,9 +54,13 @@ void Application::createScene() {
   // FOR DEBUG PURPOSES
   if (MODE_3D_ENABLED) {
     // todo : let the user choose the file
+//    videoCaptureDevice3D_ =
+//        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
+//            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+
     videoCaptureDevice3D_ =
-        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+        std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<VideoCaptureDeviceDecklink3D>(
+            VideoCaptureDeviceDescriptor("/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv")));
 
     // create video player entity and add it to the scene
     videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
