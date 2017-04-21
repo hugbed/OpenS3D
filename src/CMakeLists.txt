@@ -24,6 +24,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(cmake/clang-cxx-dev-tools.cmake)
 
+enable_testing()
+
 # When done tweaking common stuff, configure the components (subprojects).
 # NOTE: The order matters! The most independent ones should go first.
 add_subdirectory(libs/gsl)

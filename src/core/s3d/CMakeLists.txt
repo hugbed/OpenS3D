@@ -16,4 +16,5 @@ add_library(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} gsl decklink_sdk)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-# ${OpenCV_INCLUDE_DIRS};/usr/include/c++/5.4.0"
+add_subdirectory(test)
+
