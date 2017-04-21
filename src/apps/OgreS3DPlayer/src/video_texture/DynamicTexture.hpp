@@ -7,8 +7,9 @@
 
 #include <Ogre.h>
 
-#include <vector>
 #include <gsl/gsl>
+
+#include <vector>
 
 class DynamicTexture {
  public:

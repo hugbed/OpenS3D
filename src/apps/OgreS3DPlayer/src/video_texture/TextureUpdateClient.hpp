@@ -13,14 +13,14 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
     return new TextureUpdateClient(videoTextures_);
   }
 
-  TextureUpdateClient(const std::vector<DynamicTextureThreadSafe*>& videoTextures)
+  explicit TextureUpdateClient(const std::vector<DynamicTextureThreadSafe*>& videoTextures)
       : videoTextures_{videoTextures} {}
 
   void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat) override {
     //    outputPerformanceMetrics(std::cout);
 
-    if (images.size() > 0 && videoTextures_.size() > 0) {
+    if (!images.empty() && !videoTextures_.empty()) {
       videoTextures_[0]->updateImage(images[0]);
     }
 

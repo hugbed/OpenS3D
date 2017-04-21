@@ -5,11 +5,11 @@
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H
 #define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H
 
-#include <memory>
 #include <string>
 
-// todo(hugbed): put in s3d namespace
+#include <memory>
 
+// todo(hugbed): put in s3d namespace
 // todo(hugbed): must elaborate
 struct VideoCaptureDeviceDescriptor {
   explicit VideoCaptureDeviceDescriptor(std::string name) : name(std::move(name)) {}

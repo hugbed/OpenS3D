@@ -962,9 +962,9 @@ class IDeckLinkEncoderInput : public IUnknown {
 
 class IDeckLinkVideoFrame : public IUnknown {
  public:
-  virtual long GetWidth(void) = 0;
-  virtual long GetHeight(void) = 0;
-  virtual long GetRowBytes(void) = 0;
+  virtual int64_t GetWidth(void) = 0;
+  virtual int64_t GetHeight(void) = 0;
+  virtual int64_t GetRowBytes(void) = 0;
   virtual BMDPixelFormat GetPixelFormat(void) = 0;
   virtual BMDFrameFlags GetFlags(void) = 0;
   virtual HRESULT GetBytes(/* out */ void** buffer) = 0;

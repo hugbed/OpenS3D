@@ -2,9 +2,10 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
+#include "s3d/video/capture/video_file_parser.h"
+
 #include "s3d/utilities/file_io.h"
 #include "s3d/video/capture/video_capture_types.h"
-#include "s3d/video/capture/video_file_parser.h"
 #include "s3d/video/compression/yuv.h"
 #include "s3d/video/video_frame.h"
 

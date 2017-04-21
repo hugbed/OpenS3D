@@ -2,14 +2,15 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#ifndef S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
-#define S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
+#ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H
+#define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H
 
 #include "video_capture_device.h"
-#include "video_capture_types.h"
 #include "video_capture_device_factory.h"
+#include "video_capture_types.h"
 
 #include <gsl/gsl>
+
 #include <chrono>
 
 class DecklinkCaptureDelegate;
@@ -41,4 +42,4 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;  // todo:reuse delegate
 };
 
-#endif  // S_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK__H
+#endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H

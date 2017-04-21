@@ -81,7 +81,7 @@ class RawUYVY3DFileParserConsumer
     const auto& producers = getProducers();
     auto& leftImage = producers[0]->getProduct();
     auto& rightImage = producers[1]->getProduct();
-    if (client_) {
+    if (client_ != nullptr) {
       client_->OnIncomingCapturedData({leftImage, rightImage}, format_);
     }
   }

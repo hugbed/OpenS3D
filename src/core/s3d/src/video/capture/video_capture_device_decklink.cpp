@@ -7,56 +7,57 @@
 
 // inspiration: https://forum.blackmagicdesign.com/viewtopic.php?f=12&t=33269
 // todo: should verify which pixel format we need (BGRA or RGBA)
+// todo: should test int64_t instead of long
 class RGB8VideoFrame : public IDeckLinkVideoFrame {
  public:
   constexpr static const int kNbBytesPixel = 4;
 
-  RGB8VideoFrame(long width, long height, BMDPixelFormat pixelFormat, BMDFrameFlags flags);
+  RGB8VideoFrame(int64_t width, int64_t height, BMDPixelFormat pixelFormat, BMDFrameFlags flags);
 
   // override these methods for virtual
-  virtual long GetWidth();
-  virtual long GetHeight();
-  virtual long GetRowBytes();
-  virtual BMDPixelFormat GetPixelFormat();
-  virtual BMDFrameFlags GetFlags();
-  virtual HRESULT GetBytes(/* out */ void** buffer);
+  int64_t GetWidth() override;
+  int64_t GetHeight() override;
+  int64_t GetRowBytes() override;
+  BMDPixelFormat GetPixelFormat() override;
+  BMDFrameFlags GetFlags() override;
+  HRESULT GetBytes(/* out */ void** buffer) override;
 
-  void resize(long width, long height) {
+  void resize(int64_t width, int64_t height) {
     width_ = width;
     height_ = height;
     bufferPointer_.resize(static_cast<size_t>(width_ * height_ * kNbBytesPixel));
   }
 
   // Dummy implementations of remaining virtual methods
-  virtual HRESULT GetTimecode(/* in */ BMDTimecodeFormat format,
-                              /* out */ IDeckLinkTimecode** timecode) {
+  HRESULT GetTimecode(/* in */ BMDTimecodeFormat /*format*/,
+                      /* out */ IDeckLinkTimecode** /*timecode*/) override {
     return E_NOINTERFACE;
   }
 
-  virtual HRESULT GetAncillaryData(/* out */ IDeckLinkVideoFrameAncillary** ancillary) {
+  HRESULT GetAncillaryData(/* out */ IDeckLinkVideoFrameAncillary** /*ancillary*/) override {
     return E_NOINTERFACE;
   }
 
   //
   // IUnknown interface (dummy implementation)
   //
-  virtual HRESULT QueryInterface(REFIID iid, LPVOID* ppv) { return E_NOINTERFACE; }
-  virtual ULONG AddRef() { return 1; }
-  virtual ULONG Release() { return 1; }
+  HRESULT QueryInterface(REFIID /*iid*/, LPVOID* /*ppv*/) override { return E_NOINTERFACE; }
+  ULONG AddRef() override { return 1; }
+  ULONG Release() override { return 1; }
 
  private:
-  long width_;
-  long height_;
+  int64_t width_;
+  int64_t height_;
   BMDPixelFormat pixelFormat_;
   BMDFrameFlags frameFlags_;
   std::vector<uint8_t> bufferPointer_;
 };
 
-RGB8VideoFrame::RGB8VideoFrame(long width,
-                               long height,
+RGB8VideoFrame::RGB8VideoFrame(int64_t width,
+                               int64_t height,
                                BMDPixelFormat pixelFormat,
-                               BMDFrameFlags frameFlags)
-    : width_{width}, height_{height}, pixelFormat_{pixelFormat}, frameFlags_{frameFlags} {
+                               BMDFrameFlags flags)
+    : width_{width}, height_{height}, pixelFormat_{pixelFormat}, frameFlags_{flags} {
   // this pointer size is only valid for bmdFormat8BitYUV
   switch (pixelFormat_) {
     case bmdFormat8BitBGRA:
@@ -67,15 +68,15 @@ RGB8VideoFrame::RGB8VideoFrame(long width,
   }
 }
 
-long RGB8VideoFrame::GetWidth() {
+int64_t RGB8VideoFrame::GetWidth() {
   return width_;
 }
 
-long RGB8VideoFrame::GetHeight() {
+int64_t RGB8VideoFrame::GetHeight() {
   return height_;
 }
 
-long RGB8VideoFrame::GetRowBytes() {
+int64_t RGB8VideoFrame::GetRowBytes() {
   return width_ * kNbBytesPixel;
 }
 
@@ -115,12 +116,12 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
   HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents notification_events,
                                   IDeckLinkDisplayMode* new_display_mode,
                                   BMDDetectedVideoInputFormatFlags detected_signal_flags) override;
-  HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame* video_frame,
+  HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame* videoFrameLeft,
                                  IDeckLinkAudioInputPacket* audio_packet) override;
 
-  ULONG STDMETHODCALLTYPE AddRef(void) override { return ++refCount_; }
-  ULONG STDMETHODCALLTYPE Release(void) override { return --refCount_; }  // accepted memory leak
-  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, LPVOID* ppv) override {
+  ULONG STDMETHODCALLTYPE AddRef() override { return ++refCount_; }
+  ULONG STDMETHODCALLTYPE Release() override { return --refCount_; }  // accepted memory leak
+  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID /*iid*/, LPVOID* /*ppv*/) override {
     return E_NOINTERFACE;
   }
 
@@ -188,7 +189,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
       params.stereo3D ? bmdVideoInputDualStream3D : bmdVideoInputFlagDefault;
 
   HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,
-                                                       &displayModeSupported, NULL);
+                                                       &displayModeSupported, nullptr);
   if (result != S_OK) {
     SendErrorString("Display mode not supported");
     return;
@@ -235,19 +236,24 @@ HRESULT DecklinkCaptureDelegate::VideoInputFormatChanged(
 HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
-  if (videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) {
+  if ((videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) != 0u) {  // todo: verify this != 0u
     SendErrorString("Left frame, no input signal");
     return S_FALSE;
   }
+
+  void* raw_data_left = nullptr;
+  void* raw_data_right = nullptr;
 
   uint8_t* video_data_left = nullptr;
   uint8_t* video_data_right = nullptr;
 
   // get left frame
   rgbFrameLeft_->resize(videoFrameLeft->GetWidth(), videoFrameLeft->GetHeight());
+
   videoConversion_->ConvertFrame(videoFrameLeft,
                                  static_cast<IDeckLinkVideoFrame*>(rgbFrameLeft_.get()));
-  rgbFrameLeft_->GetBytes(reinterpret_cast<void**>(&video_data_left));
+  rgbFrameLeft_->GetBytes(&raw_data_left);
+  video_data_left = static_cast<uint8_t*>(raw_data_left);
 
   if (captureFormat_.stereo3D) {
     auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
@@ -257,7 +263,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       return S_FALSE;
     }
     // get right frame
-    IDeckLinkVideoFrame* rightEyeFrameRaw = NULL;
+    IDeckLinkVideoFrame* rightEyeFrameRaw = nullptr;
     threeDExtension->GetFrameForRightEye(&rightEyeFrameRaw);
     SmartDecklinkPtr<IDeckLinkVideoFrame> videoFrameRight{rightEyeFrameRaw};
 
@@ -268,7 +274,8 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     rgbFrameRight_->resize(videoFrameRight->GetWidth(), videoFrameRight->GetHeight());
     videoConversion_->ConvertFrame(videoFrameRight.get(),
                                    static_cast<IDeckLinkVideoFrame*>(rgbFrameRight_.get()));
-    rgbFrameRight_->GetBytes(reinterpret_cast<void**>(&video_data_right));
+    rgbFrameRight_->GetBytes(&raw_data_right);
+    video_data_right = static_cast<uint8_t*>(raw_data_right);
   }
 
   VideoPixelFormat pixelFormat = VideoPixelFormat::UNKNOWN;
@@ -286,7 +293,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
 
   const VideoCaptureFormat capture_format(
       Size(rgbFrameLeft_->GetWidth(),
-           rgbFrameLeft_->GetHeight()),  // todo: cast or something (long -> int)
+           rgbFrameLeft_->GetHeight()),  // todo: cast or something (int64_t-> int)
       0.0f,                              // Frame rate is not needed for captured data callback.
       pixelFormat,
       captureFormat_
@@ -296,7 +303,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
   //  if (firstRefTime_ == 0ms)
   //  firstRefTime_ = now;
   //  base::AutoLock lock(lock_);
-  if (frameReceiver_) {
+  if (frameReceiver_ != nullptr) {
     //    // todo: put this in another file somewhere
     //    constexpr const int kMicrosecondsPerSecond = 1000000;
     //
@@ -304,7 +311,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     //    BMDTimeValue frame_time;
     //    BMDTimeValue frame_duration;
     //    std::chrono::duration timestamp; // time delay since the last frame
-    //    if (SUCCEEDED(video_frame->GetStreamTime(&frame_time, &frame_duration,
+    //    if (SUCCEEDED(videoFrameLeft->GetStreamTime(&frame_time, &frame_duration,
     //    micros_time_scale))) {
     //      timestamp = std::chrono::microseconds(frame_time);
     //    } else {
@@ -329,10 +336,12 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
 }
 
 void DecklinkCaptureDelegate::StopAndDeAllocate() {
-  if (!deckLinkInput_.get())
+  if (deckLinkInput_ == nullptr) {
     return;
-  if (deckLinkInput_->StopStreams() != S_OK)
+  }
+  if (deckLinkInput_->StopStreams() != S_OK) {
     SendLogString("Problem stopping capture.");
+  }
   deckLinkInput_->SetCallback(nullptr);
   deckLinkInput_->DisableVideoInput();
   deckLinkInput_.reset(nullptr);
