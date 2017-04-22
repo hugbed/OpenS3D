@@ -54,7 +54,7 @@ RGB8VideoFrame::RGB8VideoFrame(int64_t width,
                                BMDPixelFormat pixelFormat,
                                BMDFrameFlags flags)
     : width_{width}, height_{height}, pixelFormat_{pixelFormat}, frameFlags_{flags} {
-  assert(pixelFormat_ == kPixelFormat);
+  assert(pixelFormat == kPixelFormat);
   bufferPointer_.resize(static_cast<size_t>(width_ * kNbBytesPixel * height_));
 }
 
@@ -335,11 +335,8 @@ void DecklinkCaptureDelegate::StopAndDeAllocate() {
 
 // static
 bool DecklinkCaptureDelegate::supportedFormat(const VideoCaptureFormat& format) {
-  if (format.frameSize != Size(1920, 1080) || format.frameRate != 30.0f ||
-      format.pixelFormat != VideoPixelFormat::ARGB) {
-    return false;
-  }
-  return true;
+  return format.frameSize == Size(1920, 1080) && format.frameRate == 30.0f &&
+         format.pixelFormat == VideoPixelFormat::ARGB;
 }
 
 void DecklinkCaptureDelegate::SendErrorString(const std::string& reason) {
