@@ -69,7 +69,9 @@ void Application::createScene() {
         ->attachObject(videoPlayerEntity_.get());
   }
 
-  videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+  if (videoCaptureDevice_ != nullptr) {
+    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+  }
 
   //  createVideoPlane("PointCloud");
   //  addLights();

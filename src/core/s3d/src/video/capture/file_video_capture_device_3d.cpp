@@ -91,6 +91,11 @@ bool RawUYVY3DFileParserProducer::allocate() {
 }
 
 void RawUYVY3DFileParserProducer::produce() {
+  if (fileParser_ == nullptr) {
+    readingFile_ = false;
+    return;
+  }
+
   readingFile_ = fileParser_->GetNextFrame(rgbBytes);
 }
 
@@ -145,11 +150,11 @@ gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice3D::clone() const {
 
 FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() = default;
 
-void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*format*/,
+void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format,
                                                 std::unique_ptr<Client> client) {
   client_ = std::move(client);
 
-  auto captureThread = std::thread([this] {
+  auto captureThread = std::thread([this, format] {
     std::mutex doneProducingMutex;
     std::condition_variable shouldConsumeCV;
 
@@ -172,10 +177,8 @@ void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& /*form
       producerThreads.emplace_back([&producer] { producer->startProducing(); });
     }
 
-    VideoCaptureFormat outputFormat(fileFormat.frameSize, fileFormat.frameRate,
-                                    VideoPixelFormat::RGB);
     consumer_ = std::make_unique<RawUYVY3DFileParserConsumer>(
-        client_.get(), outputFormat, &doneProducingMutex, &shouldConsumeCV, producers);
+        client_.get(), format, &doneProducingMutex, &shouldConsumeCV, producers);
 
     client_->OnStarted();
 
