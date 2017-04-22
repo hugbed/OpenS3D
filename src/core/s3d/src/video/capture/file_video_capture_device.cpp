@@ -6,24 +6,14 @@
 #include "s3d/video/capture/video_file_parser.h"
 #include "s3d/utilities/file_io.h"
 
-// static
-std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
-    const std::string& filePath,
-    VideoCaptureFormat* format) {
-  // currently only RawUYVY supported
-  auto fileParser = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
+FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
+    : filePath_(std::move(filePath)), stopCaptureFlag_(false) {}
 
-  if (!fileParser->Initialize(format)) {
-    fileParser.reset();
-  }
-
-  return fileParser;
+gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice::clone() const {
+  return new FileVideoCaptureDevice(filePath_);
 }
 
 FileVideoCaptureDevice::~FileVideoCaptureDevice() = default;
-
-FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
-    : filePath_(std::move(filePath)), stopCaptureFlag_(false) {}
 
 // todo(hugbed): check that thread is not still runing
 // FileVideoCaptureDevice::~FileVideoCaptureDevice()  = default;
@@ -52,6 +42,8 @@ void FileVideoCaptureDevice::OnAllocateAndStart() {
   auto loopDuration =
       duration_cast<milliseconds>(duration<float>(1.0f / captureFormat_.frameRate / 1000.0f));
 
+  client_->OnStarted();
+
   while (!stopCaptureFlag_) {
     auto t1 = high_resolution_clock::now();
     OnCaptureTask();
@@ -64,8 +56,22 @@ void FileVideoCaptureDevice::StopAndDeAllocate() {
   stopCaptureFlag_ = true;
 }
 
+// static
+std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
+    const std::string& filePath,
+    VideoCaptureFormat* format) {
+  // currently only RawUYVY supported
+  auto fileParser = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
+
+  if (!fileParser->Initialize(format)) {
+    fileParser.reset();
+  }
+
+  return fileParser;
+}
+
 void FileVideoCaptureDevice::OnCaptureTask() {
-  if (fileParser_->GetNextFrame(videoFrame_) || client_) {
+  if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(videoFrame_)) {
     client_->OnIncomingCapturedData({videoFrame_}, captureFormat_);
   } else {
     stopCaptureFlag_ = true;

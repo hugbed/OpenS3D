@@ -21,10 +21,11 @@ struct VideoCaptureDeviceDescriptor {
 
 class VideoCaptureDevice;
 
+// todo: not really useful for now
 class VideoCaptureDeviceFactory {
  public:
   virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
-      const VideoCaptureDeviceDescriptor& deviceDescriptor) = 0;
+      const VideoCaptureDeviceDescriptor& deviceDescriptor) const = 0;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H

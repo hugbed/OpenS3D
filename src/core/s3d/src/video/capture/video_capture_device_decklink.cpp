@@ -10,7 +10,8 @@
 // todo: should test int64_t instead of long
 class RGB8VideoFrame : public IDeckLinkVideoFrame {
  public:
-  constexpr static const int kNbBytesPixel = 4;
+  static const int kNbBytesPixel = 4;
+  static const BMDPixelFormat kPixelFormat = bmdFormat8BitBGRA;
 
   RGB8VideoFrame(int64_t width, int64_t height, BMDPixelFormat pixelFormat, BMDFrameFlags flags);
 
@@ -22,19 +23,14 @@ class RGB8VideoFrame : public IDeckLinkVideoFrame {
   BMDFrameFlags GetFlags() override;
   HRESULT GetBytes(/* out */ void** buffer) override;
 
-  void resize(int64_t width, int64_t height) {
-    width_ = width;
-    height_ = height;
-    bufferPointer_.resize(static_cast<size_t>(width_ * height_ * kNbBytesPixel));
-  }
+  void resize(int64_t width, int64_t height);
 
   // Dummy implementations of remaining virtual methods
-  HRESULT GetTimecode(/* in */ BMDTimecodeFormat /*format*/,
-                      /* out */ IDeckLinkTimecode** /*timecode*/) override {
+  HRESULT GetTimecode(BMDTimecodeFormat /*format*/, IDeckLinkTimecode** /*timecode*/) override {
     return E_NOINTERFACE;
   }
 
-  HRESULT GetAncillaryData(/* out */ IDeckLinkVideoFrameAncillary** /*ancillary*/) override {
+  HRESULT GetAncillaryData(IDeckLinkVideoFrameAncillary** /*ancillary*/) override {
     return E_NOINTERFACE;
   }
 
@@ -58,14 +54,8 @@ RGB8VideoFrame::RGB8VideoFrame(int64_t width,
                                BMDPixelFormat pixelFormat,
                                BMDFrameFlags flags)
     : width_{width}, height_{height}, pixelFormat_{pixelFormat}, frameFlags_{flags} {
-  // this pointer size is only valid for bmdFormat8BitYUV
-  switch (pixelFormat_) {
-    case bmdFormat8BitBGRA:
-      bufferPointer_.resize(static_cast<size_t>(width_ * kNbBytesPixel * height_));
-      break;
-    default:
-      break;
-  }
+  assert(pixelFormat_ == kPixelFormat);
+  bufferPointer_.resize(static_cast<size_t>(width_ * kNbBytesPixel * height_));
 }
 
 int64_t RGB8VideoFrame::GetWidth() {
@@ -93,16 +83,17 @@ HRESULT RGB8VideoFrame::GetBytes(/* out */ void** buffer) {
   return S_OK;
 }
 
+void RGB8VideoFrame::resize(int64_t width, int64_t height) {
+  width_ = width;
+  height_ = height;
+  bufferPointer_.resize(static_cast<size_t>(width_ * height_ * kNbBytesPixel));
+}
+
 // todo: better consistency between DeckLink and decklink (camel case?)
 class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
  public:
   DecklinkCaptureDelegate(const VideoCaptureDeviceDescriptor& device_descriptor,
-                          VideoCaptureDeviceDecklink* frameReceiver)
-      : device_descriptor_{device_descriptor},
-        captureFormat_{{0, 0}, 0.0f, VideoPixelFormat::UNKNOWN},
-        frameReceiver_{frameReceiver},
-        rgbFrameLeft_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)},
-        rgbFrameRight_{new RGB8VideoFrame(1920, 1080, bmdFormat8BitBGRA, bmdFrameFlagDefault)} {}
+                          VideoCaptureDeviceDecklink* frameReceiver);
 
   ~DecklinkCaptureDelegate() override = default;
 
@@ -110,6 +101,10 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
   void StopAndDeAllocate();
 
   const VideoCaptureDeviceDescriptor& getDeviceDescriptor() { return device_descriptor_; }
+
+  static bool supportedFormat(const VideoCaptureFormat& format);
+
+  void ResetVideoCaptureDeviceReference() { frameReceiver_ = nullptr; }
 
  private:
   // IDeckLinkInputCallback interface implementation.
@@ -151,11 +146,19 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
   std::chrono::high_resolution_clock::time_point firstRefTime_;
 };
 
+DecklinkCaptureDelegate::DecklinkCaptureDelegate(
+    const VideoCaptureDeviceDescriptor& device_descriptor,
+    VideoCaptureDeviceDecklink* frameReceiver)
+    : device_descriptor_{device_descriptor},
+      captureFormat_{{0, 0}, 0.0f, VideoPixelFormat::UNKNOWN},
+      frameReceiver_{frameReceiver},
+      rgbFrameLeft_{new RGB8VideoFrame(0, 0, RGB8VideoFrame::kPixelFormat, bmdFrameFlagDefault)},
+      rgbFrameRight_{new RGB8VideoFrame(0, 0, RGB8VideoFrame::kPixelFormat, bmdFrameFlagDefault)} {}
+
 void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params) {
   // Only 1920x1080, 30fps, BGRA, 2D or 3D supported
   // todo: is it BGRA or ARGB?
-  if (params.frameSize != Size(1920, 1080) || params.frameRate != 30.0f ||
-      params.pixelFormat != VideoPixelFormat::ARGB) {
+  if (!supportedFormat(params)) {
     SendErrorString("Requested format not supported");
     return;
   }
@@ -195,7 +198,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
     return;
   }
 
-  // 3D settings for VideoCapture
+  // 3D settings for video capture
   if (params.stereo3D) {
     auto decklinkConfiguration = make_decklink_ptr<IDeckLinkConfiguration>(deckLink);
     if (decklinkConfiguration == nullptr) {
@@ -227,12 +230,14 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
     return;
   }
 }
+
 HRESULT DecklinkCaptureDelegate::VideoInputFormatChanged(
     BMDVideoInputFormatChangedEvents /*notification_events*/,
     IDeckLinkDisplayMode* /*new_display_mode*/,
     BMDDetectedVideoInputFormatFlags /*detected_signal_flags*/) {
   return S_OK;
 }
+
 HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
@@ -296,28 +301,9 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
            rgbFrameLeft_->GetHeight()),  // todo: cast or something (int64_t-> int)
       0.0f,                              // Frame rate is not needed for captured data callback.
       pixelFormat,
-      captureFormat_
-          .stereo3D);  // todo: 3D flag on capture_format is redundant since there are 2 interfaces
-                       // now
-  //  auto now = std::chrono::high_resolution_clock::now();
-  //  if (firstRefTime_ == 0ms)
-  //  firstRefTime_ = now;
-  //  base::AutoLock lock(lock_);
-  if (frameReceiver_ != nullptr) {
-    //    // todo: put this in another file somewhere
-    //    constexpr const int kMicrosecondsPerSecond = 1000000;
-    //
-    //    const BMDTimeScale micros_time_scale = kMicrosecondsPerSecond;
-    //    BMDTimeValue frame_time;
-    //    BMDTimeValue frame_duration;
-    //    std::chrono::duration timestamp; // time delay since the last frame
-    //    if (SUCCEEDED(videoFrameLeft->GetStreamTime(&frame_time, &frame_duration,
-    //    micros_time_scale))) {
-    //      timestamp = std::chrono::microseconds(frame_time);
-    //    } else {
-    //      timestamp = now - firstRefTime_;
-    //    }
+      captureFormat_.stereo3D);
 
+  if (frameReceiver_ != nullptr) {
     if (captureFormat_.stereo3D) {
       frameReceiver_->OnIncomingCapturedData(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()},
@@ -328,8 +314,6 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()}},
           capture_format);
     }
-    // std::chrono::duration_cast<std::chrono::microseconds>(now - firstRefTime_));  // todo:
-    // include timestamp
   }
 
   return S_OK;
@@ -346,6 +330,16 @@ void DecklinkCaptureDelegate::StopAndDeAllocate() {
   deckLinkInput_->DisableVideoInput();
   deckLinkInput_.reset(nullptr);
   deckLink_.reset(nullptr);
+  ResetVideoCaptureDeviceReference();
+}
+
+// static
+bool DecklinkCaptureDelegate::supportedFormat(const VideoCaptureFormat& format) {
+  if (format.frameSize != Size(1920, 1080) || format.frameRate != 30.0f ||
+      format.pixelFormat != VideoPixelFormat::ARGB) {
+    return false;
+  }
+  return true;
 }
 
 void DecklinkCaptureDelegate::SendErrorString(const std::string& reason) {
@@ -360,19 +354,11 @@ void DecklinkCaptureDelegate::SendLogString(const std::string& message) {
   }
 }
 
-void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
-    const VideoCaptureDevice::Client::Images& images,
-    const VideoCaptureFormat& frameFormat) {
-  if (client_ != nullptr) {
-    client_->OnIncomingCapturedData(images, frameFormat);
-  }
-}
-
 VideoCaptureDeviceDecklink::VideoCaptureDeviceDecklink(
     const VideoCaptureDeviceDescriptor& deviceDescriptor)
     : captureDelegate_{new DecklinkCaptureDelegate{deviceDescriptor, this}} {}
 
-gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink::clone() {
+gsl::owner<VideoCaptureDevice*> VideoCaptureDeviceDecklink::clone() const {
   return new VideoCaptureDeviceDecklink(captureDelegate_->getDeviceDescriptor());
 }
 
@@ -387,10 +373,19 @@ void VideoCaptureDeviceDecklink::AllocateAndStart(
   // todo: should verify that format is supported
   // todo: should get image size from capture delegate
   captureDelegate_->AllocateAndStart(format);
+  client_->OnStarted();
 }
 
 void VideoCaptureDeviceDecklink::StopAndDeAllocate() {
   captureDelegate_->StopAndDeAllocate();
+}
+
+void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
+    const VideoCaptureDevice::Client::Images& images,
+    const VideoCaptureFormat& frameFormat) {
+  if (client_ != nullptr) {
+    client_->OnIncomingCapturedData(images, frameFormat);
+  }
 }
 
 void VideoCaptureDeviceDecklink::SendErrorString(const std::string& reason) {

@@ -18,14 +18,14 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
  public:
   explicit FileVideoCaptureDevice(std::string filePath);
 
+  gsl::owner<VideoCaptureDevice*> clone() const override;
+
   ~FileVideoCaptureDevice() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
                         std::unique_ptr<VideoCaptureDevice::Client> client) override;
 
   void StopAndDeAllocate() override;
-
-  gsl::owner<VideoCaptureDevice*> clone() override { return new FileVideoCaptureDevice(filePath_); }
 
  private:
   static std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath,

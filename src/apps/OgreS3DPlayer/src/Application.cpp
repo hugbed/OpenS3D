@@ -7,7 +7,6 @@
 
 #include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
-#include "s3d/video/capture/video_capture_types.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -35,7 +34,6 @@ void Application::createScene() {
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
   constexpr auto textureNameRight = "DynamicTextureR";
-  // todo: this should be created from VideoCaptureDevice format
   m_videoTextures.first = createDynamicTexture(textureNameLeft, format);
   m_videoTextures.second = createDynamicTexture(textureNameRight, format);
   m_frameListeners.push_back(m_videoTextures.first.get());

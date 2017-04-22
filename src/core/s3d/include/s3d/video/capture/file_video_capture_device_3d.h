@@ -15,14 +15,11 @@ class RawUYVY3DFileParserConsumer;
 
 class FileVideoCaptureDevice3D : public VideoCaptureDevice {
  public:
-  gsl::owner<FileVideoCaptureDevice3D*> clone() override {
-    auto& combinedPath = filePaths_.first.append(filePaths_.second);
-    return new FileVideoCaptureDevice3D(combinedPath);
-  }
+  explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
+
+  gsl::owner<VideoCaptureDevice*> clone() const override;
 
   ~FileVideoCaptureDevice3D() override;
-
-  explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
 
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
 

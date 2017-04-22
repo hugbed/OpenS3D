@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright 2012 The Chromium Authors. All rights reserved.
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
@@ -8,13 +8,11 @@
 #include "s3d/utilities/rule_of_five.h"
 #include "video_capture_types.h"
 
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
 // todo(hugbed): put in s3d namespace
-// todo: merge with VideoCaptureDevice3D
 
 class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
  public:
@@ -28,7 +26,7 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
 
     virtual void OnError(const std::string& reason) = 0;
     virtual void OnLog(const std::string& message) = 0;
-    virtual void OnStarted() = 0;  // todo: should be called by all VideoCaptureDevices
+    virtual void OnStarted() = 0;
   };
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,
@@ -41,15 +39,6 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
   virtual void Resume() {}
 
   virtual void StopAndDeAllocate() = 0;
-
-  //
-  //
-  //  // rule of six
-  //  VideoCaptureDevice(const VideoCaptureDevice&) = delete;
-  //  VideoCaptureDevice& operator=(const VideoCaptureDevice&) = delete;
-  //
-  //  VideoCaptureDevice(VideoCaptureDevice&&) = delete;
-  //  VideoCaptureDevice& operator=(VideoCaptureDevice&&) = delete;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H

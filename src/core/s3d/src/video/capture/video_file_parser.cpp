@@ -14,6 +14,10 @@ VideoFileParser::VideoFileParser(std::string filePath)
 
 RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : VideoFileParser(std::move(filePath)) {}
 
+gsl::owner<RawUYVYFileParser*> RawUYVYFileParser::clone() const {
+  return new RawUYVYFileParser(filePath_);
+}
+
 RawUYVYFileParser::~RawUYVYFileParser() = default;
 
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {

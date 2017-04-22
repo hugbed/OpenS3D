@@ -14,7 +14,7 @@ class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
   explicit FileVideoCaptureDeviceFactory() = default;
 
   std::unique_ptr<VideoCaptureDevice> CreateDevice(
-      const VideoCaptureDeviceDescriptor& deviceDescriptor) override;
+      const VideoCaptureDeviceDescriptor& deviceDescriptor) const override;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FACTORY_H

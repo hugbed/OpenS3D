@@ -9,7 +9,7 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
  public:
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
-  gsl::owner<VideoCaptureDevice::Client*> clone() override {
+  gsl::owner<VideoCaptureDevice::Client*> clone() const override {
     return new TextureUpdateClient(videoTextures_);
   }
 

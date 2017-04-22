@@ -24,7 +24,7 @@ class Size {
     setHeight(height);
   }
 
-  int getArea() const noexcept { return width_ * height_; }
+  constexpr int getArea() const noexcept { return width_ * height_; }
 
   constexpr bool operator==(const Size& other) const {
     return width_ == other.width_ && height_ == other.height_;

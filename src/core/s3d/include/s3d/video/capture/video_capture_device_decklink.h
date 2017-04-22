@@ -7,7 +7,6 @@
 
 #include "video_capture_device.h"
 #include "video_capture_device_factory.h"
-#include "video_capture_types.h"
 
 #include <gsl/gsl>
 
@@ -15,11 +14,11 @@
 
 class DecklinkCaptureDelegate;
 
-// todo: this is mock implementation, implement it for real
 class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
  public:
   explicit VideoCaptureDeviceDecklink(const VideoCaptureDeviceDescriptor& deviceDescriptor);
-  gsl::owner<VideoCaptureDevice*> clone() override;
+
+  gsl::owner<VideoCaptureDevice*> clone() const override;
 
   ~VideoCaptureDeviceDecklink() override;
 
@@ -31,15 +30,13 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   // called from delegate
   void OnIncomingCapturedData(const VideoCaptureDevice::Client::Images& images,
                               const VideoCaptureFormat& frameFormat);
-  // std::chrono::high_resolution_clock::duration<std::chrono::high_resolution_clok::microseconds>
-  // timestamp);  // todo: include timestamp
 
   void SendErrorString(const std::string& /*reason*/);
   void SendLogString(const std::string& /*message*/);
 
  private:
   std::unique_ptr<VideoCaptureDevice::Client> client_{};
-  std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;  // todo:reuse delegate
+  std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H

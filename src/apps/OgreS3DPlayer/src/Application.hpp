@@ -2,11 +2,12 @@
 #define APPLICATION_HPP
 
 #include "BaseApplication.hpp"
-#include "s3d/video/capture/video_capture_device.h"
 
 class DynamicTexture;
 class DynamicTextureThreadSafe;
 class PointCloudMesh;
+class VideoCaptureDevice;
+class VideoCaptureFormat;
 
 class Application : public BaseApplication {
  public:
@@ -30,7 +31,6 @@ class Application : public BaseApplication {
 
   void createPointCloud();
 
-  // 2D mode
   std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
   std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;
 
