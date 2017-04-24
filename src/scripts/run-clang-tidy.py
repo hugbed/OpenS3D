@@ -45,7 +45,7 @@ import subprocess
 import sys
 import tempfile
 import threading
-
+import re
 
 def find_compilation_database(path):
   """Adjusts the directory until a compilation database is found."""
@@ -148,6 +148,11 @@ def main():
                       'command line.')
   parser.add_argument('-quiet', action='store_true',
                       help='Run clang-tidy in quiet mode')
+  parser.add_argument('-file-filter', default=None,
+                      help='regular expression matching the names of the '
+                      'files to exclude diagnostics.'
+                      'Invokes re.compile().search(files_filter)') 
+
   args = parser.parse_args()
 
   db_path = 'compile_commands.json'
@@ -172,6 +177,11 @@ def main():
   # Load the database and extract all files.
   database = json.load(open(os.path.join(build_path, db_path)))
   files = [entry['file'] for entry in database]
+
+  # filter files
+  if not args.file_filter == None:
+    filter_pattern = re.compile(args.file_filter)
+    files = filter(lambda f: not filter_pattern.search(f), files)
 
   max_task = args.j
   if max_task == 0:

@@ -1,11 +1,11 @@
-//
-// Created by jon on 11/04/17.
-//
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 #define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 
-#include "video_capture_device_3d.h"
+#include "video_capture_device.h"
 
 #include <atomic>
 #include <utility>
@@ -13,16 +13,13 @@
 class RawUYVY3DFileParserProducer;
 class RawUYVY3DFileParserConsumer;
 
-class FileVideoCaptureDevice3D : public VideoCaptureDevice3D {
+class FileVideoCaptureDevice3D : public VideoCaptureDevice {
  public:
-  gsl::owner<FileVideoCaptureDevice3D*> clone() override {
-    auto& combinedPath = filePaths_.first.append(filePaths_.second);
-    return new FileVideoCaptureDevice3D(combinedPath);
-  }
+  explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
+
+  gsl::owner<VideoCaptureDevice*> clone() const override;
 
   ~FileVideoCaptureDevice3D() override;
-
-  explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
 
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
 

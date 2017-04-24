@@ -5,6 +5,7 @@
 #include "video_texture/DynamicTextureThreadSafe.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
+#include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 
 //-------------------------------------------------------------------------------------
@@ -26,32 +27,51 @@ void Application::createScene() {
   //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
   //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
 
+  // todo: this should be chosen from possible input formats
+  // todo: it's actually BGRA, I think?
+  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB, false);
+
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
   constexpr auto textureNameRight = "DynamicTextureR";
-  m_videoTextures.first = createDynamicTexture(textureNameLeft);
-  m_videoTextures.second = createDynamicTexture(textureNameRight);
+  m_videoTextures.first = createDynamicTexture(textureNameLeft, format);
+  m_videoTextures.second = createDynamicTexture(textureNameRight, format);
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  // create video player entity and add it to the scene
-  videoPlayer3DEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
-      VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
-  mSceneMgr->getRootSceneNode()
-      ->createChildSceneNode("entititiNode")
-      ->attachObject(videoPlayer3DEntity_.get());
+  auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+      std::make_unique<TextureUpdateClient>(std::vector<DynamicTextureThreadSafe*>{
+          m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
-  // create video capture device and client
-  videoCaptureDevice_ =
-      std::unique_ptr<VideoCaptureDevice3D>(std::make_unique<FileVideoCaptureDevice3D>(
-          "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
+  videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+      std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
 
-  auto captureClient =
-      std::unique_ptr<VideoCaptureDevice3D::Client>(std::make_unique<TextureUpdateClient>(
-          m_videoTextures.first.get(), m_videoTextures.second.get()));
+  // choose the appropriate video player (should be a factory)
+  if (format.stereo3D) {
+    // todo : let the user choose the file
+    //    videoCaptureDevice_ =
+    //        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+    //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
+    //    format.pixelFormat = VideoPixelFormat::RGB;
 
-  VideoCaptureFormat format;  // todo(hugbed): could be used to init texture size
-  videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+    // create video player entity and add it to the scene
+    videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
+        VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
+    mSceneMgr->getRootSceneNode()
+        ->createChildSceneNode("entititiNode")
+        ->attachObject(videoPlayerEntity_.get());
+  } else {
+    auto videoMaterial = DynamicTexture::createImageMaterial("VideoMaterial", textureNameLeft);
+    videoPlayerEntity_ =
+        std::make_unique<FullscreenRectangleEntity>("VideoEntity", videoMaterial->getName());
+    mSceneMgr->getRootSceneNode()
+        ->createChildSceneNode("entititiNode")
+        ->attachObject(videoPlayerEntity_.get());
+  }
+
+  if (videoCaptureDevice_ != nullptr) {
+    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+  }
 
   //  createVideoPlane("PointCloud");
   //  addLights();
@@ -86,11 +106,26 @@ void Application::createGroundPlane() {
 }
 
 std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
-    const std::string& name) {
-  // twice as fast as update to prevent aliasing (if this makes sense)
-  constexpr auto refreshRate = 1.0f / 60.0f;
-  return std::make_unique<DynamicTextureThreadSafe>(name, Ogre::PixelFormat::PF_R8G8B8, 1920, 1080,
-                                                    refreshRate);
+    const std::string& name,
+    const VideoCaptureFormat& format) {
+  Ogre::PixelFormat pixelFormat = Ogre::PixelFormat::PF_UNKNOWN;
+
+  switch (format.pixelFormat) {
+    case VideoPixelFormat::RGB:
+      pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
+      break;
+    case VideoPixelFormat::ARGB:
+      // todo : ARGB or BGRA!!
+      pixelFormat = Ogre::PixelFormat::PF_B8G8R8A8;
+      break;
+    default:
+      break;
+  }
+
+  // more than twice as fast as update to prevent aliasing (if this makes sense)
+  return std::make_unique<DynamicTextureThreadSafe>(name, pixelFormat, format.frameSize.getWidth(),
+                                                    format.frameSize.getHeight(),
+                                                    1.0f / (4.0f * format.frameRate));
 }
 
 void Application::createVideoPlane(const std::string& materialName) {

@@ -1,7 +1,3 @@
-//
-// Created by jon on 07/04/17.
-//
-
 #include "s3d/video/capture/file_video_capture_device.h"
 #include "s3d/video/capture/file_video_capture_device_factory.h"
 
@@ -9,16 +5,15 @@
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
-  gsl::owner<VideoCaptureDevice::Client*> clone() override { return new VideoTestClient(); }
-
-  void OnIncomingCapturedData(const std::vector<uint8_t>& imageBytes,
-                              const VideoCaptureFormat& /*frameFormat*/) override {
-    std::cout << "received image, size: " << imageBytes.size() << std::endl;
-  }
-
-  void OnError(const std::string& /*reason*/) override {}
+  gsl::owner<VideoCaptureDevice::Client*> clone() const override { return new VideoTestClient; }
   void OnLog(const std::string& /*reason*/) override {}
+  void OnError(const std::string& /*message*/) override {}
   void OnStarted() override {}
+
+  void OnIncomingCapturedData(const Images& data,
+                              const VideoCaptureFormat& /*frameFormat*/) override {
+    std::cout << "Image arrived, size=" << data.size() << " bytes." << std::endl;
+  }
 };
 
 std::unique_ptr<VideoCaptureDeviceFactory> createVideoCaptureDeviceFactory() {

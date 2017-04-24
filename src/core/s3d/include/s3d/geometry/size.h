@@ -9,24 +9,32 @@
 
 class Size {
  public:
+  using value_type = int;
+
   constexpr Size() noexcept : width_{}, height_{} {}
-  constexpr Size(int width, int height) noexcept : width_(width), height_(height) {}
+  constexpr Size(value_type width, value_type height) noexcept : width_(width), height_(height) {}
 
-  void setWidth(int width) noexcept { height_ = width; }
-  void setHeight(int height) noexcept { height_ = height; }
-  constexpr int getWidth() const noexcept { return width_; }
-  constexpr int getHeight() const noexcept { return height_; }
+  void setWidth(value_type width) noexcept { height_ = width; }
+  void setHeight(value_type height) noexcept { height_ = height; }
+  constexpr value_type getWidth() const noexcept { return width_; }
+  constexpr value_type getHeight() const noexcept { return height_; }
 
-  void setSize(int width, int height) noexcept {
+  void setSize(value_type width, value_type height) noexcept {
     setWidth(width);
     setHeight(height);
   }
 
-  int getArea() const noexcept { return width_ * height_; }
+  constexpr int getArea() const noexcept { return width_ * height_; }
+
+  constexpr bool operator==(const Size& other) const {
+    return width_ == other.width_ && height_ == other.height_;
+  }
+
+  constexpr bool operator!=(const Size& other) const { return !(*this == other); }
 
  private:
-  int width_;
-  int height_;
+  value_type width_;
+  value_type height_;
 };
 
 #endif  // S3D_GEOMETRY_SIZE_H

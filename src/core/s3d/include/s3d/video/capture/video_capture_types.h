@@ -1,6 +1,6 @@
-//
-// Created by bedh2102 on 06/04/17.
-//
+// Copyright 2012 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H
 #define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H
@@ -13,9 +13,17 @@
 // todo(hugbed): put in s3d namespace
 
 struct VideoCaptureFormat {
-  VideoCaptureFormat();
-  VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat);
-  VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat, bool stereo3D);
+  class Unsupported;
+
+  constexpr VideoCaptureFormat()
+      : frameRate{0.0f}, pixelFormat{VideoPixelFormat::UNKNOWN}, stereo3D{false} {}
+  constexpr VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat)
+      : frameSize{frameSize}, frameRate{frameRate}, pixelFormat{pixelFormat}, stereo3D{false} {}
+  constexpr VideoCaptureFormat(Size frameSize,
+                               float frameRate,
+                               VideoPixelFormat pixelFormat,
+                               bool stereo3D)
+      : frameSize{frameSize}, frameRate{frameRate}, pixelFormat{pixelFormat}, stereo3D{stereo3D} {}
   size_t ImageAllocationSize() const;
 
   Size frameSize;

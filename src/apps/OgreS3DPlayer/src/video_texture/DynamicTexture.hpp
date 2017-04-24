@@ -7,6 +7,8 @@
 
 #include <Ogre.h>
 
+#include <gsl/gsl>
+
 #include <vector>
 
 class DynamicTexture {
@@ -24,7 +26,7 @@ class DynamicTexture {
   }
 
   // source: http://ogre3d.org/tikiwiki/Creating+dynamic+textures
-  virtual void updateImage(const std::vector<uint8_t>& imageBytes) {
+  virtual void updateImage(gsl::span<const uint8_t> imageBytes) {
     auto pixelBuffer = m_pDynamicTexture->getBuffer();
     assert(imageBytes.size() == pixelBuffer->getSizeInBytes());
 

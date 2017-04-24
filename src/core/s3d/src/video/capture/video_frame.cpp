@@ -1,6 +1,6 @@
-//
-// Created by bedh2102 on 06/04/17.
-//
+// Copyright 2012 The Chromium Authors. All rights reserved.
+// Inspired by Chromium video capture interface
+// Simplified and stripped from internal base code
 
 #include "s3d/video/video_frame.h"
 

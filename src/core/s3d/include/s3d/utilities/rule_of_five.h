@@ -12,7 +12,7 @@ class rule_of_five_interface {
  public:
   // todo(hugbed): virtual functions probably prevent empty base class
   // optimization
-  virtual gsl::owner<Interface*> clone() = 0;
+  virtual gsl::owner<Interface*> clone() const = 0;
   virtual ~rule_of_five_interface() = default;
   rule_of_five_interface(const rule_of_five_interface&) = delete;
   rule_of_five_interface& operator=(const rule_of_five_interface&) = delete;

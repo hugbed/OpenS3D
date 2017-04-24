@@ -2,11 +2,12 @@
 #define APPLICATION_HPP
 
 #include "BaseApplication.hpp"
-#include "s3d/video/capture/video_capture_device_3d.h"
 
 class DynamicTexture;
 class DynamicTextureThreadSafe;
 class PointCloudMesh;
+class VideoCaptureDevice;
+class VideoCaptureFormat;
 
 class Application : public BaseApplication {
  public:
@@ -22,15 +23,16 @@ class Application : public BaseApplication {
 
   void createGroundPlane();
 
-  static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(const std::string& name);
+  static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(
+      const std::string& name,
+      const VideoCaptureFormat& format);
 
   void createVideoPlane(const std::string& materialName);
 
   void createPointCloud();
 
-  std::unique_ptr<Ogre::MovableObject> videoPlayer3DEntity_;
-
-  std::unique_ptr<VideoCaptureDevice3D> videoCaptureDevice_;
+  std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
+  std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;
 
   // to stream image to texture (L, R)
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>>
