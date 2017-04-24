@@ -40,7 +40,7 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.second.get());
 
   auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
-      std::make_unique<TextureUpdateClient>(std::vector<DynamicTextureThreadSafe*>{
+      new TextureUpdateClient(std::vector<DynamicTextureThreadSafe*>{
           m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
   // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
@@ -49,9 +49,8 @@ void Application::createScene() {
   // choose the appropriate video player (should be a factory)
   if (format.stereo3D) {
     // todo : let the user choose the file
-    videoCaptureDevice_ =
-        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
-            "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice3D(
+        "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
 
     // create video player entity and add it to the scene
     videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
