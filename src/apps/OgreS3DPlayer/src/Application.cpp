@@ -29,7 +29,7 @@ void Application::createScene() {
 
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::ARGB, false);
+  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::RGB, true);
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -43,16 +43,15 @@ void Application::createScene() {
       std::make_unique<TextureUpdateClient>(std::vector<DynamicTextureThreadSafe*>{
           m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
-  videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-      std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
+  // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+  //     std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
 
   // choose the appropriate video player (should be a factory)
   if (format.stereo3D) {
     // todo : let the user choose the file
-    //    videoCaptureDevice_ =
-    //        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
-    //            "/home/bedh2102/Videos/current-left.yuv;/home/bedh2102/Videos/current-right.yuv"));
-    //    format.pixelFormat = VideoPixelFormat::RGB;
+    videoCaptureDevice_ =
+        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+            "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
 
     // create video player entity and add it to the scene
     videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(

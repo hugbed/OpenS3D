@@ -24,6 +24,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(cmake/clang-cxx-dev-tools.cmake)
 
+# GTest
+set(ENV{CTEST_OUTPUT_ON_FAILURE} true)
+set(ENV{GTEST_COLOR} true)
 enable_testing()
 
 # When done tweaking common stuff, configure the components (subprojects).
@@ -35,5 +38,3 @@ add_subdirectory(core/s3dcuda)
 add_subdirectory(apps/OgreS3DPlayer)
 add_subdirectory(apps/S3DDemo)
 add_subdirectory(apps/S3DCudaDemo)
-
-
