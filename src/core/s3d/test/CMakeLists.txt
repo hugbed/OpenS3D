@@ -7,18 +7,22 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 # tests
 find_package(GTest REQUIRED)
 include_directories(GTEST_INCLUDE_DIRS)
-
 set(TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} s3d)
 
-add_executable(tests_video_capture tests_video_capture_device.cpp)
-target_link_libraries(tests_video_capture ${TEST_LIBRARIES})
+# create executable and add test
+# test name for: "path/to/tests_a.cpp"
+# will be : "path_to_tests_a"
+function(add_gtest filepath)
+  string(REPLACE "${PROJECT_SOURCE_DIR}/" "" test_name ${filepath})
+  string(REPLACE "\/" "_" test_name ${test_name})
+  string(REPLACE ".cpp" "" test_name ${test_name})
+  add_executable(${test_name} ${filepath})
+  target_link_libraries(${test_name} ${TEST_LIBRARIES})
+  add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
 
-add_executable(tests_math utilities/tests_math.cpp)
-target_link_libraries(tests_math ${TEST_LIBRARIES})
-
-add_executable(tests_rule_of_five utilities/tests_rule_of_five.cpp)
-target_link_libraries(tests_rule_of_five ${TEST_LIBRARIES})
-
-add_test(NAME tests_video_capture COMMAND tests_video_capture)
-add_test(NAME tests_math COMMAND tests_math)
-add_test(NAME tests_rule_of_five COMMAND tests_rule_of_five)
+# find all tests and add them
+file(GLOB_RECURSE SRC_FILES *.cpp)
+foreach(file_name ${SRC_FILES})
+  add_gtest(${file_name})
+endforeach()
