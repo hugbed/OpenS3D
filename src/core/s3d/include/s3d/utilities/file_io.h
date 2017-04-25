@@ -29,14 +29,11 @@ bool read_n_bytes(std::istream& stream, Size_t n, OIt it) {
   return !stream.eof();
 }
 
+// to write to binary file
+// std::ofstream outputStream{filename, std::ios::binary};
 template <class Container>
-bool write_bytes(const std::string& filename, Container c) {
-  std::ofstream out{filename, std::ios::binary};
-  if (out.is_open()) {
-    std::copy(std::begin(c), std::end(c), std::ostreambuf_iterator<char>{out});
-    return true;
-  }
-  return false;
+void write_bytes(std::ostream& outputStream, Container c) {
+  std::copy(std::begin(c), std::end(c), std::ostreambuf_iterator<char>{outputStream});
 }
 
 template <class Size_t>
@@ -47,24 +44,6 @@ std::vector<uint8_t> load_n_bytes(const std::string& filename, Size_t n) {
   return bytes;
 }
 
-class ifchunkstream {
- public:
-  ifchunkstream(const std::string& filename, size_t chunkSize)
-      : stream_{filename, std::ios::binary}, chunkSize_{chunkSize} {}
-
-  friend ifchunkstream& operator>>(ifchunkstream& input, std::vector<uint8_t>& v) {
-    input.push_back_chunk(v);
-    return input;
-  }
-
-  explicit operator bool() const { return stream_.eof(); }
-
-  // private:
-  void push_back_chunk(std::vector<uint8_t>& v) { push_back_n_bytes(stream_, chunkSize_, v); }
-
-  std::ifstream stream_;
-  size_t chunkSize_;
-};
 }  // namespace file_io
 }  // namespace s3d
 
