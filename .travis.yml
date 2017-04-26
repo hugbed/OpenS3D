@@ -35,7 +35,7 @@ addons:
 env:
   global:
     - OPENS3D_SOURCE=${TRAVIS_BUILD_DIR}/src
-    - OPENS3D_BUILD=${TRAVIS_BUILD_DIR}/build
+    - OPENS3D_BUILD=${TRAVIS_BUILD_DIR}/src/build
     
 before_script:
   # Display cmake version
