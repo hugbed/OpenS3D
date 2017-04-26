@@ -30,6 +30,7 @@ addons:
     packages:
       - cmake
       - libgtest-dev
+      - libopencv-dev
 
 env:
   global:
@@ -42,12 +43,10 @@ before_script:
   # Create build folder
   - mkdir $OPENS3D_BUILD
   - cd $OPENS3D_BUILD
-  - cmake \
-      -DCMAKE_CXX_COMPILER=$COMPILER \
-      -DCMAKE_BUILD_TYPE=release
+  - cmake ..
 
 install: 
-- echo installing dependencies...
+- echo installing...
 - echo oops not implemented
 
 script: 
