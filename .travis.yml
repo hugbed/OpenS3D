@@ -6,4 +6,4 @@ install:
 
 script: 
 - echo building ...
-- oops not implemented
+- echo oops not implemented
