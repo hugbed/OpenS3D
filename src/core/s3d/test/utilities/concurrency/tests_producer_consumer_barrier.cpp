@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "s3d/utilities/concurrency/producer_barrier_sync.h"
-#include "s3d/utilities/concurrency/consumer_barrier_sync.h"
+#include "s3d/utilities/concurrency/producer_barrier.h"
+#include "s3d/utilities/concurrency/consumer_barrier.h"
 
 using s3d::concurrency::ProducerConsumerMediator;
 using s3d::concurrency::ProducerConsumerBarrier;
@@ -34,7 +34,7 @@ class FakeProducerInt : public s3d::concurrency::ProducerBarrier<int> {
   int product_{0};
 };
 
-TEST(producer_barrier_sync, wait_produce_notify) {
+TEST(producer_barrier, wait_produce_notify) {
   MockProducerConsumerMediator mediator;
   FakeProducerInt producer(&mediator);
   EXPECT_EQ(producer.getProduct(), 0);

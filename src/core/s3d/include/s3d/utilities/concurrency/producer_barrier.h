@@ -1,7 +1,7 @@
-#ifndef S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_SYNC_H
-#define S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_SYNC_H
+#ifndef S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_H
+#define S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_H
 
-#include "s3d/utilities/rule_of_five.h"
+#include "producer_consumer_mediator.h"
 
 #include <algorithm>
 #include <condition_variable>
@@ -13,18 +13,6 @@
 
 namespace s3d {
 namespace concurrency {
-
-class ProducerConsumerMediator : rule_of_five_interface<ProducerConsumerMediator> {
- public:
-  virtual void acknowledgeDoneProducing() = 0;
-  virtual bool isDoneProducing() = 0;
-  virtual bool isDoneConsuming() = 0;
-  virtual void notifyShouldProduce() = 0;
-  virtual void notifyDoneConsuming() = 0;
-  virtual void notifyDoneProducing() = 0;
-  virtual void waitUntilAllDoneProducing(std::function<bool()> allDoneProducingCheck) = 0;
-  virtual void waitUntilShouldProduce() = 0;
-};
 
 // Separate class to handle thread locks and condition variables
 // This way it could be implemented with other threading primitives
@@ -87,32 +75,32 @@ template <class T>
 class ProducerBarrier {
  public:
   ProducerBarrier() = delete;
-  ProducerBarrier(ProducerConsumerMediator* delegate) : syncDelegate(delegate) {}
+  ProducerBarrier(ProducerConsumerMediator* mediator) : mediator_(mediator) {}
   virtual const T& getProduct() = 0;
 
   void startProducing() {
     onStartProducing();
     while (!shouldStopProducing()) {
-      syncDelegate->waitUntilShouldProduce();
+      mediator_->waitUntilShouldProduce();
       produce();
-      syncDelegate->notifyDoneProducing();
+      mediator_->notifyDoneProducing();
     }
   }
 
   // called/checked by consumer
-  void acknowledgeDoneProducing() { syncDelegate->acknowledgeDoneProducing(); }
-  bool isDoneProducing() { return syncDelegate->isDoneProducing(); }
-  void notifyShouldProduce() { syncDelegate->notifyShouldProduce(); }
-  void notifyDoneConsuming() { syncDelegate->notifyDoneConsuming(); }
+  void acknowledgeDoneProducing() { mediator_->acknowledgeDoneProducing(); }
+  bool isDoneProducing() { return mediator_->isDoneProducing(); }
+  void notifyShouldProduce() { mediator_->notifyShouldProduce(); }
+  void notifyDoneConsuming() { mediator_->notifyDoneConsuming(); }
   virtual bool shouldStopProducing() { return false; }
 
  private:
   virtual void produce() = 0;  // where the work happens : set product
   virtual void onStartProducing() {}
 
-  gsl::not_null<ProducerConsumerMediator*> syncDelegate;
+  gsl::not_null<ProducerConsumerMediator*> mediator_;
 };
 }  // namespace concurrency
 }  // namespace s3d
 
-#endif  // S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_SYNC_H
+#endif  // S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_H

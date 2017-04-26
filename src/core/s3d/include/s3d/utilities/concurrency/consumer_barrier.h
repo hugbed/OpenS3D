@@ -1,7 +1,7 @@
-#ifndef S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H
-#define S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H
+#ifndef S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_H
+#define S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_H
 
-#include "producer_barrier_sync.h"
+#include "producer_barrier.h"
 
 #include <mutex>
 #include <vector>
@@ -65,4 +65,4 @@ class ConsumerBarrier {
 }  // namespace concurrency
 }  // namespace s3d
 
-#endif  // S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H
+#endif  // S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_H

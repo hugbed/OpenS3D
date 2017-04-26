@@ -2,7 +2,7 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include "s3d/utilities/concurrency/consumer_barrier_sync.h"
+#include "s3d/utilities/concurrency/consumer_barrier.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/strings.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
