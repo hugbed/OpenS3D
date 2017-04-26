@@ -1,9 +1,54 @@
+dist: trusty
+sudo: false
+
 language: cpp
 
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8
+      env: COMPILER=g++-4.8
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env: COMPILER=clang++-3.7
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - cmake
+      - libgtest-dev
+      - libopencv-dev
+
+env:
+  global:
+    - OPENS3D_SOURCE=${TRAVIS_BUILD_DIR}/src
+    - OPENS3D_BUILD=${TRAVIS_BUILD_DIR}/src/build
+    
+before_script:
+  # Display cmake version
+  - cmake --version
+  # Create build folder
+  - mkdir $OPENS3D_BUILD
+  - cd $OPENS3D_BUILD
+  - cmake ..
+
 install: 
-- echo installing dependencies...
-- oops not implemented
+- echo installing...
+- echo oops not implemented
 
 script: 
-- echo building ...
-- oops not implemented
+- make -j2
+- make test
