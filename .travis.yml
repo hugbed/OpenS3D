@@ -29,13 +29,15 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - cmake
-      - libgtest-dev
-      - libopencv-dev
 
 env:
   global:
     - OPENS3D_SOURCE=${TRAVIS_BUILD_DIR}/src
     - OPENS3D_BUILD=${TRAVIS_BUILD_DIR}/src/build
+    
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libopencv-dev libgtest-dev
     
 before_script:
   # Display cmake version
