@@ -31,6 +31,7 @@ enable_testing()
 
 # When done tweaking common stuff, configure the components (subprojects).
 # NOTE: The order matters! The most independent ones should go first.
+add_subdirectory(libs/googletest)
 add_subdirectory(libs/gsl)
 add_subdirectory(libs/decklink)
 add_subdirectory(core/s3d)

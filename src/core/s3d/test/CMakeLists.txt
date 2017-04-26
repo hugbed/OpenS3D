@@ -5,10 +5,8 @@ project(s3d_test)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 # tests
-find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
-set(TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} ${GMOCK_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} s3d)
+set(TEST_LIBRARIES gtest gtest_main gmock ${CMAKE_THREAD_LIBS_INIT} s3d)
 
 # create executable and add test
 # test name for: "path/to/tests_a.cpp"
