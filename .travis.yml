@@ -2,7 +2,7 @@ language: cpp
 
 install: 
 - echo installing dependencies...
-- oops not implemented
+- echo oops not implemented
 
 script: 
 - echo building ...
