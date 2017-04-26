@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.2)
 
 # You can tweak some common (for all subprojects) stuff here. For example:
 

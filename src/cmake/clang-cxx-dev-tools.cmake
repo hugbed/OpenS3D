@@ -38,7 +38,7 @@ if(CLANG_TIDY)
 #        -clang-tidy-binary='/home/jon/Downloads/clang-4.0/bin/clang-tidy'
         -checks='*,-clang-analyzer-alpha*,-google-runtime-references*,-modernize-pass-by-value*'
         -header-filter='\(${CMAKE_SOURCE_DIR}/core/.*|${CMAKE_SOURCE_DIR}/apps/.*\)'
-        -file-filter='libs'
+        -file-filter='\(libs|tests_*\)'
         -p='${CMAKE_BINARY_DIR}'
         -j='4'
     )
