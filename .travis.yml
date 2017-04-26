@@ -37,7 +37,17 @@ env:
     
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libopencv-dev libgtest-dev
+  
+install:
+  - export CXX=$COMPILER
+  - sudo apt-get install -y libopencv-dev libgtest-dev google-mock
+  #  NOTE gtest install workaround
+  - cd /usr/src/gtest
+  - sudo cmake .
+  - sudo make
+  - sudo mv libgtest* /usr/lib/
+  - cd "${TRAVIS_BUILD_DIR}"
+  # -- workaround end
     
 before_script:
   # Display cmake version
@@ -46,10 +56,6 @@ before_script:
   - mkdir $OPENS3D_BUILD
   - cd $OPENS3D_BUILD
   - cmake ..
-
-install: 
-- echo installing...
-- echo oops not implemented
 
 script: 
 - make -j2
