@@ -1,7 +1,3 @@
-//
-// Created by jon on 18/02/17.
-//
-
 #ifndef S3D_UTILITIES_TIME_H
 #define S3D_UTILITIES_TIME_H
 

@@ -24,5 +24,5 @@ TEST(mesure_time, param_capture_lambda_positive_time_for_loops) {
       value = 2;
     }
   });
-  EXPECT_EQ(std::chrono::duration_cast<std::chrono::nanoseconds>(dt).count(), 0);
+  EXPECT_GT(std::chrono::duration_cast<std::chrono::nanoseconds>(dt).count(), 0);
 }

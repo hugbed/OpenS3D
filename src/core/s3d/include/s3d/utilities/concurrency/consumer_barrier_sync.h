@@ -1,7 +1,3 @@
-//
-// Created by jon on 22/03/17.
-//
-
 #ifndef S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H
 #define S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_SYNC_H
 
@@ -14,16 +10,12 @@ namespace s3d {
 namespace concurrency {
 
 template <class T>
-class ConsumerBarrierSync {
+class ConsumerBarrier {
  public:
-  using Producers = std::vector<ProducerBarrierSync<T>*>;
+  using Producers = std::vector<ProducerBarrier<T>*>;
 
-  ConsumerBarrierSync(std::mutex* doneProducingMutex,
-                      std::condition_variable* shouldConsumeCV,
-                      Producers producers)
-      : doneProducingMutex_(doneProducingMutex),
-        shouldConsumeCV_(shouldConsumeCV),
-        producers_(std::move(producers)) {}
+  ConsumerBarrier(ProducerConsumerMediator* mediator, Producers producers)
+      : mediator_(mediator), producers_(std::move(producers)) {}
 
   void startConsuming() {
     while (!shouldStopConsuming()) {
@@ -50,11 +42,7 @@ class ConsumerBarrierSync {
   }
 
   void waitUntilAllDoneProducing() {
-    // wait until all producers are done producing
-    std::unique_lock<std::mutex> lk(*doneProducingMutex_);
-    while (!allAreDoneProducing()) {
-      shouldConsumeCV_->wait(lk, [this] { return allAreDoneProducing(); });
-    }
+    mediator_->waitUntilAllDoneProducing([this]() { return allAreDoneProducing(); });
 
     // acknowledge done producing, set it back to default state
     for (auto& producer : producers_) {
@@ -71,8 +59,7 @@ class ConsumerBarrierSync {
     }
   }
 
-  std::mutex* doneProducingMutex_;
-  std::condition_variable* shouldConsumeCV_;
+  gsl::not_null<ProducerConsumerMediator*> mediator_;
   Producers producers_;
 };
 }  // namespace concurrency
