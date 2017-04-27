@@ -1,7 +1,3 @@
-//
-// Created by jon on 04/04/17.
-//
-
 #include <s3d/disparity/disparities_sparse.h>
 #include "s3dcuda/disparity/disparity_algorithm_orb.h"
 

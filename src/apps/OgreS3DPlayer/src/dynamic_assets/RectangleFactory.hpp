@@ -1,7 +1,3 @@
-//
-// Created by jon on 13/04/17.
-//
-
 #ifndef DYNAMIC_ASSETS_RECTANGLEFACTORY_H
 #define DYNAMIC_ASSETS_RECTANGLEFACTORY_H
 

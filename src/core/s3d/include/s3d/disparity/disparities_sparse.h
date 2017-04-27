@@ -1,7 +1,3 @@
-//
-// Created by jon on 04/04/17.
-//
-
 #ifndef S3D_DISPARITY_DISPARITIES_SPARSE_H
 #define S3D_DISPARITY_DISPARITIES_SPARSE_H
 

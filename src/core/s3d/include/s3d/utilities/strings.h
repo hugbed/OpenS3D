@@ -1,7 +1,3 @@
-//
-// Created by jon on 11/04/17.
-//
-
 #ifndef S3D_UTILITIES_STRINGS_H
 #define S3D_UTILITIES_STRINGS_H
 

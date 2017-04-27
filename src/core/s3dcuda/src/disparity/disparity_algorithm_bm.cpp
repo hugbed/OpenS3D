@@ -1,10 +1,3 @@
-//
-// Created by jon on 06/03/17.
-//
-
-#ifndef OPENCVTESTS_DISPARITYALGORITHMBM_H
-#define OPENCVTESTS_DISPARITYALGORITHMBM_H
-
 #include "s3dcuda/disparity/disparity_algorithm_bm.h"
 #include "s3d/disparity/disparities_dense.h"
 #include "s3d/utilities/time.h"
@@ -57,5 +50,3 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image left
 
 }  // namespace cuda
 }  // namespace s3d
-
-#endif  // OPENCVTESTS_DISPARITYALGORITHMBM_H

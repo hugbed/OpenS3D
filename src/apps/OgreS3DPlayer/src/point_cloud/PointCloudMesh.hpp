@@ -1,7 +1,3 @@
-//
-// Created by jon on 29/03/17.
-//
-
 #ifndef POINT_CLOUD_POINTCLOUDMESH_H
 #define POINT_CLOUD_POINTCLOUDMESH_H
 

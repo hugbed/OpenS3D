@@ -1,7 +1,3 @@
-//
-// Created by jon on 12/04/17.
-//
-
 #ifndef S3D_UTILITIES_RULE_OF_FIVE_H
 #define S3D_UTILITIES_RULE_OF_FIVE_H
 

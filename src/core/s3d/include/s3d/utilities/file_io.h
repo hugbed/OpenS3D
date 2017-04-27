@@ -1,7 +1,3 @@
-//
-// Created by jon on 19/03/17.
-//
-
 #ifndef S3D_UTILITIES_FILE_IO_H
 #define S3D_UTILITIES_FILE_IO_H
 

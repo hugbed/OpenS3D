@@ -1,9 +1,5 @@
-//
-// Created by jon on 06/03/17.
-//
-
-#ifndef S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H
-#define S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H
+#ifndef S3DCUDA_DISPARITY_DISPARITY_ALGORITHM_BM_H
+#define S3DCUDA_DISPARITY_DISPARITY_ALGORITHM_BM_H
 
 #include "s3d/disparity/disparity_algorithm.h"
 
@@ -20,4 +16,4 @@ class DisparityAlgorithmBM : public s3d::DisparityAlgorithm {
 }  // namespace cuda
 }  // namespace s3d
 
-#endif  // S3D_DISPARITY_DISPARITY_ALGORITHM_BM_H
+#endif  // S3DCUDA_DISPARITY_DISPARITY_ALGORITHM_BM_H

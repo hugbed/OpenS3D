@@ -1,7 +1,3 @@
-//
-// Created by bedh2102 on 06/04/17.
-//
-
 #ifndef S3D_GEOMETRY_SIZE_H
 #define S3D_GEOMETRY_SIZE_H
 

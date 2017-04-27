@@ -75,7 +75,7 @@ template <class T>
 class ProducerBarrier {
  public:
   ProducerBarrier() = delete;
-  ProducerBarrier(ProducerConsumerMediator* mediator) : mediator_(mediator) {}
+  explicit ProducerBarrier(ProducerConsumerMediator* mediator) : mediator_(mediator) {}
   virtual const T& getProduct() = 0;
 
   void startProducing() {
