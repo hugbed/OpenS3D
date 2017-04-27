@@ -5,7 +5,7 @@
 #ifndef OPENCVTESTS_DISPARITYALGORITHMBM_H
 #define OPENCVTESTS_DISPARITYALGORITHMBM_H
 
-#include "s3d/disparity/disparity_algorithm_bm.h"
+#include "s3dcuda/disparity/disparity_algorithm_bm.h"
 #include "s3d/disparity/disparities_dense.h"
 #include "s3d/utilities/time.h"
 
@@ -19,6 +19,7 @@
 // todo(hugbed): move this to s3dcuda
 
 namespace s3d {
+namespace cuda {
 
 std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image leftImg,
                                                                       Image rightImg) {
@@ -53,6 +54,8 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image left
 
   return disparities;
 }
+
+}  // namespace cuda
 }  // namespace s3d
 
 #endif  // OPENCVTESTS_DISPARITYALGORITHMBM_H

@@ -3,13 +3,14 @@
 //
 
 #include <s3d/disparity/disparities_sparse.h>
-#include <s3d/disparity/disparity_algorithm_orb.h>
+#include "s3dcuda/disparity/disparity_algorithm_orb.h"
 
 #include "opencv2/cudaarithm.hpp"
 #include "opencv2/cudafeatures2d.hpp"
 #include "opencv2/cudastereo.hpp"
 
 namespace s3d {
+namespace cuda {
 
 std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image leftImg,
                                                                        Image rightImg) {
@@ -60,4 +61,5 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image lef
 
   return disparities;
 }
+}  // namespace cuda
 }  // namespace s3d
