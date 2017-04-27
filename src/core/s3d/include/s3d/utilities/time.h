@@ -2,7 +2,6 @@
 #define S3D_UTILITIES_TIME_H
 
 #include <chrono>
-#include <opencv/cv.hpp>
 
 // Small useful tool functions
 
