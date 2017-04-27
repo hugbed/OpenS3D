@@ -26,11 +26,11 @@ env:
     - OPENS3D_SOURCE=${TRAVIS_BUILD_DIR}/src
     - OPENS3D_BUILD=${TRAVIS_BUILD_DIR}/src/build
     
-#before_install:
-#  - sudo apt-get -qq update
+before_install:
+  - sudo apt-get -qq update
   
-#install:
-#  - export CXX=$COMPILER
+install:
+  - export CXX=$COMPILER
 #  - sudo apt-get install -y libopencv-dev
     
 before_script:
