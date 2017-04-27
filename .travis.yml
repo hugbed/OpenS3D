@@ -41,7 +41,6 @@ before_install:
 install:
   - export CXX=$COMPILER
   - sudo apt-get install -y libopencv-dev
-  - sudo ${OPENS3D_SOURCE}/scripts/install_ogre.sh
     
 before_script:
   # Display cmake version
@@ -49,8 +48,7 @@ before_script:
   # Create build folder
   - mkdir $OPENS3D_BUILD
   - cd $OPENS3D_BUILD
-  - cmake ..
+  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF
 
 script: 
-- make -j2
-- make test
+- make -j2 && make test

@@ -12,6 +12,10 @@ endif ()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
 
+# BUILD OPTIONS
+option(OpenS3D_BUILD_APS "Build OpenS3D applications" ON)
+option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" ON)
+
 # Remove 'lib' prefix for shared libraries on Windows
 if (WIN32)
   set(CMAKE_SHARED_LIBRARY_PREFIX "")
@@ -35,7 +39,14 @@ add_subdirectory(libs/googletest)
 add_subdirectory(libs/gsl)
 add_subdirectory(libs/decklink)
 add_subdirectory(core/s3d)
-add_subdirectory(core/s3dcuda)
-add_subdirectory(apps/OgreS3DPlayer)
-add_subdirectory(apps/S3DDemo)
-add_subdirectory(apps/S3DCudaDemo)
+
+if (OpenS3D_USE_CUDA)
+  add_subdirectory(core/s3dcuda)
+endif (OpenS3D_USE_CUDA)
+
+if (OpenS3D_BUILD_APPS)
+  add_subdirectory(apps/OgreS3DPlayer)
+  add_subdirectory(apps/S3DDemo)
+  add_subdirectory(apps/S3DCudaDemo)
+endif (OpenS3D_BUILD_APPS)
+
