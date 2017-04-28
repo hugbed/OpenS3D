@@ -21,7 +21,7 @@ function(add_gtest filepath)
 endfunction()
 
 # find all tests and add them
-file(GLOB_RECURSE SRC_FILES *.cpp)
+file(GLOB_RECURSE SRC_FILES tests_*.cpp)
 foreach(file_name ${SRC_FILES})
   add_gtest(${file_name})
 endforeach()

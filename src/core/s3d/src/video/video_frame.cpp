@@ -13,10 +13,12 @@ size_t VideoFrame::AllocationSize(VideoPixelFormat format, const Size& size) {
 size_t VideoFrame::NumBytesPerPixel(VideoPixelFormat format) {
   switch (format) {
     case VideoPixelFormat::ARGB:
+    case VideoPixelFormat::BGRA:
       return 4;
     case VideoPixelFormat::UYVY:
       return 2;
     case VideoPixelFormat::RGB:
+    case VideoPixelFormat::BGR:
       return 3;
     case VideoPixelFormat::UNKNOWN:
       return 0;

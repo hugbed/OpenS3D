@@ -7,6 +7,6 @@
 
 // todo(hugbed): put in s3d namespace
 
-enum class VideoPixelFormat { UNKNOWN = 0, UYVY = 1, ARGB = 2, RGB = 3 };
+enum class VideoPixelFormat { UNKNOWN = 0, UYVY, ARGB, BGRA, BGR, RGB };
 
 #endif  // S3D_VIDEO_VIDEO_TYPES_H
