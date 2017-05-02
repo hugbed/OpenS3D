@@ -7,6 +7,7 @@ set(CUDA_TOOLKIT_ROOT_DIR /usr/local/cuda/)
 find_package(CUDA QUIET REQUIRED)
 find_package(OpenCV REQUIRED)
 
+set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 set(CUDA_64_BIT_DEVICE_CODE ON)
 set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11 -arch=sm_52" )
 

@@ -13,8 +13,6 @@
 // todo(hugbed): put in s3d namespace
 
 struct VideoCaptureFormat {
-  class Unsupported;
-
   constexpr VideoCaptureFormat()
       : frameRate{-1.0f}, pixelFormat{VideoPixelFormat::UNKNOWN}, stereo3D{false} {}
   constexpr VideoCaptureFormat(Size frameSize, float frameRate, VideoPixelFormat pixelFormat)

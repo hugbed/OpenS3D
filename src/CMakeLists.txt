@@ -42,11 +42,11 @@ add_subdirectory(core/s3d)
 
 if (OpenS3D_USE_CUDA)
   add_subdirectory(core/s3dcuda)
+  add_subdirectory(apps/S3DCudaDemo)
 endif (OpenS3D_USE_CUDA)
 
 if (OpenS3D_BUILD_APPS)
   add_subdirectory(apps/OgreS3DPlayer)
   add_subdirectory(apps/S3DDemo)
-  add_subdirectory(apps/S3DCudaDemo)
 endif (OpenS3D_BUILD_APPS)
 
