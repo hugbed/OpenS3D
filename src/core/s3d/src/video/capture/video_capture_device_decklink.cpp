@@ -227,7 +227,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFormatChanged(
 HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
-  if ((videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) != 0u) {  // todo: verify this != 0u
+  if ((videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) != 0u) {
     SendErrorString("Left frame, no input signal");
     return S_FALSE;
   }
@@ -282,7 +282,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
   const VideoCaptureFormat capture_format(
       Size(rgbFrameLeft_->GetWidth(),
            rgbFrameLeft_->GetHeight()),  // todo: cast or something (int64_t-> int)
-      0.0f,                              // Frame rate is not needed for captured data callback.
+      -1.0f,                             // Frame rate is not needed for captured data callback.
       pixelFormat,
       captureFormat_.stereo3D);
 
