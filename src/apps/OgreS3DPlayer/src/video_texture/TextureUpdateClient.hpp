@@ -37,12 +37,6 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
     lastTimeMesure = now;
   }
 
-  void OnError(const std::string& reason) override {
-    std::cerr << "Video Capture Error: " << reason << std::endl;
-  }
-  void OnLog(const std::string& /*unused*/) override {}
-  void OnStarted() override {}
-
  private:
   time_point lastTimeMesure;
   std::vector<DynamicTextureThreadSafe*> videoTextures_;

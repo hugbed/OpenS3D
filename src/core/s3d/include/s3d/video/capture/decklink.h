@@ -51,6 +51,12 @@ constexpr REFIID get_iid(
   return IID_IDeckLinkVideoFrame3DExtensions;
 }
 
+template <class T>
+class DeckLinkBadAlloc : std::bad_alloc {
+ public:
+  DeckLinkBadAlloc() : std::bad_alloc() {}
+};
+
 template <class U, class T>
 std::unique_ptr<U, DecklinkPtrDeleter> make_decklink_ptr(T const& src) {
   if (!src) {
@@ -58,7 +64,7 @@ std::unique_ptr<U, DecklinkPtrDeleter> make_decklink_ptr(T const& src) {
   }
   void* r = nullptr;
   if (src->QueryInterface(DecklinkHelpers::interface_iid<U>, &r) != S_OK) {
-    return {};
+    throw DeckLinkBadAlloc<U>();
   }
   return {static_cast<U*>(r), {}};
 }

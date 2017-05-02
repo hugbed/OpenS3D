@@ -21,20 +21,15 @@ gsl::owner<RawUYVYFileParser*> RawUYVYFileParser::clone() const {
 RawUYVYFileParser::~RawUYVYFileParser() = default;
 
 bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
-  format->frameRate = 1.0f / 30.0f;
+  format->frameRate = 30.0f;
   format->frameSize = Size{1920, 1080};
-  format->pixelFormat = VideoPixelFormat::RGB;
+  format->pixelFormat = VideoPixelFormat::BGR;
+  frameSize_ = format->ImageAllocationSize();
 
   frameUYVY_.resize(VideoFrame::AllocationSize(VideoPixelFormat::UYVY, format->frameSize));
 
   fileStream_ = std::make_unique<std::ifstream>(filePath_, std::ios::binary);
-
-  if (!fileStream_->is_open()) {
-    return false;
-  }
-
-  frameSize_ = format->ImageAllocationSize();
-  return true;
+  return fileStream_->is_open();
 }
 
 bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {

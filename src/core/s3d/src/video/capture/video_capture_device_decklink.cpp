@@ -159,27 +159,21 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
   // Only 1920x1080, 30fps, BGRA, 2D or 3D supported
   // todo: is it BGRA or ARGB?
   if (!supportedFormat(params)) {
-    SendErrorString("Requested format not supported");
-    return;
+    // todo: this seems like another type of exception, or a bug?
+    throw VideoCaptureDeviceAllocationException("Requested format not supported");
   }
 
   IDeckLinkIterator* deckLinkIterator = CreateDeckLinkIteratorInstance();
   if (deckLinkIterator == nullptr) {
-    SendErrorString("Error creating DeckLink iterator");
-    return;
+    throw VideoCaptureDeviceAllocationException("Error creating DeckLink iterator");
   }
 
   IDeckLink* deckLink;
   if (deckLinkIterator->Next(&deckLink) != S_OK) {
-    SendErrorString("No DeckLink device found");
-    return;
+    throw VideoCaptureDeviceAllocationException("No DeckLink device found");
   }
 
   auto deckLinkInput = make_decklink_ptr<IDeckLinkInput>(deckLink);
-  if (deckLinkInput == nullptr) {
-    SendErrorString("Error querying input interface");
-    return;
-  }
   deckLinkInput->SetCallback(this);
 
   // Check if display mode is supported
@@ -194,20 +188,14 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
   HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,
                                                        &displayModeSupported, nullptr);
   if (result != S_OK) {
-    SendErrorString("Display mode not supported");
-    return;
+    throw VideoCaptureDeviceAllocationException("Display mode not supported");
   }
 
   // 3D settings for video capture
   if (params.stereo3D) {
     auto decklinkConfiguration = make_decklink_ptr<IDeckLinkConfiguration>(deckLink);
-    if (decklinkConfiguration == nullptr) {
-      SendErrorString("Error creating configuration interface");
-      return;
-    }
     if (decklinkConfiguration->SetFlag(bmdDeckLinkConfigSDIInput3DPayloadOverride, true) != S_OK) {
-      SendErrorString("Cannot set 3D payload override flag");
-      return;
+      throw VideoCaptureDeviceAllocationException("Cannot set 3D payload override flag");
     }
   }
 
@@ -216,8 +204,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
 
   // Enable Video Input
   if (deckLinkInput->EnableVideoInput(displayMode, pixelFormat, videoInputFlag) != S_OK) {
-    SendErrorString("Cannot enable video input");
-    return;
+    throw VideoCaptureDeviceAllocationException("Cannot enable video input");
   }
 
   // todo: now it's hardcoded to 1080p, 30fps, BGRA
@@ -226,8 +213,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
   deckLinkInput_.swap(deckLinkInput);
 
   if (deckLinkInput_->StartStreams() != S_OK) {
-    SendErrorString("Cannot start capture stream");
-    return;
+    throw VideoCaptureDeviceAllocationException("Cannot start capture stream");
   }
 }
 
@@ -263,17 +249,14 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
   if (captureFormat_.stereo3D) {
     auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
 
-    if (threeDExtension == nullptr) {
-      SendErrorString("Error creating 3D extension");
-      return S_FALSE;
-    }
     // get right frame
     IDeckLinkVideoFrame* rightEyeFrameRaw = nullptr;
     threeDExtension->GetFrameForRightEye(&rightEyeFrameRaw);
     SmartDecklinkPtr<IDeckLinkVideoFrame> videoFrameRight{rightEyeFrameRaw};
 
     if (videoFrameRight == nullptr) {
-      SendErrorString("No right frame detected");
+      // todo: this is another type of exception, should it be thrown?
+      throw VideoCaptureDeviceAllocationException("No right frame detected");
     }
 
     rgbFrameRight_->resize(videoFrameRight->GetWidth(), videoFrameRight->GetHeight());
@@ -370,7 +353,6 @@ void VideoCaptureDeviceDecklink::AllocateAndStart(
   // todo: should verify that format is supported
   // todo: should get image size from capture delegate
   captureDelegate_->AllocateAndStart(format);
-  client_->OnStarted();
 }
 
 void VideoCaptureDeviceDecklink::StopAndDeAllocate() {
@@ -382,17 +364,5 @@ void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
     const VideoCaptureFormat& frameFormat) {
   if (client_ != nullptr) {
     client_->OnIncomingCapturedData(images, frameFormat);
-  }
-}
-
-void VideoCaptureDeviceDecklink::SendErrorString(const std::string& reason) {
-  if (client_ != nullptr) {
-    client_->OnError(reason);
-  }
-}
-
-void VideoCaptureDeviceDecklink::SendLogString(const std::string& message) {
-  if (client_ != nullptr) {
-    client_->OnLog(message);
   }
 }

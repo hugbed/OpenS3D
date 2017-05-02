@@ -12,6 +12,12 @@
 #include <string>
 #include <vector>
 
+class VideoCaptureDeviceAllocationException : std::runtime_error {
+ public:
+  VideoCaptureDeviceAllocationException(std::string reason)
+      : std::runtime_error(std::move(reason)) {}
+};
+
 // todo(hugbed): put in s3d namespace
 
 class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
@@ -23,10 +29,6 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
     // can accept multiple images (mono/stereo cameras)
     virtual void OnIncomingCapturedData(const Images& data,
                                         const VideoCaptureFormat& frameFormat) = 0;
-
-    virtual void OnError(const std::string& reason) = 0;
-    virtual void OnLog(const std::string& message) = 0;
-    virtual void OnStarted() = 0;
   };
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,

@@ -6,9 +6,6 @@
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
   gsl::owner<VideoCaptureDevice::Client*> clone() const override { return new VideoTestClient; }
-  void OnLog(const std::string& /*reason*/) override {}
-  void OnError(const std::string& /*message*/) override {}
-  void OnStarted() override {}
 
   void OnIncomingCapturedData(const Images& data,
                               const VideoCaptureFormat& /*frameFormat*/) override {

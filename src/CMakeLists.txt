@@ -13,7 +13,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
 
 # BUILD OPTIONS
-option(OpenS3D_BUILD_APS "Build OpenS3D applications" ON)
+option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
 option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" ON)
 
 # Remove 'lib' prefix for shared libraries on Windows

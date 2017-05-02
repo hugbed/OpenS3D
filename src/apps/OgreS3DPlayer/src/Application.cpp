@@ -6,6 +6,7 @@
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/video_capture_device_decklink.h"
+#include "s3d/video/capture/file_video_capture_device.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 
 //-------------------------------------------------------------------------------------
@@ -24,12 +25,9 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 //-------------------------------------------------------------------------------------
 void Application::createScene() {
-  //  createVideoRectangle(m_Rectangles.first, m_videoTextures.first, "L");
-  //  createVideoRectangle(m_Rectangles.second, m_videoTextures.second, "R");
-
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::RGB, true);
+  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::BGR, true);
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -59,6 +57,9 @@ void Application::createScene() {
         ->createChildSceneNode("entititiNode")
         ->attachObject(videoPlayerEntity_.get());
   } else {
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+        new FileVideoCaptureDevice("/home/jon/Videos/current-left.yuv"));
+
     auto videoMaterial = DynamicTexture::createImageMaterial("VideoMaterial", textureNameLeft);
     videoPlayerEntity_ =
         std::make_unique<FullscreenRectangleEntity>("VideoEntity", videoMaterial->getName());
@@ -110,6 +111,7 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
 
   switch (format.pixelFormat) {
     case VideoPixelFormat::RGB:
+    case VideoPixelFormat::BGR:
       pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
       break;
     case VideoPixelFormat::ARGB:
