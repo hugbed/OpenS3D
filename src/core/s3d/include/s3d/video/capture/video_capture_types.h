@@ -22,6 +22,13 @@ struct VideoCaptureFormat {
                                VideoPixelFormat pixelFormat,
                                bool stereo3D)
       : frameSize{frameSize}, frameRate{frameRate}, pixelFormat{pixelFormat}, stereo3D{stereo3D} {}
+
+  constexpr VideoCaptureFormat(const VideoCaptureFormat& other)
+      : frameSize{other.frameSize},
+        frameRate{other.frameRate},
+        pixelFormat{other.pixelFormat},
+        stereo3D{other.stereo3D} {}
+
   size_t ImageAllocationSize() const;
 
   constexpr bool operator==(const VideoCaptureFormat& other) const {
@@ -29,7 +36,7 @@ struct VideoCaptureFormat {
            pixelFormat == other.pixelFormat && stereo3D == other.stereo3D;
   }
 
-  Size frameSize;
+  Size frameSize{};
   float frameRate;
   VideoPixelFormat pixelFormat;
   bool stereo3D;

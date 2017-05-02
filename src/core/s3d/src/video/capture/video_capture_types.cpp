@@ -6,6 +6,5 @@
 #include "s3d/video/video_frame.h"
 
 size_t VideoCaptureFormat::ImageAllocationSize() const {
-  auto sizeInBytes = VideoFrame::AllocationSize(pixelFormat, frameSize);
-  return stereo3D ? 2 * sizeInBytes : sizeInBytes;
+  return VideoFrame::AllocationSize(pixelFormat, frameSize);
 }
