@@ -20,6 +20,9 @@ cd build
 make
 ```
 
+Continuous integration:
+ - linux 64 bits, GCC (Build + tests): [![Build Status](https://travis-ci.org/hugbed/OpenS3D.svg?branch=master)](https://travis-ci.org/hugbed/OpenS3D)
+
 ## Coding Standards
 
 This project uses clang-format Chromium coding standard.
