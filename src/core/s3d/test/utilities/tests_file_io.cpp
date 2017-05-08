@@ -104,3 +104,38 @@ TEST(file_io_write_bytes, write_abcd) {
   EXPECT_EQ(written[2], 'C');
   EXPECT_EQ(written[3], 'D');
 }
+
+TEST(file_io_write_bytes, write_ab_twice) {
+  std::ostringstream stream;
+  std::vector<uint8_t> values = {'A', 'B'};
+  s3d::file_io::write_bytes(stream, values);
+  s3d::file_io::write_bytes(stream, values);
+  auto written = stream.str();
+  EXPECT_EQ(written[0], 'A');
+  EXPECT_EQ(written[1], 'B');
+  EXPECT_EQ(written[2], 'A');
+  EXPECT_EQ(written[3], 'B');
+}
+
+TEST(file_io_write_bytes, write_abcd_iterators) {
+  std::ostringstream stream;
+  std::vector<uint8_t> values = {'A', 'B', 'C', 'D'};
+  s3d::file_io::write_bytes(stream, std::begin(values), std::end(values));
+  auto written = stream.str();
+  EXPECT_EQ(written[0], 'A');
+  EXPECT_EQ(written[1], 'B');
+  EXPECT_EQ(written[2], 'C');
+  EXPECT_EQ(written[3], 'D');
+}
+
+TEST(file_io_read_bytes, all_values_are_present) {
+  std::istringstream dummyStream;
+  dummyStream.str("ABCD");
+  std::vector<uint8_t> buf;
+  s3d::file_io::read_bytes(dummyStream, back_inserter(buf));
+  EXPECT_EQ(buf.size(), 4);
+  EXPECT_EQ(buf[0], 'A');
+  EXPECT_EQ(buf[1], 'B');
+  EXPECT_EQ(buf[2], 'C');
+  EXPECT_EQ(buf[3], 'D');
+}

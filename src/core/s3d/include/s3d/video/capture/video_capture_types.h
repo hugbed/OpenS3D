@@ -9,6 +9,7 @@
 #include "s3d/video/video_types.h"
 
 #include <cstddef>
+#include <tuple>
 
 // todo(hugbed): put in s3d namespace
 
@@ -32,8 +33,8 @@ struct VideoCaptureFormat {
   size_t ImageAllocationSize() const;
 
   constexpr bool operator==(const VideoCaptureFormat& other) const {
-    return frameSize == other.frameSize && frameRate == other.frameRate &&
-           pixelFormat == other.pixelFormat && stereo3D == other.stereo3D;
+    return std::make_tuple(frameSize, frameRate, pixelFormat, stereo3D) ==
+           std::make_tuple(other.frameSize, other.frameRate, other.pixelFormat, other.stereo3D);
   }
 
   Size frameSize{};

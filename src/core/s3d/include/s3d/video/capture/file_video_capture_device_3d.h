@@ -22,13 +22,15 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   ~FileVideoCaptureDevice3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
-
   void StopAndDeAllocate() override;
+
+ protected:
+  void Allocate();
+  void Start();
 
  private:
   std::pair<std::string, std::string> filePaths_;
   VideoCaptureFormat captureFormat_;
-  std::atomic<bool> stopCaptureFlag_;
 
   std::unique_ptr<Client> client_;
   std::unique_ptr<RawUYVY3DFileParserConsumer> consumer_;

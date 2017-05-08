@@ -25,11 +25,28 @@ bool read_n_bytes(std::istream& stream, Size_t n, OIt it) {
   return !stream.eof();
 }
 
+template <class OIt>
+bool read_bytes(std::istream& stream, OIt it) {
+  if (stream.peek() == EOF) {
+    return false;
+  }
+  std::copy(std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{}, it);
+  stream.get();
+  return !stream.eof();
+}
+
 // to write to binary file
 // std::ofstream outputStream{filename, std::ios::binary};
 template <class Container>
 void write_bytes(std::ostream& outputStream, Container c) {
   std::copy(std::begin(c), std::end(c), std::ostreambuf_iterator<char>{outputStream});
+}
+
+// to write to binary file
+// std::ofstream outputStream{filename, std::ios::binary};
+template <class InIt>
+void write_bytes(std::ostream& outputStream, InIt begin, InIt end) {
+  std::copy(begin, end, std::ostreambuf_iterator<char>{outputStream});
 }
 
 template <class Size_t>

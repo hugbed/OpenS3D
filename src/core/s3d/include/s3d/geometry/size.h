@@ -2,6 +2,7 @@
 #define S3D_GEOMETRY_SIZE_H
 
 #include <stdexcept>
+#include <tuple>
 
 // todo(hugbed): put in namespace s3d
 
@@ -30,7 +31,7 @@ struct Size {
   constexpr int getArea() const noexcept { return width_ * height_; }
 
   constexpr bool operator==(const Size& other) const {
-    return width_ == other.width_ && height_ == other.height_;
+    return std::make_tuple(width_, height_) == std::make_tuple(other.width_, other.height_);
   }
 
   constexpr bool operator!=(const Size& other) const { return !(*this == other); }

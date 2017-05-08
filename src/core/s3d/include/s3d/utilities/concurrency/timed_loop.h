@@ -5,7 +5,6 @@
 
 #include <chrono>
 
-// todo :inherit rule_of_five_interface<TimedLoop>
 class TimedLoop : rule_of_five_interface<TimedLoop> {
  public:
   class Client : rule_of_five_interface<Client> {

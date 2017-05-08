@@ -10,3 +10,6 @@ include_directories(${GSL_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME}_VideoFileClient ${PROJECT_SOURCE_DIR}/src/video_file_client.cpp)
 target_link_libraries(${PROJECT_NAME}_VideoFileClient s3d pthread) # pthread is linux dependant
+
+add_executable(${PROJECT_NAME}_VideoConversionPBM ${PROJECT_SOURCE_DIR}/src/video_conversion_pbm.cpp)
+target_link_libraries(${PROJECT_NAME}_VideoConversionPBM s3d pthread) # pthread is linux dependant
