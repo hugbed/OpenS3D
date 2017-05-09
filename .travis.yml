@@ -46,7 +46,7 @@ script:
 
 after_success:
     # Creating report
-  - cd ${TRAVIS_BUILD_DIR}
+  - cd $OPENS3D_BUILD
   - lcov --directory . --capture --output-file coverage.info # capture coverage info
   - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
   - lcov --remove coverage.info 'src/libs/*' --output-file coverage.info # filter out libs
