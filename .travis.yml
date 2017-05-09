@@ -39,7 +39,7 @@ before_script:
   - cmake --version
   # Create build folder
   - mkdir $OPENS3D_BUILD && cd $OPENS3D_BUILD
-  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF
+  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF -DOpenS3D_BUILD_COVERAGE=ON
 
 script: 
 - make -j2 && make test
