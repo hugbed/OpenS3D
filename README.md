@@ -22,7 +22,7 @@ make
 
 Continuous integration:
  - linux 64 bits, GCC (Build + tests): [![Build Status](https://travis-ci.org/hugbed/OpenS3D.svg?branch=master)](https://travis-ci.org/hugbed/OpenS3D)
- - Unit test coverage: [![Coverage Status](https://coveralls.io/repos/github/hugbed/OpenS3D/badge.svg?branch=master)](https://coveralls.io/github/hugbed/OpenS3D?branch=master)
+ - Unit test coverage: [![codecov](https://codecov.io/gh/hugbed/OpenS3D/branch/master/graph/badge.svg)](https://codecov.io/gh/hugbed/OpenS3D)
 
 ## Coding Standards
 
@@ -30,4 +30,4 @@ This project uses clang-format Chromium coding standard.
 
 ## License
 
-Interesting question, I'll come back to this later.
+This software is licensed under a BSD 3-clause license. See [LICENSE](LICENSE) file.

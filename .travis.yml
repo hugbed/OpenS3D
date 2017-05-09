@@ -31,6 +31,7 @@ before_install:
   
 install:
   - export CXX=$COMPILER
+  - sudo apt-get install -y lcov
 #  - sudo apt-get install -y libopencv-dev
     
 before_script:
@@ -38,7 +39,17 @@ before_script:
   - cmake --version
   # Create build folder
   - mkdir $OPENS3D_BUILD && cd $OPENS3D_BUILD
-  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF
+  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF -DOpenS3D_BUILD_COVERAGE=ON
 
 script: 
 - make -j2 && make test
+
+after_success:
+    # Creating report
+  - cd $OPENS3D_BUILD
+  - lcov --directory . --capture --output-file coverage.info # capture coverage info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
+  - lcov --remove coverage.info 'src/libs/*' --output-file coverage.info # filter out libs
+  - lcov --list coverage.info #debug info
+  # Uploading report to CodeCov
+  - bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
