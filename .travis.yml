@@ -42,3 +42,6 @@ before_script:
 
 script: 
 - make -j2 && make test
+
+after_success:
+  - coveralls
