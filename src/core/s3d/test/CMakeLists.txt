@@ -15,9 +15,9 @@ function(add_gtest filepath)
   string(REPLACE "${PROJECT_SOURCE_DIR}/" "" test_name ${filepath})
   string(REPLACE "\/" "_" test_name ${test_name})
   string(REPLACE ".cpp" "" test_name ${test_name})
-  add_executable(${test_name} ${filepath})
-  target_link_libraries(${test_name} ${TEST_LIBRARIES})
-  add_test(NAME ${test_name} COMMAND ${test_name})
+  add_executable(test_${test_name} ${filepath})
+  target_link_libraries(test_${test_name} ${TEST_LIBRARIES})
+  add_test(NAME ${test_name} COMMAND test_${test_name})
 endfunction()
 
 # find all tests and add them
