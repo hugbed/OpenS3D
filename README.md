@@ -30,4 +30,4 @@ This project uses clang-format Chromium coding standard.
 
 ## License
 
-Interesting question, I'll come back to this later.
+This software is licensed under a BSD 3-clause license. See [LICENSE](LICENSE) file.
