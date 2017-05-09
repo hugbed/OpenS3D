@@ -32,8 +32,7 @@ struct color_conversion<UYVY, BGR> {
   };
 
   template <class It>
-  static std::pair<yuv_tuple, yuv_tuple> decompose_yuv_from_uyvy_it(It uyvy_it)
-  {
+  static std::pair<yuv_tuple, yuv_tuple> decompose_yuv_from_uyvy_it(It uyvy_it) {
     auto y1 = *(uyvy_it + 3);
     auto cr0 = *(uyvy_it + 2);
     auto y0 = *(uyvy_it + 1);
