@@ -32,7 +32,6 @@ before_install:
 install:
   - export CXX=$COMPILER
   - sudo apt-get install -y lcov
-  - gem install coveralls-lcov
 #  - sudo apt-get install -y libopencv-dev
     
 before_script:
@@ -46,5 +45,11 @@ script:
 - make -j2 && make test
 
 after_success:
-  - lcov --compat-libtool --directory . --capture --output-file coverage.info
-  - coveralls-lcov coverage.info
+    # Creating report
+  - cd ${TRAVIS_BUILD_DIR}
+  - lcov --directory . --capture --output-file coverage.info # capture coverage info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
+  - lcov --remove coverage.info 'src/libs/*' --output-file coverage.info # filter out libs
+  - lcov --list coverage.info #debug info
+  # Uploading report to CodeCov
+  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
