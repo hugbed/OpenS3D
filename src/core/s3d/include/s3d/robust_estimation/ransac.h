@@ -1,65 +1,30 @@
 #ifndef S3D_ROBUST_ESTIMATION_RANSAC_H
 #define S3D_ROBUST_ESTIMATION_RANSAC_H
 
-namespace s3d {
+#include "s3d/utilities/rand.h"
+#include "s3d/utilities/containers.h"
 
-template <class Container, class T>
-bool contains(Container c, T t) {
-  return (std::find(std::begin(c), std::end(c), t) != std::end(c));
-}
+#include <algorithm>
+#include <stdexcept>
+#include <cassert>
+#include <memory>
 
-template <class InIt, class OutIt>
-void copy_if_true(InIt srcBegin, InIt srcEnd, OutIt dstBegin, const std::vector<bool>& flags) {
-  auto i = 0;
-  std::copy_if(srcBegin, srcEnd, dstBegin, [&i, flags](typename InIt::value_type) {
-    return flags[i++];
-  });
-}
-
-template <class SizeType>
-std::vector<int> rand_n_unique_values(int minVal, int maxVal, SizeType n, int seed) {
-  assert(minVal < maxVal);
-
-  std::mt19937 mt(seed);
-  std::uniform_int_distribution<int> dist(minVal, maxVal);
-
-  std::vector<int> randValues;
-  randValues.reserve(n);
-
-  for (auto i = 0ULL; i < n; ++i) {
-    auto randNb = dist(mt);
-    while (s3d::contains(randValues, randNb)) {
-      randNb = dist(mt);
-    }
-    randValues.emplace_back(randNb);
-  }
-  return randValues;
+// todo: put this in some more restricted scope (namespace robust?)
+class NotEnoughInliersFound : std::runtime_error {
+ public:
+  NotEnoughInliersFound(size_t nbInliers, size_t expectedNb)
+      : std::runtime_error(std::string("Not enough inliers found: [expected, found] = [") +
+                           std::to_string(nbInliers) +
+                           std::string(", ") +
+                           std::to_string(expectedNb) +
+                           std::string("]")) {}
 };
 
-template <class SizeType>
-std::vector<int> rand_n_unique_values(int minVal, int maxVal, SizeType n) {
-  std::random_device rd;
-  return rand_n_unique_values(minVal, maxVal, n, rd());
-};
-
-template <class T>
-std::vector<T> values_from_indices(std::vector<T> values, std::vector<int> indices) {
-  std::vector<T> sample;
-  sample.reserve(indices.size());
-
-  for (auto i : indices) {
-    assert(i < values.size());
-    sample.emplace_back(values[i]);
-  }
-
-  return sample;
-};
-
-}  // namespace s3d
-
-template <class ModelSolver, class DistanceFunction>
+// Empty base class for common types
 class Ransac {
  public:
+  using Distances = std::vector<double>;
+
   struct Params {
     size_t nbTrials{500};
     double distanceThreshold{0.01};
@@ -67,10 +32,52 @@ class Ransac {
     size_t minNbPts{};
   };
 
-  using Points = std::vector<typename ModelSolver::PointsType>;
-  using Distances = std::vector<double>;
+ protected:
+  // Base class only, instantiate RansacAlgorithm instead
+  Ransac() = default;
 
-  explicit Ransac(Ransac::Params params) : params_(params) {}
+  class Inliers {
+   public:
+    explicit Inliers(size_t nbPts);
+
+    bool currentInliersAreBetter() const noexcept;
+    void chooseCurrentInliersAsBest();
+    void updateBest();
+    void updateCurrent(const Distances& distances, double distanceThreshold);
+
+    size_t getCurrentNb() const noexcept;
+    size_t getBestNb() const noexcept;
+    const std::vector<bool>& getBest() const noexcept;
+
+   private:
+    size_t currentNb_{0};
+    std::vector<bool> current_;
+    size_t bestNb_{0};
+    std::vector<bool> best_;
+  };
+
+  class Trials {
+   public:
+    explicit Trials(size_t nbPts, size_t maxNbTrials, Params params);
+    void updateNb(double currentNbInliers);
+    bool reachedMaxNb();
+
+   private:
+    Params params_;
+    size_t maxNb_{};
+    size_t curNb_{0};
+
+    const double logOneMinusConf_;
+    const double oneOverNbPts_;
+  };
+};
+
+template <class ModelSolver, class DistanceFunction>
+class RansacAlgorithm : public Ransac {
+ public:
+  using Points = std::vector<typename ModelSolver::PointsType>;
+
+  explicit RansacAlgorithm(Params params) : params_(params) {}
 
   typename ModelSolver::ModelType operator()(Points pts1, Points pts2) {
     assert(pts1.size() == pts2.size());
@@ -78,130 +85,59 @@ class Ransac {
 
     pts1_ = std::move(pts1);
     pts2_ = std::move(pts2);
-    state_ = std::make_unique<State>(pts1_.size(), params_.nbTrials, params_);
+    trials_ = std::make_unique<Trials>(pts1_.size(), params_.nbTrials, params_);
+    inliers_ = std::make_unique<Inliers>(pts1_.size());
+    distances_.resize(pts1_.size());
 
-    return ransacAlg();
+    return runAlgorithm();
   }
 
  private:
-  // todo: this may be doing too much stuff (inliers, nbTrials, distances...)
-  struct State {
-    explicit State(size_t nbPts, size_t maxNbTrials, Params params)
-        : params_(params),
-          maxNbTrials{maxNbTrials},
-          logOneMinusConf{log(1.0 - params.confidence)},
-          oneOverNbPts{1.0 / nbPts} {
-      currentInliers.resize(nbPts);
-      bestInliers.resize(nbPts);
-      distances.resize(nbPts);
-    }
-
-    bool currentInliersAreBetter() { return currentNbInliers > bestNbInliers; }
-
-    void chooseCurrentInliersAsBest() {
-      bestNbInliers = currentNbInliers;
-      std::copy(std::begin(currentInliers), std::end(currentInliers), std::begin(bestInliers));
-    }
-
-    void updateBestInliers() {
-      if (currentInliersAreBetter()) {
-        chooseCurrentInliersAsBest();
-      }
-    }
-
-    void updateNbTrials() {
-      constexpr double eps = 1E-15;
-
-      size_t newNb = 0;
-      double ratioOfInliers = static_cast<double>(currentNbInliers) * oneOverNbPts;
-      if (ratioOfInliers <= (1 - eps)) {
-        auto ratio7 = std::pow(ratioOfInliers, 7);
-        if (ratio7 > eps) {
-          auto logOneMinusRatio7 = std::log(1 - ratio7);
-          newNb = size_t(std::ceil(logOneMinusConf / logOneMinusRatio7));
-        } else {
-          newNb = std::numeric_limits<size_t>::max();
-        }
-      }
-
-      if (maxNbTrials > newNb) {
-        maxNbTrials = newNb;
-      }
-    }
-
-    void updateInliers() {
-      currentInliers.clear();
-      currentInliers.resize(distances.size());
-      currentNbInliers = 0;
-      for (auto i = 0ULL; i < distances.size(); ++i) {
-        if (distances[i] < params_.distanceThreshold) {
-          currentInliers[i] = true;
-          currentNbInliers++;
-        }
-      }
-    }
-
-    bool reachedMaxNbTrials() {
-      bool hasReached = curNbTrials >= maxNbTrials;
-      curNbTrials++;
-      return hasReached;
-    }
-
-    Params params_;
-
-    size_t maxNbTrials{};
-    size_t currentNbInliers{0};
-    std::vector<bool> currentInliers;
-    size_t bestNbInliers{0};
-    std::vector<bool> bestInliers;
-    Distances distances;
-
-    size_t curNbTrials{0};
-
-    const double logOneMinusConf;
-    const double oneOverNbPts;
-  };
-
-  typename ModelSolver::ModelType ransacAlg() {
-    while (!state_->reachedMaxNbTrials()) {
+  typename ModelSolver::ModelType runAlgorithm() {
+    while (!trials_->reachedMaxNb()) {
       sampleModel();
-      state_->updateInliers();
-      state_->updateBestInliers();
-      state_->updateNbTrials();
+      inliers_->updateCurrent(distances_, params_.distanceThreshold);
+      inliers_->updateBest();
+      trials_->updateNb(inliers_->getCurrentNb());
     }
-    // todo: ok, assert is too brutal. Exception would be better
-    assert(state_->bestNbInliers >= params_.minNbPts);
-    auto bestInliers = getBestInliers();
-    return ModelSolver::ComputeModel(bestInliers.first, bestInliers.second);
+    if (inliers_->getBestNb() < params_.minNbPts) {
+      throw NotEnoughInliersFound(params_.minNbPts, inliers_->getBestNb());
+    }
+    auto bestInlierPoints = getBestInlierPoints();
+    return ModelSolver::ComputeModel(bestInlierPoints.first, bestInlierPoints.second);
   }
 
   void sampleModel() {
     // todo: optimize by reusing memory
+    auto samples = getUniformPointsSamples();
+    auto&& model = ModelSolver::ComputeModel(samples.first, samples.second);
+    DistanceFunction::ComputeDistance(pts1_, pts2_, model, &distances_);
+    assert(distances_.size() == pts1_.size());
+  }
+
+  std::pair<Points, Points> getUniformPointsSamples() {
     auto randIndices =
         s3d::rand_n_unique_values(0, static_cast<int>(pts1_.size()) - 1, params_.minNbPts);
     auto pts1Sample = s3d::values_from_indices(pts1_, randIndices);
     auto pts2Sample = s3d::values_from_indices(pts2_, randIndices);
+    return {pts1Sample, pts2Sample};
+  };
 
-    // something like that but reuse memory please
-    auto&& model = ModelSolver::ComputeModel(pts1Sample, pts2Sample);
-    DistanceFunction::ComputeDistance(pts1_, pts2_, model, &state_->distances);
-    assert(state_->distances.size() == pts1_.size());
-  }
-
-  std::pair<Points, Points> getBestInliers() {
+  std::pair<Points, Points> getBestInlierPoints() {
     Points pts1Inliers, pts2Inliers;
     s3d::copy_if_true(std::begin(pts1_), std::end(pts1_), back_inserter(pts1Inliers),
-                      state_->bestInliers);
+                      inliers_->getBest());
     s3d::copy_if_true(std::begin(pts2_), std::end(pts2_), back_inserter(pts2Inliers),
-                      state_->bestInliers);
+                      inliers_->getBest());
     return {pts1Inliers, pts2Inliers};
   }
-
 
   Params params_;
   Points pts1_{};
   Points pts2_{};
-  std::unique_ptr<State> state_{};
+  Distances distances_{};
+  std::unique_ptr<Trials> trials_{};
+  std::unique_ptr<Inliers> inliers_{};
 };
 
 #endif  // S3D_ROBUST_ESTIMATION_RANSAC_H
