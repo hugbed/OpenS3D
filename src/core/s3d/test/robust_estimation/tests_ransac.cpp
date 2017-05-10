@@ -69,3 +69,29 @@ TEST(ransac, line_solver) {
   EXPECT_DOUBLE_EQ(line.A, -line.B);
   EXPECT_DOUBLE_EQ(line.C, 0);
 }
+
+
+class FakeDistanceAllOverThreshold {
+ public:
+  using PointsType = LineSolver::PointsType;
+
+  static constexpr auto THRESHOLD = 0.0;
+
+  static void ComputeDistance(const std::vector<PointsType>& x,
+                              const std::vector<PointsType>& y,
+                              const LineSolver::ModelType& model,
+                              std::vector<double>* distances) {
+    for (auto i = 0ULL; i < distances->size(); ++i) {
+      distances->operator[](i) = THRESHOLD + 1;
+    }
+  }
+};
+
+TEST(ransac, not_enough_inliers_throws) {
+  Ransac::Params params{};
+  params.minNbPts = 2;
+  params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
+  RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
+
+  EXPECT_THROW(ransac({0, 0}, {0, 0}), NotEnoughInliersFound);
+}
