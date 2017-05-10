@@ -13,3 +13,7 @@ target_link_libraries(${PROJECT_NAME}_VideoFileClient s3d pthread) # pthread is 
 
 add_executable(${PROJECT_NAME}_VideoConversionPBM ${PROJECT_SOURCE_DIR}/src/video_conversion_pbm.cpp)
 target_link_libraries(${PROJECT_NAME}_VideoConversionPBM s3d pthread) # pthread is linux dependant
+
+add_executable(${PROJECT_NAME}_CameraAlignmentDemo ${PROJECT_SOURCE_DIR}/src/camera_alignment_demo.cpp)
+target_link_libraries(${PROJECT_NAME}_CameraAlignmentDemo s3d ${OpenCV_LIBS} gsl) # pthread is linux dependant
+

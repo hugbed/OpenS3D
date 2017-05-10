@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <memory>
+#include <iostream>
 
 // todo: put this in some more restricted scope (namespace robust?)
 class NotEnoughInliersFound : std::runtime_error {
@@ -92,6 +93,15 @@ class RansacAlgorithm : public Ransac {
     return runAlgorithm();
   }
 
+  std::pair<Points, Points> getBestInlierPoints() {
+    Points pts1Inliers, pts2Inliers;
+    s3d::copy_if_true(std::begin(pts1_), std::end(pts1_), back_inserter(pts1Inliers),
+                      inliers_->getBest());
+    s3d::copy_if_true(std::begin(pts2_), std::end(pts2_), back_inserter(pts2Inliers),
+                      inliers_->getBest());
+    return {pts1Inliers, pts2Inliers};
+  }
+
  private:
   typename ModelSolver::ModelType runAlgorithm() {
     while (!trials_->reachedMaxNb()) {
@@ -100,6 +110,9 @@ class RansacAlgorithm : public Ransac {
       inliers_->updateBest();
       trials_->updateNb(inliers_->getCurrentNb());
     }
+
+    std::cout << inliers_->getBestNb() << std::endl;
+
     if (inliers_->getBestNb() < params_.minNbPts) {
       throw NotEnoughInliersFound(params_.minNbPts, inliers_->getBestNb());
     }
@@ -122,15 +135,6 @@ class RansacAlgorithm : public Ransac {
     auto pts2Sample = s3d::values_from_indices(pts2_, randIndices);
     return {pts1Sample, pts2Sample};
   };
-
-  std::pair<Points, Points> getBestInlierPoints() {
-    Points pts1Inliers, pts2Inliers;
-    s3d::copy_if_true(std::begin(pts1_), std::end(pts1_), back_inserter(pts1Inliers),
-                      inliers_->getBest());
-    s3d::copy_if_true(std::begin(pts2_), std::end(pts2_), back_inserter(pts2Inliers),
-                      inliers_->getBest());
-    return {pts1Inliers, pts2Inliers};
-  }
 
   Params params_;
   Points pts1_{};

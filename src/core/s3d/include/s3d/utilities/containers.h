@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <cassert>
 
 namespace s3d {
 

@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "s3d/robust_estimation/ransac.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
 // Ax + By + C = 0
 struct Line {
