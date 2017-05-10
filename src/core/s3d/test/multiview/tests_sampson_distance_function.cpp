@@ -2,7 +2,7 @@
 
 #include "s3d/multiview/sampson_distance_function.h"
 
-TEST(sampson_distance_function, real_image_features_overkill) {
+TEST(sampson_distance_function, real_image_features_overkill_integration) {
   std::vector<Eigen::Vector3d> x;
   std::vector<Eigen::Vector3d> xp;
 
@@ -104,8 +104,13 @@ TEST(sampson_distance_function, real_image_features_overkill) {
   xp.emplace_back(248.0333, 189.0962, 1.0);
   xp.emplace_back(168.1256, 112.9354, 1.0);
 
-  // should replace this with the real model
-  auto model = StanFundamentalMatrixSolver::ComputeModel(x, xp);
+  StanAlignment model{-0.060726821886125215,
+                      0.031560420672474818,
+                      0.040187771735154088,
+                      8.3586881896848784,
+                      -0.00015986108011345864,
+                      0,
+                      0};
 
   std::vector<double> distances;
   distances.resize(x.size());

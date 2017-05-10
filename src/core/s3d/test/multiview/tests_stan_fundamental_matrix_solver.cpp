@@ -2,7 +2,49 @@
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
-TEST(stan_fundamental_matrix_solver, real_image_data_overkill) {
+TEST(stan_fundamental_matrix_solver, eq_system_has_correct_equation) {
+  std::vector<Eigen::Vector3d> pts1;
+  pts1.emplace_back(1.0, 2.0, 3.0);
+  pts1.emplace_back(1.0, 2.0, 3.0);
+  pts1.emplace_back(1.0, 2.0, 3.0);
+  pts1.emplace_back(1.0, 2.0, 3.0);
+  pts1.emplace_back(1.0, 2.0, 3.0);
+
+  std::vector<Eigen::Vector3d> pts2;
+  pts2.emplace_back(4.0, 5.0, 6.0);
+  pts2.emplace_back(4.0, 5.0, 6.0);
+  pts2.emplace_back(4.0, 5.0, 6.0);
+  pts2.emplace_back(4.0, 5.0, 6.0);
+  pts2.emplace_back(4.0, 5.0, 6.0);
+
+  Eigen::MatrixXd A;
+  Eigen::VectorXd b;
+  std::tie(A, b) = StanFundamentalMatrixSolver::BuildEquationSystem(pts1, pts2);
+
+  constexpr int nbVariables = 6;
+
+  // assert A has the right size
+  EXPECT_EQ(A.rows(), pts1.size());
+  EXPECT_EQ(b.rows(), pts1.size());
+  EXPECT_EQ(A.cols(), nbVariables);
+
+  // A and b have correct equations
+  for (int i = 0; i < pts1.size(); ++i) {
+    auto x = pts1[i];
+    auto xp = pts2[i];
+
+    // first row of A has correct equation
+    Eigen::VectorXd row(nbVariables);
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y();
+    auto firstRow = A.block<1, nbVariables>(i, 0);
+    EXPECT_EQ(firstRow, row.transpose());
+
+    // first b has correct equation
+    EXPECT_EQ(b[i], xp.y() - x.y());
+  }
+}
+
+TEST(stan_fundamental_matrix_solver, real_image_data_overkill_integration) {
   std::vector<Eigen::Vector3d> x;
   std::vector<Eigen::Vector3d> xp;
 

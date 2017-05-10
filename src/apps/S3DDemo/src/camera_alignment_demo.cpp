@@ -10,13 +10,12 @@ class BadNumberOfArgumentsException {};
 class FileNotFoundException {};
 
 void displayInNewWindow(const std::string& name, cv::InputArray src) {
-//  cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
-//  cv::imshow(name, src);
-//  cv::waitKey(0);
+  //  cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
+  //  cv::imshow(name, src);
+  //  cv::waitKey(0);
 }
 
 int main(int argc, char* argv[]) {
-
   auto t1 = std::chrono::high_resolution_clock::now();
 
   auto input_args = gsl::span<char*>(argv, argc);
@@ -52,28 +51,30 @@ int main(int argc, char* argv[]) {
 
   auto matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
   std::vector<cv::DMatch> matches;
-  matcher->match(descriptors1, descriptors2, matches );
+  matcher->match(descriptors1, descriptors2, matches);
 
-//  cv::Mat imgMatchesNotGood;
-//  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, matches, imgMatchesNotGood);
-//  cv::imshow( "Not Good Matches", imgMatchesNotGood);
-//  cv::waitKey(0);
+  //  cv::Mat imgMatchesNotGood;
+  //  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, matches, imgMatchesNotGood);
+  //  cv::imshow( "Not Good Matches", imgMatchesNotGood);
+  //  cv::waitKey(0);
 
-  double max_dist = 0; double min_dist = 100;
+  double max_dist = 0;
+  double min_dist = 100;
   //-- Quick calculation of max and min distances between keypoints
-  for( int i = 0; i < descriptors1.rows; i++ ) {
+  for (int i = 0; i < descriptors1.rows; i++) {
     double dist = matches[i].distance;
-    if( dist < min_dist ) min_dist = dist;
-    if( dist > max_dist ) max_dist = dist;
+    if (dist < min_dist)
+      min_dist = dist;
+    if (dist > max_dist)
+      max_dist = dist;
   }
 
   std::vector<Eigen::Vector3d> pts1;
   std::vector<Eigen::Vector3d> pts2;
 
-  std::vector<cv::DMatch > goodMatches;
-  for( int i = 0; i < descriptors1.rows; i++ )
-  {
-    if(matches[i].distance <= std::max(10*min_dist, 0.02) ) {
+  std::vector<cv::DMatch> goodMatches;
+  for (int i = 0; i < descriptors1.rows; i++) {
+    if (matches[i].distance <= std::max(10 * min_dist, 0.02)) {
       goodMatches.push_back(matches[i]);
 
       cv::Point2f pt1 = keypoints1[matches[i].queryIdx].pt;
@@ -84,12 +85,12 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  printf("-- Max dist : %f \n", max_dist );
-  printf("-- Min dist : %f \n", min_dist );
+  printf("-- Max dist : %f \n", max_dist);
+  printf("-- Min dist : %f \n", min_dist);
 
   cv::Mat imgMatches;
   cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, goodMatches, imgMatches);
-//  cv::imshow( "Good Matches", imgMatches);
+  //  cv::imshow( "Good Matches", imgMatches);
   cv::waitKey(0);
 
   cv::Mat leftCircles = leftOrig.clone();
@@ -116,7 +117,8 @@ int main(int argc, char* argv[]) {
   Ransac::Params params;
   params.minNbPts = 5;
   params.nbTrials = 2000;
-  params.distanceThreshold = 0.01 * sqrt(leftOrig.rows*leftOrig.rows + leftOrig.cols*leftOrig.cols);
+  params.distanceThreshold =
+      0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
   RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
 
   auto model = ransac(pts1, pts2);
@@ -170,7 +172,8 @@ int main(int argc, char* argv[]) {
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count() << std::endl;
+  std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
+            << std::endl;
 
   return 0;
 }

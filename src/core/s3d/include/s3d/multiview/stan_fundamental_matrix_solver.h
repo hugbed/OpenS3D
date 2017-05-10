@@ -4,6 +4,7 @@
 #include <iostream>
 #include "s3d/utilities/eigen.h"
 
+// todo: this is really not clear
 struct StanAlignment {
   double ch_y{};
   double a_z{};
@@ -23,6 +24,19 @@ class StanFundamentalMatrixSolver {
                                 const std::vector<PointsType>& pts2) {
     assert(pts1.size() == pts2.size());
 
+    Eigen::MatrixXd A;
+    Eigen::VectorXd b;
+    std::tie(A, b) = BuildEquationSystem(pts1, pts2);
+
+    // solve
+    auto x = s3d::pseudoinverse(A) * b;
+
+    return {x[0], x[1], x[2], x[3], x[4], 0, 0};
+  }
+
+  static std::pair<Eigen::MatrixXd, Eigen::VectorXd> BuildEquationSystem(
+      const std::vector<PointsType>& pts1,
+      const std::vector<PointsType>& pts2) {
     constexpr int nbVariables = 5;
     assert(pts1.size() >= nbVariables);
     assert(pts2.size() >= nbVariables);
@@ -44,10 +58,7 @@ class StanFundamentalMatrixSolver {
       b[i] = xp.y() - x.y();
     }
 
-    // solve
-    auto x = s3d::pinv(A) * b;
-
-    return {x[0], x[1], x[2], x[3], x[4], 0, 0};
+    return {A, b};
   }
 
   static Eigen::Matrix3d FundamentalMatrixFromSevenParams(const StanAlignment x) {

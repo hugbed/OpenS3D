@@ -53,6 +53,7 @@ class LeastSquareDistanceFunction {
 TEST(ransac, line_solver) {
   Ransac::Params params{};
   params.minNbPts = 2;
+  params.nbTrials = 100;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
   // inliers: y = x
@@ -69,7 +70,6 @@ TEST(ransac, line_solver) {
   EXPECT_DOUBLE_EQ(line.A, -line.B);
   EXPECT_DOUBLE_EQ(line.C, 0);
 }
-
 
 class FakeDistanceAllOverThreshold {
  public:
@@ -90,6 +90,7 @@ class FakeDistanceAllOverThreshold {
 TEST(ransac, not_enough_inliers_throws) {
   Ransac::Params params{};
   params.minNbPts = 2;
+  params.nbTrials = 1;
   params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
