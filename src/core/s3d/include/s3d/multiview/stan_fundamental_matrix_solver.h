@@ -30,6 +30,7 @@ class StanFundamentalMatrixSolver {
 
   static Eigen::Matrix3d FundamentalMatrixFromSevenParams(const StanAlignment& x);
 };
+
 }  // namespace s3d
 
 #endif  // S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H

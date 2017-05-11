@@ -3,6 +3,22 @@
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
 using s3d::StanFundamentalMatrixSolver;
+using s3d::StanAlignment;
+
+TEST(stan_fundamental_matrix_solver, f_from_params_correct_equation) {
+  StanAlignment x{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+  auto F = StanFundamentalMatrixSolver::FundamentalMatrixFromSevenParams(x);
+
+  EXPECT_DOUBLE_EQ(F(0, 0), 0.0);
+  EXPECT_DOUBLE_EQ(F(0, 1), -x.ch_z_f + x.a_y_f);
+  EXPECT_DOUBLE_EQ(F(0, 2), x.ch_y + x.a_z);
+  EXPECT_DOUBLE_EQ(F(1, 0), x.ch_z_f);
+  EXPECT_DOUBLE_EQ(F(1, 1), -x.a_x_f);
+  EXPECT_DOUBLE_EQ(F(1, 2), -1 + x.a_f);
+  EXPECT_DOUBLE_EQ(F(2, 0), -x.ch_y);
+  EXPECT_DOUBLE_EQ(F(2, 1), 1);
+  EXPECT_DOUBLE_EQ(F(2, 2), -x.f_a_x);
+}
 
 TEST(stan_fundamental_matrix_solver, eq_system_has_correct_equation) {
   std::vector<Eigen::Vector3d> pts1;
