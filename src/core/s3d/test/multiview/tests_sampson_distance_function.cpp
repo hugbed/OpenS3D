@@ -2,6 +2,9 @@
 
 #include "s3d/multiview/sampson_distance_function.h"
 
+using s3d::StanAlignment;
+using s3d::SampsonDistanceFunction;
+
 TEST(sampson_distance_function, real_image_features_overkill_integration) {
   std::vector<Eigen::Vector3d> x;
   std::vector<Eigen::Vector3d> xp;

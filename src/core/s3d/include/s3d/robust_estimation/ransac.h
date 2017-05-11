@@ -4,11 +4,11 @@
 #include "s3d/utilities/rand.h"
 #include "s3d/utilities/containers.h"
 
-#include <algorithm>
 #include <stdexcept>
 #include <cassert>
 #include <memory>
-#include <iostream>
+
+namespace s3d {
 
 // todo: put this in some more restricted scope (namespace robust?)
 class NotEnoughInliersFound : std::runtime_error {
@@ -111,8 +111,6 @@ class RansacAlgorithm : public Ransac {
       trials_->updateNb(inliers_->getCurrentNb());
     }
 
-    std::cout << inliers_->getBestNb() << std::endl;
-
     if (inliers_->getBestNb() < params_.minNbPts) {
       throw NotEnoughInliersFound(params_.minNbPts, inliers_->getBestNb());
     }
@@ -143,5 +141,7 @@ class RansacAlgorithm : public Ransac {
   std::unique_ptr<Trials> trials_{};
   std::unique_ptr<Inliers> inliers_{};
 };
+
+}  // namespace s3d
 
 #endif  // S3D_ROBUST_ESTIMATION_RANSAC_H

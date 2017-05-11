@@ -114,12 +114,13 @@ int main(int argc, char* argv[]) {
     pts2[i] -= Eigen::Vector3d(rightCircles.rows / 2.0, rightCircles.cols / 2.0, 0.0);
   }
 
-  Ransac::Params params;
+  s3d::Ransac::Params params;
   params.minNbPts = 5;
   params.nbTrials = 2000;
   params.distanceThreshold =
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
-  RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
+  s3d::RansacAlgorithm<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> ransac(
+      params);
 
   auto model = ransac(pts1, pts2);
 

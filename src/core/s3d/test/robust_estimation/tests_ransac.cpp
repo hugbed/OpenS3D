@@ -3,6 +3,9 @@
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
+using s3d::Ransac;
+using s3d::RansacAlgorithm;
+
 // Ax + By + C = 0
 struct Line {
   double A;
@@ -94,5 +97,5 @@ TEST(ransac, not_enough_inliers_throws) {
   params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
-  EXPECT_THROW(ransac({0, 0}, {0, 0}), NotEnoughInliersFound);
+  EXPECT_THROW(ransac({0, 0}, {0, 0}), s3d::NotEnoughInliersFound);
 }

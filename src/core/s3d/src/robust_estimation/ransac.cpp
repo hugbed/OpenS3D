@@ -1,5 +1,7 @@
 #include "s3d/robust_estimation/ransac.h"
 
+namespace s3d {
+
 // Inliers
 Ransac::Inliers::Inliers(size_t nbPts) {
   current_.resize(nbPts);
@@ -77,3 +79,4 @@ bool Ransac::Trials::reachedMaxNb() {
   curNb_++;
   return hasReached;
 }
+}  // namespace s3d

@@ -2,6 +2,8 @@
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
+using s3d::StanFundamentalMatrixSolver;
+
 TEST(stan_fundamental_matrix_solver, eq_system_has_correct_equation) {
   std::vector<Eigen::Vector3d> pts1;
   pts1.emplace_back(1.0, 2.0, 3.0);
