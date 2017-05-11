@@ -1,5 +1,7 @@
 #include "s3d/multiview/sampson_distance_function.h"
 
+#include <vector>
+
 namespace s3d {
 
 using ModelType = SampsonDistanceFunction::ModelType;
