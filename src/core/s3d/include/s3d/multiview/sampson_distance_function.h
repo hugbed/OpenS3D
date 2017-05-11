@@ -13,7 +13,7 @@ class SampsonDistanceFunction {
 
   static void ComputeDistance(const std::vector<PointsType>& pts1,
                               const std::vector<PointsType>& pts2,
-                              const StanFundamentalMatrixSolver::ModelType& model,
+                              const ModelType& model,
                               std::vector<double>* distances);
 };
 

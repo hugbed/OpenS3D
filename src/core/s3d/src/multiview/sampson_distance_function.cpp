@@ -2,10 +2,13 @@
 
 namespace s3d {
 
+using ModelType = SampsonDistanceFunction::ModelType;
+using PointsType = SampsonDistanceFunction::PointsType;
+
 // static
 void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts1,
                                               const std::vector<PointsType>& pts2,
-                                              const StanFundamentalMatrixSolver::ModelType& model,
+                                              const ModelType& model,
                                               std::vector<double>* distances) {
   assert(pts1.size() == pts2.size());
   assert(pts1.size() == distances->size());

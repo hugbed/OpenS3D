@@ -2,10 +2,12 @@
 
 namespace s3d {
 
+using ModelType = StanFundamentalMatrixSolver::ModelType;
+using PointsType = StanFundamentalMatrixSolver::PointsType;
+
 // static
-StanFundamentalMatrixSolver::ModelType StanFundamentalMatrixSolver::ComputeModel(
-    const std::vector<PointsType>& pts1,
-    const std::vector<PointsType>& pts2) {
+ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<PointsType>& pts1,
+                                                    const std::vector<PointsType>& pts2) {
   assert(pts1.size() == pts2.size());
 
   Eigen::MatrixXd A;
