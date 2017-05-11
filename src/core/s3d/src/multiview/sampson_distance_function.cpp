@@ -1,11 +1,13 @@
 #include "s3d/multiview/sampson_distance_function.h"
 
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
+
 #include <vector>
 
 namespace s3d {
 
-using ModelType = SampsonDistanceFunction::ModelType;
 using PointsType = SampsonDistanceFunction::PointsType;
+using ModelType = SampsonDistanceFunction::ModelType;
 
 // static
 void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts1,
@@ -25,7 +27,7 @@ void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts
   }
 
   // this is probably not efficient
-  auto f = StanFundamentalMatrixSolver::FundamentalMatrixFromSevenParams(model);
+  auto f = StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(model);
   auto pfp = (pts2h.transpose() * f).transpose();
   auto pfp2 = pfp.cwiseProduct(pts1h);
   auto colSum = pfp2.colwise().sum();

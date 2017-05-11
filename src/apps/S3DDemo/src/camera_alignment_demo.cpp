@@ -1,5 +1,6 @@
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/multiview/sampson_distance_function.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
 #include <opencv2/opencv.hpp>
 #include <gsl/gsl>

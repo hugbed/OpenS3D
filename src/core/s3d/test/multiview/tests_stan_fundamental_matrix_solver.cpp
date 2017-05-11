@@ -7,7 +7,7 @@ using s3d::StanAlignment;
 
 TEST(stan_fundamental_matrix_solver, f_from_params_correct_equation) {
   StanAlignment x{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
-  auto F = StanFundamentalMatrixSolver::FundamentalMatrixFromSevenParams(x);
+  auto F = StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(x);
 
   EXPECT_DOUBLE_EQ(F(0, 0), 0.0);
   EXPECT_DOUBLE_EQ(F(0, 1), -x.ch_z_f + x.a_y_f);

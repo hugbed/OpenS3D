@@ -1,9 +1,13 @@
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
+#include "s3d/utilities/eigen.h"
+
+#include <vector>
+
 namespace s3d {
 
-using ModelType = StanFundamentalMatrixSolver::ModelType;
 using PointsType = StanFundamentalMatrixSolver::PointsType;
+using ModelType = StanFundamentalMatrixSolver::ModelType;
 
 // static
 ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<PointsType>& pts1,
@@ -49,8 +53,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 }
 
 // static
-Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromSevenParams(
-    const StanAlignment& x) {
+Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(const StanAlignment& x) {
   Eigen::Matrix3d F;
   F << 0, (-x.ch_z_f + x.a_y_f), (x.ch_y + x.a_z),  //
       (x.ch_z_f), (-x.a_x_f), (-1 + x.a_f),         //

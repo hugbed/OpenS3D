@@ -1,7 +1,8 @@
 #ifndef S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 #define S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 
-#include "s3d/utilities/eigen.h"
+// std::vector requires complete type
+#include <Eigen/Dense>
 
 namespace s3d {
 
@@ -28,7 +29,7 @@ class StanFundamentalMatrixSolver {
       const std::vector<PointsType>& pts1,
       const std::vector<PointsType>& pts2);
 
-  static Eigen::Matrix3d FundamentalMatrixFromSevenParams(const StanAlignment& x);
+  static Eigen::Matrix3d FundamentalMatrixFromAlignment(const StanAlignment& x);
 };
 
 }  // namespace s3d

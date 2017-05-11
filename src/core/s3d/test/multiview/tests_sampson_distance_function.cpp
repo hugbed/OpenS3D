@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "s3d/multiview/sampson_distance_function.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
 using s3d::StanAlignment;
 using s3d::SampsonDistanceFunction;

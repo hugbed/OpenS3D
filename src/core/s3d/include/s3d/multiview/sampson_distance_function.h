@@ -1,15 +1,17 @@
 #ifndef S3D_MULTIVIEW_SAMPSON_DISTANCE_FUNCTION_H
 #define S3D_MULTIVIEW_SAMPSON_DISTANCE_FUNCTION_H
 
-#include "s3d/multiview/stan_fundamental_matrix_solver.h"
+// std::vector requires complete type
+#include <Eigen/Dense>
 
 namespace s3d {
 
-// Distance that can be applied to the model
+struct StanAlignment;
+
 class SampsonDistanceFunction {
  public:
-  using PointsType = StanFundamentalMatrixSolver::PointsType;
-  using ModelType = StanFundamentalMatrixSolver::ModelType;
+  using PointsType = Eigen::Vector3d;
+  using ModelType = StanAlignment;
 
   static void ComputeDistance(const std::vector<PointsType>& pts1,
                               const std::vector<PointsType>& pts2,
