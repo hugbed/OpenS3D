@@ -11,8 +11,8 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-6
-      env: COMPILER=g++-6
+            - g++-5
+      env: COMPILER=g++-5
       
 addons:
   apt:
