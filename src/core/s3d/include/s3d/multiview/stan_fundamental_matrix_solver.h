@@ -4,6 +4,8 @@
 // std::vector requires complete type
 #include <Eigen/Dense>
 
+#include <vector>
+
 namespace s3d {
 
 // todo: this is really not clear

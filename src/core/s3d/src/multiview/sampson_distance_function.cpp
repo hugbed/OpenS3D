@@ -2,8 +2,6 @@
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
-#include <vector>
-
 namespace s3d {
 
 using PointsType = SampsonDistanceFunction::PointsType;

@@ -2,8 +2,6 @@
 
 #include "s3d/utilities/eigen.h"
 
-#include <vector>
-
 namespace s3d {
 
 using PointsType = StanFundamentalMatrixSolver::PointsType;
