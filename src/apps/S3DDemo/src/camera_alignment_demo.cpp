@@ -11,16 +11,56 @@ class BadNumberOfArgumentsException {};
 class FileNotFoundException {};
 
 void displayInNewWindow(const std::string& name, cv::InputArray src) {
-  //  cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
-  //  cv::imshow(name, src);
-  //  cv::waitKey(0);
+  cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
+  cv::imshow(name, src);
+  cv::waitKey(0);
+}
+
+void drawFeatures(cv::Mat img, const std::vector<Eigen::Vector3d>& pts) {
+  for (auto& pt : pts) {
+    cv::circle(img, cv::Point(pt.x(), pt.y()), 2, cv::Scalar(255, 0, 0, 0), -1);
+  }
+}
+
+void displayMatches(const std::string& displayName,
+                    cv::Mat imgLeft,
+                    cv::Mat imgRight,
+                    std::vector<Eigen::Vector3d> ptsLeft,
+                    std::vector<Eigen::Vector3d> ptsRight) {
+  assert(ptsLeft.size() == ptsRight.size());
+  assert(imgLeft.size == imgRight.size);
+
+  drawFeatures(imgLeft, ptsLeft);
+  drawFeatures(imgRight, ptsRight);
+
+  cv::Mat combined(imgLeft.rows, imgLeft.cols * 2, imgLeft.type());
+  cv::hconcat(imgLeft, imgRight, combined);
+
+  for (int i = 0; i < ptsLeft.size(); ++i) {
+    auto& pt1 = ptsLeft[i];
+    auto& pt2 = ptsRight[i] + Eigen::Vector3d(imgLeft.cols, 0.0, 0.0);
+    cv::line(combined, cv::Point(pt1.x(), pt1.y()), cv::Point(pt2.x(), pt2.y()),
+             cv::Scalar(255, 0, 0, 0));
+  }
+  displayInNewWindow(displayName, combined);
+}
+
+std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
+  out << "Vertical offset (%) = " << model.ch_y << std::endl;
+  out << "Roll angle (degrees) = " << tan(model.a_z * 3.141592653589793 / 180.0) << std::endl;
+  out << "Focal distance ratio (%) = " << (model.a_f + 1.0) * 100.0 << std::endl;
+  out << "Tilt offset (pixels) = " << model.f_a_x << std::endl;
+  out << "Pan keystone = " << model.a_x_f << std::endl;
+  out << "Tilt offset keystone = " << model.a_y_f << std::endl;
+  out << "Z parallax deformation =  " << model.ch_z_f << std::endl << std::endl;
+  return out;
 }
 
 int main(int argc, char* argv[]) {
   auto t1 = std::chrono::high_resolution_clock::now();
 
   auto input_args = gsl::span<char*>(argv, argc);
-  if (input_args.size() == 2) {
+  if (input_args.size() != 3) {
     throw BadNumberOfArgumentsException{};
   }
 
@@ -86,95 +126,55 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  printf("-- Max dist : %f \n", max_dist);
-  printf("-- Min dist : %f \n", min_dist);
-
-  cv::Mat imgMatches;
-  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, goodMatches, imgMatches);
+  //  cv::Mat imgMatches;
+  //  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, goodMatches, imgMatches);
   //  cv::imshow( "Good Matches", imgMatches);
-  cv::waitKey(0);
+  //  cv::waitKey(0);
 
-  cv::Mat leftCircles = leftOrig.clone();
-  cv::Mat rightCircles = rightOrig.clone();
-
-  for (int i = 0; i < pts1.size(); ++i) {
-    auto& pt1 = pts1[i];
-    auto& pt2 = pts2[i];
-
-    cv::circle(leftCircles, cv::Point(pt1.x(), pt1.y()), 2, cv::Scalar(255, 0, 0, 0), -1);
-    cv::circle(rightCircles, cv::Point(pt2.x(), pt2.y()), 2, cv::Scalar(255, 0, 0, 0), -1);
-  }
-
-  cv::Mat combinedAfter(leftCircles.rows, leftCircles.cols * 2, leftCircles.type());
-  cv::hconcat(leftCircles, rightCircles, combinedAfter);
-  displayInNewWindow("after", combinedAfter);
+  // // display found features
+  //  cv::Mat leftCircles = leftOrig.clone();
+  //  cv::Mat rightCircles = rightOrig.clone();
+  //  drawFeatures(leftCircles, pts1);
+  //  drawFeatures(rightCircles, pts2);
+  //
+  //  cv::Mat combinedAfter(leftCircles.rows, leftCircles.cols * 2, leftCircles.type());
+  //  cv::hconcat(leftCircles, rightCircles, combinedAfter);
+  //  displayInNewWindow("after", combinedAfter);
 
   // center points for ransac
-  for (int i = 0; i < pts1.size(); ++i) {
-    pts1[i] -= Eigen::Vector3d(leftCircles.rows / 2.0, leftCircles.cols / 2.0, 0.0);
-    pts2[i] -= Eigen::Vector3d(rightCircles.rows / 2.0, rightCircles.cols / 2.0, 0.0);
-  }
+  auto imageCenter = Eigen::Vector3d(leftOrig.rows / 2.0, leftOrig.cols / 2.0, 0.0);
+  s3d::center_values(std::begin(pts1), std::end(pts1), std::begin(pts1), imageCenter);
+  s3d::center_values(std::begin(pts2), std::end(pts2), std::begin(pts2), imageCenter);
 
   s3d::Ransac::Params params;
   params.minNbPts = 5;
   params.nbTrials = 2000;
   params.distanceThreshold =
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
-  s3d::RansacAlgorithm<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> ransac(
-      params);
 
-  auto model = ransac(pts1, pts2);
+  using s3d::RansacAlgorithm;
+  using s3d::StanFundamentalMatrixSolver;
+  using s3d::SampsonDistanceFunction;
+  RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
 
-  std::cout << model.ch_y << std::endl;
-  std::cout << tan(model.a_z * 3.141592653589793 / 180.0) << std::endl;
-  std::cout << (model.a_f + 1.0) * 100.0 << std::endl;
-  std::cout << model.f_a_x << std::endl;
-  std::cout << model.a_x_f << std::endl;
-  std::cout << model.a_y_f << std::endl;
-  std::cout << model.ch_z_f << std::endl;
+  std::cout << ransac(pts1, pts2);
 
-  auto bestPts = ransac.getBestInlierPoints();
+  std::vector<Eigen::Vector3d> bestPts1, bestPts2;
+  std::tie(bestPts1, bestPts2) = ransac.getBestInlierPoints();
 
-  auto bestPts1 = bestPts.first;
-  auto bestPts2 = bestPts.second;
+  // decenter points after ransac
+  s3d::center_values(std::begin(bestPts1), std::end(bestPts1), std::begin(bestPts1), -imageCenter);
+  s3d::center_values(std::begin(bestPts2), std::end(bestPts2), std::begin(bestPts2), -imageCenter);
 
-  std::cout << leftOrig.rows / 2.0 << std::endl;
-  std::cout << leftOrig.cols / 2.0 << std::endl;
-
-  // decenter points for ransac
-  for (int i = 0; i < bestPts1.size(); ++i) {
-    bestPts1[i] += Eigen::Vector3d(leftOrig.rows / 2.0, leftOrig.cols / 2.0, 0.0);
-    bestPts2[i] += Eigen::Vector3d(rightOrig.rows / 2.0, rightOrig.cols / 2.0, 0.0);
-    assert(bestPts1[i].x() >= 0.0);
-    assert(bestPts1[i].y() >= 0.0);
-  }
-
-  cv::Mat leftMatches = leftOrig.clone();
-  cv::Mat rightMatches = rightOrig.clone();
-
-  for (int i = 0; i < bestPts1.size(); ++i) {
-    auto& pt1 = bestPts1[i];
-    auto& pt2 = bestPts2[i];
-
-    cv::circle(leftMatches, cv::Point(pt1.x(), pt1.y()), 2, cv::Scalar(255, 0, 0, 0), -1);
-    cv::circle(rightMatches, cv::Point(pt2.x(), pt2.y()), 2, cv::Scalar(255, 0, 0, 0), -1);
-  }
-
-  cv::Mat combinedWayAfter(leftMatches.rows, leftMatches.cols * 2, leftMatches.type());
-  cv::hconcat(leftMatches, rightMatches, combinedWayAfter);
-
-  for (int i = 0; i < bestPts1.size(); ++i) {
-    auto& pt1 = bestPts1[i];
-    auto& pt2 = bestPts2[i] + Eigen::Vector3d(leftMatches.cols, 0.0, 0.0);
-
-    cv::line(combinedWayAfter, cv::Point(pt1.x(), pt1.y()), cv::Point(pt2.x(), pt2.y()),
-             cv::Scalar(255, 0, 0, 0));
-  }
-  displayInNewWindow("after", combinedWayAfter);
+  // display inliers (matches)
+  cv::Mat leftMatchesImg = leftOrig.clone();
+  cv::Mat rightMatchesImg = rightOrig.clone();
+  displayMatches("after", leftMatchesImg, rightMatchesImg, bestPts1, bestPts2);
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
+  std::cout << "Computation Time: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms"
             << std::endl;
 
   return 0;

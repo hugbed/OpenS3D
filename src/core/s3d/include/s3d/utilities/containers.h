@@ -32,6 +32,12 @@ std::vector<T> values_from_indices(std::vector<T> values, std::vector<int> indic
   return sample;
 };
 
+template <class InIt, class OutIt>
+void center_values(InIt first, InIt last, OutIt result, typename InIt::value_type center) {
+  std::transform(first, last, result,
+                 [&center](const typename InIt::value_type& value) { return value - center; });
+};
+
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONTAINERS_H
