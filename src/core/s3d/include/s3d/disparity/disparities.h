@@ -1,6 +1,8 @@
 #ifndef S3D_DISPARITY_DISPARITIES_H
 #define S3D_DISPARITY_DISPARITIES_H
 
+#include "s3d/image/image.h"
+
 #include <cstddef>
 #include <cv.h>  // todo: oh oh
 
@@ -9,11 +11,6 @@ namespace s3d {
 struct ImageSize {
   size_t rows;
   size_t cols;
-};
-
-struct Image {
-  explicit Image(cv::Mat imgMat) : mat(std::move(imgMat)) {}
-  cv::Mat mat;
 };
 
 struct PixelPos {
