@@ -9,11 +9,21 @@
 
 namespace s3d {
 
-// todo: to be tested
+template <class MatrixType>
+struct is_eigen_dynamic {
+  enum {
+    value = MatrixType::ColsAtCompileTime == Eigen::Dynamic &&
+            MatrixType::RowsAtCompileTime == Eigen::Dynamic
+  };
+};
 
-template <typename MatrixType>
-MatrixType pseudoinverse(const MatrixType& a,
-                         double epsilon = std::numeric_limits<double>::epsilon()) {
+// for dynamic matrices only
+// for square matrices: call inverse()
+template <class MatrixType,
+          class DynamicSizeMatrixType =
+              typename std::enable_if<is_eigen_dynamic<MatrixType>::value, MatrixType>::type>
+DynamicSizeMatrixType pseudoinverse(const MatrixType& a,
+                                    double epsilon = std::numeric_limits<double>::epsilon()) {
   Eigen::JacobiSVD<MatrixType> svd(a, Eigen::ComputeThinU | Eigen::ComputeThinV);
   double tolerance = epsilon * std::max(a.cols(), a.rows()) * svd.singularValues().array().abs()(0);
   return svd.matrixV() *
