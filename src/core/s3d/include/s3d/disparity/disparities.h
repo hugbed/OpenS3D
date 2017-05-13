@@ -33,7 +33,7 @@ struct DisparityPoint {
 class Disparities {
  public:
   virtual const std::vector<DisparityPoint>& getDisparities() = 0;
-  virtual Image getDisparityMap() = 0;
+  virtual Image<uint8_t> getDisparityMap() = 0;
   virtual DisparityPoint max() = 0;
   virtual DisparityPoint min() = 0;
 };

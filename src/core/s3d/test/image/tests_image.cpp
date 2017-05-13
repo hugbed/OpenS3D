@@ -3,7 +3,7 @@
 #include "s3d/image/image.h"
 
 using s3d::Image;
-using s3d::RGBColor;
+using s3d::RgbColor;
 
 TEST(image_container, default_construction_size_0) {
   Image<uint8_t> i;
@@ -11,20 +11,24 @@ TEST(image_container, default_construction_size_0) {
   EXPECT_EQ(i.height(), 0);
 }
 
-TEST(image_container, copy_construction_from_eigen_pixel_access_operator) {
+TEST(image_container, copy_construction_from_eigen_image_row_major) {
   // Eigen::Matrix<Type, Rows, Cols, Options, MaxRows, MaxCols>
+
   constexpr size_t N = 2;
   Eigen::Matrix<uint8_t, N, N, 0, N, N> m;
   m << 1, 2,  //
       3, 4;
 
-  Image<uint8_t> i(m);
-  EXPECT_EQ(i.width(), 2);
-  EXPECT_EQ(i.height(), 2);
-  EXPECT_EQ(i(0, 0), 1);
-  EXPECT_EQ(i(0, 1), 2);
-  EXPECT_EQ(i(1, 0), 3);
-  EXPECT_EQ(i(1, 1), 4);
+  // todo: this actually calls move constructor
+  const auto& mRef = m;
+  Image<uint8_t> i(mRef);
+
+  EXPECT_EQ(i.width(), mRef.cols());
+  EXPECT_EQ(i.height(), mRef.rows());
+  EXPECT_EQ(i[0], mRef(0));
+  EXPECT_EQ(i[1], mRef(2));
+  EXPECT_EQ(i[2], mRef(1));
+  EXPECT_EQ(i[3], mRef(3));
 }
 
 TEST(image_container, move_construction_from_eigen_pixel_access_operator) {
@@ -56,26 +60,27 @@ TEST(image_container, depth_byte) {
 }
 
 TEST(image_container, depth_rgb) {
-  Image<RGBColor> i;
+  Image<RgbColor> i;
   EXPECT_EQ(i.depth(), 3);
 }
 
-TEST(image_container, pixel_assignment_and_accessors) {
+TEST(image_container, pixel_assignment_and_accessors_row_major) {
   Image<uint8_t> i(Size(2, 2));
   i(0, 0) = 0x00;
   i(0, 1) = 0x01;
   i(1, 0) = 0x02;
   i(1, 1) = 0x03;
 
-  const auto& cval0 = i[0];
-  const auto& cval11 = i(1, 1);
-  auto& val2 = i[2];
-  auto& val01 = i(0, 1);
+  EXPECT_EQ(i[0], 0x00);
+  EXPECT_EQ(i[1], 0x01);
+  EXPECT_EQ(i[2], 0x02);
+  EXPECT_EQ(i[3], 0x03);
 
-  EXPECT_EQ(cval0, 0x00);
-  EXPECT_EQ(cval11, 0x03);
-  EXPECT_EQ(val2, 0x02);
-  EXPECT_EQ(val01, 0x01);
+  // must be row major
+  EXPECT_EQ(i[0], 0x00);
+  EXPECT_EQ(i[1], 0x01);
+  EXPECT_EQ(i[2], 0x02);
+  EXPECT_EQ(i[3], 0x03);
 }
 
 TEST(image_container, index_assignment_pixel_accessor) {
@@ -85,9 +90,9 @@ TEST(image_container, index_assignment_pixel_accessor) {
   i[2] = 0x02;
   i[3] = 0x03;
 
-  EXPECT_EQ(i(0,0), 0);
-  EXPECT_EQ(i(0,1), 1);
-  EXPECT_EQ(i(1,0), 2);
+  EXPECT_EQ(i(0, 0), 0);
+  EXPECT_EQ(i(0, 1), 1);
+  EXPECT_EQ(i(1, 0), 2);
   EXPECT_EQ(i(1, 1), 3);
 }
 
@@ -127,4 +132,33 @@ TEST(image_container, eigen_assignment) {
   Image<uint8_t> i;
   i.setMatrix(m);
   EXPECT_EQ(i, m);
+}
+
+struct Idx {
+  int i;
+  int j;
+};
+
+void verifyConstSquareAccessor(const Image<uint8_t>& img, std::vector<uint8_t> gold) {
+  for (int i = 0; i < gold.size(); ++i) {
+    EXPECT_EQ(img[i], gold[i]);
+  }
+}
+
+void verifyConstPixelAccessor(const Image<uint8_t>& img,
+                              std::vector<uint8_t> gold,
+                              std::vector<Idx> indices) {
+  for (int i = 0; i < gold.size(); ++i) {
+    auto idx = indices[i];
+    EXPECT_EQ(img(idx.i, idx.j), gold[i]);
+  }
+}
+
+TEST(image_container, const_accessors) {
+  std::vector<uint8_t> gold{1, 2, 3, 4};
+  Image<uint8_t> i(Size(2, 2));
+  i << gold[0], gold[1],  //
+      gold[2], gold[3];
+  verifyConstSquareAccessor(i, gold);
+  verifyConstPixelAccessor(i, gold, {{0, 0}, {0, 1}, {1, 0}, {1, 1}});
 }

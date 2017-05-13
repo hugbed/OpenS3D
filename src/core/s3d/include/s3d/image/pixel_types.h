@@ -48,16 +48,16 @@ class RgbBase : public Eigen::Matrix<T, 3, 1, 0, 3, 1> {
 };
 
 // Instantiation for unsigned char color component
-using RGBColor = RgbBase<uint8_t>;
+using RgbColor = RgbBase<uint8_t>;
 
-namespace RGBValues {
-static const RGBColor WHITE(255, 255, 255);
-static const RGBColor BLACK(0, 0, 0);
-static const RGBColor BLUE(0, 0, 255);
-static const RGBColor RED(255, 0, 0);
-static const RGBColor GREEN(0, 255, 0);
-static const RGBColor YELLOW(255, 255, 0);
-static const RGBColor CYAN(0, 255, 255);
-static const RGBColor MAGENTA(255, 0, 255);
+namespace RgbValues {
+static const RgbColor WHITE(255, 255, 255);
+static const RgbColor BLACK(0, 0, 0);
+static const RgbColor BLUE(0, 0, 255);
+static const RgbColor RED(255, 0, 0);
+static const RgbColor GREEN(0, 255, 0);
+static const RgbColor YELLOW(255, 255, 0);
+static const RgbColor CYAN(0, 255, 255);
+static const RgbColor MAGENTA(255, 0, 255);
 }
 }

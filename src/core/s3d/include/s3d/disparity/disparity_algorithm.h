@@ -9,7 +9,8 @@ namespace s3d {
 
 class DisparityAlgorithm {
  public:
-  virtual std::unique_ptr<Disparities> ComputeDisparities(Image left, Image right) = 0;
+  virtual std::unique_ptr<Disparities> ComputeDisparities(Image<uint8_t> left,
+                                                          Image<uint8_t> right) = 0;
 };
 }  // namespace s3d
 
