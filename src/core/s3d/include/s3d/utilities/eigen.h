@@ -1,7 +1,3 @@
-//
-// Created by jon on 09/05/17.
-//
-
 #ifndef S3D_UTILITIES_EIGEN_H
 #define S3D_UTILITIES_EIGEN_H
 
