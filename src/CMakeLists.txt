@@ -14,7 +14,7 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 
 # BUILD OPTIONS
 option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
-option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
+option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" OFF)
 option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" OFF)
 option(OpenS3D_BUILD_COVERAGE "Enable code coverage generation (gcc only)" OFF)
 
