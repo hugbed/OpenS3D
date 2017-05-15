@@ -1,6 +1,8 @@
 #ifndef S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 #define S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 
+#include "s3d/robust_estimation/robust_estimation_traits.h"
+
 // std::vector requires complete type
 #include <Eigen/Dense>
 
@@ -21,17 +23,24 @@ struct StanAlignment {
 
 class StanFundamentalMatrixSolver {
  public:
-  using PointsType = Eigen::Vector3d;
+  using SampleType = Eigen::Vector3d;
   using ModelType = StanAlignment;
 
-  static ModelType ComputeModel(const std::vector<PointsType>& pts1,
-                                const std::vector<PointsType>& pts2);
+  static ModelType ComputeModel(const std::vector<SampleType>& pts1,
+                                const std::vector<SampleType>& pts2);
 
   static std::pair<Eigen::MatrixXd, Eigen::VectorXd> BuildEquationSystem(
-      const std::vector<PointsType>& pts1,
-      const std::vector<PointsType>& pts2);
+      const std::vector<SampleType>& pts1,
+      const std::vector<SampleType>& pts2);
 
   static Eigen::Matrix3d FundamentalMatrixFromAlignment(const StanAlignment& x);
+};
+
+template <>
+struct robust_solver_traits<StanFundamentalMatrixSolver> {
+  using SampleType = StanFundamentalMatrixSolver::SampleType;
+  using ModelType = StanFundamentalMatrixSolver::ModelType;
+  enum { MIN_NB_SAMPLES = 5 };
 };
 
 }  // namespace s3d

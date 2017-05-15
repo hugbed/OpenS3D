@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "s3d/robust_estimation/ransac.h"
+#include "s3d/robust_estimation/robust_estimation_traits.h"
+
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
 using s3d::Ransac;
@@ -16,11 +18,11 @@ struct Line {
 // Example for line solver
 class LineSolver {
  public:
-  using PointsType = double;
+  using SampleType = double;
   using ModelType = Line;
 
-  static ModelType ComputeModel(const std::vector<PointsType>& x,
-                                const std::vector<PointsType>& y) {
+  static ModelType ComputeModel(const std::vector<SampleType>& x,
+                                const std::vector<SampleType>& y) {
     assert(x.size() >= 2);
     assert(y.size() >= 2);
 
@@ -36,13 +38,23 @@ class LineSolver {
   }
 };
 
+// traits must be in the same namespace
+namespace s3d {
+template <>
+struct robust_solver_traits<LineSolver> {
+  using SampleType = LineSolver::SampleType;
+  using ModelType = LineSolver::ModelType;
+  enum { MIN_NB_SAMPLES = 2 };
+};
+}  // namespace s3d
+
 // Distance that can be applied to the model
 class LeastSquareDistanceFunction {
  public:
-  using PointsType = LineSolver::PointsType;
+  using SampleType = LineSolver::SampleType;
 
-  static void ComputeDistance(const std::vector<PointsType>& x,
-                              const std::vector<PointsType>& y,
+  static void ComputeDistance(const std::vector<SampleType>& x,
+                              const std::vector<SampleType>& y,
                               const LineSolver::ModelType& model,
                               std::vector<double>* distances) {
     assert(x.size() == y.size());
@@ -55,14 +67,13 @@ class LeastSquareDistanceFunction {
 
 TEST(ransac, line_solver) {
   Ransac::Params params{};
-  params.minNbPts = 2;
   params.nbTrials = 100;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
   // inliers: y = x
-  using PointsType = LineSolver::PointsType;
-  auto x = std::vector<PointsType>{0, 1, 2, 3, 4, 5, 6, 7, 8};
-  auto y = std::vector<PointsType>{0, 1, 2, 3, 4, 5, 6, 7, 8};
+  using SampleType = LineSolver::SampleType;
+  auto x = std::vector<SampleType>{0, 1, 2, 3, 4, 5, 6, 7, 8};
+  auto y = std::vector<SampleType>{0, 1, 2, 3, 4, 5, 6, 7, 8};
 
   // outliers
   x.insert(std::end(x), {1, 3, 4, 6, 8});
@@ -76,12 +87,12 @@ TEST(ransac, line_solver) {
 
 class FakeDistanceAllOverThreshold {
  public:
-  using PointsType = LineSolver::PointsType;
+  using SampleType = LineSolver::SampleType;
 
   static constexpr auto THRESHOLD = 0.0;
 
-  static void ComputeDistance(const std::vector<PointsType>& x,
-                              const std::vector<PointsType>& y,
+  static void ComputeDistance(const std::vector<SampleType>& x,
+                              const std::vector<SampleType>& y,
                               const LineSolver::ModelType& model,
                               std::vector<double>* distances) {
     for (auto i = 0ULL; i < distances->size(); ++i) {
@@ -92,7 +103,6 @@ class FakeDistanceAllOverThreshold {
 
 TEST(ransac, not_enough_inliers_throws) {
   Ransac::Params params{};
-  params.minNbPts = 2;
   params.nbTrials = 1;
   params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);

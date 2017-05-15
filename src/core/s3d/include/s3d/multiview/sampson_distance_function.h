@@ -12,11 +12,11 @@ struct StanAlignment;
 
 class SampsonDistanceFunction {
  public:
-  using PointsType = Eigen::Vector3d;
+  using SampleType = Eigen::Vector3d;
   using ModelType = StanAlignment;
 
-  static void ComputeDistance(const std::vector<PointsType>& pts1,
-                              const std::vector<PointsType>& pts2,
+  static void ComputeDistance(const std::vector<SampleType>& pts1,
+                              const std::vector<SampleType>& pts2,
                               const ModelType& model,
                               std::vector<double>* distances);
 };

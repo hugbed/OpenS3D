@@ -4,12 +4,12 @@
 
 namespace s3d {
 
-using PointsType = StanFundamentalMatrixSolver::PointsType;
+using SampleType = StanFundamentalMatrixSolver::SampleType;
 using ModelType = StanFundamentalMatrixSolver::ModelType;
 
 // static
-ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<PointsType>& pts1,
-                                                    const std::vector<PointsType>& pts2) {
+ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType>& pts1,
+                                                    const std::vector<SampleType>& pts2) {
   assert(pts1.size() == pts2.size());
 
   Eigen::MatrixXd A;
@@ -24,8 +24,8 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<PointsType
 
 // static
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEquationSystem(
-    const std::vector<PointsType>& pts1,
-    const std::vector<PointsType>& pts2) {
+    const std::vector<SampleType>& pts1,
+    const std::vector<SampleType>& pts2) {
   constexpr int nbVariables = 5;
   assert(pts1.size() >= nbVariables);
   assert(pts2.size() >= nbVariables);

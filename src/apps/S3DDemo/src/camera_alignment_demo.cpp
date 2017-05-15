@@ -147,7 +147,6 @@ int main(int argc, char* argv[]) {
   s3d::center_values(std::begin(pts2), std::end(pts2), std::begin(pts2), imageCenter);
 
   s3d::Ransac::Params params;
-  params.minNbPts = 5;
   params.nbTrials = 2000;
   params.distanceThreshold =
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
