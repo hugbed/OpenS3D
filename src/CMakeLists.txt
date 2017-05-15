@@ -14,6 +14,7 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 
 # BUILD OPTIONS
 option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
+option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
 option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" ON)
 option(OpenS3D_BUILD_COVERAGE "Enable code coverage generation (gcc only)" OFF)
 
@@ -53,6 +54,10 @@ add_subdirectory(libs/gsl)
 add_subdirectory(libs/decklink)
 add_subdirectory(core/s3d)
 
+if (OpenS3D_USE_CV)
+  add_subdirectory(core/s3dcv)
+endif(OpenS3D_USE_CV)
+
 if (OpenS3D_USE_CUDA)
   add_subdirectory(core/s3dcuda)
   add_subdirectory(apps/S3DCudaDemo)
@@ -63,3 +68,10 @@ if (OpenS3D_BUILD_APPS)
   add_subdirectory(apps/S3DDemo)
 endif (OpenS3D_BUILD_APPS)
 
+
+# add test target (make test)
+include(ProcessorCount)
+ProcessorCount(N)
+add_custom_target(
+    Tests
+    COMMAND make -j${N} && make test)
