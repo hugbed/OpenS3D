@@ -32,14 +32,14 @@ before_install:
 install:
   - export CXX=$COMPILER
   - sudo apt-get install -y lcov
-#  - sudo apt-get install -y libopencv-dev
+  - sudo apt-get install -y libopencv-dev
     
 before_script:
   # Display cmake version
   - cmake --version
   # Create build folder
   - mkdir $OPENS3D_BUILD && cd $OPENS3D_BUILD
-  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF -DOpenS3D_BUILD_COVERAGE=ON
+  - cmake .. -DOpenS3D_BUILD_APPS=OFF -DOpenS3D_USE_CUDA=OFF -DOpenS3D_BUILD_COVERAGE=ON -DOpenS3D_USE_CV=ON
 
 script: 
 - make -j2 && make test

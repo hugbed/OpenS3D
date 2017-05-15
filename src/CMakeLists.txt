@@ -15,7 +15,7 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 # BUILD OPTIONS
 option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
 option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
-option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" ON)
+option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" OFF)
 option(OpenS3D_BUILD_COVERAGE "Enable code coverage generation (gcc only)" OFF)
 
 # Remove 'lib' prefix for shared libraries on Windows
@@ -56,17 +56,17 @@ add_subdirectory(core/s3d)
 
 if (OpenS3D_USE_CV)
   add_subdirectory(core/s3dcv)
-endif(OpenS3D_USE_CV)
+endif()
 
-if (OpenS3D_USE_CUDA)
+if (OpenS3D_USE_CUDA AND OpenS3D_USE_CV)
   add_subdirectory(core/s3dcuda)
   add_subdirectory(apps/S3DCudaDemo)
-endif (OpenS3D_USE_CUDA)
+endif()
 
 if (OpenS3D_BUILD_APPS)
   add_subdirectory(apps/OgreS3DPlayer)
   add_subdirectory(apps/S3DDemo)
-endif (OpenS3D_BUILD_APPS)
+endif()
 
 
 # add test target (make test)
