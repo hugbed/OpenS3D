@@ -47,9 +47,6 @@ script:
 after_success:
     # Creating report
   - cd $OPENS3D_BUILD
-  - lcov --directory . --capture --output-file coverage.info # capture coverage info
-  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
-  - lcov --remove coverage.info 'src/libs/*' --output-file coverage.info # filter out libs
-  - lcov --list coverage.info #debug info
+  - ../scripts/coverage.sh
   # Uploading report to CodeCov
   - bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
