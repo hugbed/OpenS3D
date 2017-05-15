@@ -1,6 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "s3d/robust_estimation/ransac.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
+
+using s3d::Ransac;
+using s3d::RansacAlgorithm;
 
 // Ax + By + C = 0
 struct Line {
@@ -52,6 +56,7 @@ class LeastSquareDistanceFunction {
 TEST(ransac, line_solver) {
   Ransac::Params params{};
   params.minNbPts = 2;
+  params.nbTrials = 100;
   RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
   // inliers: y = x
@@ -67,4 +72,30 @@ TEST(ransac, line_solver) {
 
   EXPECT_DOUBLE_EQ(line.A, -line.B);
   EXPECT_DOUBLE_EQ(line.C, 0);
+}
+
+class FakeDistanceAllOverThreshold {
+ public:
+  using PointsType = LineSolver::PointsType;
+
+  static constexpr auto THRESHOLD = 0.0;
+
+  static void ComputeDistance(const std::vector<PointsType>& x,
+                              const std::vector<PointsType>& y,
+                              const LineSolver::ModelType& model,
+                              std::vector<double>* distances) {
+    for (auto i = 0ULL; i < distances->size(); ++i) {
+      distances->operator[](i) = THRESHOLD + 1;
+    }
+  }
+};
+
+TEST(ransac, not_enough_inliers_throws) {
+  Ransac::Params params{};
+  params.minNbPts = 2;
+  params.nbTrials = 1;
+  params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
+  RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
+
+  EXPECT_THROW(ransac({0, 0}, {0, 0}), s3d::NotEnoughInliersFound);
 }

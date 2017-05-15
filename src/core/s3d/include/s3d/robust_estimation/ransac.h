@@ -4,10 +4,11 @@
 #include "s3d/utilities/rand.h"
 #include "s3d/utilities/containers.h"
 
-#include <algorithm>
 #include <stdexcept>
 #include <cassert>
 #include <memory>
+
+namespace s3d {
 
 // todo: put this in some more restricted scope (namespace robust?)
 class NotEnoughInliersFound : std::runtime_error {
@@ -92,6 +93,15 @@ class RansacAlgorithm : public Ransac {
     return runAlgorithm();
   }
 
+  std::pair<Points, Points> getBestInlierPoints() {
+    Points pts1Inliers, pts2Inliers;
+    s3d::copy_if_true(std::begin(pts1_), std::end(pts1_), back_inserter(pts1Inliers),
+                      inliers_->getBest());
+    s3d::copy_if_true(std::begin(pts2_), std::end(pts2_), back_inserter(pts2Inliers),
+                      inliers_->getBest());
+    return {pts1Inliers, pts2Inliers};
+  }
+
  private:
   typename ModelSolver::ModelType runAlgorithm() {
     while (!trials_->reachedMaxNb()) {
@@ -100,6 +110,7 @@ class RansacAlgorithm : public Ransac {
       inliers_->updateBest();
       trials_->updateNb(inliers_->getCurrentNb());
     }
+
     if (inliers_->getBestNb() < params_.minNbPts) {
       throw NotEnoughInliersFound(params_.minNbPts, inliers_->getBestNb());
     }
@@ -123,15 +134,6 @@ class RansacAlgorithm : public Ransac {
     return {pts1Sample, pts2Sample};
   };
 
-  std::pair<Points, Points> getBestInlierPoints() {
-    Points pts1Inliers, pts2Inliers;
-    s3d::copy_if_true(std::begin(pts1_), std::end(pts1_), back_inserter(pts1Inliers),
-                      inliers_->getBest());
-    s3d::copy_if_true(std::begin(pts2_), std::end(pts2_), back_inserter(pts2Inliers),
-                      inliers_->getBest());
-    return {pts1Inliers, pts2Inliers};
-  }
-
   Params params_;
   Points pts1_{};
   Points pts2_{};
@@ -139,5 +141,7 @@ class RansacAlgorithm : public Ransac {
   std::unique_ptr<Trials> trials_{};
   std::unique_ptr<Inliers> inliers_{};
 };
+
+}  // namespace s3d
 
 #endif  // S3D_ROBUST_ESTIMATION_RANSAC_H

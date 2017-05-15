@@ -19,3 +19,18 @@ TEST(values_from_indices, first_last_index) {
   EXPECT_EQ(res[0], values[indices[0]]);
   EXPECT_EQ(res[1], values[indices[indices.size() - 1]]);
 }
+
+TEST(center, res_is_values_minus_center) {
+  constexpr int center = 2;
+  std::vector<int> values{-2, 0, 2, 4};
+  std::vector<int> gold;
+  for (auto value: values) {
+    gold.emplace_back(value - center);
+  }
+
+  s3d::center_values(std::begin(values), std::end(values), std::begin(values), center);
+
+  for (int i = 0; i < values.size(); ++i) {
+    EXPECT_EQ(values[i], gold[i]);
+  }
+}
