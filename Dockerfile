@@ -20,5 +20,5 @@ RUN cd OpenS3D/src && mkdir build && cd build && \
 
 # Coverage - Uploading report to CodeCov
 RUN ../scripts/coverage.sh && \
-    bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
+    bash < $(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
 
