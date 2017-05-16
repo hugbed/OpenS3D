@@ -56,6 +56,7 @@ add_subdirectory(core/s3d)
 
 if (OpenS3D_USE_CV)
   add_subdirectory(core/s3dcv)
+  add_subdirectory(apps/S3DCVDemo)
 endif()
 
 if (OpenS3D_USE_CUDA AND OpenS3D_USE_CV)
