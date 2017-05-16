@@ -1,5 +1,5 @@
 dist: trusty
-sudo: true
+sudo: false 
 
 language: cpp
 
@@ -7,5 +7,5 @@ services:
   - docker
 
 script: 
-  - docker run hugbed/opens3d
-
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
+  - docker run $ci_env hugbed/opens3d
