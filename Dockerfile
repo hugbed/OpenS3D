@@ -35,5 +35,5 @@ CMD cd /opt && \
         -DOpenS3D_USE_CV=ON && \
     make -j2 && make test && \
     ../scripts/coverage.sh && \
-    bash < $(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
-
+    curl -s https://codecov.io/bash | sed '3d' > .codecov && chmod +x .codecov && \
+    sh .codecov -X gcov || echo "Codecov did not collect coverage reports"
