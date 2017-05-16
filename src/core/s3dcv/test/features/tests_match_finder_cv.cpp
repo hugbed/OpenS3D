@@ -168,3 +168,9 @@ TEST(match_finder_cv, find_matches_returns_correct) {
   EXPECT_EQ(res[0][0], Eigen::Vector2d(goldPt.x, goldPt.y));
   EXPECT_EQ(res[1][0], Eigen::Vector2d(goldPt.x, goldPt.y));
 }
+
+TEST(match_finder_cv, cv_instance_creation_return_valid_objects) {
+  MatchFinderCV m;
+  EXPECT_NE(m.createFeatureDetector(), nullptr);
+  EXPECT_NE(m.createDescriptorMatcher(), nullptr);
+}
