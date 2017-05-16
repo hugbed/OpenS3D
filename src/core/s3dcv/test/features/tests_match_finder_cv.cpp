@@ -155,3 +155,16 @@ TEST(match_finder_cv, matches_min_distance_returns_min) {
   auto minDist = matchFinder.matchesMinDistance(matches);
   EXPECT_EQ(minDist, goldMinDist);
 }
+
+TEST(match_finder_cv, find_matches_returns_correct) {
+  FakeMatchFinderCV matchFinder;
+  auto res = matchFinder.findMatches({{}, {}});
+
+  EXPECT_EQ(res.size(), 2);
+  EXPECT_EQ(res[0].size(), 1);
+  EXPECT_EQ(res[1].size(), 1);
+
+  auto goldPt = FakeFeatureDetector().goldKeypoints[0].pt;
+  EXPECT_EQ(res[0][0], Eigen::Vector2d(goldPt.x, goldPt.y));
+  EXPECT_EQ(res[1][0], Eigen::Vector2d(goldPt.x, goldPt.y));
+}
