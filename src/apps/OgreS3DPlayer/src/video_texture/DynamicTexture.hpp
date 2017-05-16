@@ -3,7 +3,7 @@
 
 #include <Ogre.h>
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 #include <vector>
 

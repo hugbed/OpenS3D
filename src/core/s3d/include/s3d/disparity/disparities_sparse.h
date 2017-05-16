@@ -2,6 +2,7 @@
 #define S3D_DISPARITY_DISPARITIES_SPARSE_H
 
 #include "disparities.h"
+#include "s3d/geometry/size.h"
 
 #include <vector>
 
@@ -11,18 +12,15 @@ class DisparitiesSparse : public Disparities {
  public:
   using DisparityPoints = std::vector<DisparityPoint>;
 
-  DisparitiesSparse(DisparityPoints disparities, ImageSize imageSize)
-      : disparities_(std::move(disparities)),
-        disparityMap_(cv::Mat::zeros(static_cast<int>(imageSize.rows),
-                                     static_cast<int>(imageSize.cols),
-                                     CV_8U)) {}
+  DisparitiesSparse(DisparityPoints disparities, Size imageSize)
+      : disparities_(std::move(disparities)), disparityMap_(imageSize) {}
 
   const std::vector<DisparityPoint>& getDisparities() override  // const & ??
   {
     return disparities_;
   }
 
-  Image getDisparityMap() override {
+  Image<uint8_t> getDisparityMap() override {
     auto minVal = min().disparity.col;
     auto maxVal = max().disparity.col;
 
@@ -32,8 +30,7 @@ class DisparitiesSparse : public Disparities {
       auto j = (*d_it).leftPos.col;
       auto d = (*d_it).disparity.col;
 
-      disparityMap_.mat.at<uchar>(i, j) =
-          static_cast<uchar>((d - minVal) * 255 / (maxVal - minVal));
+      disparityMap_(i, j) = static_cast<uint8_t>((d - minVal) * 255 / (maxVal - minVal));
     }
     return disparityMap_;
   }
@@ -48,7 +45,7 @@ class DisparitiesSparse : public Disparities {
 
  private:
   DisparityPoints disparities_;
-  Image disparityMap_;
+  Image<uint8_t> disparityMap_;
 };
 }  // namespace s3d
 

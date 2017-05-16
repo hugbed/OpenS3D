@@ -1,17 +1,21 @@
-#include <s3d/disparity/disparities_sparse.h>
+#include "s3d/disparity/disparities_sparse.h"
 #include "s3dcuda/disparity/disparity_algorithm_orb.h"
 
-#include "opencv2/cudaarithm.hpp"
-#include "opencv2/cudafeatures2d.hpp"
-#include "opencv2/cudastereo.hpp"
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudafeatures2d.hpp>
+#include <opencv2/cudastereo.hpp>
+#include <opencv/cxeigen.hpp>
 
 namespace s3d {
 namespace cuda {
 
-std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image leftImg,
-                                                                       Image rightImg) {
-  auto left = leftImg.mat;
-  auto right = rightImg.mat;
+std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
+    const Image<uint8_t>& leftImg,
+    const Image<uint8_t>& rightImg) {
+  cv::Mat left(leftImg.height(), leftImg.width(), CV_8U);
+  cv::Mat right(rightImg.height(), rightImg.width(), CV_8U);
+  cv::eigen2cv(leftImg.getMatrix(), left);
+  cv::eigen2cv(rightImg.getMatrix(), right);
 
   cv::cuda::GpuMat d_left, d_right;
   d_left.upload(left);
@@ -52,8 +56,8 @@ std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image lef
   //        imgRes);
   //        cv::imshow("imgRes", imgRes);
 
-  auto disparities = std::unique_ptr<Disparities>(std::make_unique<DisparitiesSparse>(
-      disparityPoints, ImageSize{size_t(left.rows), size_t(left.cols)}));
+  auto disparities = std::unique_ptr<Disparities>(
+      std::make_unique<DisparitiesSparse>(disparityPoints, Size{left.rows, left.cols}));
 
   return disparities;
 }

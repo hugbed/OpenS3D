@@ -2,7 +2,7 @@
 #define S3D_MULTIVIEW_SAMPSON_DISTANCE_FUNCTION_H
 
 // std::vector requires complete type
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <vector>
 
@@ -12,11 +12,11 @@ struct StanAlignment;
 
 class SampsonDistanceFunction {
  public:
-  using PointsType = Eigen::Vector3d;
+  using SampleType = Eigen::Vector3d;
   using ModelType = StanAlignment;
 
-  static void ComputeDistance(const std::vector<PointsType>& pts1,
-                              const std::vector<PointsType>& pts2,
+  static void ComputeDistance(const std::vector<SampleType>& pts1,
+                              const std::vector<SampleType>& pts2,
                               const ModelType& model,
                               std::vector<double>* distances);
 };

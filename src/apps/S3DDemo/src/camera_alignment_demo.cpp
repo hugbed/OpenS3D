@@ -1,9 +1,12 @@
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
+#include "s3d/cv/features/match_finder_cv.h"
+#include "s3d/cv/utilities/cv.h"
 
 #include <opencv2/opencv.hpp>
-#include <gsl/gsl>
+
+#include "gsl/gsl"
 
 #include <chrono>
 
@@ -38,11 +41,18 @@ void displayMatches(const std::string& displayName,
 
   for (int i = 0; i < ptsLeft.size(); ++i) {
     auto& pt1 = ptsLeft[i];
-    auto& pt2 = ptsRight[i] + Eigen::Vector3d(imgLeft.cols, 0.0, 0.0);
+    Eigen::Vector3d pt2 = ptsRight[i] + Eigen::Vector3d(imgLeft.cols, 0.0, 0.0);
     cv::line(combined, cv::Point(pt1.x(), pt1.y()), cv::Point(pt2.x(), pt2.y()),
              cv::Scalar(255, 0, 0, 0));
   }
   displayInNewWindow(displayName, combined);
+}
+
+void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::Vector3d>* result) {
+  result->resize(in.size());
+  std::transform(
+      std::begin(in), std::end(in), std::begin(*result),
+      [](const Eigen::Vector2d& value) { return Eigen::Vector3d(value.x(), value.y(), 1.0); });
 }
 
 std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
@@ -64,6 +74,7 @@ int main(int argc, char* argv[]) {
     throw BadNumberOfArgumentsException{};
   }
 
+  // load images
   auto path_left = std::string(input_args[1]);
   auto path_right = std::string(input_args[2]);
 
@@ -76,78 +87,24 @@ int main(int argc, char* argv[]) {
   cv::resize(leftOrig, leftOrig, cv::Size(leftOrig.cols / 2, leftOrig.rows / 2));
   cv::resize(rightOrig, rightOrig, cv::Size(rightOrig.cols / 2, rightOrig.rows / 2));
 
-  // debugging
-  //  cv::Mat combined(left.rows, left.cols * 2, left.type());
-  //  cv::hconcat(left, right, combined);
-  //  displayInNewWindow("before", combined);
+  // find matches
+  std::unique_ptr<s3d::MatchFinder> matchFinder = std::make_unique<s3d::MatchFinderCV>();
+  auto matches = matchFinder->findMatches({s3d::cv2image(leftOrig), s3d::cv2image(rightOrig)});
+  assert(matches.size() == 2);
+  std::vector<Eigen::Vector2d> pts1 = matches[0], pts2 = matches[1];
 
-  // detect features
-  std::vector<cv::KeyPoint> keypoints1, keypoints2;
-
-  cv::Mat descriptors1, descriptors2;
-
-  auto orb = cv::ORB::create();
-  orb->detectAndCompute(leftOrig, cv::noArray(), keypoints1, descriptors1);
-  orb->detectAndCompute(rightOrig, cv::noArray(), keypoints2, descriptors2);
-
-  auto matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
-  std::vector<cv::DMatch> matches;
-  matcher->match(descriptors1, descriptors2, matches);
-
-  //  cv::Mat imgMatchesNotGood;
-  //  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, matches, imgMatchesNotGood);
-  //  cv::imshow( "Not Good Matches", imgMatchesNotGood);
-  //  cv::waitKey(0);
-
-  double max_dist = 0;
-  double min_dist = 100;
-  //-- Quick calculation of max and min distances between keypoints
-  for (int i = 0; i < descriptors1.rows; i++) {
-    double dist = matches[i].distance;
-    if (dist < min_dist)
-      min_dist = dist;
-    if (dist > max_dist)
-      max_dist = dist;
-  }
-
-  std::vector<Eigen::Vector3d> pts1;
-  std::vector<Eigen::Vector3d> pts2;
-
-  std::vector<cv::DMatch> goodMatches;
-  for (int i = 0; i < descriptors1.rows; i++) {
-    if (matches[i].distance <= std::max(10 * min_dist, 0.02)) {
-      goodMatches.push_back(matches[i]);
-
-      cv::Point2f pt1 = keypoints1[matches[i].queryIdx].pt;
-      cv::Point2f pt2 = keypoints2[matches[i].trainIdx].pt;
-
-      pts1.emplace_back(pt1.x, pt1.y, 1.0);
-      pts2.emplace_back(pt2.x, pt2.y, 1.0);
-    }
-  }
-
-  //  cv::Mat imgMatches;
-  //  cv::drawMatches(leftOrig, keypoints1, rightOrig, keypoints2, goodMatches, imgMatches);
-  //  cv::imshow( "Good Matches", imgMatches);
-  //  cv::waitKey(0);
-
-  // // display found features
-  //  cv::Mat leftCircles = leftOrig.clone();
-  //  cv::Mat rightCircles = rightOrig.clone();
-  //  drawFeatures(leftCircles, pts1);
-  //  drawFeatures(rightCircles, pts2);
-  //
-  //  cv::Mat combinedAfter(leftCircles.rows, leftCircles.cols * 2, leftCircles.type());
-  //  cv::hconcat(leftCircles, rightCircles, combinedAfter);
-  //  displayInNewWindow("after", combinedAfter);
+  // to homogeneous
+  std::vector<Eigen::Vector3d> pts1h, pts2h;
+  toHomogeneous2D(pts1, &pts1h);
+  toHomogeneous2D(pts2, &pts2h);
 
   // center points for ransac
   auto imageCenter = Eigen::Vector3d(leftOrig.rows / 2.0, leftOrig.cols / 2.0, 0.0);
-  s3d::center_values(std::begin(pts1), std::end(pts1), std::begin(pts1), imageCenter);
-  s3d::center_values(std::begin(pts2), std::end(pts2), std::begin(pts2), imageCenter);
+  s3d::center_values(std::begin(pts1h), std::end(pts1h), std::begin(pts1h), imageCenter);
+  s3d::center_values(std::begin(pts2h), std::end(pts2h), std::begin(pts2h), imageCenter);
 
+  // solve F with RANSAC
   s3d::Ransac::Params params;
-  params.minNbPts = 5;
   params.nbTrials = 2000;
   params.distanceThreshold =
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
@@ -157,25 +114,23 @@ int main(int argc, char* argv[]) {
   using s3d::SampsonDistanceFunction;
   RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
 
-  std::cout << ransac(pts1, pts2);
-
-  std::vector<Eigen::Vector3d> bestPts1, bestPts2;
-  std::tie(bestPts1, bestPts2) = ransac.getBestInlierPoints();
-
-  // decenter points after ransac
-  s3d::center_values(std::begin(bestPts1), std::end(bestPts1), std::begin(bestPts1), -imageCenter);
-  s3d::center_values(std::begin(bestPts2), std::end(bestPts2), std::begin(bestPts2), -imageCenter);
-
-  // display inliers (matches)
-  cv::Mat leftMatchesImg = leftOrig.clone();
-  cv::Mat rightMatchesImg = rightOrig.clone();
-  displayMatches("after", leftMatchesImg, rightMatchesImg, bestPts1, bestPts2);
+  std::cout << ransac(pts1h, pts2h);
 
   auto t2 = std::chrono::high_resolution_clock::now();
-
   std::cout << "Computation Time: "
             << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms"
             << std::endl;
+
+  // display inliers (matches)
+  std::vector<Eigen::Vector3d> bestPts1, bestPts2;
+  std::tie(bestPts1, bestPts2) = ransac.getBestInlierSamples();
+
+  s3d::center_values(std::begin(bestPts1), std::end(bestPts1), std::begin(bestPts1), -imageCenter);
+  s3d::center_values(std::begin(bestPts2), std::end(bestPts2), std::begin(bestPts2), -imageCenter);
+
+  cv::Mat leftMatchesImg = leftOrig.clone();
+  cv::Mat rightMatchesImg = rightOrig.clone();
+  displayMatches("after", leftMatchesImg, rightMatchesImg, bestPts1, bestPts2);
 
   return 0;
 }

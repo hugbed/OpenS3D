@@ -4,12 +4,12 @@
 
 namespace s3d {
 
-using PointsType = SampsonDistanceFunction::PointsType;
+using SampleType = SampsonDistanceFunction::SampleType;
 using ModelType = SampsonDistanceFunction::ModelType;
 
 // static
-void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts1,
-                                              const std::vector<PointsType>& pts2,
+void SampsonDistanceFunction::ComputeDistance(const std::vector<SampleType>& pts1,
+                                              const std::vector<SampleType>& pts2,
                                               const ModelType& model,
                                               std::vector<double>* distances) {
   assert(pts1.size() == pts2.size());
@@ -24,7 +24,6 @@ void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts
     pts2h.block<3, 1>(0, i) = pts2[i];
   }
 
-  // this is probably not efficient
   auto f = StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(model);
   auto pfp = (pts2h.transpose() * f).transpose();
   auto pfp2 = pfp.cwiseProduct(pts1h);
@@ -36,8 +35,7 @@ void SampsonDistanceFunction::ComputeDistance(const std::vector<PointsType>& pts
   auto coeff = epl1.row(0).array().square() + epl1.row(1).array().square() +
                epl2.row(0).array().square() + epl2.row(1).array().square();
 
-  auto distancesVector = d.array() / coeff.array();
-
+  Eigen::VectorXd distancesVector = d.array() / coeff.array();
   Eigen::VectorXd::Map(&distances->operator[](0), distancesVector.size()) = distancesVector;
 }
 }
