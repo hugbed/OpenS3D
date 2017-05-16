@@ -13,6 +13,7 @@ RUN apt-get update && \
 
 ENV CC /usr/bin/gcc 
 ENV CXX /usr/bin/g++
+ENV PATH "$PATH:/bin"
 
 # install opencv 3.2
 WORKDIR /
@@ -35,5 +36,5 @@ CMD cd /opt && \
         -DOpenS3D_USE_CV=ON && \
     make -j2 && make test && \
     ../scripts/coverage.sh && \
-    curl -s https://codecov.io/bash | sed '3d' > .codecov && chmod +x .codecov && \
-    sh .codecov -X gcov || echo "Codecov did not collect coverage reports"
+    curl -s https://codecov.io/bash > .codecov && chmod +x .codecov && \
+    bash ./.codecov -X gcov
