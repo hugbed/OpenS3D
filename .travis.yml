@@ -7,5 +7,5 @@ services:
   - docker
 
 script: 
-  - docker build .
+  - docker run hugbed/opens3d
 

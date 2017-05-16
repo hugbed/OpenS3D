@@ -3,6 +3,7 @@ FROM ubuntu:16.04
 RUN apt-get update && \
     apt-get install -y \
         git \
+        curl \
         wget \
         unzip \
         build-essential \
@@ -23,11 +24,10 @@ RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip \
     && rm /3.2.0.zip \
     && rm -r /opencv-3.2.0
 
-# build OpenS3D
-WORKDIR /opt
-RUN git clone https://github.com/hugbed/OpenS3D.git
-
-RUN cd OpenS3D/src && mkdir build && cd build && \ 
+# build and test OpenS3D
+CMD cd /opt && \
+    git clone https://github.com/hugbed/OpenS3D.git && \
+    cd OpenS3D/src && mkdir build && cd build && \ 
     cmake .. \
         -DOpenS3D_BUILD_APPS=OFF \
         -DOpenS3D_USE_CUDA=OFF \
