@@ -3,7 +3,7 @@
 
 #include "s3d/image/image.h"
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 namespace s3d {
 

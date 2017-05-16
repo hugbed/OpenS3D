@@ -86,7 +86,7 @@ class RansacAlgorithm : public Ransac {
 
   explicit RansacAlgorithm(Params params) : params_(params) {}
 
-  ModelType operator()(Samples samples1, Samples samples2) {
+  ModelType operator()(const Samples& samples1, const Samples& samples2) {
     assert(samples1.size() == samples2.size());
     assert(samples1.size() >= MIN_NB_SAMPLES);
 

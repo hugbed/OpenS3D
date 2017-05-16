@@ -1,11 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <s3d/video/compression/yuv.h>
-#include <s3d/utilities/file_io.h>
+#include "s3d/video/compression/yuv.h"
+#include "s3d/utilities/file_io.h"
 
+#include <fstream>
+#include <iostream>
 #include <sstream>
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 int main(int argc, char* argv[]) {
   auto input_args = gsl::span<char*>(argv, argc);

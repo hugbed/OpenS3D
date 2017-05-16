@@ -13,7 +13,6 @@ TEST(image_container, default_construction_size_0) {
 
 TEST(image_container, copy_construction_from_eigen_image_row_major) {
   // Eigen::Matrix<Type, Rows, Cols, Options, MaxRows, MaxCols>
-
   constexpr size_t N = 2;
   Eigen::Matrix<uint8_t, N, N, 0, N, N> m;
   m << 1, 2,  //

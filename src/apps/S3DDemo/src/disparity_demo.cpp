@@ -1,9 +1,10 @@
-#include "opencv2/cudafeatures2d.hpp"
-#include "opencv2/cudastereo.hpp"
 #include "s3d/disparity/disparity_algorithm_bm.h"
 #include "s3d/disparity/disparity_algorithm_orb.h"
 
-#include <gsl/gsl>
+#include <opencv2/cudafeatures2d.hpp>
+#include <opencv2/cudastereo.hpp>
+
+#include "gsl/gsl"
 
 using s3d::DisparityAlgorithm;
 using s3d::DisparityAlgorithmORB;

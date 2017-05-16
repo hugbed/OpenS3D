@@ -8,7 +8,7 @@
 #include "video_capture_device.h"
 #include "video_capture_device_factory.h"
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 #include <chrono>
 

@@ -6,7 +6,7 @@
 #include <opencv2/core/mat.hpp>    // cv::Mat
 #include <opencv2/core/types.hpp>  // cv::DMatch, cv::KeyPoint
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <vector>
 

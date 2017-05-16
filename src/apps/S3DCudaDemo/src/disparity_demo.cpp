@@ -1,15 +1,14 @@
-
 #include "s3dcuda/disparity/disparity_algorithm_bm.h"
 #include "s3dcuda/disparity/disparity_algorithm_orb.h"
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/cudafeatures2d.hpp>
 #include <opencv2/cudastereo.hpp>
 #include <opencv/cxeigen.hpp>
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 using s3d::DisparityAlgorithm;
 using s3d::cuda::DisparityAlgorithmORB;
@@ -39,8 +38,8 @@ int main(int argc, char* argv[]) {
     throw FileNotFoundException{};
   }
 
-//  cv::resize(left, left, cv::Size(left.rows / 2, left.cols / 2));
-//  cv::resize(right, right, cv::Size(left.rows / 2, left.cols / 2));
+  //  cv::resize(left, left, cv::Size(left.rows / 2, left.cols / 2));
+  //  cv::resize(right, right, cv::Size(left.rows / 2, left.cols / 2));
 
   // debugging
   cv::Mat combined(left.rows, left.cols * 2, left.type());

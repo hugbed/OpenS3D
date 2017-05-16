@@ -12,8 +12,8 @@ namespace cuda {
 
 class DisparityAlgorithmORB : public s3d::DisparityAlgorithm {
  public:
-  std::unique_ptr<Disparities> ComputeDisparities(Image<uint8_t> leftImg,
-                                                  Image<uint8_t> rightImg) override;
+  std::unique_ptr<Disparities> ComputeDisparities(const Image<uint8_t>& leftImg,
+                                                  const Image<uint8_t>& rightImg) override;
 };
 
 }  // namespace cuda

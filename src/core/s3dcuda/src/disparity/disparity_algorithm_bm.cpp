@@ -2,10 +2,10 @@
 #include "s3d/disparity/disparities_dense.h"
 #include "s3d/utilities/time.h"
 
-#include "opencv2/cudaarithm.hpp"
-#include "opencv2/cudafeatures2d.hpp"
-#include "opencv2/cudastereo.hpp"
-#include "opencv/cxeigen.hpp"
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudafeatures2d.hpp>
+#include <opencv2/cudastereo.hpp>
+#include <opencv/cxeigen.hpp>
 
 #include <iostream>
 #include <memory>
@@ -15,8 +15,9 @@
 namespace s3d {
 namespace cuda {
 
-std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(Image<uint8_t> leftImg,
-                                                                      Image<uint8_t> rightImg) {
+std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(
+    const Image<uint8_t>& leftImg,
+    const Image<uint8_t>& rightImg) {
   cv::Mat left;
   cv::Mat right;
   cv::eigen2cv(leftImg.getMatrix(), left);

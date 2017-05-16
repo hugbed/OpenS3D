@@ -6,7 +6,7 @@
 
 // Inspired by openMVG Image class
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <cstdint>  // uint8_t
 
@@ -47,7 +47,7 @@ class RgbBase : public Eigen::Matrix<T, 3, 1, 0, 3, 1> {
   }
 };
 
-// Instantiation for unsigned char color component
+// Instantiation for grayscale 8 bits
 using RgbColor = RgbBase<uint8_t>;
 
 namespace RgbValues {

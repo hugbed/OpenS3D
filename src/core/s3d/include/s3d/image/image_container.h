@@ -11,7 +11,7 @@
 
 #include "s3d/geometry/size.h"
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 namespace s3d {
 

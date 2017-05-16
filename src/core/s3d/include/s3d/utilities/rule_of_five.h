@@ -1,7 +1,7 @@
 #ifndef S3D_UTILITIES_RULE_OF_FIVE_H
 #define S3D_UTILITIES_RULE_OF_FIVE_H
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 template <class Interface>
 class rule_of_five_interface {

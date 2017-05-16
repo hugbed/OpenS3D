@@ -6,7 +6,7 @@
 
 #include <opencv2/opencv.hpp>
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 #include <chrono>
 

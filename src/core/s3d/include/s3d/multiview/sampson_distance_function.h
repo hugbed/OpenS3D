@@ -2,7 +2,7 @@
 #define S3D_MULTIVIEW_SAMPSON_DISTANCE_FUNCTION_H
 
 // std::vector requires complete type
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <vector>
 

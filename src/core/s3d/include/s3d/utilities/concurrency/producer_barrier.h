@@ -9,7 +9,7 @@
 #include <thread>
 #include <vector>
 
-#include <gsl/gsl>
+#include "gsl/gsl"
 
 namespace s3d {
 namespace concurrency {

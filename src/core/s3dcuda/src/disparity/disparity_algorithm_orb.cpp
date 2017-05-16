@@ -1,16 +1,17 @@
-#include <s3d/disparity/disparities_sparse.h>
+#include "s3d/disparity/disparities_sparse.h"
 #include "s3dcuda/disparity/disparity_algorithm_orb.h"
 
-#include "opencv2/cudaarithm.hpp"
-#include "opencv2/cudafeatures2d.hpp"
-#include "opencv2/cudastereo.hpp"
-#include "opencv/cxeigen.hpp"
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudafeatures2d.hpp>
+#include <opencv2/cudastereo.hpp>
+#include <opencv/cxeigen.hpp>
 
 namespace s3d {
 namespace cuda {
 
-std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(Image<uint8_t> leftImg,
-                                                                       Image<uint8_t> rightImg) {
+std::unique_ptr<Disparities> DisparityAlgorithmORB::ComputeDisparities(
+    const Image<uint8_t>& leftImg,
+    const Image<uint8_t>& rightImg) {
   cv::Mat left(leftImg.height(), leftImg.width(), CV_8U);
   cv::Mat right(rightImg.height(), rightImg.width(), CV_8U);
   cv::eigen2cv(leftImg.getMatrix(), left);

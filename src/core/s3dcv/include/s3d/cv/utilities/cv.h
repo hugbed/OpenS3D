@@ -3,7 +3,7 @@
 
 #include "s3d/image/image.h"
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 #include <opencv/cxcore.hpp>
 #include <opencv/cxeigen.hpp>
