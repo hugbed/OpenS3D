@@ -11,7 +11,7 @@
 namespace s3d {
 
 inline Image<uint8_t> cv2image(cv::Mat cvImg) {
-  Image<uint8_t> img(Size(cvImg.rows, cvImg.cols));
+  Image<uint8_t> img(Size(cvImg.cols, cvImg.rows));
   cv::cv2eigen(cvImg, img);
   return img;
 }

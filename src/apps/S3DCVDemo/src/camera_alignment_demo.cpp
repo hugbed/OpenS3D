@@ -1,14 +1,17 @@
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
+#include "s3d/disparity/utilities.h"
 #include "s3d/cv/features/match_finder_cv.h"
 #include "s3d/cv/utilities/cv.h"
+#include "s3d/utilities/histogram.h"
 
 #include <opencv2/opencv.hpp>
 
 #include "gsl/gsl"
 
 #include <chrono>
+
 
 class BadNumberOfArgumentsException {};
 class FileNotFoundException {};
@@ -53,6 +56,15 @@ void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::
   std::transform(
       std::begin(in), std::end(in), std::begin(*result),
       [](const Eigen::Vector2d& value) { return Eigen::Vector3d(value.x(), value.y(), 1.0); });
+}
+
+// usually have to divide by z() but not necessary here
+void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
+                           std::vector<Eigen::Vector2d>* result) {
+  result->resize(in.size());
+  std::transform(
+      std::begin(in), std::end(in), std::begin(*result),
+      [](const Eigen::Vector3d& value) { return Eigen::Vector2d(value.x(), value.y()); });
 }
 
 std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
@@ -119,6 +131,7 @@ int main(int argc, char* argv[]) {
   auto t2 = std::chrono::high_resolution_clock::now();
   std::cout << "Computation Time: "
             << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms"
+            << std::endl
             << std::endl;
 
   // display inliers (matches)
@@ -131,6 +144,46 @@ int main(int argc, char* argv[]) {
   cv::Mat leftMatchesImg = leftOrig.clone();
   cv::Mat rightMatchesImg = rightOrig.clone();
   displayMatches("after", leftMatchesImg, rightMatchesImg, bestPts1, bestPts2);
+
+  // compute disparity range
+  const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
+
+  toEuclidian2DTruncate(bestPts1, &pts1);
+  toEuclidian2DTruncate(bestPts2, &pts2);
+  std::vector<double> disparities;
+  s3d::compute_disparities(pts1, pts2, back_inserter(disparities));
+
+  // disparity histogram
+  auto hist = Histogram::Compute(disparities, 10);
+
+  double minDisp, maxDisp;
+  std::tie(minDisp, maxDisp) = s3d::disparity_range(disparities);
+
+
+  auto minDispP = minDisp * widthRatio;
+  auto maxDispP = maxDisp * widthRatio;
+  auto budgetP = (maxDisp - minDisp) * widthRatio;
+
+  std::cout << "Disparity 1st percentile (%): " << minDispP << std::endl;
+  std::cout << "Disparity 99th percentile (%): " << maxDispP << std::endl;
+  std::cout << "Estimated disparity budget (%): " << budgetP << std::endl;
+
+  // disparity should generally not be more than 1/30 of screen width
+  std::cout << "Suggested maximum disparity (%) : "
+            << static_cast<float>(leftOrig.cols) / 30.0f * widthRatio << std::endl;
+
+  // estimate pixel shift if current budget is considered adequate
+  double wantedMinDisp = -1.0f;
+  double wantedMaxDisp = 2.0f;
+  double wantedCenter = (wantedMaxDisp + wantedMinDisp) / 2.0f;
+  double currentCenter = (maxDispP + minDispP) / 2.0f;
+  double shift = wantedCenter - currentCenter;
+
+  std::cout << "Recommended shift (%) for " << wantedMinDisp << "% front, " << wantedMaxDisp
+            << "% rear: " << shift << std::endl;
+  std::cout << "Budget would become: " << minDispP + shift << ", " << maxDispP + shift << std::endl;
+  std::cout << "Recommended interaxial distance adjustment (%): "
+            << budgetP - (wantedMaxDisp - wantedMinDisp) << std::endl;
 
   return 0;
 }

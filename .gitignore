@@ -42,3 +42,5 @@ src/apps/OgreS3DPlayer/cmake-build-release/
 src/cmake-build-release/
 
 src/cmake-build-relwithdebinfo/
+
+src/cmake-build-coverage/

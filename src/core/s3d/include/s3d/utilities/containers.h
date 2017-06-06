@@ -2,8 +2,9 @@
 #define S3D_UTILITIES_CONTAINERS_H
 
 #include <algorithm>
-#include <vector>
 #include <cassert>
+#include <ostream>
+#include <vector>
 
 namespace s3d {
 
@@ -37,6 +38,16 @@ void center_values(InIt first, InIt last, OutIt result, typename InIt::value_typ
   std::transform(first, last, result,
                  [&center](const typename InIt::value_type& value) { return value - center; });
 };
+
+template <class InIt, class Delimiter>
+void display_values(InIt first, InIt last, std::ostream& os, Delimiter delimiter = ',') {
+  for (auto it = first; it != last; ++it) {
+    os << *it;
+    if (it + 1 != last) {
+      os << delimiter;
+    }
+  }
+}
 
 }  // namespace s3d
 
