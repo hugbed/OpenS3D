@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>S3D Analyzer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0">
@@ -26,14 +26,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="ParametersListView" name="parametersListView" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
+     <widget class="ParametersListView" name="parametersListView" native="true" />
     </item>
     <item row="2" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
@@ -60,7 +53,7 @@
          </widget>
         </item>
         <item>
-         <widget class="DepthWidget" name="depthWidget" native="true"/>
+         <widget class="RangeWidget" name="depthWidget" native="true"/>
         </item>
         <item>
          <widget class="Line" name="line_2">
@@ -77,17 +70,10 @@
          </widget>
         </item>
         <item>
-         <widget class="ConvergenceIndicatorWidget" name="convergenceIndicator">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="WidthHintLabel" name="convergenceIndicator"/>
         </item>
         <item>
          <widget class="Line" name="line">
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -101,7 +87,7 @@
          </widget>
         </item>
         <item alignment="Qt::AlignHCenter">
-         <widget class="HITWidget" name="hitWidget" native="true"/>
+         <widget class="DoubleSpinBoxNoCursor" name="hitWidget" native="true"/>
         </item>
        </layout>
       </item>
@@ -243,20 +229,20 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>HITWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/hitwidget.h</header>
+   <class>DoubleSpinBoxNoCursor</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>widgets/doublespinboxnocursor.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ConvergenceIndicatorWidget</class>
+   <class>WidthHintLabel</class>
    <extends>QLabel</extends>
-   <header>widgets/convergenceindicatorwidget.h</header>
+   <header>widgets/widthhintlabel.h</header>
   </customwidget>
   <customwidget>
-   <class>DepthWidget</class>
+   <class>RangeWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/depthwidget.h</header>
+   <header>widgets/rangewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
