@@ -127,9 +127,7 @@ void OpenGLWidget::initEntities() {
   float h = m_textures[0]->height();
   auto billboardEntity = std::make_unique<BillboardIntensityEntity>(QSize(w, h));
   billboardEntity->init();
-  billboardEntity->setPoints(
-      {QVector2D(0.0f, 0.0f), QVector2D(w / 2.0f, h / 2.0f), QVector2D(w - 1.0f, h - 1.0f)},
-      {-1.0f, 0.0f, 0.8f});
+  billboardEntity->setPoints({}, {});
   billboardEntity->setMinIntensity(-1.1f);
   billboardEntity->setMaxIntensity(3.1f);
   m_overlay = std::move(billboardEntity);

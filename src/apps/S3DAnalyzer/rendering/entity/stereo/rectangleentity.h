@@ -55,7 +55,6 @@ class RectangleEntity : public StereoImageEntity, QOpenGLFunctions {
   QOpenGLBuffer m_vertex;
   QOpenGLVertexArrayObject m_object;
   std::map<int, QOpenGLTexture*> m_textures;
-  std::vector<Vertex> m_vertices;
 };
 
 #endif  // S3D_ANALYZER_RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H

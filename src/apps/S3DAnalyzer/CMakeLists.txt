@@ -61,5 +61,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/core/s3dcv/include)
 
 # compile
-add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS} )
+add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS})
 target_link_libraries(${PROJECT_NAME} s3d s3dcv Qt5::Widgets Qt5::Core Qt5::Gui)
+
+# tests
+add_subdirectory(test)

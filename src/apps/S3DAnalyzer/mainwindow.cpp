@@ -40,8 +40,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
           [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Left); });
   connect(ui->actionRight, &QAction::triggered,
           [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Right); });
-  connect(ui->actionFeatures, &QAction::triggered, [this] { ui->openGLWidget->toggleFeatures(); });
-  connect(ui->actionCompute, &QAction::triggered, [this] { computeAndUpdate(); });
+  connect(ui->actionFeatures, &QAction::triggered,  //
+          [this] { ui->openGLWidget->toggleFeatures(); });
+  connect(ui->actionCompute, &QAction::triggered,  //
+          [this] { computeAndUpdate(); });
 
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),

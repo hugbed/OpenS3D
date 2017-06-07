@@ -109,7 +109,7 @@ void RectangleEntity::draw() {
   m_program->bind();
   {
     for (auto textureIt = std::begin(m_textures); textureIt != std::end(m_textures); ++textureIt) {
-      glActiveTexture(GL_TEXTURE0 + (*textureIt).first);
+      glActiveTexture(static_cast<GLenum>((static_cast<int>(GL_TEXTURE0) + (*textureIt).first)));
       (*textureIt).second->bind();
     }
     m_object.bind();
