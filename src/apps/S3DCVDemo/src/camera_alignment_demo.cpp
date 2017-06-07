@@ -12,7 +12,6 @@
 
 #include <chrono>
 
-
 class BadNumberOfArgumentsException {};
 class FileNotFoundException {};
 
@@ -158,7 +157,6 @@ int main(int argc, char* argv[]) {
 
   double minDisp, maxDisp;
   std::tie(minDisp, maxDisp) = s3d::disparity_range(disparities);
-
 
   auto minDispP = minDisp * widthRatio;
   auto maxDispP = maxDisp * widthRatio;

@@ -1,13 +1,12 @@
+#include "mainwindow.h"
+#include "rendering/openglwindow.h"
+
 #include <QApplication>
 #include <QFile>
 
 #include <cassert>
 
-#include "rendering/openglwindow.h"
-#include "mainwindow.h"
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
 
   // Set OpenGL Version information
@@ -27,10 +26,10 @@ int main(int argc, char *argv[])
   app.setStyleSheet(ts.readAll());
 
   // Set the window up
-//  OpenGLWindow window;
-//  window.setFormat(format);
-//  window.resize(QSize(800, 600));
-//  window.show();
+  //  OpenGLWindow window;
+  //  window.setFormat(format);
+  //  window.resize(QSize(800, 600));
+  //  window.show();
 
   // Set up window
   MainWindow w;

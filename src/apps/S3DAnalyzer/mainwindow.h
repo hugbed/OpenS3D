@@ -6,7 +6,6 @@
 
 #include "rendering/openglwidget.h"
 
-
 // todo: use forwarding everywhere possible
 namespace Ui {
 class MainWindow;

@@ -3,11 +3,10 @@
 
 #include "rectangleentity.h"
 
-class OpacityRectangleEntity : public RectangleEntity
-{
-public:
-    OpacityRectangleEntity();
-    void addShaders() override;
+class OpacityRectangleEntity : public RectangleEntity {
+ public:
+  OpacityRectangleEntity();
+  void addShaders() override;
 };
 
-#endif // RENDERING_ENTITY_STEREO_ANAGLYPHRECTANGLEENTITY_H
+#endif  // RENDERING_ENTITY_STEREO_ANAGLYPHRECTANGLEENTITY_H

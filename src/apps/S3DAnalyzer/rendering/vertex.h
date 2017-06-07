@@ -3,17 +3,17 @@
 
 #include <QVector3D>
 
-class Vertex
-{
-public:
+class Vertex {
+ public:
   // Constructors
   Q_DECL_CONSTEXPR Vertex();
-  Q_DECL_CONSTEXPR explicit Vertex(const QVector3D &position);
-  Q_DECL_CONSTEXPR Vertex(const QVector3D &position, const QVector3D &color);
-  Q_DECL_CONSTEXPR Vertex(const QVector3D &position, const QVector3D &color, const QVector2D& texCoord);
-  Q_DECL_CONSTEXPR Vertex(const QVector3D &position, const QVector2D& texCoord);
-  Q_DECL_CONSTEXPR Vertex(const QVector3D &position, float intensity);
-
+  Q_DECL_CONSTEXPR explicit Vertex(const QVector3D& position);
+  Q_DECL_CONSTEXPR Vertex(const QVector3D& position, const QVector3D& color);
+  Q_DECL_CONSTEXPR Vertex(const QVector3D& position,
+                          const QVector3D& color,
+                          const QVector2D& texCoord);
+  Q_DECL_CONSTEXPR Vertex(const QVector3D& position, const QVector2D& texCoord);
+  Q_DECL_CONSTEXPR Vertex(const QVector3D& position, float intensity);
 
   // Accessors / Mutators
   Q_DECL_CONSTEXPR const QVector3D& position() const;
@@ -24,7 +24,6 @@ public:
   void setColor(const QVector3D& color);
   void setTexCoord(const QVector2D& texCoord);
   void setIntensity(float intensity);
-
 
   // OpenGL Helpers
   static const int PositionTupleSize = 3;
@@ -37,7 +36,7 @@ public:
   static Q_DECL_CONSTEXPR int intensityOffset();
   static Q_DECL_CONSTEXPR int stride();
 
-private:
+ private:
   QVector3D m_position;
   QVector3D m_color;
   QVector2D m_texCoord;
@@ -53,30 +52,59 @@ Q_DECLARE_TYPEINFO(Vertex, Q_MOVABLE_TYPE);
 
 // Constructors
 Q_DECL_CONSTEXPR inline Vertex::Vertex() {}
-Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D &position) : m_position(position) {}
-Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D &position, const QVector3D &color) : m_position(position), m_color(color) {}
-Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D &position, const QVector3D &color, const QVector2D &texCoord)
+Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D& position) : m_position(position) {}
+Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D& position, const QVector3D& color)
+    : m_position(position), m_color(color) {}
+Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D& position,
+                                       const QVector3D& color,
+                                       const QVector2D& texCoord)
     : m_position(position), m_color(color), m_texCoord(texCoord) {}
-Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D &position, const QVector2D &texCoord)
+Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D& position, const QVector2D& texCoord)
     : m_position(position), m_texCoord(texCoord) {}
-Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D &position, float intensity)
+Q_DECL_CONSTEXPR inline Vertex::Vertex(const QVector3D& position, float intensity)
     : m_position(position), m_intensity(intensity) {}
 
 // Accessors / Mutators
-Q_DECL_CONSTEXPR inline const QVector3D& Vertex::position() const { return m_position; }
-Q_DECL_CONSTEXPR inline const QVector3D& Vertex::color() const { return m_color; }
-Q_DECL_CONSTEXPR inline const QVector2D& Vertex::texCoord() const { return m_texCoord; }
-Q_DECL_CONSTEXPR inline float Vertex::intensity() const { return m_intensity; }
-void inline Vertex::setPosition(const QVector3D& position) { m_position = position; }
-void inline Vertex::setColor(const QVector3D& color) { m_color = color; }
-void inline Vertex::setTexCoord(const QVector2D& texCoord) { m_texCoord = texCoord; }
-void inline Vertex::setIntensity(float intensity) { m_intensity = intensity; }
+Q_DECL_CONSTEXPR inline const QVector3D& Vertex::position() const {
+  return m_position;
+}
+Q_DECL_CONSTEXPR inline const QVector3D& Vertex::color() const {
+  return m_color;
+}
+Q_DECL_CONSTEXPR inline const QVector2D& Vertex::texCoord() const {
+  return m_texCoord;
+}
+Q_DECL_CONSTEXPR inline float Vertex::intensity() const {
+  return m_intensity;
+}
+void inline Vertex::setPosition(const QVector3D& position) {
+  m_position = position;
+}
+void inline Vertex::setColor(const QVector3D& color) {
+  m_color = color;
+}
+void inline Vertex::setTexCoord(const QVector2D& texCoord) {
+  m_texCoord = texCoord;
+}
+void inline Vertex::setIntensity(float intensity) {
+  m_intensity = intensity;
+}
 
 // OpenGL Helpers
-Q_DECL_CONSTEXPR inline int Vertex::positionOffset() { return offsetof(Vertex, m_position); }
-Q_DECL_CONSTEXPR inline int Vertex::colorOffset() { return offsetof(Vertex, m_color); }
-Q_DECL_CONSTEXPR inline int Vertex::texCoordOffset() { return offsetof(Vertex, m_texCoord); }
-Q_DECL_CONSTEXPR inline int Vertex::intensityOffset() { return offsetof(Vertex, m_intensity); }
-Q_DECL_CONSTEXPR inline int Vertex::stride() { return sizeof(Vertex); }
+Q_DECL_CONSTEXPR inline int Vertex::positionOffset() {
+  return offsetof(Vertex, m_position);
+}
+Q_DECL_CONSTEXPR inline int Vertex::colorOffset() {
+  return offsetof(Vertex, m_color);
+}
+Q_DECL_CONSTEXPR inline int Vertex::texCoordOffset() {
+  return offsetof(Vertex, m_texCoord);
+}
+Q_DECL_CONSTEXPR inline int Vertex::intensityOffset() {
+  return offsetof(Vertex, m_intensity);
+}
+Q_DECL_CONSTEXPR inline int Vertex::stride() {
+  return sizeof(Vertex);
+}
 
-#endif // RENDERING_VERTEX_H
+#endif  // RENDERING_VERTEX_H

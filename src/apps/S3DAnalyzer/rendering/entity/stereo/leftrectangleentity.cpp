@@ -1,15 +1,9 @@
 #include "leftrectangleentity.h"
 
-LeftRectangleEntity::LeftRectangleEntity()
-    : RectangleEntity()
-{
-}
+LeftRectangleEntity::LeftRectangleEntity() : RectangleEntity() {}
 
-void LeftRectangleEntity::setTextureRight(QOpenGLTexture */*texture*/)
-{
-}
+void LeftRectangleEntity::setTextureRight(QOpenGLTexture* /*texture*/) {}
 
-void LeftRectangleEntity::setHorizontalShift(float shift)
-{
-    RectangleEntity::setHorizontalShift(shift/2.0f);
+void LeftRectangleEntity::setHorizontalShift(float shift) {
+  RectangleEntity::setHorizontalShift(shift / 2.0f);
 }

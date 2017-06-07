@@ -51,7 +51,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 }
 
 // static
-Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(const StanAlignment& x) {
+Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
+    const StanAlignment& x) {
   Eigen::Matrix3d F;
   F << 0, (-x.ch_z_f + x.a_y_f), (x.ch_y + x.a_z),  //
       (x.ch_z_f), (-x.a_x_f), (-1 + x.a_f),         //

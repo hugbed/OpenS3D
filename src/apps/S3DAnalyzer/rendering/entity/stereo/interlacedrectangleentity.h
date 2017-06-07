@@ -3,11 +3,10 @@
 
 #include "rectangleentity.h"
 
-class InterlacedRectangleEntity : public RectangleEntity
-{
-public:
-    InterlacedRectangleEntity();
-    void addShaders() override;
+class InterlacedRectangleEntity : public RectangleEntity {
+ public:
+  InterlacedRectangleEntity();
+  void addShaders() override;
 };
 
-#endif // RENDERING_ENTITY_STEREO_INTERLACEDRECTANGLEENTITY_H
+#endif  // RENDERING_ENTITY_STEREO_INTERLACEDRECTANGLEENTITY_H

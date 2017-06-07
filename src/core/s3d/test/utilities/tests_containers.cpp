@@ -24,7 +24,7 @@ TEST(center, res_is_values_minus_center) {
   constexpr int center = 2;
   std::vector<int> values{-2, 0, 2, 4};
   std::vector<int> gold;
-  for (auto value: values) {
+  for (auto value : values) {
     gold.emplace_back(value - center);
   }
 

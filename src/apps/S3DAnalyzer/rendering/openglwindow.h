@@ -9,20 +9,18 @@
 
 class QOpenGLShaderProgram;
 
-class OpenGLWindow : public QOpenGLWindow,
-               protected QOpenGLFunctions
-{
+class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions {
   Q_OBJECT
 
-// OpenGL Events
-public:
+  // OpenGL Events
+ public:
   void initializeGL();
   void resizeGL(int width, int height);
   void paintGL();
-protected slots:
+ protected slots:
   void teardownGL();
 
-private:
+ private:
   void initColorTriangle();
   void initTexturedTriangle();
   void drawColorTriangle();
@@ -31,11 +29,11 @@ private:
   // OpenGL State Information
   QOpenGLBuffer m_vertex;
   QOpenGLVertexArrayObject m_object;
-  QOpenGLTexture *m_texture;
-  QOpenGLShaderProgram *m_program;
+  QOpenGLTexture* m_texture;
+  QOpenGLShaderProgram* m_program;
 
   // Private Helpers
   void printVersionInformation();
 };
 
-#endif // RENDERING_OPENGLWINDOW_H
+#endif  // RENDERING_OPENGLWINDOW_H
