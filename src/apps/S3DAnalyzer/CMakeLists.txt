@@ -24,11 +24,11 @@ set ( SOURCES
   rendering/entity/billboard/billboardintensityentity.cpp
   widgets/parameterslistview.cpp
   widgets/parameterwidget.cpp
-  widgets/hitwidget.cpp
+  widgets/doublespinboxnocursor.cpp
   widgets/lineeditnocursor.cpp
-  widgets/convergenceindicatorwidget.cpp
-  widgets/depthwidget.cpp
-  widgets/depthvolumeindicator.cpp
+  widgets/widthhintlabel.cpp
+  widgets/rangewidget.cpp
+  widgets/rangebar.cpp
   worker/depthanalyzer.cpp
 )
 

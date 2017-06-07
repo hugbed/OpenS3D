@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class ConvergenceIndicatorWidget : public QLabel {
+class WidthHintLabel : public QLabel {
   Q_OBJECT
  public:
   enum class State {
@@ -19,11 +19,10 @@ class ConvergenceIndicatorWidget : public QLabel {
     NB_STATES
   };
 
-  ConvergenceIndicatorWidget(QWidget* parent = nullptr);
-
+  WidthHintLabel(QWidget* parent = nullptr);
 
   void setState(State state);
-  void updateIndicator(float ratio);
+  void updateHint(float ratio);
 
  private:
   void initPixmaps();

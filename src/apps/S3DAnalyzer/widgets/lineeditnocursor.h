@@ -3,13 +3,12 @@
 
 #include <QLineEdit>
 
-class LineEditNoCursor : public QLineEdit
-{
-    Q_OBJECT
-public:
-    LineEditNoCursor(QWidget *parent = nullptr);
+class LineEditNoCursor : public QLineEdit {
+  Q_OBJECT
+ public:
+  LineEditNoCursor(QWidget* parent = nullptr);
 
-    void keyPressEvent(QKeyEvent* e) override;
+  void keyPressEvent(QKeyEvent* e) override;
 };
 
-#endif // WIDGETS_LINEEDITNOCURSOR_H
+#endif  // WIDGETS_LINEEDITNOCURSOR_H
