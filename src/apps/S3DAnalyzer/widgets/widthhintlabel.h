@@ -1,5 +1,5 @@
-#ifndef WIDGETS_CONVERGENCEINDICATORWIDGET_H
-#define WIDGETS_CONVERGENCEINDICATORWIDGET_H
+#ifndef S3D_ANALYZER_WIDGETS_CONVERGENCEINDICATORWIDGET_H
+#define S3D_ANALYZER_WIDGETS_CONVERGENCEINDICATORWIDGET_H
 
 #include <QLabel>
 
@@ -19,7 +19,7 @@ class WidthHintLabel : public QLabel {
     NB_STATES
   };
 
-  WidthHintLabel(QWidget* parent = nullptr);
+  explicit WidthHintLabel(QWidget* parent = nullptr);
 
   void setState(State state);
   void updateHint(float ratio);
@@ -33,4 +33,4 @@ class WidthHintLabel : public QLabel {
   std::unique_ptr<QPixmap> m_pixmaps[static_cast<int>(State::NB_STATES)];
 };
 
-#endif  // WIDGETS_CONVERGENCEINDICATORWIDGET_H
+#endif  // S3D_ANALYZER_WIDGETS_CONVERGENCEINDICATORWIDGET_H

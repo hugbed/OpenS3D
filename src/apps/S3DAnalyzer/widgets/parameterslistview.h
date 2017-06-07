@@ -1,5 +1,5 @@
-#ifndef WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
-#define WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
+#ifndef S3D_ANALYZER_WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
+#define S3D_ANALYZER_WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
 
 #include <QHBoxLayout>
 #include <QWidget>
@@ -15,7 +15,7 @@ class ParametersListView : public QWidget {
   using LabelSymbolPair = std::pair<QString, QString>;
 
   explicit ParametersListView(QWidget* parent = nullptr);
-  ~ParametersListView();
+  ~ParametersListView() override;
   void updateUI();
 
  signals:
@@ -30,4 +30,4 @@ class ParametersListView : public QWidget {
   QHBoxLayout* m_layout;
 };
 
-#endif  // WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
+#endif  // S3D_ANALYZER_WIDGETS_ALIGNMENTPARAMETERSWIDGET_H

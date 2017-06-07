@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/photo.jpg</file>
         <file>shaders/texture.frag</file>
         <file>shaders/texture.vert</file>
         <file>images/left.jpg</file>

@@ -1,5 +1,5 @@
-#ifndef RENDERING_OPENGLWINDOW_H
-#define RENDERING_OPENGLWINDOW_H
+#ifndef S3D_ANALYZER_RENDERING_OPENGLWINDOW_H
+#define S3D_ANALYZER_RENDERING_OPENGLWINDOW_H
 
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions>
@@ -14,9 +14,9 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions {
 
   // OpenGL Events
  public:
-  void initializeGL();
-  void resizeGL(int width, int height);
-  void paintGL();
+  void initializeGL() override;
+  void resizeGL(int width, int height) override;
+  void paintGL() override;
  protected slots:
   void teardownGL();
 
@@ -36,4 +36,4 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions {
   void printVersionInformation();
 };
 
-#endif  // RENDERING_OPENGLWINDOW_H
+#endif  // S3D_ANALYZER_RENDERING_OPENGLWINDOW_H

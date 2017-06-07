@@ -77,7 +77,7 @@ void OpenGLWidget::setHorizontalShift(float shift) {
 }
 
 void OpenGLWidget::toggleFeatures(bool display) {
-  m_showOverlay = !m_showOverlay | display;
+  m_showOverlay = !m_showOverlay || display;
   update();
 }
 
@@ -119,8 +119,9 @@ void OpenGLWidget::initEntities() {
 
   m_currentMode = DisplayMode::Anaglyph;
 
-  if (m_textures.empty() || m_textures[0] == nullptr)
+  if (m_textures.empty() || m_textures[0] == nullptr) {
     return;
+  }
 
   float w = m_textures[0]->width();
   float h = m_textures[0]->height();

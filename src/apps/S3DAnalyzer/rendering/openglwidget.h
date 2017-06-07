@@ -1,5 +1,5 @@
-#ifndef RENDERING_OPENGLWIDGET_H
-#define RENDERING_OPENGLWIDGET_H
+#ifndef S3D_ANALYZER_RENDERING_OPENGLWIDGET_H
+#define S3D_ANALYZER_RENDERING_OPENGLWIDGET_H
 
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
@@ -13,8 +13,8 @@
 #include "entity/stereo/rectangleentity.h"
 #include "entity/stereo/stereoimageentity.h"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 class QOpenGLShaderProgram;
 
@@ -30,7 +30,7 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     NB_DISPLAY_MODES = 6
   };
 
-  ~OpenGLWidget();
+  ~OpenGLWidget() override;
   explicit OpenGLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
 
   void initializeGL() override;
@@ -63,6 +63,8 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
   std::vector<std::unique_ptr<QOpenGLTexture>> m_textures;
   DisplayMode m_currentMode;
+
+  // todo: such arrays may lead to out of bounds
   std::unique_ptr<StereoImageEntity>
       m_stereoEntities[static_cast<int>(DisplayMode::NB_DISPLAY_MODES)];
 
@@ -70,4 +72,4 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
   std::unique_ptr<BillboardIntensityEntity> m_overlay;
 };
 
-#endif  // RENDERING_OPENGLWIDGET_H
+#endif  // S3D_ANALYZER_RENDERING_OPENGLWIDGET_H

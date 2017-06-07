@@ -1,5 +1,5 @@
-#ifndef S3D_FEATURES_FEATURE_DETECTOR_H
-#define S3D_FEATURES_FEATURE_DETECTOR_H
+#ifndef S3D_FEATURES_MATCH_FINDER_H
+#define S3D_FEATURES_MATCH_FINDER_H
 
 #include "s3d/image/image.h"
 
@@ -19,4 +19,4 @@ class MatchFinder {
 
 }  // namespace s3d
 
-#endif  // S3D_FEATURES_FEATURE_DETECTOR_H
+#endif  // S3D_FEATURES_MATCH_FINDER_H

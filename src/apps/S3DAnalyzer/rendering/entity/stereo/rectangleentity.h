@@ -1,5 +1,7 @@
-#ifndef RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H
-#define RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H
+#ifndef S3D_ANALYZER_RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H
+#define S3D_ANALYZER_RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H
+
+#include "stereoimageentity.h"
 
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -9,7 +11,6 @@
 
 #include "rendering/vertex.h"
 #include "rendering/entity/entity.h"
-#include "stereoimageentity.h"
 
 #include <memory>
 
@@ -57,4 +58,4 @@ class RectangleEntity : public StereoImageEntity, QOpenGLFunctions {
   std::vector<Vertex> m_vertices;
 };
 
-#endif  // RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H
+#endif  // S3D_ANALYZER_RENDERING_ENTITY_STEREO_RECTANGLEENTITY_H

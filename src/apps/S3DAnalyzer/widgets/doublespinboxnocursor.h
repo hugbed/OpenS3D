@@ -1,5 +1,5 @@
-#ifndef WIDGETS_HITWIDGET_H
-#define WIDGETS_HITWIDGET_H
+#ifndef S3D_ANALYZER_WIDGETS_HITWIDGET_H
+#define S3D_ANALYZER_WIDGETS_HITWIDGET_H
 
 #include <QDoubleSpinBox>
 
@@ -9,4 +9,4 @@ class DoubleSpinBoxNoCursor : public QDoubleSpinBox {
   explicit DoubleSpinBoxNoCursor(QWidget* parent = nullptr);
 };
 
-#endif  // WIDGETS_HITWIDGET_H
+#endif  // S3D_ANALYZER_WIDGETS_HITWIDGET_H

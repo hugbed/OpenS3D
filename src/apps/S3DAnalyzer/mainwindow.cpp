@@ -55,8 +55,6 @@ MainWindow::~MainWindow() {
   delete ui;
 }
 
-std::mt19937 gen{};
-
 void MainWindow::computeAndUpdate() {
   DepthAnalyzer analyzer;
   analyzer.analyze(m_imageLeft, m_imageRight);

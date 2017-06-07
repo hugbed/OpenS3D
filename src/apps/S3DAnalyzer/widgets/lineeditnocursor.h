@@ -1,14 +1,14 @@
-#ifndef WIDGETS_LINEEDITNOCURSOR_H
-#define WIDGETS_LINEEDITNOCURSOR_H
+#ifndef S3D_ANALYZER_WIDGETS_LINEEDITNOCURSOR_H
+#define S3D_ANALYZER_WIDGETS_LINEEDITNOCURSOR_H
 
 #include <QLineEdit>
 
 class LineEditNoCursor : public QLineEdit {
   Q_OBJECT
  public:
-  LineEditNoCursor(QWidget* parent = nullptr);
+  explicit LineEditNoCursor(QWidget* parent = nullptr);
 
   void keyPressEvent(QKeyEvent* e) override;
 };
 
-#endif  // WIDGETS_LINEEDITNOCURSOR_H
+#endif  // S3D_ANALYZER_WIDGETS_LINEEDITNOCURSOR_H

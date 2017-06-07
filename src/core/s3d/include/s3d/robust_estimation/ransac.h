@@ -6,8 +6,8 @@
 #include "s3d/utilities/rand.h"
 #include "s3d/utilities/containers.h"
 
-#include <stdexcept>
 #include <cassert>
+#include <stdexcept>
 #include <memory>
 
 namespace s3d {

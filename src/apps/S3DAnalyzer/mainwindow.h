@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef S3D_ANALYZER_MAINWINDOW_H
+#define S3D_ANALYZER_MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QImage>
@@ -9,14 +9,14 @@
 // todo: use forwarding everywhere possible
 namespace Ui {
 class MainWindow;
-}
+}  // namespace Ui
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
  public:
-  explicit MainWindow(QWidget* parent = 0);
-  ~MainWindow();
+  explicit MainWindow(QWidget* parent = nullptr);
+  ~MainWindow() override;
 
   void computeAndUpdate();
   void updateConvergenceHint(float minDisparity, float maxDisparity);
@@ -31,4 +31,4 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow* ui;
 };
 
-#endif  // MAINWINDOW_H
+#endif  // S3D_ANALYZER_MAINWINDOW_H

@@ -1,5 +1,5 @@
-#ifndef WIDGETS_PARAMETERWIDGET_H
-#define WIDGETS_PARAMETERWIDGET_H
+#ifndef S3D_ANALYZER_WIDGETS_PARAMETERWIDGET_H
+#define S3D_ANALYZER_WIDGETS_PARAMETERWIDGET_H
 
 #include <QLabel>
 #include <QPushButton>
@@ -26,4 +26,4 @@ class ParameterWidget : public QWidget {
   QString m_unitSymbol{""};
 };
 
-#endif  // WIDGETS_PARAMETERWIDGET_H
+#endif  // S3D_ANALYZER_WIDGETS_PARAMETERWIDGET_H

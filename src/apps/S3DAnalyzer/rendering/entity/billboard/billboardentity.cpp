@@ -10,8 +10,7 @@ BillboardEntity::BillboardEntity(const QSize& imageSize) : m_imageSize(imageSize
 
 BillboardEntity::~BillboardEntity() {
   m_object.destroy();
-  if (m_vertex.isCreated())
-    m_vertex.destroy();
+  m_vertex.destroy();
   m_program.reset();
 }
 
@@ -47,8 +46,7 @@ void BillboardEntity::createVertexArrayObject() {
 
 void BillboardEntity::releaseAll() {
   m_object.release();
-  if (m_vertex.isCreated())
-    m_vertex.release();
+  m_vertex.release();
   m_program->release();
 }
 
@@ -82,9 +80,6 @@ void BillboardEntity::clear() {
 }
 
 void BillboardEntity::draw() {
-  if (!m_vertex.isCreated())
-    return;
-
   // Render using our shader
   m_program->bind();
   {

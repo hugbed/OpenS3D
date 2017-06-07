@@ -59,4 +59,4 @@ Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
       (-x.ch_y), 1, (-x.f_a_x);
   return F;
 }
-}
+}  // namespace s3d

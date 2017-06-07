@@ -1,5 +1,5 @@
-#ifndef S3DCV_UTILITIES_CV_H
-#define S3DCV_UTILITIES_CV_H
+#ifndef S3D_CV_UTILITIES_CV_H
+#define S3D_CV_UTILITIES_CV_H
 
 #include "s3d/image/image.h"
 
@@ -24,4 +24,4 @@ inline cv::Mat image2cv(const Image<uint8_t>& img) {
 
 }  // namespace s3d
 
-#endif  // S3DCV_UTILITIES_CV_H
+#endif  // S3D_CV_UTILITIES_CV_H

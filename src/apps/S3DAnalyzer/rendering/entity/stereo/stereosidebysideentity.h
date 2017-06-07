@@ -1,7 +1,8 @@
-#ifndef RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
-#define RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
+#ifndef S3D_ANALYZER_RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
+#define S3D_ANALYZER_RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
 
 #include "stereoimageentity.h"
+
 #include "rectangleentity.h"
 
 // could have a flag keep aspect ratio (true or false)
@@ -22,4 +23,4 @@ class StereoSideBySideEntity : public StereoImageEntity {
   RectangleEntity m_rectangles[2];
 };
 
-#endif  // RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
+#endif  // S3D_ANALYZER_RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H
