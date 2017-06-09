@@ -4,6 +4,8 @@ project(FFmpegDecoding)
 
 find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL REQUIRED) # missing AVDEVICE
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+
 if(FFMPEG_FOUND)
   include_directories(${FFMPEG_INCLUDE_DIRS})
 else()
