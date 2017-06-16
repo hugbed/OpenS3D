@@ -13,10 +13,9 @@ void avformat::open_input(AVFormatContext** ps,
 }
 
 UniquePtr<AVFormatContext> avformat::open_input(const char* url,
-                          AVInputFormat* fmt,
-                          AVDictionary** options) {
-
-  AVFormatContext *ps{nullptr};
+                                                AVInputFormat* fmt,
+                                                AVDictionary** options) {
+  AVFormatContext* ps{nullptr};
   /* open input file, and allocate format context */
   if (avformat_open_input(&ps, url, fmt, options) < 0) {
     throw FFmpegException(std::string("Could not open source file ") + std::string(url));
@@ -50,8 +49,7 @@ int avformat::find_best_stream(AVFormatContext* formatContext,
   return ret;
 }
 
-bool avformat::read_frame(AVFormatContext *s, AVPacket *pkt)
-{
+bool avformat::read_frame(AVFormatContext* s, AVPacket* pkt) {
   return av_read_frame(s, pkt) >= 0;
 }
 
@@ -94,13 +92,13 @@ attribute_deprecated int avcodec::decode_video2(AVCodecContext* avctx,
                                                 const AVPacket* avpkt) {
   int ret = avcodec_decode_video2(avctx, picture, got_picture_ptr, avpkt);
   if (ret < 0) {
-    throw FFmpegException(std::string("Error decoding video frame: ") + std::string(av_err2str(ret)));
+    throw FFmpegException(std::string("Error decoding video frame: ") +
+                          std::string(av_err2str(ret)));
   }
   return ret;
 }
 
-bool avcodec::send_packet(AVCodecContext *avctx, const AVPacket *avpkt, bool* inputBufferFull)
-{
+bool avcodec::send_packet(AVCodecContext* avctx, const AVPacket* avpkt, bool* inputBufferFull) {
   int res = avcodec_send_packet(avctx, avpkt);
   if (res < 0 && res != AVERROR_EOF) {
     throw FFmpegException("Cannot send packet to decoder: " + std::string(av_err2str(res)));
@@ -110,8 +108,7 @@ bool avcodec::send_packet(AVCodecContext *avctx, const AVPacket *avpkt, bool* in
   return res != AVERROR_EOF;
 }
 
-bool avcodec::receive_frame(AVCodecContext *avctx, AVFrame *frame, bool* receiveQueueEmpty)
-{
+bool avcodec::receive_frame(AVCodecContext* avctx, AVFrame* frame, bool* receiveQueueEmpty) {
   int res = avcodec_receive_frame(avctx, frame);
   if (res < 0 && res != AVERROR_EOF && res != AVERROR(EAGAIN)) {
     throw FFmpegException("Cannot receive packet from decoder: " + std::string(av_err2str(res)));

@@ -1,8 +1,21 @@
 #include "Decoder.h"
 
+#include <cassert>
+
 Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext} {
   streamIndex_ = openCodexContext(codecContext_, formatContext, AVMEDIA_TYPE_VIDEO);
   frame_ = ffmpeg::UniquePtr<AVFrame>(ffmpeg::avframe::alloc());
+
+  // allocate output buffer
+  outputBufferSize_ =
+      ffmpeg::imgutils::image_alloc(outputBuffer_, outputBufferLineSize_, codecContext_->width,
+                                    codecContext_->height, codecContext_->pix_fmt, 1);
+}
+
+Decoder::~Decoder() {
+  if (outputBuffer_[0] != nullptr) {
+    av_freep(&outputBuffer_[0]);
+  }
 }
 
 bool Decoder::sendPacketForDecoding(AVPacket* packet) {
@@ -22,9 +35,16 @@ bool Decoder::receiveDecodedFrame(AVFrame** frame) {
   return !receiveQueueWasEmpty;
 }
 
-size_t Decoder::frameBufferSize() {
-  return av_image_get_buffer_size(codecContext_->pix_fmt, codecContext_->width,
-                                  codecContext_->height, 1);
+void Decoder::copyFrameData(AVFrame* frame, std::vector<uint8_t>* out) {
+  // need to reallocate a frame for different frame properties
+  assert(frame->height == codecContext_->height && frame->width == codecContext_->width &&
+         frame->format == codecContext_->pix_fmt);
+
+  // necessary, to remove alignment from raw frame
+  av_image_copy(&outputBuffer_[0], outputBufferLineSize_, const_cast<const uint8_t**>(frame->data),
+                frame->linesize, codecContext_->pix_fmt, frame->width, frame->height);
+  out->resize(outputBufferSize_);
+  std::copy(outputBuffer_[0], outputBuffer_[0] + outputBufferSize_, std::begin(*out));
 }
 
 bool Decoder::endOfFileReached() {

@@ -54,8 +54,8 @@ void open_input(AVFormatContext** ps,
                 AVDictionary** options = nullptr);
 
 UniquePtr<AVFormatContext> open_input(const char* url,
-                                  AVInputFormat* fmt = nullptr,
-                                  AVDictionary** options = nullptr);
+                                      AVInputFormat* fmt = nullptr,
+                                      AVDictionary** options = nullptr);
 
 void find_stream_info(AVFormatContext* ic, AVDictionary** options = nullptr);
 

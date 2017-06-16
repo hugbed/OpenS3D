@@ -50,4 +50,4 @@ class BigDecoder {
   int video_frame_count{0};
 };
 
-#endif //PROJECT_BIGDECODER_H
+#endif  // PROJECT_BIGDECODER_H

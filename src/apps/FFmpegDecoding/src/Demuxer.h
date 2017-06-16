@@ -15,6 +15,8 @@ class Demuxer {
 
   std::unique_ptr<Decoder> createDecoder();
 
+  AVFormatContext* getFormatContext() { return formatContext_.get(); }
+
   // seeking functions
  private:
   bool endOfFileReached_{false};

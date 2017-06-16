@@ -20,4 +20,3 @@ bool Demuxer::readFrame(AVPacket** packet) {
 std::unique_ptr<Decoder> Demuxer::createDecoder() {
   return std::make_unique<Decoder>(formatContext_.get());
 }
-
