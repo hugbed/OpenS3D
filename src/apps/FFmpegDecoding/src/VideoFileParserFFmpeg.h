@@ -7,6 +7,10 @@
 #include <vector>
 
 class Decoder;
+class Scaler;
+
+// todo: decoder->createFrameScaler() // de-align, YUV to RGB
+//class FrameScaler;
 
 class VideoFileParserFFmpeg {
  public:
@@ -18,6 +22,7 @@ class VideoFileParserFFmpeg {
  private:
   Demuxer demuxer_;
   std::unique_ptr<Decoder> decoder_;
+  std::unique_ptr<Scaler> scaler_;
 };
 
 #endif  // PROJECT_VIDEOFILEPARSERFFMPEG_H

@@ -43,6 +43,16 @@ struct AVDeleter<FILE> {
   void operator()(FILE* p) { fclose(p); }
 };
 
+template <>
+struct AVDeleter<uint8_t> {
+  void operator()(uint8_t* p) { av_freep(&p); }
+};
+
+template <>
+struct AVDeleter<SwsContext> {
+  void operator()(SwsContext* p) { sws_freeContext(p); }
+};
+
 template <class T>
 using UniquePtr = std::unique_ptr<T, AVDeleter<T>>;
 

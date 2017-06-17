@@ -1,10 +1,12 @@
 #include "VideoFileParserFFmpeg.h"
 
 #include "Decoder.h"
+#include "Scaler.h"
 
 VideoFileParserFFmpeg::VideoFileParserFFmpeg(const std::string& inputFilename)
     : demuxer_(inputFilename) {
   decoder_ = demuxer_.createDecoder();
+  scaler_ = decoder_->createScaler(AV_PIX_FMT_RGB24);
 }
 
 VideoFileParserFFmpeg::~VideoFileParserFFmpeg() = default;
@@ -27,9 +29,9 @@ bool VideoFileParserFFmpeg::GetNextFrame(std::vector<uint8_t>& imageData) {
     frameReceived = decoder_->receiveDecodedFrame(&frame);
   }
 
-  // copy received frame to imageData vector
+  // copy received frame (converted to RGB24) to imageData vector
   if (frameReceived) {
-    decoder_->copyFrameData(frame, &imageData);
+    scaler_->scaleFrame(frame, &imageData);
   }
 
   return !decoder_->endOfFileReached();

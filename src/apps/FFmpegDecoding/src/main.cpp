@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 
   // todo: get format from VideofileParserFFmpeg
   std::cout << "Play the output video file with the command:" << std::endl
-            << "ffplay -f rawvideo -pixel_format yuv422p -video_size 1920x1080 -framerate 60 "
+            << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 60 "
             << video_dst_filename << std::endl;
 
   return 0;

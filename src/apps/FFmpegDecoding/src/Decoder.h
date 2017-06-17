@@ -6,10 +6,11 @@
 
 #include "ffmpeg_utils.h"
 
+class Scaler;
+
 class Decoder {
  public:
   explicit Decoder(AVFormatContext* formatContext);
-  ~Decoder();
 
   bool sendPacketForDecoding(AVPacket* packet);
 
@@ -18,6 +19,8 @@ class Decoder {
   bool endOfFileReached();
 
   void copyFrameData(AVFrame*, std::vector<uint8_t>* data);
+
+  std::unique_ptr<Scaler> createScaler(enum AVPixelFormat dstFormat);
 
  private:
   static int openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
@@ -32,9 +35,12 @@ class Decoder {
   AVFormatContext* formatContext_;  // no ownership
   ffmpeg::UniquePtr<AVFrame> frame_;
 
-  // output buffer (this is not very clean to have here...)
+  // output buffer (is this the right place to put this?)
+  // could have a FrameScaler that takes the codecContext has constructor param
+  // to remove alignment and convert to RGB
   int outputBufferSize_{0};
   uint8_t* outputBuffer_[4]{nullptr};
+  ffmpeg::UniquePtr<uint8_t> outputBufferPtr_{nullptr};
   int outputBufferLineSize_[4];
 };
 

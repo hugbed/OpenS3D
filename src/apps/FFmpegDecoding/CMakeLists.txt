@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 
 project(FFmpegDecoding)
 
-find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL REQUIRED) # missing AVDEVICE
+find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL REQUIRED SWSCALE)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
@@ -19,4 +19,4 @@ source_group("Source Files" FILES ${SRC_FILES})
 
 # build target
 add_executable(${PROJECT_NAME} ${SRC_FILES})
-target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES} ${SWSCALE_LIBRARIES})

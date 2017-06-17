@@ -1,5 +1,7 @@
 #include "Decoder.h"
 
+#include "Scaler.h"
+
 #include <cassert>
 
 Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext} {
@@ -10,12 +12,9 @@ Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext}
   outputBufferSize_ =
       ffmpeg::imgutils::image_alloc(outputBuffer_, outputBufferLineSize_, codecContext_->width,
                                     codecContext_->height, codecContext_->pix_fmt, 1);
-}
 
-Decoder::~Decoder() {
-  if (outputBuffer_[0] != nullptr) {
-    av_freep(&outputBuffer_[0]);
-  }
+  // transfer ownership, will call av_freep(&outputBuffer_[0])
+  outputBufferPtr_ = ffmpeg::UniquePtr<uint8_t>(outputBuffer_[0]);
 }
 
 bool Decoder::sendPacketForDecoding(AVPacket* packet) {
@@ -44,7 +43,7 @@ void Decoder::copyFrameData(AVFrame* frame, std::vector<uint8_t>* out) {
   av_image_copy(&outputBuffer_[0], outputBufferLineSize_, const_cast<const uint8_t**>(frame->data),
                 frame->linesize, codecContext_->pix_fmt, frame->width, frame->height);
   out->resize(outputBufferSize_);
-  std::copy(outputBuffer_[0], outputBuffer_[0] + outputBufferSize_, std::begin(*out));
+  std::copy(outputBufferPtr_.get(), outputBufferPtr_.get() + outputBufferSize_, std::begin(*out));
 }
 
 bool Decoder::endOfFileReached() {
@@ -68,4 +67,8 @@ int Decoder::openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
   avcodec::open2(codecContext.get(), codec, nullptr);
 
   return stream_index;
+}
+
+std::unique_ptr<Scaler> Decoder::createScaler(enum AVPixelFormat dstFormat) {
+  return std::make_unique<Scaler>(codecContext_.get(), dstFormat);
 }
