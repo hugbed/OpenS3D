@@ -1,6 +1,6 @@
-#include "Demuxer.h"
+#include "s3d/video/file_parser/ffmpeg/demuxer.h"
 
-#include "Decoder.h"
+#include "s3d/video/file_parser/ffmpeg/decoder.h"
 
 Demuxer::Demuxer(const std::string& inputFilename) {
   using namespace ffmpeg;

@@ -1,4 +1,4 @@
-#include "ffmpeg_utils.h"
+#include "s3d/video/file_parser/ffmpeg/ffmpeg_utils.h"
 
 namespace ffmpeg {
 
@@ -92,11 +92,9 @@ attribute_deprecated int avcodec::decode_video2(AVCodecContext* avctx,
                                                 const AVPacket* avpkt) {
   int ret = avcodec_decode_video2(avctx, picture, got_picture_ptr, avpkt);
   if (ret < 0) {
-
     char errBuff[AV_ERROR_MAX_STRING_SIZE];
     av_make_error_string(errBuff, AV_ERROR_MAX_STRING_SIZE, ret);
-    throw FFmpegException(std::string("Error decoding video frame: ") +
-                          errBuff);
+    throw FFmpegException(std::string("Error decoding video frame: ") + errBuff);
   }
   return ret;
 }

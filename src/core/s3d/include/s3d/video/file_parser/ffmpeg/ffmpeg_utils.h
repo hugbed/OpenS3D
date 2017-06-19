@@ -1,5 +1,5 @@
-#ifndef PROJECT_FFMPEG_UTILS_H
-#define PROJECT_FFMPEG_UTILS_H
+#ifndef S3D_VIDEO_FILE_PARSER_FFMPEG_FFMPEG_UTILS_H
+#define S3D_VIDEO_FILE_PARSER_FFMPEG_FFMPEG_UTILS_H
 
 extern "C" {
 #include <cstdint>
@@ -126,4 +126,4 @@ void init(AVPacket* pkt);
 
 }  // namespace ffmpeg
 
-#endif  // PROJECT_FFMPEG_UTILS_H
+#endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_FFMPEG_UTILS_H

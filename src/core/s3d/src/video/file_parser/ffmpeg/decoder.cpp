@@ -1,6 +1,6 @@
-#include "Decoder.h"
+#include "s3d/video/file_parser/ffmpeg/decoder.h"
 
-#include "Scaler.h"
+#include "s3d/video/file_parser/ffmpeg/scaler.h"
 
 #include <cassert>
 
@@ -72,6 +72,12 @@ int Decoder::openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
 std::unique_ptr<Scaler> Decoder::createScaler(enum AVPixelFormat dstFormat) {
   return std::make_unique<Scaler>(codecContext_.get(), dstFormat);
 }
-Size Decoder::getImageSize() {
-  return Size(frame_->width, frame_->height);
+Size Decoder::getImageSize() const {
+  return Size(codecContext_->width, codecContext_->height);
+}
+
+float Decoder::getFrameRate() const {
+  // todo: this may return 0. estimate from bitrate?
+  return static_cast<float>(codecContext_->framerate.num) /
+         static_cast<float>(codecContext_->framerate.den);
 }

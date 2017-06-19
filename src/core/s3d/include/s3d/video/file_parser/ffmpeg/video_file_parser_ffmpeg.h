@@ -1,9 +1,9 @@
-#ifndef PROJECT_VIDEOFILEPARSERFFMPEG_H
-#define PROJECT_VIDEOFILEPARSERFFMPEG_H
+#ifndef S3D_VIDEO_FILE_PARSER_FFMPEG_VIDEO_FILE_PARSER_FFMPEG_H
+#define S3D_VIDEO_FILE_PARSER_FFMPEG_VIDEO_FILE_PARSER_FFMPEG_H
 
 #include <s3d/video/file_parser/video_file_parser.h>
 
-#include "Demuxer.h"
+#include "demuxer.h"
 
 #include <string>
 #include <vector>
@@ -30,4 +30,4 @@ class VideoFileParserFFmpeg : public VideoFileParser {
   std::unique_ptr<Scaler> scaler_;
 };
 
-#endif  // PROJECT_VIDEOFILEPARSERFFMPEG_H
+#endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_VIDEO_FILE_PARSER_FFMPEG_H

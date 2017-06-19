@@ -7,54 +7,27 @@
  * @example demuxing_decoding.c
  */
 
-#include "VideoFileParserFFmpeg.h"
-
-#include <s3d/video/capture/file_video_capture_device.h>
+#include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 
 #include <memory>
 #include <fstream>
 #include <thread>
 
-class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDevice {
- public:
-  FileVideoCaptureDeviceFFmpeg(const std::string& filename)
-      : filename_(filename), FileVideoCaptureDevice(filename) {}
-
-  gsl::owner<FileVideoCaptureDeviceFFmpeg*> clone() const override {
-    return new FileVideoCaptureDeviceFFmpeg(filename_);
-  }
-
-  std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath,
-                                                      VideoCaptureFormat* format) override {
-    auto fileParser =
-        std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath));
-
-    if (!fileParser->Initialize(format)) {
-      fileParser.reset();
-    }
-
-    return fileParser;
-  }
-
- private:
-  std::string filename_;
-};
-
 class FFmpegClient : public VideoCaptureDevice::Client {
  public:
   FFmpegClient(const std::string& dstFilename)
-    : frame_{}
-    , dstFilename_{dstFilename}
-    , dstFile_{dstFilename, std::ios::binary} {}
+      : frame_{}, dstFilename_{dstFilename}, dstFile_{dstFilename, std::ios::binary} {}
 
   VideoCaptureDevice::Client* clone() const override { return new FFmpegClient{dstFilename_}; }
 
  public:
-  void OnIncomingCapturedData(const Images& images, const VideoCaptureFormat& frameFormat) override {
+  void OnIncomingCapturedData(const Images& images,
+                              const VideoCaptureFormat& frameFormat) override {
     std::copy(std::begin(images[0]), std::end(images[0]), std::ostreambuf_iterator<char>{dstFile_});
     std::cout << "decoded frame " << ++frameCount_ << std::endl;
   }
-private:
+
+ private:
   int frameCount_{0};
   std::string dstFilename_;
   std::vector<uint8_t> frame_;
@@ -85,11 +58,11 @@ int main(int argc, char** argv) {
 
   // create client
   std::unique_ptr<VideoCaptureDevice::Client> client =
-    std::make_unique<FFmpegClient>(video_dst_filename);
+      std::make_unique<FFmpegClient>(video_dst_filename);
 
   // create video capture device
   std::unique_ptr<VideoCaptureDevice> captureDevice =
-    std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
+      std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
 
   // start "capture"
   captureDevice->AllocateAndStart({}, std::move(client));

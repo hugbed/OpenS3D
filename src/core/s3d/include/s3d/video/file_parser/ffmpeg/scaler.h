@@ -1,5 +1,5 @@
-#ifndef PROJECT_SCALER_H
-#define PROJECT_SCALER_H
+#ifndef S3D_VIDEO_FILE_PARSER_FFMPEG_SCALER_H
+#define S3D_VIDEO_FILE_PARSER_FFMPEG_SCALER_H
 
 #include "ffmpeg_utils.h"
 
@@ -24,4 +24,4 @@ class Scaler {
   ffmpeg::UniquePtr<uint8_t> dstBufferPtr_{nullptr};
 };
 
-#endif  // PROJECT_SCALER_H
+#endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_SCALER_H

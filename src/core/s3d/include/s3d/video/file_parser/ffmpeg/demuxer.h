@@ -1,5 +1,5 @@
-#ifndef PROJECT_DEMUXER_H
-#define PROJECT_DEMUXER_H
+#ifndef S3D_VIDEO_FILE_PARSER_FFMPEG_DEMUXER_H
+#define S3D_VIDEO_FILE_PARSER_FFMPEG_DEMUXER_H
 
 #include "ffmpeg_utils.h"
 
@@ -22,4 +22,4 @@ class Demuxer {
   AVPacket packet_;
 };
 
-#endif  // PROJECT_DEMUXER_H
+#endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_DEMUXER_H

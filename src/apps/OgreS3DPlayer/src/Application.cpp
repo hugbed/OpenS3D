@@ -6,7 +6,7 @@
 #include "video_texture/TextureUpdateClient.hpp"
 
 #include "s3d/video/capture/video_capture_device_decklink.h"
-#include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 
 //-------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 void Application::createScene() {
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 30.0f, VideoPixelFormat::BGR, true);
+  VideoCaptureFormat format({1280, 720}, 30.0f, VideoPixelFormat::BGR, false);
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -58,7 +58,7 @@ void Application::createScene() {
         ->attachObject(videoPlayerEntity_.get());
   } else {
     videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-        new FileVideoCaptureDevice("/home/jon/Videos/current-left.yuv"));
+        new FileVideoCaptureDeviceFFmpeg("/home/bedh2102/Videos/Portal2WorldRecord.mp4"));
 
     auto videoMaterial = DynamicTexture::createImageMaterial("VideoMaterial", textureNameLeft);
     videoPlayerEntity_ =

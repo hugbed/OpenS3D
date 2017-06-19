@@ -1,4 +1,4 @@
-#include "Scaler.h"
+#include "s3d/video/file_parser/ffmpeg/scaler.h"
 
 Scaler::Scaler(AVCodecContext* codecContext, enum AVPixelFormat dstFormat)
     : codecContext_(codecContext) {

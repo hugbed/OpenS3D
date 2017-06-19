@@ -1,5 +1,5 @@
-#ifndef PROJECT_DECODER_H
-#define PROJECT_DECODER_H
+#ifndef S3D_VIDEO_FILE_PARSER_FFMPEG_DECODER_H
+#define S3D_VIDEO_FILE_PARSER_FFMPEG_DECODER_H
 
 #include "ffmpeg_utils.h"
 
@@ -24,7 +24,9 @@ class Decoder {
 
   std::unique_ptr<Scaler> createScaler(enum AVPixelFormat dstFormat);
 
-  Size getImageSize();
+  Size getImageSize() const;
+
+  float getFrameRate() const;
 
  private:
   static int openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
@@ -39,13 +41,11 @@ class Decoder {
   AVFormatContext* formatContext_;  // no ownership
   ffmpeg::UniquePtr<AVFrame> frame_;
 
-  // output buffer (is this the right place to put this?)
-  // could have a FrameScaler that takes the codecContext has constructor param
-  // to remove alignment and convert to RGB
+  // output buffer
   int outputBufferSize_{0};
   uint8_t* outputBuffer_[4]{nullptr};
   ffmpeg::UniquePtr<uint8_t> outputBufferPtr_{nullptr};
   int outputBufferLineSize_[4];
 };
 
-#endif  // PROJECT_DECODER_H
+#endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_DECODER_H
