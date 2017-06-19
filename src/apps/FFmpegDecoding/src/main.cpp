@@ -42,13 +42,23 @@ class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDevice {
 
 class FFmpegClient : public VideoCaptureDevice::Client {
  public:
- private:
-  VideoCaptureDevice::Client* clone() const override { return new FFmpegClient; }
+  FFmpegClient(const std::string& dstFilename)
+    : frame_{}
+    , dstFilename_{dstFilename}
+    , dstFile_{dstFilename, std::ios::binary} {}
+
+  VideoCaptureDevice::Client* clone() const override { return new FFmpegClient{dstFilename_}; }
 
  public:
-  void OnIncomingCapturedData(const Images& data, const VideoCaptureFormat& frameFormat) override {
-    std::cout << "Hello!" << std::endl;
+  void OnIncomingCapturedData(const Images& images, const VideoCaptureFormat& frameFormat) override {
+    std::copy(std::begin(images[0]), std::end(images[0]), std::ostreambuf_iterator<char>{dstFile_});
+    std::cout << "decoded frame " << ++frameCount_ << std::endl;
   }
+private:
+  int frameCount_{0};
+  std::string dstFilename_;
+  std::vector<uint8_t> frame_;
+  std::ofstream dstFile_;
 };
 
 class BadNumberOfInputArgs : public std::runtime_error {
@@ -68,35 +78,25 @@ void checkArguments(int argc, char** argv) {
   }
 }
 
-// todo: have 1 bool/condition variable per mutex (currently 1 per producer I think)
-
 int main(int argc, char** argv) {
   checkArguments(argc, argv);
   const char* src_filename = argv[1];
   const char* video_dst_filename = argv[2];
 
-  //  VideoFileParserFFmpeg parser(src_filename);
-  //
-  //  int frameCount{1};
-  //  std::vector<uint8_t> frame;
-  //  std::ofstream dstFile{video_dst_filename, std::ios::binary};
-  //  while (parser.GetNextFrame(frame)) {
-  //    std::copy(std::begin(frame), std::end(frame), std::ostreambuf_iterator<char>{dstFile});
-  //    std::cout << "decoded frame " << frameCount++ << std::endl;
-  //  }
-  //
-  //  // todo: get format from VideofileParserFFmpeg
-  //  std::cout << "Play the output video file with the command:" << std::endl
-  //            << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 60 "
-  //            << video_dst_filename << std::endl;
+  // create client
+  std::unique_ptr<VideoCaptureDevice::Client> client =
+    std::make_unique<FFmpegClient>(video_dst_filename);
 
-  std::unique_ptr<VideoCaptureDevice::Client> client = std::make_unique<FFmpegClient>();
+  // create video capture device
   std::unique_ptr<VideoCaptureDevice> captureDevice =
-      std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
+    std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
+
+  // start "capture"
   captureDevice->AllocateAndStart({}, std::move(client));
 
-  captureDevice->StopAndDeAllocate();
-  captureDevice->WaitUntilDone();
+  std::cout << "Play the output video file with the command:" << std::endl
+            << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 30 "
+            << video_dst_filename << std::endl;
 
   return 0;
 }

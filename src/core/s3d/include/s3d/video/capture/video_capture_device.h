@@ -40,8 +40,6 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
 
   virtual void Resume() {}
 
-  virtual void WaitUntilDone() {}
-
   virtual void StopAndDeAllocate() = 0;
 };
 

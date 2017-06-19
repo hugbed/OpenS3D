@@ -25,7 +25,10 @@ gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice::clone() const {
   return new FileVideoCaptureDevice(filePath_);
 }
 
-FileVideoCaptureDevice::~FileVideoCaptureDevice() = default;
+FileVideoCaptureDevice::~FileVideoCaptureDevice() {
+  // todo: is this the correct behaviour?
+  WaitUntilDone();
+}
 
 void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
                                               std::unique_ptr<VideoCaptureDevice::Client> client) {
@@ -51,8 +54,10 @@ void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
 }
 
 void FileVideoCaptureDevice::WaitUntilDone() {
-  captureThread_->join();
-  captureThread_.reset();
+  if (captureThread_ != nullptr) {
+    captureThread_->join();
+    captureThread_.reset();
+  }
 }
 
 void FileVideoCaptureDevice::StopAndDeAllocate() {

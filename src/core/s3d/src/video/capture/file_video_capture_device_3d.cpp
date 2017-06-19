@@ -142,7 +142,9 @@ gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice3D::clone() const {
   return new FileVideoCaptureDevice3D(combinedPath);
 }
 
-FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() = default;
+FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() {
+  WaitUntilDone();
+}
 
 void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format,
                                                 std::unique_ptr<Client> client) {
@@ -182,7 +184,7 @@ void FileVideoCaptureDevice3D::Allocate() {
 }
 
 void FileVideoCaptureDevice3D::Start() {
-  auto captureThread = std::thread([this] {
+  captureThread_ = std::make_unique<std::thread>([this] {
     std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {producers_.first.get(),
                                                                          producers_.second.get()};
     // start thread for each producer
@@ -200,8 +202,13 @@ void FileVideoCaptureDevice3D::Start() {
       producerThread.join();
     }
   });
+}
 
-  captureThread.detach();
+void FileVideoCaptureDevice3D::WaitUntilDone() {
+  if (captureThread_ != nullptr) {
+    captureThread_->join();
+    captureThread_.reset();
+  }
 }
 
 void FileVideoCaptureDevice3D::StopAndDeAllocate() {

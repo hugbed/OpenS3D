@@ -43,7 +43,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
              std::unique_ptr<VideoFileParser> fileParser,
              std::unique_ptr<TimedLoop> timedLoop);
 
-  void WaitUntilDone() override;
+  void WaitUntilDone();
   void StopAndDeAllocate() override;
 
  protected:

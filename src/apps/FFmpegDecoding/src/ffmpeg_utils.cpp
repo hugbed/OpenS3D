@@ -92,8 +92,11 @@ attribute_deprecated int avcodec::decode_video2(AVCodecContext* avctx,
                                                 const AVPacket* avpkt) {
   int ret = avcodec_decode_video2(avctx, picture, got_picture_ptr, avpkt);
   if (ret < 0) {
+
+    char errBuff[AV_ERROR_MAX_STRING_SIZE];
+    av_make_error_string(errBuff, AV_ERROR_MAX_STRING_SIZE, ret);
     throw FFmpegException(std::string("Error decoding video frame: ") +
-                          std::string(av_err2str(ret)));
+                          errBuff);
   }
   return ret;
 }
@@ -101,7 +104,9 @@ attribute_deprecated int avcodec::decode_video2(AVCodecContext* avctx,
 bool avcodec::send_packet(AVCodecContext* avctx, const AVPacket* avpkt, bool* inputBufferFull) {
   int res = avcodec_send_packet(avctx, avpkt);
   if (res < 0 && res != AVERROR_EOF) {
-    throw FFmpegException("Cannot send packet to decoder: " + std::string(av_err2str(res)));
+    char errBuff[AV_ERROR_MAX_STRING_SIZE];
+    av_make_error_string(errBuff, AV_ERROR_MAX_STRING_SIZE, res);
+    throw FFmpegException("Cannot send packet to decoder: " + std::string(errBuff));
   }
   *inputBufferFull = (res == AVERROR(EAGAIN));
   // true if can continue, false if end of file
@@ -111,7 +116,9 @@ bool avcodec::send_packet(AVCodecContext* avctx, const AVPacket* avpkt, bool* in
 bool avcodec::receive_frame(AVCodecContext* avctx, AVFrame* frame, bool* receiveQueueEmpty) {
   int res = avcodec_receive_frame(avctx, frame);
   if (res < 0 && res != AVERROR_EOF && res != AVERROR(EAGAIN)) {
-    throw FFmpegException("Cannot receive packet from decoder: " + std::string(av_err2str(res)));
+    char errBuff[AV_ERROR_MAX_STRING_SIZE];
+    av_make_error_string(errBuff, AV_ERROR_MAX_STRING_SIZE, res);
+    throw FFmpegException("Cannot receive packet from decoder: " + std::string(errBuff));
   }
   *receiveQueueEmpty = (res == AVERROR(EAGAIN));
   // true if can continue, false if end of file

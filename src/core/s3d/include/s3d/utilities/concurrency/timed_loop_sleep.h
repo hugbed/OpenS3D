@@ -14,7 +14,6 @@ class TimedLoopSleep : public TimedLoop {
   gsl::owner<TimedLoop*> clone() const override { return new TimedLoopSleep; }
 
   void start(Client* client, std::chrono::milliseconds loopDuration) override {
-    stopLoopFlag_ = false;
     while (!stopLoopFlag_) {
       using std::chrono::high_resolution_clock;
       auto t1 = high_resolution_clock::now();
@@ -22,6 +21,8 @@ class TimedLoopSleep : public TimedLoop {
       auto dt = high_resolution_clock::now() - t1;
       std::this_thread::sleep_for(loopDuration - dt);
     }
+    // reset flag
+    stopLoopFlag_ = false;
   }
 
   // todo: unit test the value of the flag through the public methods
