@@ -18,10 +18,11 @@ gsl::owner<VideoFileParserFFmpeg*> VideoFileParserFFmpeg::clone() const {
 VideoFileParserFFmpeg::~VideoFileParserFFmpeg() = default;
 
 bool VideoFileParserFFmpeg::Initialize(VideoCaptureFormat* format) {
-  format->frameRate = 30;  // todo: hardcoded fps
+  format->frameRate = decoder_->getFrameRate();
   format->pixelFormat = VideoPixelFormat::BGR;
   format->frameSize = decoder_->getImageSize();
   format->stereo3D = false;
+
   return true;
 }
 

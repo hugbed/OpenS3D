@@ -78,6 +78,7 @@ Size Decoder::getImageSize() const {
 
 float Decoder::getFrameRate() const {
   // todo: this may return 0. estimate from bitrate?
-  return static_cast<float>(codecContext_->framerate.num) /
-         static_cast<float>(codecContext_->framerate.den);
+  auto frameRate = formatContext_->streams[streamIndex_]->r_frame_rate;
+  return static_cast<float>(frameRate.num) /
+         static_cast<float>(frameRate.den);
 }
