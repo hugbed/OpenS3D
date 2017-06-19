@@ -1,18 +1,11 @@
-// Copyright 2013 The Chromium Authors. All rights reserved.
-// Inspired by Chromium video capture interface
-// Simplified and stripped from internal base code
-
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 
 #include "s3d/utilities/file_io.h"
 #include "s3d/video/capture/video_capture_types.h"
 #include "s3d/video/compression/yuv.h"
 #include "s3d/video/video_frame.h"
 
-VideoFileParser::VideoFileParser(std::string filePath)
-    : filePath_(std::move(filePath)), frameSize_{}, currentByteIndex_{}, firstFrameIndex_{} {}
-
-RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : VideoFileParser(std::move(filePath)) {}
+RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : filePath_(std::move(filePath)) {}
 
 gsl::owner<RawUYVYFileParser*> RawUYVYFileParser::clone() const {
   return new RawUYVYFileParser(filePath_);

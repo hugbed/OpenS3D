@@ -1,10 +1,12 @@
 #ifndef PROJECT_DECODER_H
 #define PROJECT_DECODER_H
 
+#include "ffmpeg_utils.h"
+
+#include <s3d/geometry/size.h>
+
 #include <cstdint>
 #include <vector>
-
-#include "ffmpeg_utils.h"
 
 class Scaler;
 
@@ -21,6 +23,8 @@ class Decoder {
   void copyFrameData(AVFrame*, std::vector<uint8_t>* data);
 
   std::unique_ptr<Scaler> createScaler(enum AVPixelFormat dstFormat);
+
+  Size getImageSize();
 
  private:
   static int openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,

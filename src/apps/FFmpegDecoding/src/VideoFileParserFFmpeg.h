@@ -1,6 +1,8 @@
 #ifndef PROJECT_VIDEOFILEPARSERFFMPEG_H
 #define PROJECT_VIDEOFILEPARSERFFMPEG_H
 
+#include <s3d/video/file_parser/video_file_parser.h>
+
 #include "Demuxer.h"
 
 #include <string>
@@ -8,18 +10,21 @@
 
 class Decoder;
 class Scaler;
+class VideoCaptureFormat;
 
-// todo: decoder->createFrameScaler() // de-align, YUV to RGB
-//class FrameScaler;
-
-class VideoFileParserFFmpeg {
+class VideoFileParserFFmpeg : public VideoFileParser {
  public:
   explicit VideoFileParserFFmpeg(const std::string& inputFilename);
+
+  gsl::owner<VideoFileParserFFmpeg*> clone() const override;
+
   ~VideoFileParserFFmpeg();
 
-  bool GetNextFrame(std::vector<uint8_t>& imageData);
+  bool Initialize(VideoCaptureFormat* format) override;
+  bool GetNextFrame(std::vector<uint8_t>& imageData) override;
 
  private:
+  std::string filename_;
   Demuxer demuxer_;
   std::unique_ptr<Decoder> decoder_;
   std::unique_ptr<Scaler> scaler_;

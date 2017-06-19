@@ -72,3 +72,6 @@ int Decoder::openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
 std::unique_ptr<Scaler> Decoder::createScaler(enum AVPixelFormat dstFormat) {
   return std::make_unique<Scaler>(codecContext_.get(), dstFormat);
 }
+Size Decoder::getImageSize() {
+  return Size(frame_->width, frame_->height);
+}

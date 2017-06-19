@@ -6,7 +6,7 @@
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/strings.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/video/compression/yuv.h"
 
 // todo(hugbed): should use RawUYVYFileParser

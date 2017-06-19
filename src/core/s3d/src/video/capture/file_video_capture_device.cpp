@@ -3,7 +3,7 @@
 // Simplified and stripped from internal base code
 
 #include "s3d/video/capture/file_video_capture_device.h"
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/time.h"
 
@@ -50,6 +50,11 @@ void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
   StartCaptureThread();
 }
 
+void FileVideoCaptureDevice::WaitUntilDone() {
+  captureThread_->join();
+  captureThread_.reset();
+}
+
 void FileVideoCaptureDevice::StopAndDeAllocate() {
   if (captureLoop_ != nullptr) {
     captureLoop_->stop();
@@ -58,7 +63,6 @@ void FileVideoCaptureDevice::StopAndDeAllocate() {
 
 void FileVideoCaptureDevice::StartCaptureThread() {
   captureThread_ = std::make_unique<std::thread>(&FileVideoCaptureDevice::OnAllocateAndStart, this);
-  captureThread_->detach();
 }
 
 void FileVideoCaptureDevice::OnAllocateAndStart() {
