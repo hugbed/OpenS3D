@@ -16,10 +16,18 @@ class TimedLoopSleep : public TimedLoop {
   void start(Client* client, std::chrono::milliseconds loopDuration) override {
     while (!stopLoopFlag_) {
       using std::chrono::high_resolution_clock;
+
       auto t1 = high_resolution_clock::now();
       client->callback();
-      auto dt = high_resolution_clock::now() - t1;
-      std::this_thread::sleep_for(loopDuration - dt);
+      auto duration = high_resolution_clock::now() - t1;
+
+      if (std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() > 0) {
+        // sleep approximatively 3/4 of it (integer division is ok I guess)
+        std::this_thread::sleep_for(duration * 3 / 4);
+      }
+
+      // spin the rest
+      while (std::chrono::high_resolution_clock::now() - t1 <= loopDuration) {}
     }
     // reset flag
     stopLoopFlag_ = false;
