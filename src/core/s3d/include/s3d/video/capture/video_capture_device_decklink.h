@@ -31,8 +31,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   void OnIncomingCapturedData(const VideoCaptureDevice::Client::Images& images,
                               const VideoCaptureFormat& frameFormat);
 
-  void SendErrorString(const std::string& /*reason*/);
-  void SendLogString(const std::string& /*message*/);
+  VideoCaptureFormat DefaultFormat() override;
 
  private:
   std::unique_ptr<VideoCaptureDevice::Client> client_{};

@@ -20,8 +20,6 @@ class RawUYVYFileParser : public VideoFileParser {
  private:
   std::string filePath_;
   size_t frameSize_;
-  size_t currentByteIndex_;
-  size_t firstFrameIndex_;
 
   std::unique_ptr<std::ifstream> fileStream_;
   std::vector<uint8_t> frameUYVY_;

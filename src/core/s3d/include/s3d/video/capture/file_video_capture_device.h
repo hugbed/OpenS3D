@@ -45,6 +45,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
 
   void WaitUntilDone();
   void StopAndDeAllocate() override;
+  VideoCaptureFormat DefaultFormat() override;
 
  protected:
   void OnAllocateAndStart();

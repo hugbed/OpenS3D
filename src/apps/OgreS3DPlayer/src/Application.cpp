@@ -27,7 +27,24 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 void Application::createScene() {
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1280, 720}, 30.0f, VideoPixelFormat::BGR, false);
+  VideoCaptureFormat format({1920, 1080}, 60.0f, VideoPixelFormat::BGR, false);
+
+  // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+  //     std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
+
+  // todo : let the user choose the file
+
+  // create capture device
+  if (format.stereo3D) {
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice3D(
+        "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
+  } else {
+    videoCaptureDevice_ =
+        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDeviceFFmpeg>(
+            "/home/jon/Videos/BeautifulPlaces.mp4"));
+  }
+
+  format = videoCaptureDevice_->DefaultFormat();
 
   // create dynamic textures
   constexpr auto textureNameLeft = "DynamicTextureL";
@@ -41,15 +58,8 @@ void Application::createScene() {
       new TextureUpdateClient(std::vector<DynamicTextureThreadSafe*>{
           m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
-  // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-  //     std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
-
-  // choose the appropriate video player (should be a factory)
+  // create scene
   if (format.stereo3D) {
-    // todo : let the user choose the file
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice3D(
-        "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
-
     // create video player entity and add it to the scene
     videoPlayerEntity_ = VideoPlayer3DEntityFactory::createVideoPlayer3DEntity(
         VideoPlayer3D::Mode::ANAGLYPH, "SomeVideoPlayer3D", textureNameLeft, textureNameRight);
@@ -57,9 +67,6 @@ void Application::createScene() {
         ->createChildSceneNode("entititiNode")
         ->attachObject(videoPlayerEntity_.get());
   } else {
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-        new FileVideoCaptureDeviceFFmpeg("/home/bedh2102/Videos/Portal2WorldRecord.mp4"));
-
     auto videoMaterial = DynamicTexture::createImageMaterial("VideoMaterial", textureNameLeft);
     videoPlayerEntity_ =
         std::make_unique<FullscreenRectangleEntity>("VideoEntity", videoMaterial->getName());
@@ -125,7 +132,7 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
   // more than twice as fast as update to prevent aliasing (if this makes sense)
   return std::make_unique<DynamicTextureThreadSafe>(name, pixelFormat, format.frameSize.getWidth(),
                                                     format.frameSize.getHeight(),
-                                                    1.0f / (4.0f * format.frameRate));
+                                                    1.0f / (2.0f * format.frameRate));
 }
 
 void Application::createVideoPlane(const std::string& materialName) {

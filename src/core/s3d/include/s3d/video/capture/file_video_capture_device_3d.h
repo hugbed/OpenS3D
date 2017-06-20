@@ -25,6 +25,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
   void WaitUntilDone();
   void StopAndDeAllocate() override;
+  VideoCaptureFormat DefaultFormat() override;
 
  protected:
   void Allocate();

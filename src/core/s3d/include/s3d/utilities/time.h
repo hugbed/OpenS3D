@@ -19,6 +19,11 @@ inline std::chrono::milliseconds seconds_to_ms(float seconds) {
       std::chrono::duration<float>(seconds));
 }
 
+inline std::chrono::microseconds seconds_to_us(float seconds) {
+  return std::chrono::duration_cast<std::chrono::microseconds>(
+      std::chrono::duration<float>(seconds));
+}
+
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_TIME_H

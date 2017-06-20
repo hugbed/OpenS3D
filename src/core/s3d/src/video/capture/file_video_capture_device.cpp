@@ -73,9 +73,8 @@ void FileVideoCaptureDevice::StartCaptureThread() {
 void FileVideoCaptureDevice::OnAllocateAndStart() {
   // blocking loop start
   assert(captureFormat_.frameRate != 0.0f);
-  auto loopDuration = s3d::seconds_to_ms(1.0f / captureFormat_.frameRate);
-  captureLoop_->start(captureLoopClient_.get(),
-                      std::chrono::duration_cast<std::chrono::milliseconds>(loopDuration));
+  auto loopDuration = s3d::seconds_to_us(1.0f / captureFormat_.frameRate);
+  captureLoop_->start(captureLoopClient_.get(), loopDuration);
 }
 
 void FileVideoCaptureDevice::OnCaptureTask() {
@@ -103,4 +102,10 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
 
 std::unique_ptr<TimedLoop> FileVideoCaptureDevice::GetTimedLoop() {
   return std::make_unique<TimedLoopSleep>();
+}
+
+VideoCaptureFormat FileVideoCaptureDevice::DefaultFormat() {
+  VideoCaptureFormat format{};
+  GetVideoFileParser(filePath_, &format);
+  return format;
 }

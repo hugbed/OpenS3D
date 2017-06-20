@@ -214,3 +214,7 @@ void FileVideoCaptureDevice3D::WaitUntilDone() {
 void FileVideoCaptureDevice3D::StopAndDeAllocate() {
   // call producers/consumers with some flag
 }
+
+VideoCaptureFormat FileVideoCaptureDevice3D::DefaultFormat() {
+  return VideoCaptureFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::BGR, true);
+}
