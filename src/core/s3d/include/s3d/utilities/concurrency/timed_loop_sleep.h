@@ -34,7 +34,7 @@ class TimedLoopSleep : public TimedLoop {
       while ((high_resolution_clock::now() - nextFrameTime) < 0us) {
       }
 
-      outputPerformanceMetrics(std::cout, loopDuration);
+//      outputPerformanceMetrics(std::cout, loopDuration);
       client->callback();
 
       // update next frame time
