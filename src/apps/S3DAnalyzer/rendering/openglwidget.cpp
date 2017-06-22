@@ -12,13 +12,7 @@ OpenGLWidget::~OpenGLWidget() {
 
   // OpenGL related objects must be cleared
   // with their related current
-  for (auto&& texture : m_textures) {
-    texture.reset();
-  }
-
-  for (auto&& entity : m_stereoEntities) {
-    entity.reset();
-  }
+  m_textureManager.reset();
 
   doneCurrent();
 }
@@ -48,26 +42,12 @@ void OpenGLWidget::paintGL() {
 }
 
 void OpenGLWidget::setImageLeft(const QImage& image) {
-  auto&& texture = m_textures[0];
-  texture->destroy();
-  texture->create();
-  texture->setData(image.mirrored(false, true));
-  setTextureDefaultProperties(texture.get());
-
-  m_overlay->clear();
-
+  m_textureManager->setImageLeft(image);
   update();
 }
 
 void OpenGLWidget::setImageRight(const QImage& image) {
-  auto&& texture = m_textures[1];
-  texture->destroy();
-  texture->create();
-  texture->setData(image.mirrored(false, true));
-  setTextureDefaultProperties(texture.get());
-
-  m_overlay->clear();
-
+  m_textureManager->setImageRight(image);
   update();
 }
 
@@ -92,21 +72,7 @@ void OpenGLWidget::displayModeChanged(OpenGLWidget::DisplayMode mode) {
 }
 
 void OpenGLWidget::initTextures() {
-  addTexture(":/images/left.jpg");
-  addTexture(":/images/right.jpg");
-}
-
-void OpenGLWidget::addTexture(const QString& filename) {
-  auto texture = std::make_unique<QOpenGLTexture>((QImage(filename).mirrored()));
-  setTextureDefaultProperties(texture.get());
-  m_textures.push_back(std::move(texture));
-}
-
-void OpenGLWidget::setTextureDefaultProperties(QOpenGLTexture* texture) {
-  texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-  texture->setMagnificationFilter(QOpenGLTexture::Linear);
-  texture->setWrapMode(QOpenGLTexture::ClampToBorder);
-  texture->setBorderColor(Qt::black);
+  m_textureManager = std::make_unique<TextureManager>();
 }
 
 void OpenGLWidget::initEntities() {
@@ -119,13 +85,11 @@ void OpenGLWidget::initEntities() {
 
   m_currentMode = DisplayMode::Anaglyph;
 
-  if (m_textures.empty() || m_textures[0] == nullptr) {
+  if (m_textureManager->empty()) {
     return;
   }
 
-  float w = m_textures[0]->width();
-  float h = m_textures[0]->height();
-  auto billboardEntity = std::make_unique<BillboardIntensityEntity>(QSize(w, h));
+  auto billboardEntity = std::make_unique<BillboardIntensityEntity>(m_textureManager->getTextureSize());
   billboardEntity->init();
   billboardEntity->setPoints({}, {});
   billboardEntity->setMinIntensity(-1.1f);
@@ -134,7 +98,7 @@ void OpenGLWidget::initEntities() {
 }
 
 void OpenGLWidget::drawEntities() {
-  auto ratio = computeImageAspectRatio();
+  auto ratio = m_textureManager->computeImageAspectRatio(m_viewportSize);
 
   auto&& currentEntity = m_stereoEntities[static_cast<int>(m_currentMode)];
   currentEntity->setAspectRatio(ratio);
@@ -143,29 +107,18 @@ void OpenGLWidget::drawEntities() {
 
   // todo adapt features to current mode
   if (m_showOverlay && m_overlay != nullptr) {
-    m_overlay->setImageSize(QSize(m_textures[0]->width(), m_textures[0]->height()));
+    m_overlay->setImageSize(m_textureManager->getTextureSize());
     m_overlay->setAspectRatio(ratio);  // necessary?
     m_overlay->setHorizontalShift(m_horizontalShift);
     m_overlay->draw();
   }
 }
 
-float OpenGLWidget::computeImageAspectRatio() {
-  if (m_textures.empty() || m_textures[0] == nullptr) {
-    return 1.0f;
-  }
-
-  float vW = m_viewportSize.width(), vH = m_viewportSize.height(), iW = m_textures[0]->width(),
-        iH = m_textures[0]->height();
-
-  return (vW / vH) / (iW / iH);
-}
-
 template <class T>
 void OpenGLWidget::createEntity(DisplayMode mode) {
   std::unique_ptr<StereoImageEntity> stereoImageEntity = std::make_unique<T>();
   stereoImageEntity->init();
-  stereoImageEntity->setTextureLeft(m_textures[0].get());
-  stereoImageEntity->setTextureRight(m_textures[1].get());
+  stereoImageEntity->setTextureLeft(m_textureManager->getTexture(0));
+  stereoImageEntity->setTextureRight(m_textureManager->getTexture(1));
   m_stereoEntities[static_cast<int>(mode)] = std::move(stereoImageEntity);
 }

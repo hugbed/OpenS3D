@@ -12,9 +12,11 @@
 #include "rendering/entity/billboard/billboardintensityentity.h"
 #include "entity/stereo/rectangleentity.h"
 #include "entity/stereo/stereoimageentity.h"
+#include "texturemanager.h"
 
 #include <memory>
 #include <vector>
+#include <gsl/span>
 
 class QOpenGLShaderProgram;
 
@@ -39,6 +41,7 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
   void setImageLeft(const QImage& image);
   void setImageRight(const QImage& image);
+
   void setHorizontalShift(float shift);
   void toggleFeatures(bool display = false);
 
@@ -49,22 +52,21 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 
  private:
   void initTextures();
-  void addTexture(const QString& filename);
-  void setTextureDefaultProperties(QOpenGLTexture* texture);
   void initEntities();
   void drawEntities();
-  float computeImageAspectRatio();
 
   template <class T>
   void createEntity(DisplayMode mode);
 
+ private:
   QSize m_viewportSize;
+
   float m_horizontalShift;
 
-  std::vector<std::unique_ptr<QOpenGLTexture>> m_textures;
+  std::unique_ptr<TextureManager> m_textureManager;
+
   DisplayMode m_currentMode;
 
-  // todo: such arrays may lead to out of bounds
   std::unique_ptr<StereoImageEntity>
       m_stereoEntities[static_cast<int>(DisplayMode::NB_DISPLAY_MODES)];
 
