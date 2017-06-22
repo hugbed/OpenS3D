@@ -1,5 +1,10 @@
 #include "texturemanager.h"
 
+#include <QColor>
+#include <QImage>
+#include <QOpenGLTexture>
+#include <QString>
+
 // must be created with OpenGL context current
 TextureManager::TextureManager()
 {
@@ -69,7 +74,7 @@ QOpenGLTexture* TextureManager::getTexture(int id) {
   return m_textures[id].get();
 }
 
-boolTextureManager:: empty()
+bool TextureManager::empty()
 {
   return m_textures.empty() || m_textures[0] == nullptr;
 }

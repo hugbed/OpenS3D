@@ -1,6 +1,14 @@
 #ifndef S3D_ANALYZER_RENDERING_TEXTUREMANAGER_H
 #define S3D_ANALYZER_RENDERING_TEXTUREMANAGER_H
 
+#include <QSize>
+
+#include <memory>
+
+class QImage;
+class QOpenGLTexture;
+class QString;
+
 class TextureManager {
  public:
   // must be created/deleted with OpenGL context current

@@ -6,7 +6,6 @@
 
 #include "rendering/openglwidget.h"
 
-// todo: use forwarding everywhere possible
 namespace Ui {
 class MainWindow;
 }  // namespace Ui
@@ -24,6 +23,9 @@ class MainWindow : public QMainWindow {
  private:
   template <class Functor>
   void requestImageFilename(Functor f);
+
+  std::unique_ptr<TextureManager> m_textureManager;
+  std::unique_ptr<EntityManager> m_entityManager;
 
   QImage m_imageLeft;
   QImage m_imageRight;

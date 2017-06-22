@@ -15,42 +15,72 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(ui->actionOpen_Left_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
       QImage img(filename);
-      ui->openGLWidget->setImageLeft(img);
+      m_textureManager->setImageLeft(img);
       m_imageLeft = img;
+      ui->openGLWidget->update();
     });
   });
 
   connect(ui->actionOpen_Right_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
       QImage img(filename);
-      ui->openGLWidget->setImageRight(QImage(filename));
+      m_textureManager->setImageRight(img);
       m_imageRight = img;
+      ui->openGLWidget->update();
     });
   });
 
-  connect(ui->actionAnaglyph, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Anaglyph); });
-  connect(ui->actionOpacity, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Opacity); });
-  connect(ui->actionInterlaced, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Interlaced); });
-  connect(ui->actionSide_by_side, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::SideBySide); });
-  connect(ui->actionLeft, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Left); });
-  connect(ui->actionRight, &QAction::triggered,
-          [this] { ui->openGLWidget->displayModeChanged(OpenGLWidget::DisplayMode::Right); });
+  connect(ui->actionAnaglyph, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::Anaglyph);
+    ui->openGLWidget->update();
+  });
+
+  connect(ui->actionOpacity, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
+    ui->openGLWidget->update();
+  });
+
+  connect(ui->actionInterlaced, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::Interlaced);
+    ui->openGLWidget->update();
+  });
+
+  connect(ui->actionSide_by_side, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::SideBySide);
+    ui->openGLWidget->update();
+  });
+
+  connect(ui->actionLeft, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::Left);
+    ui->openGLWidget->update();
+  });
+
+  connect(ui->actionRight, &QAction::triggered, [this] {
+    m_entityManager->displayModeChanged(EntityManager::DisplayMode::Right);
+    ui->openGLWidget->update();
+  });
+
   connect(ui->actionFeatures, &QAction::triggered,  //
-          [this] { ui->openGLWidget->toggleFeatures(); });
+          [this] {
+            m_entityManager->toggleFeatures();
+            ui->openGLWidget->update();
+          });
   connect(ui->actionCompute, &QAction::triggered,  //
           [this] { computeAndUpdate(); });
 
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           [this](double value) {
-            ui->openGLWidget->setHorizontalShift(value / 100.0f);
+            m_entityManager->setHorizontalShift(value / 100.0f);
             ui->depthWidget->setShift(value);
+            ui->openGLWidget->update();
           });
+
+  connect(ui->openGLWidget, &OpenGLWidget::GLInitialized, [this] {
+    m_textureManager = ui->openGLWidget->createTextureManager();
+    m_entityManager = ui->openGLWidget->createEntityManager(m_textureManager.get());
+    ui->openGLWidget->setEntityManager(m_entityManager.get());
+  });
 }
 
 MainWindow::~MainWindow() {
@@ -71,7 +101,8 @@ void MainWindow::computeAndUpdate() {
   ui->parametersListView->setParameter("Tilt Offset", analyzer.tiltOffset);
   ui->parametersListView->setParameter("Zoom", analyzer.zoom);
 
-  ui->openGLWidget->setFeatures(analyzer.featurePoints, analyzer.disparitiesPercent);
+  m_entityManager->setFeatures(analyzer.featurePoints, analyzer.disparitiesPercent);
+  ui->openGLWidget->update();
 
   updateConvergenceHint(analyzer.minDisparity, analyzer.maxDisparity);
 }
