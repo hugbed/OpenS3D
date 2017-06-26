@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
       std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
 
   // start "capture"
-  captureDevice->AllocateAndStart({}, std::move(client));
+  captureDevice->AllocateAndStart({}, client.get());
 
   std::cout << "Play the output video file with the command:" << std::endl
             << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 30 "

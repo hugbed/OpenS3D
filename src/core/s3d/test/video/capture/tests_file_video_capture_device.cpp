@@ -9,20 +9,20 @@ class FakeTimedLoop : public TimedLoop {
   FakeTimedLoop() = default;
   gsl::owner<TimedLoop*> clone() const override { return new FakeTimedLoop; }
 
-  void start(Client* client, std::chrono::milliseconds loopDuration) override {
+  void start(Client* client, std::chrono::microseconds loopDuration) override {
     lastLoopDuration_ = loopDuration;
     client->callback();
   }
   void stop() override {}
 
-  std::chrono::milliseconds lastLoopDuration_;
+  std::chrono::microseconds lastLoopDuration_;
 };
 
 class MockTimedLoop : public TimedLoop {
  public:
   MockTimedLoop() = default;
   gsl::owner<TimedLoop*> clone() const override { return new MockTimedLoop; }
-  MOCK_METHOD2(start, void(Client* client, std::chrono::milliseconds loopDuration));
+  MOCK_METHOD2(start, void(Client* client, std::chrono::microseconds loopDuration));
   MOCK_METHOD0(stop, void());
 };
 
