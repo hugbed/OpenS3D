@@ -32,6 +32,7 @@ set ( SOURCES
   widgets/rangewidget.cpp
   widgets/rangebar.cpp
   worker/depthanalyzer.cpp
+  worker/videosynchronizer.cpp
 )
 
 set ( MOC_HEADERS
@@ -64,7 +65,7 @@ include_directories(
 
 # compile
 add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS})
-target_link_libraries(${PROJECT_NAME} s3d s3dcv Qt5::Widgets Qt5::Core Qt5::Gui)
+target_link_libraries(${PROJECT_NAME} s3d s3dcv Qt5::Widgets Qt5::Core Qt5::Gui pthread)
 
 # tests
 add_subdirectory(test)

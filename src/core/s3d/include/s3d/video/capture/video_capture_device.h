@@ -32,7 +32,7 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
   };
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,
-                                std::unique_ptr<Client> client) = 0;
+                                Client* client) = 0;
 
   virtual void RequestRefreshFrame() {}
 

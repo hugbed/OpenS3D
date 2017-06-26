@@ -22,7 +22,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
 
   ~FileVideoCaptureDevice3D() override;
 
-  void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
+  void AllocateAndStart(const VideoCaptureFormat& format, Client* client) override;
   void WaitUntilDone();
   void StopAndDeAllocate() override;
   VideoCaptureFormat DefaultFormat() override;
@@ -35,7 +35,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   std::pair<std::string, std::string> filePaths_;
   VideoCaptureFormat captureFormat_;
 
-  std::unique_ptr<Client> client_;
+  Client* client_;
   std::unique_ptr<RawUYVY3DFileParserConsumer> consumer_;
   std::pair<std::unique_ptr<RawUYVY3DFileParserProducer>,
             std::unique_ptr<RawUYVY3DFileParserProducer>>

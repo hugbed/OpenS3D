@@ -147,8 +147,8 @@ FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() {
 }
 
 void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format,
-                                                std::unique_ptr<Client> client) {
-  client_ = std::move(client);
+                                                Client* client) {
+  client_ = client;
   captureFormat_ = format;
   Allocate();
   Start();
@@ -179,7 +179,7 @@ void FileVideoCaptureDevice3D::Allocate() {
   std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {producers_.first.get(),
                                                                        producers_.second.get()};
 
-  consumer_ = std::make_unique<RawUYVY3DFileParserConsumer>(client_.get(), captureFormat_,
+  consumer_ = std::make_unique<RawUYVY3DFileParserConsumer>(client_, captureFormat_,
                                                             &mediatorLeft, producers);
 }
 

@@ -14,19 +14,17 @@ void BillboardIntensityEntity::setDefaultAttributeBuffers() {
 
 void BillboardIntensityEntity::setPoints(const std::vector<QVector2D>& points,
                                          const std::vector<float>& intensities) {
-  if (!points.empty() && points.size() == intensities.size()) {
-    m_vertex.bind();
+  m_vertex.bind();
+  {
+    m_object.bind();
     {
-      m_object.bind();
-      {
-        m_vertices.clear();
-        m_vertices = verticesFromPoints(points, intensities);
-        m_vertex.allocate(&m_vertices[0], m_vertices.size() * sizeof(Vertex));
-      }
-      m_object.release();
+      m_vertices.clear();
+      m_vertices = verticesFromPoints(points, intensities);
+      m_vertex.allocate(&m_vertices[0], m_vertices.size() * sizeof(Vertex));
     }
-    m_vertex.release();
+    m_object.release();
   }
+  m_vertex.release();
 }
 
 void BillboardIntensityEntity::setDefaultUniforms() {

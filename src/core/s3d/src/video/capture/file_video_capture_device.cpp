@@ -31,22 +31,22 @@ FileVideoCaptureDevice::~FileVideoCaptureDevice() {
 }
 
 void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
-                                              std::unique_ptr<VideoCaptureDevice::Client> client) {
+                                              VideoCaptureDevice::Client* client) {
   captureFormat_ = format;
   auto captureLoopClient =
       std::unique_ptr<TimedLoop::Client>(std::make_unique<CaptureLoopClient>(this));
   auto fileParser = GetVideoFileParser(filePath_, &captureFormat_);
-  Start(captureFormat_, std::move(client), std::move(captureLoopClient), std::move(fileParser),
+  Start(captureFormat_, client, std::move(captureLoopClient), std::move(fileParser),
         GetTimedLoop());
 }
 
 void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
-                                   std::unique_ptr<VideoCaptureDevice::Client> client,
+                                   VideoCaptureDevice::Client* client,
                                    std::unique_ptr<TimedLoop::Client> captureLoopClient,
                                    std::unique_ptr<VideoFileParser> fileParser,
                                    std::unique_ptr<TimedLoop> timedLoop) {
   captureFormat_ = format;
-  client_ = std::move(client);
+  client_ = client;
   captureLoopClient_ = std::move(captureLoopClient);
   fileParser_ = std::move(fileParser);
   captureLoop_ = std::move(timedLoop);

@@ -336,8 +336,8 @@ VideoCaptureDeviceDecklink::~VideoCaptureDeviceDecklink() {
 
 void VideoCaptureDeviceDecklink::AllocateAndStart(
     const VideoCaptureFormat& format,
-    std::unique_ptr<VideoCaptureDevice::Client> client) {
-  client_ = std::move(client);
+    VideoCaptureDevice::Client* client) {
+  client_ = client;
   // todo: should verify that format is supported
   // todo: should get image size from capture delegate
   captureDelegate_->AllocateAndStart(format);

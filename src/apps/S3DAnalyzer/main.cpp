@@ -7,6 +7,8 @@
 
 #include <cassert>
 
+#include "worker/videosynchronizer.h"
+
 int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
 
@@ -31,6 +33,8 @@ int main(int argc, char* argv[]) {
   //  window.setFormat(format);
   //  window.resize(QSize(800, 600));
   //  window.show();
+
+  VideoSynchronizer s;
 
   // Set up window
   MainWindow w;

@@ -25,7 +25,7 @@ int main() {
       VideoCaptureDeviceDescriptor("/home/jon/Videos/current-left.yuv"));
   auto client = std::unique_ptr<VideoCaptureDevice::Client>(new VideoTestClient);
 
-  device->AllocateAndStart({}, std::move(client));
+  device->AllocateAndStart({}, client.get());
 
   while (true) {
     using std::literals::chrono_literals::operator""s;

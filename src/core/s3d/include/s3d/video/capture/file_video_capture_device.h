@@ -35,10 +35,10 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   ~FileVideoCaptureDevice() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
-                        std::unique_ptr<VideoCaptureDevice::Client> client) override;
+                        VideoCaptureDevice::Client* client) override;
 
   void Start(const VideoCaptureFormat& format,
-             std::unique_ptr<VideoCaptureDevice::Client> client,
+             VideoCaptureDevice::Client* client,
              std::unique_ptr<TimedLoop::Client> captureLoopClient,
              std::unique_ptr<VideoFileParser> fileParser,
              std::unique_ptr<TimedLoop> timedLoop);
@@ -65,7 +65,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   std::unique_ptr<TimedLoop> captureLoop_;
   std::unique_ptr<std::thread> captureThread_;
   std::unique_ptr<VideoFileParser> fileParser_;
-  std::unique_ptr<Client> client_;
+  VideoCaptureDevice::Client* client_;
   std::vector<uint8_t> videoFrame_;
   VideoCaptureFormat captureFormat_;
 };

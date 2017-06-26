@@ -23,7 +23,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   ~VideoCaptureDeviceDecklink() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
-                        std::unique_ptr<VideoCaptureDevice::Client> client) override;
+                        VideoCaptureDevice::Client* client) override;
 
   void StopAndDeAllocate() override;
 
@@ -34,7 +34,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   VideoCaptureFormat DefaultFormat() override;
 
  private:
-  std::unique_ptr<VideoCaptureDevice::Client> client_{};
+  VideoCaptureDevice::Client* client_{};
   std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;
 };
 

@@ -76,7 +76,7 @@ void Application::createScene() {
   }
 
   if (videoCaptureDevice_ != nullptr) {
-    videoCaptureDevice_->AllocateAndStart(format, std::move(captureClient));
+    videoCaptureDevice_->AllocateAndStart(format, captureClient.get());
   }
 
   //  createVideoPlane("PointCloud");
