@@ -1,12 +1,3 @@
-/**
- * @file
- * Demuxing and decoding example.
- *
- * Show how to use the libavformat and libavcodec API to demux and
- * decode video data.
- * @example demuxing_decoding.c
- */
-
 #include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 
 #include <memory>
