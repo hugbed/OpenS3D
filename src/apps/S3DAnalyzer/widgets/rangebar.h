@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_WIDGETS_DEPTHVOLUMEINDICATOR_H
-#define S3D_ANALYZER_WIDGETS_DEPTHVOLUMEINDICATOR_H
+#ifndef WIDGETS_RANGEBAR_H
+#define WIDGETS_RANGEBAR_H
 
 #include <QWidget>
 #include <QLabel>
@@ -45,4 +45,4 @@ class RangeBar : public QWidget {
   float m_expectedRangeMax;
 };
 
-#endif  // S3D_ANALYZER_WIDGETS_DEPTHVOLUMEINDICATOR_H
+#endif  // WIDGETS_RANGEBAR_H

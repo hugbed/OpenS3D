@@ -7,8 +7,8 @@
 #include "s3d/utilities/containers.h"
 
 #include <cassert>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 namespace s3d {
 

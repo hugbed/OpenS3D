@@ -1,39 +1,49 @@
-#ifndef S3D_ANALYZER_RENDERING_OPENGLWINDOW_H
-#define S3D_ANALYZER_RENDERING_OPENGLWINDOW_H
+#ifndef RENDERING_OPENGLWINDOW_H
+#define RENDERING_OPENGLWINDOW_H
+
+#include "rendering/openglrenderer.h"
 
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLTexture>
 
-class QOpenGLShaderProgram;
+#include <memory>
 
-class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions {
+class EntityManager;
+class TextureManager;
+
+class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public OpenGLRenderer {
   Q_OBJECT
 
   // OpenGL Events
  public:
   void initializeGL() override;
-  void resizeGL(int width, int height) override;
+  void resizeGL(int w, int h) override;
   void paintGL() override;
+
+  // OpenGLRenderer
+  void update() override;
+  std::unique_ptr<TextureManager> createTextureManager() override;
+  std::unique_ptr<EntityManager> createEntityManager(TextureManager* textureManager) override;
+  void setEntityManager(EntityManager* entityManager) override;
+
+  void makeCurrent() override { QOpenGLWindow::makeCurrent(); }
+  void doneCurrent() override { QOpenGLWindow::doneCurrent(); }
+
+ protected:
+  void mouseDoubleClickEvent(QMouseEvent* e) override;
+
  protected slots:
   void teardownGL();
 
- private:
-  void initColorTriangle();
-  void initTexturedTriangle();
-  void drawColorTriangle();
-  void drawTexturedTriangle();
+ signals:
+  void GLInitialized();
 
-  // OpenGL State Information
-  QOpenGLBuffer m_vertex;
-  QOpenGLVertexArrayObject m_object;
-  QOpenGLTexture* m_texture;
-  QOpenGLShaderProgram* m_program;
+ private:
+  QSize m_viewportSize;
+  EntityManager* m_entityManager;
 
   // Private Helpers
   void printVersionInformation();
 };
 
-#endif  // S3D_ANALYZER_RENDERING_OPENGLWINDOW_H
+#endif  // RENDERING_OPENGLWINDOW_H

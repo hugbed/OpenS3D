@@ -80,14 +80,16 @@ void BillboardEntity::clear() {
 }
 
 void BillboardEntity::draw() {
-  // Render using our shader
-  m_program->bind();
-  {
-    m_object.bind();
-    { glDrawArrays(GL_POINTS, 0, m_vertices.size()); }
-    m_object.release();
+  if (!m_vertices.empty()) {
+    // Render using our shader
+    m_program->bind();
+    {
+      m_object.bind();
+      { glDrawArrays(GL_POINTS, 0, m_vertices.size()); }
+      m_object.release();
+    }
+    m_program->release();
   }
-  m_program->release();
 }
 
 void BillboardEntity::setDefaultUniforms() {

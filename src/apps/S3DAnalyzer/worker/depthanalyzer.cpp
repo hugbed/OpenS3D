@@ -1,12 +1,12 @@
 #include "depthanalyzer.h"
 
-#include "s3d/robust_estimation/ransac.h"
-#include "s3d/multiview/sampson_distance_function.h"
-#include "s3d/multiview/stan_fundamental_matrix_solver.h"
-#include "s3d/disparity/utilities.h"
-#include "s3d/cv/features/match_finder_cv.h"
-#include "s3d/cv/utilities/cv.h"
-#include "s3d/utilities/histogram.h"
+#include <s3d/cv/features/match_finder_cv.h>
+#include <s3d/cv/utilities/cv.h>
+#include <s3d/disparity/utilities.h>
+#include <s3d/multiview/sampson_distance_function.h>
+#include <s3d/multiview/stan_fundamental_matrix_solver.h>
+#include <s3d/robust_estimation/ransac.h>
+#include <s3d/utilities/histogram.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -78,7 +78,8 @@ std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
 cv::Mat QImage2Mat(QImage const& src) {
   //  src.convertToFormat(QImage::Format_RGB888);
 
-  cv::Mat tmp(src.height(), src.width(), CV_8UC4, const_cast<uchar*>(src.bits()), src.bytesPerLine());
+  cv::Mat tmp(src.height(), src.width(), CV_8UC4, const_cast<uchar*>(src.bits()),
+              src.bytesPerLine());
   cv::Mat result;  // deep copy just in case (my lack of knowledge with open cv)
   cvtColor(tmp, result, CV_BGRA2GRAY);
   return result;
@@ -165,7 +166,7 @@ void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
 
   auto minDispP = minDisp * widthRatio;
   auto maxDispP = maxDisp * widthRatio;
-//  auto budgetP = (maxDisp - minDisp) * widthRatio;
+  //  auto budgetP = (maxDisp - minDisp) * widthRatio;
 
   //  std::cout << "Disparity 1st percentile (%): " << minDispP << std::endl;
   //  std::cout << "Disparity 99th percentile (%): " << maxDispP << std::endl;

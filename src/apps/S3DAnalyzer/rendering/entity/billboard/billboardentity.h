@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
-#define S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
+#ifndef RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
+#define RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
 
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -7,8 +7,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 
-#include "rendering/vertex.h"
 #include "rendering/entity/entity.h"
+#include "rendering/vertex.h"
 
 #include <memory>
 #include <vector>
@@ -46,4 +46,4 @@ class BillboardEntity : public Entity, QOpenGLFunctions {
   QSize m_imageSize;
 };
 
-#endif  // S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
+#endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H

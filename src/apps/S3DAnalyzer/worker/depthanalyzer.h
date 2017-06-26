@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_WORKER_DEPTHANALYZER_H
-#define S3D_ANALYZER_WORKER_DEPTHANALYZER_H
+#ifndef WORKER_DEPTHANALYZER_H
+#define WORKER_DEPTHANALYZER_H
 
 #include <QImage>
 #include <QVector2D>
@@ -23,4 +23,4 @@ class DepthAnalyzer {
   std::vector<float> disparitiesPercent;
 };
 
-#endif  // S3D_ANALYZER_WORKER_DEPTHANALYZER_H
+#endif  // WORKER_DEPTHANALYZER_H

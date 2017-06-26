@@ -36,7 +36,7 @@ if(CLANG_TIDY)
         clang-tidy
         COMMAND ${CMAKE_SOURCE_DIR}/scripts/run-clang-tidy.py
 #        -clang-tidy-binary='/home/jon/Downloads/clang-4.0/bin/clang-tidy'
-        -checks='*,-clang-analyzer-alpha*,-google-runtime-references*,-modernize-pass-by-value*'
+        -checks='*,-clang-analyzer-alpha*,-google-runtime-references*,-modernize-pass-by-value*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay'
         -header-filter='\(${CMAKE_SOURCE_DIR}/core/.*|${CMAKE_SOURCE_DIR}/apps/.*\)'
         -file-filter='\(libs|tests_*\)'
         -p='${CMAKE_BINARY_DIR}'

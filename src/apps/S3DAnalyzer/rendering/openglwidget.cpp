@@ -13,9 +13,11 @@ OpenGLWidget::~OpenGLWidget() {
   // OpenGL related objects must be cleared
   // with their related current
 
-  // ...
-
   doneCurrent();
+}
+
+void OpenGLWidget::update() {
+  QWidget::update();
 }
 
 std::unique_ptr<TextureManager> OpenGLWidget::createTextureManager() {

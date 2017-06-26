@@ -1,10 +1,12 @@
-#ifndef S3D_ANALYZER_RENDERING_ENTITY_ENTITYMANAGER_H
-#define S3D_ANALYZER_RENDERING_ENTITY_ENTITYMANAGER_H
+#ifndef RENDERING_ENTITY_ENTITYMANAGER_H
+#define RENDERING_ENTITY_ENTITYMANAGER_H
 
 #include <QSize>
 #include <QVector2D>
 
 #include <memory>
+
+// todo: this is STAN Entity manager, we could have an interface and a ViewerCentric entity manager
 
 class TextureManager;
 class StereoImageEntity;
@@ -23,13 +25,15 @@ class EntityManager {
   };
 
   // must be created with OpenGL context current
-  EntityManager(TextureManager* textureManager);
+  explicit EntityManager(TextureManager* textureManager);
+
+  ~EntityManager();
 
   template <class T>
   void createEntity(DisplayMode mode);
 
   void drawEntities(QSize viewportSize);
-  void toggleFeatures(bool display = false);
+  void setFeaturesVisibility(bool display);
   void setFeatures(std::vector<QVector2D> points, std::vector<float> disparities);
   void setHorizontalShift(float horizontalShift);
 
@@ -46,4 +50,4 @@ class EntityManager {
   TextureManager* m_textureManager;
 };
 
-#endif  // S3D_ANALYZER_RENDERING_ENTITY_ENTITYMANAGER_H
+#endif  // RENDERING_ENTITY_ENTITYMANAGER_H

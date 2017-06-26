@@ -1,36 +1,35 @@
-#ifndef S3D_ANALYZER_RENDERING_OPENGLWIDGET_H
-#define S3D_ANALYZER_RENDERING_OPENGLWIDGET_H
+#ifndef RENDERING_OPENGLWIDGET_H
+#define RENDERING_OPENGLWIDGET_H
 
+#include <QImage>
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLTexture>
-#include <QImage>
-
-#include "rendering/entity/billboard/billboardintensityentity.h"
 #include "entity/entitymanager.h"
-#include "entity/stereo/rectangleentity.h"
-#include "entity/stereo/stereoimageentity.h"
+#include "rendering/openglrenderer.h"
 #include "texturemanager.h"
+
+#include <gsl/span>
 
 #include <memory>
 #include <vector>
-#include <gsl/span>
 
 class QOpenGLShaderProgram;
 
-class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
+class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions, public OpenGLRenderer {
   Q_OBJECT
 
  public:
   ~OpenGLWidget() override;
   explicit OpenGLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
 
-  void setEntityManager(EntityManager* entityManager);
-  std::unique_ptr<TextureManager> createTextureManager();
-  std::unique_ptr<EntityManager> createEntityManager(TextureManager* textureManager);
+  void update() override;
+  void setEntityManager(EntityManager* entityManager) override;
+  std::unique_ptr<TextureManager> createTextureManager() override;
+  std::unique_ptr<EntityManager> createEntityManager(TextureManager* textureManager) override;
+
+  void makeCurrent() override { QOpenGLWidget::makeCurrent(); }
+  void doneCurrent() override { QOpenGLWidget::doneCurrent(); }
 
   void initializeGL() override;
   void resizeGL(int w, int h) override;
@@ -45,4 +44,4 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
   EntityManager* m_entityManager;
 };
 
-#endif  // S3D_ANALYZER_RENDERING_OPENGLWIDGET_H
+#endif  // RENDERING_OPENGLWIDGET_H

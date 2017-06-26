@@ -1,3 +1,4 @@
+#include <gsl/gsl_util>
 #include "entitymanager.h"
 
 #include "../texturemanager.h"
@@ -31,10 +32,16 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   m_overlay = std::move(billboardEntity);
 }
 
+EntityManager::~EntityManager() = default;
+
 void EntityManager::drawEntities(QSize viewportSize) {
+  // update dirty textures
+  m_textureManager->update();
+
+  // render entities using the updated textures
   auto ratio = m_textureManager->computeImageAspectRatio(viewportSize);
 
-  auto&& currentEntity = m_stereoEntities[static_cast<int>(m_currentMode)];
+  auto&& currentEntity = gsl::at(m_stereoEntities, static_cast<int>(m_currentMode));
   currentEntity->setAspectRatio(ratio);
   currentEntity->setHorizontalShift(m_horizontalShift);
   currentEntity->draw();
@@ -54,11 +61,11 @@ void EntityManager::createEntity(DisplayMode mode) {
   stereoImageEntity->init();
   stereoImageEntity->setTextureLeft(m_textureManager->getTexture(0));
   stereoImageEntity->setTextureRight(m_textureManager->getTexture(1));
-  m_stereoEntities[static_cast<int>(mode)] = std::move(stereoImageEntity);
+  gsl::at(m_stereoEntities, static_cast<int>(mode)) = std::move(stereoImageEntity);
 }
 
-void EntityManager::toggleFeatures(bool display) {
-  m_showOverlay = !m_showOverlay || display;
+void EntityManager::setFeaturesVisibility(bool display) {
+  m_showOverlay = display;
 }
 
 void EntityManager::setFeatures(std::vector<QVector2D> points, std::vector<float> disparities) {

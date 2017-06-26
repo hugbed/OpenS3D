@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_WIDGETS_DEPTHWIDGET_H
-#define S3D_ANALYZER_WIDGETS_DEPTHWIDGET_H
+#ifndef WIDGETS_DEPTHWIDGET_H
+#define WIDGETS_DEPTHWIDGET_H
 
 #include <QWidget>
 
@@ -37,4 +37,4 @@ class RangeWidget : public QWidget {
   float m_shift;
 };
 
-#endif  // S3D_ANALYZER_DEPTHWIDGET_H
+#endif  // WIDGETS_DEPTHWIDGET_H
