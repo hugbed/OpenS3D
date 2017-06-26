@@ -1,12 +1,12 @@
 #include "depthanalyzer.h"
 
-#include "s3d/robust_estimation/ransac.h"
-#include "s3d/multiview/sampson_distance_function.h"
-#include "s3d/multiview/stan_fundamental_matrix_solver.h"
-#include "s3d/disparity/utilities.h"
-#include "s3d/cv/features/match_finder_cv.h"
-#include "s3d/cv/utilities/cv.h"
-#include "s3d/utilities/histogram.h"
+#include <s3d/cv/features/match_finder_cv.h>
+#include <s3d/cv/utilities/cv.h>
+#include <s3d/disparity/utilities.h>
+#include <s3d/multiview/sampson_distance_function.h>
+#include <s3d/multiview/stan_fundamental_matrix_solver.h>
+#include <s3d/robust_estimation/ransac.h>
+#include <s3d/utilities/histogram.h>
 
 #include <opencv2/opencv.hpp>
 

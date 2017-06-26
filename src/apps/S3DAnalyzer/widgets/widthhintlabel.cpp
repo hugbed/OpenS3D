@@ -1,6 +1,6 @@
 #include "widthhintlabel.h"
 
-#include <QPixmap>
+#include <gsl/gsl_util>
 
 WidthHintLabel::WidthHintLabel(QWidget* parent) : QLabel(parent) {
   initPixmaps();
@@ -13,7 +13,7 @@ WidthHintLabel::WidthHintLabel(QWidget* parent) : QLabel(parent) {
 }
 
 void WidthHintLabel::setState(State state) {
-  setPixmap(*m_pixmaps[static_cast<int>(state)]);
+  setPixmap(*gsl::at(m_pixmaps, static_cast<int>(state)));
   update();
 }
 
@@ -56,5 +56,5 @@ void WidthHintLabel::initPixmaps() {
 
 void WidthHintLabel::initPixmap(State state, const QString& filepath) {
   auto pixmap = std::make_unique<QPixmap>(filepath);
-  m_pixmaps[static_cast<int>(state)] = std::move(pixmap);
+  gsl::at(m_pixmaps, static_cast<int>(state)) = std::move(pixmap);
 }

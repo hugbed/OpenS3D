@@ -26,7 +26,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="ParametersListView" name="parametersListView" native="true" />
+     <widget class="ParametersListView" name="parametersListView" native="true"/>
     </item>
     <item row="2" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
@@ -87,7 +87,7 @@
          </widget>
         </item>
         <item alignment="Qt::AlignHCenter">
-         <widget class="DoubleSpinBoxNoCursor" name="hitWidget" native="true"/>
+         <widget class="DoubleSpinBoxNoCursor" name="hitWidget"/>
         </item>
        </layout>
       </item>
@@ -135,16 +135,28 @@
     </property>
     <addaction name="actionFeatures"/>
    </widget>
-   <widget class="QMenu" name="menuCompute">
+   <widget class="QMenu" name="menuInput_Mode">
     <property name="title">
-     <string>Compute</string>
+     <string>Input Mode</string>
     </property>
-    <addaction name="actionCompute"/>
+    <widget class="QMenu" name="menuFormat">
+     <property name="title">
+      <string>3D Format</string>
+     </property>
+     <addaction name="actionSeparate_files"/>
+     <addaction name="actionSide_by_side_H"/>
+     <addaction name="actionSide_by_side_V"/>
+    </widget>
+    <addaction name="menuFormat"/>
+    <addaction name="separator"/>
+    <addaction name="actionImage"/>
+    <addaction name="actionVideo"/>
+    <addaction name="actionLive"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuInput_Mode"/>
    <addaction name="menuDisplay_Mode"/>
    <addaction name="menuOverlay"/>
-   <addaction name="menuCompute"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -164,36 +176,59 @@
    <addaction name="actionCompute"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionAnaglyph">
-   <property name="text">
-    <string>Anaglyph</string>
-   </property>
-  </action>
-  <action name="actionSide_by_side">
-   <property name="text">
-    <string>Side by side</string>
-   </property>
-  </action>
-  <action name="actionLeft">
-   <property name="text">
-    <string>Left</string>
-   </property>
-  </action>
-  <action name="actionRight">
-   <property name="text">
-    <string>Right</string>
-   </property>
-  </action>
-  <action name="actionOpacity">
-   <property name="text">
-    <string>Opacity</string>
-   </property>
-  </action>
-  <action name="actionInterlaced">
-   <property name="text">
-    <string>Interlaced</string>
-   </property>
-  </action>
+  <actiongroup name="display3DMode">
+    <action name="actionAnaglyph">
+     <property name="text">
+      <string>Anaglyph</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionSide_by_side">
+     <property name="text">
+      <string>Side by side</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionLeft">
+     <property name="text">
+      <string>Left</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionRight">
+     <property name="text">
+      <string>Right</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionOpacity">
+     <property name="text">
+      <string>Opacity</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionInterlaced">
+     <property name="text">
+      <string>Interlaced</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+  </actiongroup>
   <action name="actionOpen_Left_Image">
    <property name="text">
     <string>Open Left Image...</string>
@@ -208,10 +243,76 @@
    <property name="text">
     <string>Features</string>
    </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionCompute">
    <property name="text">
     <string>Compute</string>
+   </property>
+  </action>
+  <actiongroup>
+   <action name="actionImage">
+    <property name="text">
+     <string>Image</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionVideo">
+    <property name="text">
+     <string>Video</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionLive">
+    <property name="text">
+     <string>Live</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+  </actiongroup>
+  <actiongroup>
+   <action name="actionSeparate_files">
+    <property name="text">
+     <string>Separate files</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionSide_by_side_H">
+    <property name="text">
+     <string>Side-by-side (H)</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionSide_by_side_V">
+    <property name="text">
+     <string>Side-by-side (V)</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+  </actiongroup>
+  <action name="actionFormat">
+   <property name="text">
+    <string>Format</string>
    </property>
   </action>
  </widget>

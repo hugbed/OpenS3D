@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_RENDERING_VERTEX_H
-#define S3D_ANALYZER_RENDERING_VERTEX_H
+#ifndef RENDERING_VERTEX_H
+#define RENDERING_VERTEX_H
 
 #include <QVector3D>
 
@@ -107,4 +107,4 @@ Q_DECL_CONSTEXPR inline int Vertex::stride() {
   return sizeof(Vertex);
 }
 
-#endif  // S3D_ANALYZER_RENDERING_VERTEX_H
+#endif  // RENDERING_VERTEX_H

@@ -12,6 +12,8 @@ set ( SOURCES
   mainwindow.cpp
   rendering/openglwindow.cpp
   rendering/openglwidget.cpp
+  rendering/texturemanager.cpp
+  rendering/entity/entitymanager.cpp
   rendering/entity/stereo/rectangleentity.cpp
   rendering/entity/stereo/anaglyphrectangleentity.cpp
   rendering/entity/stereo/stereosidebysideentity.cpp

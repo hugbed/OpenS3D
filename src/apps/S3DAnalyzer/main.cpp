@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QFile>
+#include <QTextStream>
 
 #include <cassert>
 

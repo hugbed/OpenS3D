@@ -1,5 +1,5 @@
-#ifndef S3D_CV_FEATUERS_MATCH_FINDER_CV_H
-#define S3D_CV_FEATUERS_MATCH_FINDER_CV_H
+#ifndef S3D_CV_FEATURES_MATCH_FINDER_CV_H
+#define S3D_CV_FEATURES_MATCH_FINDER_CV_H
 
 #include "s3d/features/match_finder.h"
 
@@ -46,4 +46,4 @@ class MatchFinderCV : public MatchFinder {
 
 }  // namespace s3d
 
-#endif  // S3D_CV_FEATUERS_MATCH_FINDER_CV_H
+#endif  // S3D_CV_FEATURES_MATCH_FINDER_CV_H

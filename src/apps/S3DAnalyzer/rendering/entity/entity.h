@@ -1,5 +1,5 @@
-#ifndef S3D_ANALYZER_RENDERING_ENTITY_ENTITY_H
-#define S3D_ANALYZER_RENDERING_ENTITY_ENTITY_H
+#ifndef RENDERING_ENTITY_ENTITY_H
+#define RENDERING_ENTITY_ENTITY_H
 
 class Entity {
  public:
@@ -7,4 +7,4 @@ class Entity {
   virtual ~Entity() = default;
 };
 
-#endif  // S3D_ANALYZER_RENDERING_ENTITY_ENTITY_H
+#endif  // RENDERING_ENTITY_ENTITY_H

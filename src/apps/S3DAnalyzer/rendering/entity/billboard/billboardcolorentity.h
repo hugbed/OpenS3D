@@ -1,11 +1,11 @@
-#ifndef S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
-#define S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
+#ifndef RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
+#define RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
 
 #include "billboardentity.h"
 
 class BillboardColorEntity : public BillboardEntity {
  public:
-  explicit BillboardColorEntity(const QSize& size);
+  explicit BillboardColorEntity(const QSize& imageSize);
 
   void setPoints(const std::vector<QVector2D>& points, const std::vector<QColor>& colors);
 
@@ -17,4 +17,4 @@ class BillboardColorEntity : public BillboardEntity {
                                          const std::vector<QColor>& colors);
 };
 
-#endif  // S3D_ANALYZER_RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
+#endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDCOLORENTITY_H
