@@ -3,7 +3,7 @@
 // Simplified and stripped from internal base code
 
 #include "s3d/video/capture/file_video_capture_device.h"
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/time.h"
 
@@ -25,7 +25,10 @@ gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice::clone() const {
   return new FileVideoCaptureDevice(filePath_);
 }
 
-FileVideoCaptureDevice::~FileVideoCaptureDevice() = default;
+FileVideoCaptureDevice::~FileVideoCaptureDevice() {
+  // todo: is this the correct behaviour?
+  WaitUntilDone();
+}
 
 void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
                                               std::unique_ptr<VideoCaptureDevice::Client> client) {
@@ -50,6 +53,13 @@ void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
   StartCaptureThread();
 }
 
+void FileVideoCaptureDevice::WaitUntilDone() {
+  if (captureThread_ != nullptr) {
+    captureThread_->join();
+    captureThread_.reset();
+  }
+}
+
 void FileVideoCaptureDevice::StopAndDeAllocate() {
   if (captureLoop_ != nullptr) {
     captureLoop_->stop();
@@ -58,15 +68,13 @@ void FileVideoCaptureDevice::StopAndDeAllocate() {
 
 void FileVideoCaptureDevice::StartCaptureThread() {
   captureThread_ = std::make_unique<std::thread>(&FileVideoCaptureDevice::OnAllocateAndStart, this);
-  captureThread_->detach();
 }
 
 void FileVideoCaptureDevice::OnAllocateAndStart() {
   // blocking loop start
   assert(captureFormat_.frameRate != 0.0f);
-  auto loopDuration = s3d::seconds_to_ms(1.0f / captureFormat_.frameRate);
-  captureLoop_->start(captureLoopClient_.get(),
-                      std::chrono::duration_cast<std::chrono::milliseconds>(loopDuration));
+  auto loopDuration = s3d::seconds_to_us(1.0f / captureFormat_.frameRate);
+  captureLoop_->start(captureLoopClient_.get(), loopDuration);
 }
 
 void FileVideoCaptureDevice::OnCaptureTask() {
@@ -94,4 +102,10 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
 
 std::unique_ptr<TimedLoop> FileVideoCaptureDevice::GetTimedLoop() {
   return std::make_unique<TimedLoopSleep>();
+}
+
+VideoCaptureFormat FileVideoCaptureDevice::DefaultFormat() {
+  VideoCaptureFormat format{};
+  GetVideoFileParser(filePath_, &format);
+  return format;
 }

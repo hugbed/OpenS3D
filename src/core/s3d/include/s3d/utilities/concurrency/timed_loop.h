@@ -12,7 +12,7 @@ class TimedLoop : rule_of_five_interface<TimedLoop> {
     virtual void callback() = 0;
   };
 
-  virtual void start(Client* client, std::chrono::milliseconds loopDuration) = 0;
+  virtual void start(Client* client, std::chrono::microseconds loopDuration) = 0;
   virtual void stop() = 0;
 };
 

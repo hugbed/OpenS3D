@@ -6,7 +6,7 @@
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/strings.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/video/compression/yuv.h"
 
 // todo(hugbed): should use RawUYVYFileParser
@@ -142,7 +142,9 @@ gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice3D::clone() const {
   return new FileVideoCaptureDevice3D(combinedPath);
 }
 
-FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() = default;
+FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() {
+  WaitUntilDone();
+}
 
 void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format,
                                                 std::unique_ptr<Client> client) {
@@ -182,7 +184,7 @@ void FileVideoCaptureDevice3D::Allocate() {
 }
 
 void FileVideoCaptureDevice3D::Start() {
-  auto captureThread = std::thread([this] {
+  captureThread_ = std::make_unique<std::thread>([this] {
     std::vector<RawUYVY3DFileParserProducer::ProducerType*> producers = {producers_.first.get(),
                                                                          producers_.second.get()};
     // start thread for each producer
@@ -200,10 +202,19 @@ void FileVideoCaptureDevice3D::Start() {
       producerThread.join();
     }
   });
+}
 
-  captureThread.detach();
+void FileVideoCaptureDevice3D::WaitUntilDone() {
+  if (captureThread_ != nullptr) {
+    captureThread_->join();
+    captureThread_.reset();
+  }
 }
 
 void FileVideoCaptureDevice3D::StopAndDeAllocate() {
   // call producers/consumers with some flag
+}
+
+VideoCaptureFormat FileVideoCaptureDevice3D::DefaultFormat() {
+  return VideoCaptureFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::BGR, true);
 }

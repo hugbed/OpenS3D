@@ -5,6 +5,8 @@
 
 #include "s3d/video/capture/video_capture_device.h"
 
+#include <iomanip>
+
 class TextureUpdateClient : public VideoCaptureDevice::Client {
  public:
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
@@ -18,7 +20,7 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
   void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat) override {
-    //    outputPerformanceMetrics(std::cout);
+//    outputPerformanceMetrics(std::cout);
 
     if (!images.empty() && !videoTextures_.empty()) {
       videoTextures_[0]->updateImage(images[0]);
@@ -29,16 +31,32 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
     }
   }
 
-  void outputPerformanceMetrics(std::ostream& outStream) {
-    using std::chrono::milliseconds;
-    using std::chrono::duration_cast;
-    auto now = std::chrono::high_resolution_clock::now();
-    outStream << duration_cast<milliseconds>(now - lastTimeMesure).count() << std::endl;
-    lastTimeMesure = now;
-  }
+//  void outputPerformanceMetrics(std::ostream& outStream) {
+//    using std::chrono::microseconds;
+//    using std::chrono::duration_cast;
+//
+//    auto now = std::chrono::high_resolution_clock::now();
+//    auto dt = now - lastTimeMesure;
+//    lastTimeMesure = now;
+//
+//    // skip first 100 frames
+//    if (skipCounter_ > 100) {
+//      float dtc = duration_cast<microseconds>(dt).count();
+//      sumFrameRate_ += 1000000.0f / dtc;
+//      outStream << sumFrameRate_ / ++numFrames_ << std::endl;
+//    } else {
+//      skipCounter_++;
+//    }
+//  }
 
  private:
-  time_point lastTimeMesure;
+  //
+//  int skipCounter_{0};
+//  float sumFrameRate_{0};
+//  int numFrames_{0};
+//  int drift{0};
+//  time_point lastTimeMesure{time_point::max()};
+
   std::vector<DynamicTextureThreadSafe*> videoTextures_;
 };
 

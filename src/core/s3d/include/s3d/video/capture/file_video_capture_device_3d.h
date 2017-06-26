@@ -9,6 +9,7 @@
 
 #include <atomic>
 #include <utility>
+#include <thread>
 
 class RawUYVY3DFileParserProducer;
 class RawUYVY3DFileParserConsumer;
@@ -22,7 +23,9 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   ~FileVideoCaptureDevice3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format, std::unique_ptr<Client> client) override;
+  void WaitUntilDone();
   void StopAndDeAllocate() override;
+  VideoCaptureFormat DefaultFormat() override;
 
  protected:
   void Allocate();
@@ -37,6 +40,8 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   std::pair<std::unique_ptr<RawUYVY3DFileParserProducer>,
             std::unique_ptr<RawUYVY3DFileParserProducer>>
       producers_;
+
+  std::unique_ptr<std::thread> captureThread_{nullptr};
 };
 
 #endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H

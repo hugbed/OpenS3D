@@ -43,7 +43,9 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
              std::unique_ptr<VideoFileParser> fileParser,
              std::unique_ptr<TimedLoop> timedLoop);
 
+  void WaitUntilDone();
   void StopAndDeAllocate() override;
+  VideoCaptureFormat DefaultFormat() override;
 
  protected:
   void OnAllocateAndStart();

@@ -41,6 +41,8 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
   virtual void Resume() {}
 
   virtual void StopAndDeAllocate() = 0;
+
+  virtual VideoCaptureFormat DefaultFormat() = 0;
 };
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H

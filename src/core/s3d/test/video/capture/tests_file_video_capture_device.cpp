@@ -2,7 +2,7 @@
 #include "gmock/gmock.h"
 
 #include "s3d/video/capture/file_video_capture_device.h"
-#include "s3d/video/capture/video_file_parser.h"
+#include "s3d/video/file_parser/video_file_parser.h"
 
 class FakeTimedLoop : public TimedLoop {
  public:
@@ -29,7 +29,7 @@ class MockTimedLoop : public TimedLoop {
 class FakeVideoFileParser : public VideoFileParser {
  public:
   FakeVideoFileParser(const VideoCaptureFormat& fakeFileFormat)
-      : VideoFileParser(""), fakeFileFormat_{fakeFileFormat} {}
+      : VideoFileParser(), fakeFileFormat_{fakeFileFormat} {}
   gsl::owner<VideoFileParser*> clone() const override {
     return new FakeVideoFileParser(fakeFileFormat_);
   }
@@ -44,7 +44,7 @@ class FakeVideoFileParser : public VideoFileParser {
 
 class MockVideoFileParser : public VideoFileParser {
  public:
-  MockVideoFileParser() : VideoFileParser("") {}
+  MockVideoFileParser() : VideoFileParser() {}
   gsl::owner<VideoFileParser*> clone() const override { return new MockVideoFileParser; }
   MOCK_METHOD1(Initialize, bool(VideoCaptureFormat* format));
   MOCK_METHOD1(GetNextFrame, bool(std::vector<uint8_t>& frame));

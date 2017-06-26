@@ -322,18 +322,6 @@ bool DecklinkCaptureDelegate::supportedFormat(const VideoCaptureFormat& format) 
          format.pixelFormat == VideoPixelFormat::ARGB;
 }
 
-void DecklinkCaptureDelegate::SendErrorString(const std::string& reason) {
-  if (frameReceiver_ != nullptr) {
-    frameReceiver_->SendErrorString(reason);
-  }
-}
-
-void DecklinkCaptureDelegate::SendLogString(const std::string& message) {
-  if (frameReceiver_ != nullptr) {
-    frameReceiver_->SendLogString(message);
-  }
-}
-
 VideoCaptureDeviceDecklink::VideoCaptureDeviceDecklink(
     const VideoCaptureDeviceDescriptor& deviceDescriptor)
     : captureDelegate_{new DecklinkCaptureDelegate{deviceDescriptor, this}} {}
@@ -365,4 +353,8 @@ void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
   if (client_ != nullptr) {
     client_->OnIncomingCapturedData(images, frameFormat);
   }
+}
+
+VideoCaptureFormat VideoCaptureDeviceDecklink::DefaultFormat() {
+  return VideoCaptureFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::ARGB);
 }
