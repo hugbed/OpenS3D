@@ -6,6 +6,7 @@
 #define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_H
 
 #include "video_capture_device.h"
+
 #include "s3d/utilities/concurrency/timed_loop_sleep.h"
 
 #include <atomic>

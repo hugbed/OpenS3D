@@ -14,7 +14,7 @@
 
 class VideoCaptureDeviceAllocationException : std::runtime_error {
  public:
-  VideoCaptureDeviceAllocationException(std::string reason)
+  explicit VideoCaptureDeviceAllocationException(std::string reason)
       : std::runtime_error(std::move(reason)) {}
 };
 

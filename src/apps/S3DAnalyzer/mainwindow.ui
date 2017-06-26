@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>763</width>
+    <height>670</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>S3D Analyzer</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0">
+    <item row="0" column="0">
+     <widget class="OpenGLWidget" name="openGLWidget">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="ParametersListView" name="parametersListView" native="true"/>
+    </item>
+    <item row="2" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="RangeWidget" name="depthWidget" native="true"/>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Convergence</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WidthHintLabel" name="convergenceIndicator"/>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="hitLabel">
+          <property name="text">
+           <string>HIT </string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="DoubleSpinBoxNoCursor" name="hitWidget"/>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>763</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuDisplay_Mode">
+    <property name="title">
+     <string>Display Mode</string>
+    </property>
+    <addaction name="actionAnaglyph"/>
+    <addaction name="actionOpacity"/>
+    <addaction name="actionInterlaced"/>
+    <addaction name="actionSide_by_side"/>
+    <addaction name="actionLeft"/>
+    <addaction name="actionRight"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Left_Image"/>
+    <addaction name="actionOpen_Right_Image"/>
+   </widget>
+   <widget class="QMenu" name="menuOverlay">
+    <property name="title">
+     <string>Overlay</string>
+    </property>
+    <addaction name="actionFeatures"/>
+   </widget>
+   <widget class="QMenu" name="menuInput_Mode">
+    <property name="title">
+     <string>Input Mode</string>
+    </property>
+    <widget class="QMenu" name="menuFormat">
+     <property name="title">
+      <string>3D Format</string>
+     </property>
+     <addaction name="actionSeparate_files"/>
+     <addaction name="actionSide_by_side_H"/>
+     <addaction name="actionSide_by_side_V"/>
+    </widget>
+    <addaction name="menuFormat"/>
+    <addaction name="separator"/>
+    <addaction name="actionImage"/>
+    <addaction name="actionVideo"/>
+    <addaction name="actionLive"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuInput_Mode"/>
+   <addaction name="menuDisplay_Mode"/>
+   <addaction name="menuOverlay"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAnaglyph"/>
+   <addaction name="actionOpacity"/>
+   <addaction name="actionInterlaced"/>
+   <addaction name="actionSide_by_side"/>
+   <addaction name="actionLeft"/>
+   <addaction name="actionRight"/>
+   <addaction name="separator"/>
+   <addaction name="actionFeatures"/>
+   <addaction name="actionCompute"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <actiongroup name="display3DMode">
+    <action name="actionAnaglyph">
+     <property name="text">
+      <string>Anaglyph</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionSide_by_side">
+     <property name="text">
+      <string>Side by side</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionLeft">
+     <property name="text">
+      <string>Left</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionRight">
+     <property name="text">
+      <string>Right</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionOpacity">
+     <property name="text">
+      <string>Opacity</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+    <action name="actionInterlaced">
+     <property name="text">
+      <string>Interlaced</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </action>
+  </actiongroup>
+  <action name="actionOpen_Left_Image">
+   <property name="text">
+    <string>Open Left Image...</string>
+   </property>
+  </action>
+  <action name="actionOpen_Right_Image">
+   <property name="text">
+    <string>Open Right Image...</string>
+   </property>
+  </action>
+  <action name="actionFeatures">
+   <property name="text">
+    <string>Features</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionCompute">
+   <property name="text">
+    <string>Compute</string>
+   </property>
+  </action>
+  <actiongroup>
+   <action name="actionImage">
+    <property name="text">
+     <string>Image</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionVideo">
+    <property name="text">
+     <string>Video</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionLive">
+    <property name="text">
+     <string>Live</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+  </actiongroup>
+  <actiongroup>
+   <action name="actionSeparate_files">
+    <property name="text">
+     <string>Separate files</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionSide_by_side_H">
+    <property name="text">
+     <string>Side-by-side (H)</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+   <action name="actionSide_by_side_V">
+    <property name="text">
+     <string>Side-by-side (V)</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </action>
+  </actiongroup>
+  <action name="actionFormat">
+   <property name="text">
+    <string>Format</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>OpenGLWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>rendering/openglwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ParametersListView</class>
+   <extends>QWidget</extends>
+   <header>widgets/parameterslistview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DoubleSpinBoxNoCursor</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>widgets/doublespinboxnocursor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WidthHintLabel</class>
+   <extends>QLabel</extends>
+   <header>widgets/widthhintlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RangeWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/rangewidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

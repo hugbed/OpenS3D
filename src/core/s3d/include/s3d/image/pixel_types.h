@@ -1,3 +1,6 @@
+#ifndef S3D_IMAGE_PIXEL_TYPES_H
+#define S3D_IMAGE_PIXEL_TYPES_H
+
 // Copyright (c) 2012, 2013 Pierre MOULON.
 
 // This Source Code Form is subject to the terms of the Mozilla Public
@@ -59,5 +62,7 @@ static const RgbColor GREEN(0, 255, 0);
 static const RgbColor YELLOW(255, 255, 0);
 static const RgbColor CYAN(0, 255, 255);
 static const RgbColor MAGENTA(255, 0, 255);
-}
-}
+}  // namespace RgbValues
+}  // namespace s3d
+
+#endif  // S3D_IMAGE_PIXEL_TYPES_H

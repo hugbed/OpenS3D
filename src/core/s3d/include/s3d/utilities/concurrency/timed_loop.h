@@ -1,7 +1,7 @@
 #ifndef S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_H
 #define S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_H
 
-#include "s3d/utilities/rule_of_five.h"
+#include <s3d/utilities/rule_of_five.h>
 
 #include <chrono>
 

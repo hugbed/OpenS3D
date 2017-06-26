@@ -11,6 +11,8 @@
 
 namespace s3d {
 
+// naive implementation, could take infinite time
+// better implementation would be to shuffle then choose n first
 template <class SizeType>
 std::vector<int> rand_n_unique_values(int minVal, int maxVal, SizeType n, int seed) {
   assert(minVal < maxVal);

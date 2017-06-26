@@ -9,6 +9,6 @@
 namespace s3d {
 template class Image<uint8_t>;
 template class Image<RgbColor>;
-}
+}  // namespace s3d
 
 #endif  // S3D_IMAGE_IMAGE_H

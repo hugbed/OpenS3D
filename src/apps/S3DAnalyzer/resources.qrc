@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/texture.frag</file>
+        <file>shaders/texture.vert</file>
+        <file>images/left.jpg</file>
+        <file>images/right.jpg</file>
+        <file>shaders/stereo/anaglyph.frag</file>
+        <file>shaders/stereo/overlap.vert</file>
+        <file>shaders/color.frag</file>
+        <file>shaders/color.vert</file>
+        <file>shaders/stereo/difference.frag</file>
+        <file>shaders/textureshift.vert</file>
+        <file>shaders/stereo/opacity.frag</file>
+        <file>shaders/stereo/interlaced.frag</file>
+        <file>shaders/billboard.vert</file>
+        <file>shaders/billboardgradient.vert</file>
+    </qresource>
+</RCC>

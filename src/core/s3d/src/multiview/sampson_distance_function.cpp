@@ -38,4 +38,4 @@ void SampsonDistanceFunction::ComputeDistance(const std::vector<SampleType>& pts
   Eigen::VectorXd distancesVector = d.array() / coeff.array();
   Eigen::VectorXd::Map(&distances->operator[](0), distancesVector.size()) = distancesVector;
 }
-}
+}  // namespace s3d
