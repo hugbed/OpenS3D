@@ -104,7 +104,14 @@ void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
   // find matches
   std::unique_ptr<s3d::MatchFinder> matchFinder = std::make_unique<s3d::MatchFinderCV>();
   auto matches = matchFinder->findMatches({s3d::cv2image(leftOrig), s3d::cv2image(rightOrig)});
-  assert(matches.size() == 2);
+  assert(matches.size() == 2 && matches[0].size() == matches[1].size());
+
+  // no match
+  if (matches[0].size() <
+      s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 3) {
+    return;
+  }
+
   std::vector<Eigen::Vector2d> pts1 = matches[0], pts2 = matches[1];
 
   // to homogeneous
@@ -190,16 +197,26 @@ void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
   //  std::cout << "Recommended interaxial distance adjustment (%): "
   //            << budgetP - (wantedMaxDisp - wantedMinDisp) << std::endl;
 
-  // Set outputs
-  minDisparity = minDispP;
-  maxDisparity = maxDispP;
+  // Set outputs (moving average of smoothingFactor_)
+  // todo: do this elsewhere
+  maxDisparity -= maxDisparity / smoothingFactor_;
+  minDisparity -= minDisparity / smoothingFactor_;
+  minDisparity += minDispP / smoothingFactor_;
+  maxDisparity += maxDispP / smoothingFactor_;
 
-  vertical = model.ch_y;
-  roll = model.a_z;
-  zoom = model.a_f;
-  tiltOffset = model.f_a_x;
-  panKeystone = model.a_x_f;
-  tiltKeystone = model.a_y_f;
+  vertical -= vertical / smoothingFactor_;
+  roll -= roll / smoothingFactor_;
+  zoom -= zoom / smoothingFactor_;
+  tiltOffset -= tiltOffset / smoothingFactor_;
+  panKeystone -= panKeystone / smoothingFactor_;
+  tiltKeystone = tiltKeystone / smoothingFactor_;
+
+  vertical += model.ch_y / smoothingFactor_;
+  roll += model.a_z / smoothingFactor_;
+  zoom += model.a_f / smoothingFactor_;
+  tiltOffset += model.f_a_x / smoothingFactor_;
+  panKeystone += model.a_x_f / smoothingFactor_;
+  tiltKeystone += model.a_y_f / smoothingFactor_;
 
   featurePoints.clear();
   disparitiesPercent.clear();

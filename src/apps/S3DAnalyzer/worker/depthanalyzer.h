@@ -9,6 +9,7 @@ class DepthAnalyzer {
  public:
   void analyze(const QImage& imageLeft, const QImage& imageRight);
 
+  // outputs
   double minDisparity{};
   double maxDisparity{};
 
@@ -21,6 +22,9 @@ class DepthAnalyzer {
 
   std::vector<QVector2D> featurePoints;
   std::vector<float> disparitiesPercent;
+
+  // smoothing factor (moving average) for computation outputs
+  double smoothingFactor_{10.0};
 };
 
 #endif  // WORKER_DEPTHANALYZER_H
