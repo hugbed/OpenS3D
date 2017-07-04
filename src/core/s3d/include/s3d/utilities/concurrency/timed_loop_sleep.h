@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <thread>
+#include <condition_variable>
 
 class TimedLoopSleep : public TimedLoop {
  public:
@@ -22,6 +23,16 @@ class TimedLoopSleep : public TimedLoop {
 
     auto nextFrameTime = high_resolution_clock::now() + loopDuration;
     while (!stopLoopFlag_) {
+      // if should pause, wait
+      {
+        std::unique_lock<std::mutex> lk(pauseMutex);
+        while (pauseFlag) {
+          pauseCondition.wait(lk, [this] { return !pauseFlag; });
+          // reset time
+          nextFrameTime = high_resolution_clock::now() + loopDuration;
+        }
+      }
+
       // sleep until time has come (thread sleep then a bit of CPU burning)
       auto sleepDuration = nextFrameTime - high_resolution_clock::now();
 
@@ -34,7 +45,7 @@ class TimedLoopSleep : public TimedLoop {
       while ((high_resolution_clock::now() - nextFrameTime) < 0us) {
       }
 
-//      outputPerformanceMetrics(std::cout, loopDuration);
+      //      outputPerformanceMetrics(std::cout, loopDuration);
       client->callback();
 
       // update next frame time
@@ -60,6 +71,19 @@ class TimedLoopSleep : public TimedLoop {
     }
   }
 
+  void maybePause() override {
+    std::unique_lock<std::mutex> lock;
+    pauseFlag = true;
+  }
+
+  void resume() override {
+    {
+      std::unique_lock<std::mutex> lock;
+      pauseFlag = false;
+    }
+    pauseCondition.notify_all();
+  }
+
   // todo: unit test the value of the flag through the public methods
   void stop() override { stopLoopFlag_ = true; }
 
@@ -68,6 +92,10 @@ class TimedLoopSleep : public TimedLoop {
 
   // todo: atomic maybe slow
   std::atomic<bool> stopLoopFlag_{false};
+
+  std::mutex pauseMutex;
+  bool pauseFlag{false};
+  std::condition_variable pauseCondition;
 };
 
 #endif  // S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_SLEEP_H

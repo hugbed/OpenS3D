@@ -14,6 +14,8 @@ class TimedLoop : rule_of_five_interface<TimedLoop> {
 
   virtual void start(Client* client, std::chrono::microseconds loopDuration) = 0;
   virtual void stop() = 0;
+  virtual void maybePause() {}
+  virtual void resume() {}
 };
 
 #endif  // S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_H

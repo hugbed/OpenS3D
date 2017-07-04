@@ -4,6 +4,7 @@
 #include "producer_consumer_mediator.h"
 
 #include <algorithm>
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -79,6 +80,9 @@ class ProducerBarrier {
   virtual const T& getProduct() = 0;
 
   void startProducing() {
+    // reset stop flag
+    // todo: may be problem with trying to stop right after starting
+    shouldStop_ = false;
     onStartProducing();
     while (!shouldStopProducing()) {
       mediator_->waitUntilShouldProduce();
@@ -87,17 +91,23 @@ class ProducerBarrier {
     }
   }
 
+  void stop() {
+    shouldStop_ = true;
+    mediator_->notifyDoneProducing();
+  }
+
   // called/checked by consumer
   void acknowledgeDoneProducing() { mediator_->acknowledgeDoneProducing(); }
   bool isDoneProducing() { return mediator_->isDoneProducing(); }
   void notifyShouldProduce() { mediator_->notifyShouldProduce(); }
   void notifyDoneConsuming() { mediator_->notifyDoneConsuming(); }
-  virtual bool shouldStopProducing() { return false; }
+  virtual bool shouldStopProducing() { return shouldStop_; }
 
  private:
   virtual void produce() = 0;  // where the work happens : set product
   virtual void onStartProducing() {}
 
+  std::atomic<bool> shouldStop_{false};
   gsl::not_null<ProducerConsumerMediator*> mediator_;
 };
 }  // namespace concurrency

@@ -25,6 +25,15 @@ class ConsumerBarrier {
     }
   }
 
+  // stop is called on each producers
+  // then it wake them up so they can stop gracefully
+  void stop() {
+    for (auto* producer : producers_) {
+      producer->stop();
+    }
+    notifyShouldProduce();
+  }
+
  protected:
   const Producers& getProducers() { return producers_; }
 
