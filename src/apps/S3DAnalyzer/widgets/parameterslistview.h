@@ -27,7 +27,7 @@ class ParametersListView : public QWidget {
 
  private:
   std::map<QString, std::unique_ptr<ParameterWidget>> m_parameters;
-  QHBoxLayout* m_layout;
+  QLayout* m_layout;
 };
 
 #endif  // WIDGETS_ALIGNMENTPARAMETERSWIDGET_H

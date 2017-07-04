@@ -990,10 +990,10 @@ QSlider::groove:horizontal {
 QSlider::handle:horizontal {
     background: #232629;
     border: 1px solid #565a5e;
-    width: 16px;
+    width: 8px;
     height: 16px;
     margin: -8px 0;
-    border-radius: 9px;
+    border-radius: 2px;
 }
 
 QSlider::groove:vertical {

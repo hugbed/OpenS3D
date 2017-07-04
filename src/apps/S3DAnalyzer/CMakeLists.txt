@@ -31,6 +31,8 @@ set ( SOURCES
   widgets/widthhintlabel.cpp
   widgets/rangewidget.cpp
   widgets/rangebar.cpp
+  widgets/videocontrols.cpp
+  widgets/sliderdirectjump.cpp
   worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp
 )

@@ -10,6 +10,7 @@ ParameterWidget::ParameterWidget(const QString& label, const QString& unitSymbol
 
   setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 
+  m_layout.setMargin(0);
   m_layout.addWidget(&m_value);
   m_layout.addWidget(&m_label);
   setLayout(&m_layout);
