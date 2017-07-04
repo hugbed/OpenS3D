@@ -76,6 +76,11 @@ void EntityManager::setHorizontalShift(float horizontalShift) {
   m_horizontalShift = horizontalShift;
 }
 
+float EntityManager::getHorizontalShift() const
+{
+  return m_horizontalShift;
+}
+
 void EntityManager::displayModeChanged(EntityManager::DisplayMode mode) {
   m_currentMode = mode;
 }

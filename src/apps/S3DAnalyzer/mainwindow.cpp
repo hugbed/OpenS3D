@@ -4,139 +4,142 @@
 
 #include "worker/depthanalyzer.h"
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  m_analyzer = std::make_unique<DepthAnalyzer>();
+
   connect(ui->actionOpen_Left_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
       QImage img(filename);
-      for (auto* context : m_renderingContexts) {
-        context->makeCurrent();
-        context->textureManager->setImageLeft(img);
-        context->doneCurrent();
-      }
-      updateRenderingContexts();
+      m_currentContext->makeCurrent();
+      m_currentContext->textureManager->setImageLeft(img);
+      m_currentContext->doneCurrent();
+      m_currentContext->openGLRenderer->update();
     });
   });
 
   connect(ui->actionOpen_Right_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
       QImage img(filename);
-      for (auto* context : m_renderingContexts) {
-        context->makeCurrent();
-        context->textureManager->setImageRight(img);
-        context->doneCurrent();
-      }
-      updateRenderingContexts();
+      m_currentContext->makeCurrent();
+      m_currentContext->textureManager->setImageRight(img);
+      m_currentContext->doneCurrent();
+      m_currentContext->openGLRenderer->update();
     });
   });
 
   connect(ui->actionAnaglyph, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::Anaglyph);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Anaglyph);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionOpacity, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionInterlaced, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::Interlaced);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Interlaced);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionSide_by_side, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::SideBySide);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::SideBySide);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionLeft, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::Left);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Left);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionRight, &QAction::triggered, [this] {
-    for (auto* context : m_renderingContexts) {
-      context->entityManager->displayModeChanged(EntityManager::DisplayMode::Right);
-    }
-    updateRenderingContexts();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Right);
+    m_currentContext->openGLRenderer->update();
   });
 
   connect(ui->actionFeatures, &QAction::triggered,  //
           [this] {
-            for (auto* context : m_renderingContexts) {
-              context->entityManager->setFeaturesVisibility(ui->actionFeatures->isChecked());
-            }
-            updateRenderingContexts();
+            m_currentContext->entityManager->setFeaturesVisibility(ui->actionFeatures->isChecked());
+            m_currentContext->openGLRenderer->update();
           });
 
   connect(ui->actionCompute, &QAction::triggered,  //
-          [this] { computeAndUpdate(); });
+          [this] {
+            m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
+
+            connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
+                    [this](const QImage& imgLeft, const QImage& imgRight) {
+                      m_currentContext->makeCurrent();
+                      m_currentContext->textureManager->setImageLeft(imgLeft);
+                      m_currentContext->textureManager->setImageRight(imgRight);
+                      m_currentContext->doneCurrent();
+                      computeAndUpdate();
+                    });
+          });
 
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           [this](double value) {
-            for (auto* context : m_renderingContexts) {
-              context->entityManager->setHorizontalShift(value / 100.0f);
-            }
-            updateRenderingContexts();
+            m_currentContext->entityManager->setHorizontalShift(value / 100.0f);
+            m_currentContext->openGLRenderer->update();
             ui->depthWidget->setShift(value);
           });
 
   connect(ui->openGLWidget, &OpenGLWidget::GLInitialized, [this] {
     m_widgetRenderingContext = std::make_unique<RenderingContext>(ui->openGLWidget);
-    m_renderingContexts.push_back(m_widgetRenderingContext.get());
+    m_currentContext = m_widgetRenderingContext.get();
+
+    m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
+
+    connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
+            [this](const QImage& imgLeft, const QImage& imgRight) {
+              m_currentContext->makeCurrent();
+              m_currentContext->textureManager->setImageLeft(imgLeft);
+              m_currentContext->textureManager->setImageRight(imgRight);
+              m_currentContext->doneCurrent();
+              computeAndUpdate();
+            });
   });
 }
 
 MainWindow::~MainWindow() {
   // delete here to make OpenGL context current
+  m_videoSynchronizer->stop();
   m_widgetRenderingContext.reset();
   m_windowRenderingContext.reset();
   delete ui;
 }
 
 void MainWindow::computeAndUpdate() {
-  const QImage& imageLeft = m_widgetRenderingContext->textureManager->getImageLeft();
-  const QImage& imageRight = m_widgetRenderingContext->textureManager->getImageRight();
+  QImage imageLeft = m_widgetRenderingContext->textureManager->getImageLeft();
+  QImage imageRight = m_widgetRenderingContext->textureManager->getImageRight();
 
-  DepthAnalyzer analyzer;
-  analyzer.analyze(imageLeft, imageRight);
+  m_analyzer->analyze(imageLeft, imageRight);
 
-  ui->depthWidget->setLowValue(analyzer.minDisparity);
-  ui->depthWidget->setHighValue(analyzer.maxDisparity);
+  if (m_analyzer->maxDisparity - m_analyzer->minDisparity > 0.01) {
+    ui->depthWidget->setLowValue(m_analyzer->minDisparity);
+    ui->depthWidget->setHighValue(m_analyzer->maxDisparity);
 
-  ui->parametersListView->setParameter("Roll", analyzer.roll);
-  ui->parametersListView->setParameter("Vertical", analyzer.vertical);
-  ui->parametersListView->setParameter("Pan Keystone", analyzer.panKeystone);
-  ui->parametersListView->setParameter("Tilt Keystone", analyzer.tiltKeystone);
-  ui->parametersListView->setParameter("Tilt Offset", analyzer.tiltOffset);
-  ui->parametersListView->setParameter("Zoom", analyzer.zoom);
+    ui->parametersListView->setParameter("Roll", m_analyzer->roll);
+    ui->parametersListView->setParameter("Vertical", m_analyzer->vertical);
+    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->panKeystone);
+    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->tiltKeystone);
+    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->tiltOffset);
+    ui->parametersListView->setParameter("Zoom", m_analyzer->zoom);
 
-  m_featurePoints = analyzer.featurePoints;
-  m_disparitiesPercent = analyzer.disparitiesPercent;
-
-  for (auto* context : m_renderingContexts) {
-    context->makeCurrent();
-    context->entityManager->setFeatures(m_featurePoints, m_disparitiesPercent);
-    context->doneCurrent();
+    m_currentContext->makeCurrent();
+    m_currentContext->entityManager->setFeatures(m_analyzer->featurePoints,
+                                                 m_analyzer->disparitiesPercent);
+    m_currentContext->doneCurrent();
+    updateConvergenceHint(m_analyzer->minDisparity, m_analyzer->maxDisparity);
+    m_currentContext->openGLRenderer->update();
   }
-  updateRenderingContexts();
-  updateConvergenceHint(analyzer.minDisparity, analyzer.maxDisparity);
 }
 
 void MainWindow::updateConvergenceHint(float minDisparity, float maxDisparity) {
@@ -164,37 +167,43 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
     if (m_openGLWindow == nullptr) {
       m_openGLWindow = std::make_unique<OpenGLWindow>();
 
-      QSurfaceFormat format;
-      format.setRenderableType(QSurfaceFormat::OpenGL);
-      format.setProfile(QSurfaceFormat::CoreProfile);
-      format.setVersion(3, 3);
-      m_openGLWindow->setFormat(format);
+      //      QSurfaceFormat format;
+      //      format.setRenderableType(QSurfaceFormat::OpenGL);
+      //      format.setProfile(QSurfaceFormat::CoreProfile);
+      //      format.setVersion(3, 3);
+      //      m_openGLWindow->setFormat(format);
       m_openGLWindow->resize(800, 600);
 
       connect(m_openGLWindow.get(), &OpenGLWindow::GLInitialized, [this] {
         // copy current context (images, features, shift) to window context
         // since everything before the double click will not have been registered
         m_windowRenderingContext = std::make_unique<RenderingContext>(m_openGLWindow.get());
-        m_windowRenderingContext->entityManager->displayModeChanged(getCurrentDisplayMode());
-        m_windowRenderingContext->makeCurrent();
-        m_windowRenderingContext->textureManager->setImageLeft(
-            m_widgetRenderingContext->textureManager->getImageLeft());
-        m_windowRenderingContext->textureManager->setImageRight(
-            m_widgetRenderingContext->textureManager->getImageRight());
-        m_windowRenderingContext->entityManager->setFeatures(m_featurePoints, m_disparitiesPercent);
-        m_windowRenderingContext->entityManager->setFeaturesVisibility(true);
-        m_windowRenderingContext->doneCurrent();
-        m_renderingContexts.push_back(m_windowRenderingContext.get());
+        m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
+                                               getCurrentDisplayMode(),         //
+                                               m_analyzer->featurePoints,
+                                               m_analyzer->disparitiesPercent,
+                                               ui->actionFeatures->isChecked());
+        m_currentContext = m_windowRenderingContext.get();
       });
+
+      connect(m_openGLWindow.get(), &OpenGLWindow::onClose, [this] {
+        m_widgetRenderingContext->persistState(m_windowRenderingContext.get(),  //
+                                               getCurrentDisplayMode(),         //
+                                               m_analyzer->featurePoints,
+                                               m_analyzer->disparitiesPercent,
+                                               ui->actionFeatures->isChecked());
+        m_currentContext = m_widgetRenderingContext.get();
+      });
+    } else {
+      m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
+                                             getCurrentDisplayMode(),         //
+                                             m_analyzer->featurePoints,
+                                             m_analyzer->disparitiesPercent,
+                                             ui->actionFeatures->isChecked());
+      m_currentContext = m_windowRenderingContext.get();
     }
 
-    m_openGLWindow->show();
-  }
-}
-
-void MainWindow::updateRenderingContexts() {
-  for (auto* context : m_renderingContexts) {
-    context->openGLRenderer->update();
+    m_openGLWindow->showFullScreen();
   }
 }
 

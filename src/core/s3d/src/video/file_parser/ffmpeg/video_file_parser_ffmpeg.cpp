@@ -8,7 +8,6 @@
 VideoFileParserFFmpeg::VideoFileParserFFmpeg(const std::string& inputFilename)
     : filename_(inputFilename), demuxer_(inputFilename) {
   decoder_ = demuxer_.createDecoder();
-  scaler_ = decoder_->createScaler(AV_PIX_FMT_BGR24);
 }
 
 gsl::owner<VideoFileParserFFmpeg*> VideoFileParserFFmpeg::clone() const {
@@ -18,8 +17,16 @@ gsl::owner<VideoFileParserFFmpeg*> VideoFileParserFFmpeg::clone() const {
 VideoFileParserFFmpeg::~VideoFileParserFFmpeg() = default;
 
 bool VideoFileParserFFmpeg::Initialize(VideoCaptureFormat* format) {
+  // keep suggested format if not unknown
+  VideoPixelFormat suggestedPixelFormat = VideoPixelFormat::BGRA;
+  if (format->pixelFormat != VideoPixelFormat::UNKNOWN) {
+    suggestedPixelFormat = format->pixelFormat;
+  }
+
+  scaler_ = decoder_->createScaler(ffmpeg::pixelFormatToAV(suggestedPixelFormat));
+
   format->frameRate = decoder_->getFrameRate();
-  format->pixelFormat = VideoPixelFormat::BGR;
+  format->pixelFormat = suggestedPixelFormat;
   format->frameSize = decoder_->getImageSize();
   format->stereo3D = false;
 

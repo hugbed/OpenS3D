@@ -1,6 +1,7 @@
 #include "openglwindow.h"
+
 #include <QDebug>
-#include <QOpenGLTexture>
+#include <QHideEvent>
 #include <QMouseEvent>
 
 #include "entity/entitymanager.h"
@@ -97,4 +98,8 @@ void OpenGLWindow::mouseDoubleClickEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
     close();
   }
+}
+
+void OpenGLWindow::hideEvent(QHideEvent* event) {
+  emit onClose();
 }

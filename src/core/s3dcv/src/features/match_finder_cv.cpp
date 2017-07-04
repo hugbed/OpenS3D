@@ -18,6 +18,11 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
   auto featuresRight = findFeatures(*imgIt++);
 
   auto matches = matchFeatures(featuresLeft, featuresRight);
+
+  if (matches.empty()) {
+    return {{}, {}};
+  }
+
   double minDist = matchesMinDistance(matches);
   return filterMatches(featuresLeft, featuresRight, matches,
                        10 * minDist);  // todo: 10 is hardcoded
@@ -64,7 +69,7 @@ double MatchFinderCV::matchesMinDistance(MatchesCV matches) const {
 };
 
 cv::Ptr<cv::Feature2D> MatchFinderCV::createFeatureDetector() {
-  return cv::ORB::create(5000, 1.2f, 32, 5, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
+  return cv::ORB::create(500, 1.2f, 32, 5, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
 }
 
 cv::Ptr<cv::DescriptorMatcher> MatchFinderCV::createDescriptorMatcher() {

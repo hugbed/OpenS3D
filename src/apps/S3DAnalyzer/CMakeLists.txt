@@ -32,6 +32,7 @@ set ( SOURCES
   widgets/rangewidget.cpp
   widgets/rangebar.cpp
   widgets/videocontrols.cpp
+  widgets/videobuttons.cpp
   widgets/sliderdirectjump.cpp
   worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp

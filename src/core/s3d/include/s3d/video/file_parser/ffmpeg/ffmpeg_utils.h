@@ -8,10 +8,14 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
+#include "s3d/video/video_types.h"
+
 #include <stdexcept>
 #include <memory>
 
 namespace ffmpeg {
+
+AVPixelFormat pixelFormatToAV(VideoPixelFormat pixelFormat);
 
 // todo, have derived (more specific) exceptions
 struct FFmpegException : std::runtime_error {

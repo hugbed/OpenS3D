@@ -26,6 +26,8 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
 
   gsl::owner<VideoSynchronizer*> clone() const override;
 
+  void stop();
+
   void OnIncomingCapturedData(const Images& data, const VideoCaptureFormat& frameFormat) override;
 
  signals:

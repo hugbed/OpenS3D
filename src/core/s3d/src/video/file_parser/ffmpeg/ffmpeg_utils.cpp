@@ -2,6 +2,32 @@
 
 namespace ffmpeg {
 
+AVPixelFormat pixelFormatToAV(VideoPixelFormat pixelFormat) {
+  AVPixelFormat fmt;
+  switch (pixelFormat) {
+    case VideoPixelFormat::ARGB:
+      fmt = AV_PIX_FMT_ARGB;
+      break;
+    case VideoPixelFormat::BGRA:
+      fmt = AV_PIX_FMT_BGRA;
+      break;
+    case VideoPixelFormat::RGB:
+      fmt = AV_PIX_FMT_RGB24;
+      break;
+    case VideoPixelFormat::BGR:
+      fmt = AV_PIX_FMT_BGR24;
+      break;
+    case VideoPixelFormat::UYVY:
+      fmt = AV_PIX_FMT_UYVY422;
+      break;
+    case VideoPixelFormat::UNKNOWN:
+      fmt = AV_PIX_FMT_BGRA;
+      break;
+  }
+
+  return fmt;
+}
+
 void avformat::open_input(AVFormatContext** ps,
                           const char* url,
                           AVInputFormat* fmt,

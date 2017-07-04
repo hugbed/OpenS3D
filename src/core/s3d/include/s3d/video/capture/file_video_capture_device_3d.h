@@ -11,8 +11,9 @@
 #include <utility>
 #include <thread>
 
-class RawUYVY3DFileParserProducer;
-class RawUYVY3DFileParserConsumer;
+class FileParserProducer;
+class FileParserConsumer;
+class ProducerConsumerSynchronizer;
 
 class FileVideoCaptureDevice3D : public VideoCaptureDevice {
  public:
@@ -23,6 +24,9 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   ~FileVideoCaptureDevice3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format, Client* client) override;
+
+  void MaybeSuspend() override;
+  void Resume() override;
   void WaitUntilDone();
   void StopAndDeAllocate() override;
   VideoCaptureFormat DefaultFormat() override;
@@ -36,11 +40,12 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   VideoCaptureFormat captureFormat_;
 
   Client* client_;
-  std::unique_ptr<RawUYVY3DFileParserConsumer> consumer_;
-  std::pair<std::unique_ptr<RawUYVY3DFileParserProducer>,
-            std::unique_ptr<RawUYVY3DFileParserProducer>>
+  std::unique_ptr<FileParserConsumer> consumer_;
+  std::pair<std::unique_ptr<FileParserProducer>,
+            std::unique_ptr<FileParserProducer>>
       producers_;
 
+  std::unique_ptr<ProducerConsumerSynchronizer> sync_;
   std::unique_ptr<std::thread> captureThread_{nullptr};
 };
 

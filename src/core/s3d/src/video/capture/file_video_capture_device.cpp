@@ -109,3 +109,13 @@ VideoCaptureFormat FileVideoCaptureDevice::DefaultFormat() {
   GetVideoFileParser(filePath_, &format);
   return format;
 }
+
+void FileVideoCaptureDevice::MaybeSuspend() {
+  VideoCaptureDevice::MaybeSuspend();
+  captureLoop_->maybePause();
+}
+
+void FileVideoCaptureDevice::Resume() {
+  VideoCaptureDevice::Resume();
+  captureLoop_->resume();
+}

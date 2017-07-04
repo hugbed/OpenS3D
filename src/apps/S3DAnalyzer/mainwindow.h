@@ -7,6 +7,8 @@
 #include "rendering/openglwidget.h"
 #include "rendering/openglrenderer.h"
 
+#include "worker/videosynchronizer.h"
+
 namespace Ui {
 class MainWindow;
 }  // namespace Ui
@@ -25,6 +27,24 @@ struct RenderingContext {
     doneCurrent();
   }
 
+  void persistState(RenderingContext* other,
+                    EntityManager::DisplayMode displayMode,
+                    const std::vector<QVector2D>& featurePoints,
+                    const std::vector<float>& disparitiesPercent,
+                    bool featureDisplayed) {
+    if (other == nullptr) {
+      return;
+    }
+    entityManager->displayModeChanged(displayMode);
+    makeCurrent();
+    textureManager->setImageLeft(other->textureManager->getImageLeft());
+    textureManager->setImageRight(other->textureManager->getImageRight());
+    entityManager->setFeatures(featurePoints, disparitiesPercent);
+    entityManager->setFeaturesVisibility(featureDisplayed);
+    entityManager->setHorizontalShift(other->entityManager->getHorizontalShift());
+    doneCurrent();
+  }
+
   void makeCurrent() { openGLRenderer->makeCurrent(); }
 
   void doneCurrent() { openGLRenderer->doneCurrent(); }
@@ -35,6 +55,7 @@ struct RenderingContext {
 };
 
 class OpenGLWindow;
+class DepthAnalyzer;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -50,20 +71,21 @@ class MainWindow : public QMainWindow {
   void mouseDoubleClickEvent(QMouseEvent* e) override;
 
  private:
-  void updateRenderingContexts();
   EntityManager::DisplayMode getCurrentDisplayMode();
 
   template <class Functor>
   void requestImageFilename(Functor f);
 
+  // does this belong here
+  std::unique_ptr<VideoSynchronizer> m_videoSynchronizer;
+
   std::unique_ptr<RenderingContext> m_widgetRenderingContext;
   std::unique_ptr<RenderingContext> m_windowRenderingContext;
-  std::vector<RenderingContext*> m_renderingContexts;
+  RenderingContext* m_currentContext;
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
   // cached info
-  std::vector<QVector2D> m_featurePoints;
-  std::vector<float> m_disparitiesPercent;
+  std::unique_ptr<DepthAnalyzer> m_analyzer;
 
   Ui::MainWindow* ui;
 };

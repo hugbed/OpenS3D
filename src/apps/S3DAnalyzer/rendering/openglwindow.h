@@ -10,6 +10,7 @@
 
 class EntityManager;
 class TextureManager;
+class QHideEvent;
 
 class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public OpenGLRenderer {
   Q_OBJECT
@@ -31,12 +32,14 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
 
  protected:
   void mouseDoubleClickEvent(QMouseEvent* e) override;
+  void hideEvent(QHideEvent *) override;
 
  protected slots:
   void teardownGL();
 
  signals:
   void GLInitialized();
+  void onClose();
 
  private:
   QSize m_viewportSize;

@@ -14,7 +14,10 @@
    <string>S3D Analyzer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0">
+    <property name="verticalSpacing">
+     <number>2</number>
+    </property>
     <item row="0" column="0">
      <widget class="OpenGLWidget" name="openGLWidget">
       <property name="minimumSize">
@@ -25,10 +28,10 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="ParametersListView" name="parametersListView" native="true"/>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -99,6 +102,9 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="VideoControls" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -176,59 +182,6 @@
    <addaction name="actionCompute"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <actiongroup name="display3DMode">
-    <action name="actionAnaglyph">
-     <property name="text">
-      <string>Anaglyph</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </action>
-    <action name="actionSide_by_side">
-     <property name="text">
-      <string>Side by side</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </action>
-    <action name="actionLeft">
-     <property name="text">
-      <string>Left</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </action>
-    <action name="actionRight">
-     <property name="text">
-      <string>Right</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </action>
-    <action name="actionOpacity">
-     <property name="text">
-      <string>Opacity</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </action>
-    <action name="actionInterlaced">
-     <property name="text">
-      <string>Interlaced</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </action>
-  </actiongroup>
   <action name="actionOpen_Left_Image">
    <property name="text">
     <string>Open Left Image...</string>
@@ -240,11 +193,11 @@
    </property>
   </action>
   <action name="actionFeatures">
-   <property name="text">
-    <string>Features</string>
-   </property>
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Features</string>
    </property>
   </action>
   <action name="actionCompute">
@@ -252,71 +205,124 @@
     <string>Compute</string>
    </property>
   </action>
-  <actiongroup>
-   <action name="actionImage">
-    <property name="text">
-     <string>Image</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </action>
-   <action name="actionVideo">
-    <property name="text">
-     <string>Video</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </action>
-   <action name="actionLive">
-    <property name="text">
-     <string>Live</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </action>
-  </actiongroup>
-  <actiongroup>
-   <action name="actionSeparate_files">
-    <property name="text">
-     <string>Separate files</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </action>
-   <action name="actionSide_by_side_H">
-    <property name="text">
-     <string>Side-by-side (H)</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </action>
-   <action name="actionSide_by_side_V">
-    <property name="text">
-     <string>Side-by-side (V)</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </action>
-  </actiongroup>
   <action name="actionFormat">
    <property name="text">
     <string>Format</string>
    </property>
   </action>
+  <actiongroup name="display3DMode">
+   <action name="actionAnaglyph">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Anaglyph</string>
+    </property>
+   </action>
+   <action name="actionSide_by_side">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Side by side</string>
+    </property>
+   </action>
+   <action name="actionLeft">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Left</string>
+    </property>
+   </action>
+   <action name="actionRight">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Right</string>
+    </property>
+   </action>
+   <action name="actionOpacity">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Opacity</string>
+    </property>
+   </action>
+   <action name="actionInterlaced">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Interlaced</string>
+    </property>
+   </action>
+  </actiongroup>
+  <actiongroup name="">
+   <action name="actionImage">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Image</string>
+    </property>
+   </action>
+   <action name="actionVideo">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Video</string>
+    </property>
+   </action>
+   <action name="actionLive">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Live</string>
+    </property>
+   </action>
+  </actiongroup>
+  <actiongroup name="">
+   <action name="actionSeparate_files">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Separate files</string>
+    </property>
+   </action>
+   <action name="actionSide_by_side_H">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Side-by-side (H)</string>
+    </property>
+   </action>
+   <action name="actionSide_by_side_V">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Side-by-side (V)</string>
+    </property>
+   </action>
+  </actiongroup>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
+ <layoutdefault spacing="6" margin="2"/>
  <customwidgets>
   <customwidget>
    <class>OpenGLWidget</class>
@@ -344,6 +350,12 @@
    <class>RangeWidget</class>
    <extends>QWidget</extends>
    <header>widgets/rangewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VideoControls</class>
+   <extends>QWidget</extends>
+   <header>widgets/videocontrols.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

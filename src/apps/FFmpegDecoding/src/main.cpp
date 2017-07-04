@@ -3,6 +3,7 @@
 #include <memory>
 #include <fstream>
 #include <thread>
+#include <s3d/video/capture/file_video_capture_device_3d.h>
 
 class FFmpegClient : public VideoCaptureDevice::Client {
  public:
@@ -15,7 +16,7 @@ class FFmpegClient : public VideoCaptureDevice::Client {
   void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat) override {
     std::copy(std::begin(images[0]), std::end(images[0]), std::ostreambuf_iterator<char>{dstFile_});
-    std::cout << "decoded frame " << ++frameCount_ << std::endl;
+    std::cout << ++frameCount_ << std::endl;
   }
 
  private:
@@ -52,11 +53,28 @@ int main(int argc, char** argv) {
       std::make_unique<FFmpegClient>(video_dst_filename);
 
   // create video capture device
-  std::unique_ptr<VideoCaptureDevice> captureDevice =
-      std::make_unique<FileVideoCaptureDeviceFFmpeg>(src_filename);
+  std::unique_ptr<VideoCaptureDevice> captureDevice = std::make_unique<FileVideoCaptureDevice3D>(
+      "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
+      "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4");
 
   // start "capture"
-  captureDevice->AllocateAndStart({}, client.get());
+  VideoCaptureFormat format{{}, -1.0f, VideoPixelFormat::BGR};
+  captureDevice->AllocateAndStart(format, client.get());
+
+//  char c = ' ';
+//  while (c != 'q') {
+//    {
+//      std::unique_lock<std::mutex> g_ioMutex;
+//      std::cin.get(c);
+//    }
+//
+//    if (c == 'p') {
+//      captureDevice->MaybeSuspend();
+//    } else if (c == 'r') {
+//      captureDevice->Resume();
+//    }
+//  }
+  captureDevice->StopAndDeAllocate();
 
   std::cout << "Play the output video file with the command:" << std::endl
             << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 30 "

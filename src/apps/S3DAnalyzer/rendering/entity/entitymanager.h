@@ -36,6 +36,7 @@ class EntityManager {
   void setFeaturesVisibility(bool display);
   void setFeatures(std::vector<QVector2D> points, std::vector<float> disparities);
   void setHorizontalShift(float horizontalShift);
+  float getHorizontalShift() const;
 
  public slots:
   void displayModeChanged(EntityManager::DisplayMode mode);
