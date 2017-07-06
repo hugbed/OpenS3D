@@ -3,10 +3,11 @@
 
 #include "BaseApplication.hpp"
 
+#include "s3d/video/capture/video_capture_device.h"
+
 class DynamicTexture;
 class DynamicTextureThreadSafe;
 class PointCloudMesh;
-class VideoCaptureDevice;
 class VideoCaptureFormat;
 
 class Application : public BaseApplication {
@@ -33,6 +34,7 @@ class Application : public BaseApplication {
 
   std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
   std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;
+  std::unique_ptr<VideoCaptureDevice::Client> captureClient_;
 
   // to stream image to texture (L, R)
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>>

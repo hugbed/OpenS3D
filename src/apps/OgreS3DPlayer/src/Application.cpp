@@ -27,7 +27,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 void Application::createScene() {
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 60.0f, VideoPixelFormat::BGR, false);
+  VideoCaptureFormat format({1920, 1080}, 60.0f, VideoPixelFormat::BGR, true);
 
   // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
   //     std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
@@ -36,12 +36,13 @@ void Application::createScene() {
 
   // create capture device
   if (format.stereo3D) {
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(new FileVideoCaptureDevice3D(
-        "/home/jon/Videos/current-left.yuv;/home/jon/Videos/current-right.yuv"));
-  } else {
     videoCaptureDevice_ =
-        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDeviceFFmpeg>(
-            "/home/jon/Videos/BeautifulPlaces.mp4"));
+        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+            "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
+            "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"));
+  } else {
+    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
+        std::make_unique<FileVideoCaptureDeviceFFmpeg>("/home/jon/Videos/BeautifulPlaces.mp4"));
   }
 
   format = videoCaptureDevice_->DefaultFormat();
@@ -54,7 +55,7 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  auto captureClient = std::unique_ptr<VideoCaptureDevice::Client>(
+  captureClient_ = std::unique_ptr<VideoCaptureDevice::Client>(
       new TextureUpdateClient(std::vector<DynamicTextureThreadSafe*>{
           m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
@@ -76,7 +77,7 @@ void Application::createScene() {
   }
 
   if (videoCaptureDevice_ != nullptr) {
-    videoCaptureDevice_->AllocateAndStart(format, captureClient.get());
+    videoCaptureDevice_->AllocateAndStart(format, captureClient_.get());
   }
 
   //  createVideoPlane("PointCloud");
@@ -122,6 +123,7 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
       pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
       break;
     case VideoPixelFormat::ARGB:
+    case VideoPixelFormat::BGRA:
       // todo : ARGB or BGRA!!
       pixelFormat = Ogre::PixelFormat::PF_B8G8R8A8;
       break;
