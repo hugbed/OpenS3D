@@ -55,6 +55,7 @@ VideoButtons::VideoButtons(QWidget* parent) : QWidget(parent) {
   m_lastButton = createButton(":icons/player_last.png");
 
   connect(m_playButton.get(), &QAbstractButton::clicked, this, &VideoButtons::togglePlayingState);
+  connect(m_nextButton.get(), &QAbstractButton::clicked, this, &VideoButtons::next);
 
   layout->addWidget(m_firstButton.get());
   layout->addWidget(m_previousButton.get());
@@ -88,9 +89,11 @@ void VideoButtons::togglePlayingState() {
     QPixmap pixmap(":icons/player_pause.png");
     QIcon buttonIcon(pixmap);
     m_playButton->setIcon(buttonIcon);
+    emit play();
   } else {
     QPixmap pixmap(":icons/player_play.png");
     QIcon buttonIcon(pixmap);
     m_playButton->setIcon(buttonIcon);
+    emit pause();
   }
 }

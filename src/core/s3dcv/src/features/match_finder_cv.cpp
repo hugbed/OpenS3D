@@ -24,8 +24,15 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
   }
 
   double minDist = matchesMinDistance(matches);
-  return filterMatches(featuresLeft, featuresRight, matches,
-                       10 * minDist);  // todo: 10 is hardcoded
+
+  auto filteredMatches = filterMatches(featuresLeft, featuresRight, matches,
+                                       computeThreshold(images[0].width(), images[0].height()));
+
+  if (filteredMatches[0].size() < 5) {
+    return {{}, {}};
+  }
+
+  return filteredMatches;  // todo: 10 is hardcoded
 }
 
 FeaturesCV MatchFinderCV::findFeatures(const Image<uint8_t>& img) {
@@ -74,6 +81,13 @@ cv::Ptr<cv::Feature2D> MatchFinderCV::createFeatureDetector() {
 
 cv::Ptr<cv::DescriptorMatcher> MatchFinderCV::createDescriptorMatcher() {
   return cv::DescriptorMatcher::create("BruteForce-Hamming(2)");
+}
+
+// static
+double MatchFinderCV::computeThreshold(int imageWidth, int imageHeight) {
+  double W = imageWidth;
+  double H = imageHeight;
+  return 0.25 * sqrt(W * W + H * H);
 }
 
 }  // namespace s3d

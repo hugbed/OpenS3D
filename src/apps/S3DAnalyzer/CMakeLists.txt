@@ -13,6 +13,7 @@ set ( SOURCES
   rendering/openglwindow.cpp
   rendering/openglwidget.cpp
   rendering/texturemanager.cpp
+  rendering/renderingcontext.cpp
   rendering/entity/entitymanager.cpp
   rendering/entity/stereo/rectangleentity.cpp
   rendering/entity/stereo/anaglyphrectangleentity.cpp

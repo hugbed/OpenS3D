@@ -10,10 +10,16 @@ class QAbstractSlider;
 class QBoxLayout;
 
 class VideoControls : public QWidget {
+  Q_OBJECT
  public:
   VideoControls(QWidget* parent = nullptr);
   VideoControls(Qt::Orientation orientation, QWidget* parent = nullptr);
   ~VideoControls();
+
+ signals:
+  void play();
+  void pause();
+  void next();
 
  private:
   void init(Qt::Orientation orientation);

@@ -20,6 +20,10 @@ void VideoControls::init(Qt::Orientation orientation) {
   m_videoButtons = std::make_unique<VideoButtons>(this);
   m_progressSlider = std::make_unique<SliderDirectJump>(Qt::Horizontal, this);
 
+  connect(m_videoButtons.get(), &VideoButtons::play, this, &VideoControls::play);
+  connect(m_videoButtons.get(), &VideoButtons::pause, this, &VideoControls::pause);
+  connect(m_videoButtons.get(), &VideoButtons::next, this, &VideoControls::next);
+
   auto layout = orientation == Qt::Horizontal ? std::unique_ptr<QBoxLayout>(new QHBoxLayout(this))
                                               : std::unique_ptr<QBoxLayout>(new QVBoxLayout(this));
 

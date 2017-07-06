@@ -5,6 +5,7 @@
 #include <QImage>
 
 #include <memory>
+#include <mutex>
 
 class QOpenGLTexture;
 class QString;
@@ -22,11 +23,13 @@ class TextureManager {
   void fromImage(const QImage& image, int id);
 
  public:
-  // updates dirty textures (from video) in main thread
+  // updates dirty textures (transfer images to OpenGL textures)
   void update();
 
   void setImageLeft(const QImage& image);
   void setImageRight(const QImage& image);
+  void setImages(const QImage& imageLeft, const QImage& imageRight);
+  bool imagesDirty();
   const QImage& getImageLeft();
   const QImage& getImageRight();
   float computeImageAspectRatio(QSize viewportSize);

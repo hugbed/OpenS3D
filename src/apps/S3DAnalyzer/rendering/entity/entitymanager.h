@@ -6,8 +6,6 @@
 
 #include <memory>
 
-// todo: this is STAN Entity manager, we could have an interface and a ViewerCentric entity manager
-
 class TextureManager;
 class StereoImageEntity;
 class BillboardIntensityEntity;

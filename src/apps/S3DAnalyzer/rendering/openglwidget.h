@@ -1,29 +1,24 @@
 #ifndef RENDERING_OPENGLWIDGET_H
 #define RENDERING_OPENGLWIDGET_H
 
-#include <QImage>
-#include <QOpenGLFunctions>
 #include <QOpenGLWidget>
-
-#include "entity/entitymanager.h"
+#include <QOpenGLFunctions>
 #include "rendering/openglrenderer.h"
-#include "texturemanager.h"
-
-#include <gsl/span>
 
 #include <memory>
-#include <vector>
 
+class EntityManager;
 class QOpenGLShaderProgram;
+class TextureManager;
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions, public OpenGLRenderer {
   Q_OBJECT
 
  public:
+  explicit OpenGLWidget(QWidget* parent);
   ~OpenGLWidget() override;
-  explicit OpenGLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
 
-  void update() override;
+  void updateScene() override;
   void setEntityManager(EntityManager* entityManager) override;
   std::unique_ptr<TextureManager> createTextureManager() override;
   std::unique_ptr<EntityManager> createEntityManager(TextureManager* textureManager) override;

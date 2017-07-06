@@ -25,7 +25,7 @@ class VideoPlayerAnaglyphEntity : public FullscreenRectangleEntity {
 
     // set horizontal shift (%)
     material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant(
-        "horizontalShift", Ogre::Real(0.02));
+        "horizontalShift", Ogre::Real(0.00));
 
     setMaterialName(material->getName());
 

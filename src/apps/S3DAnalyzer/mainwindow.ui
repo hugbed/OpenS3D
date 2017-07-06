@@ -104,7 +104,7 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <widget class="VideoControls" name="widget" native="true"/>
+     <widget class="VideoControls" name="videoControls" native="true"/>
     </item>
    </layout>
   </widget>

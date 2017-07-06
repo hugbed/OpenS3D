@@ -34,11 +34,12 @@ class ConsumerBarrier {
     notifyShouldProduce();
   }
 
+  virtual void consume() = 0;  // use producer->getProduct()
+
  protected:
   const Producers& getProducers() { return producers_; }
 
  private:
-  virtual void consume() = 0;  // use producer->getProduct()
 
   virtual bool shouldStopConsuming() {
     return std::any_of(std::begin(producers_), std::end(producers_),

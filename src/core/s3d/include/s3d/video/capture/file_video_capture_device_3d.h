@@ -29,6 +29,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   void Resume() override;
   void WaitUntilDone();
   void StopAndDeAllocate() override;
+  void RequestRefreshFrame() override;
   VideoCaptureFormat DefaultFormat() override;
 
  protected:

@@ -96,6 +96,8 @@ class ProducerBarrier {
     mediator_->notifyDoneProducing();
   }
 
+  virtual void produce() = 0;  // where the work happens : set product
+
   // called/checked by consumer
   void acknowledgeDoneProducing() { mediator_->acknowledgeDoneProducing(); }
   bool isDoneProducing() { return mediator_->isDoneProducing(); }
@@ -104,7 +106,6 @@ class ProducerBarrier {
   virtual bool shouldStopProducing() { return shouldStop_; }
 
  private:
-  virtual void produce() = 0;  // where the work happens : set product
   virtual void onStartProducing() {}
 
   std::atomic<bool> shouldStop_{false};

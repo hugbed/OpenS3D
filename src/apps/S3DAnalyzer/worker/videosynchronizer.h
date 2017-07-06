@@ -26,6 +26,9 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
 
   gsl::owner<VideoSynchronizer*> clone() const override;
 
+  void resume();
+  void pause();
+  void next();
   void stop();
 
   void OnIncomingCapturedData(const Images& data, const VideoCaptureFormat& frameFormat) override;
@@ -43,7 +46,7 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
   // synchronization
   std::mutex m_mutex;
   bool m_imagesDirty{false};
-  std::vector<gsl::span<const uint8_t>> m_images;
+  std::vector<QImage> m_images;
 };
 
 #endif  // WORKER_VIDEOSYNCHRONIZER_H

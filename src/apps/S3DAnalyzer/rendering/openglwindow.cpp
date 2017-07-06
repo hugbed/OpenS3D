@@ -13,7 +13,7 @@
  * OpenGL Events
  ******************************************************************************/
 
-void OpenGLWindow::update() {
+void OpenGLWindow::updateScene() {
   QOpenGLWindow::update();
 }
 

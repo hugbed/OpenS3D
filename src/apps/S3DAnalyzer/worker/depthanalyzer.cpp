@@ -86,7 +86,7 @@ cv::Mat QImage2Mat(QImage const& src) {
 }
 }  // namespace
 
-void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
+bool DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
   cv::Mat leftOrig = QImage2Mat(imageLeft);
   cv::Mat rightOrig = QImage2Mat(imageRight);
 
@@ -109,7 +109,7 @@ void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
   // no match
   if (matches[0].size() <
       s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 3) {
-    return;
+    return false;
   }
 
   std::vector<Eigen::Vector2d> pts1 = matches[0], pts2 = matches[1];
@@ -220,9 +220,13 @@ void DepthAnalyzer::analyze(const QImage& imageLeft, const QImage& imageRight) {
 
   featurePoints.clear();
   disparitiesPercent.clear();
-  int i = 0;
-  for (auto& pt : bestPts2) {
-    featurePoints.emplace_back(pt.x() * resizeRatio, pt.y() * resizeRatio);
-    disparitiesPercent.push_back(disparities[i++] * widthRatio);
+  for (int i = 0; i < bestPts2.size(); ++i) {
+    // filter out extreme percentiles
+    if (minDisp <= disparities[i] && disparities[i] <= maxDisp) {
+      featurePoints.emplace_back(bestPts2[i].x() * resizeRatio, bestPts2[i].y() * resizeRatio);
+      disparitiesPercent.push_back(disparities[i] * widthRatio);
+    }
   }
+
+  return true;
 }

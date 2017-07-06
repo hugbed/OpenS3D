@@ -9,11 +9,17 @@ class QAbstractButton;
 class QHBoxLayout;
 
 class VideoButtons : public QWidget {
+  Q_OBJECT
  public:
   VideoButtons(QWidget* parent = nullptr);
   ~VideoButtons();
 
   void togglePlayingState();
+
+ signals:
+  void play();
+  void pause();
+  void next();
 
  private:
   std::unique_ptr<QAbstractButton> createButton(const QString& iconFileName);

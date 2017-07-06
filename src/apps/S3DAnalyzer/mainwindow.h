@@ -2,60 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QImage>
 
-#include "rendering/openglwidget.h"
-#include "rendering/openglrenderer.h"
-
-#include "worker/videosynchronizer.h"
+#include "rendering/entity/entitymanager.h"
 
 namespace Ui {
 class MainWindow;
 }  // namespace Ui
 
-struct RenderingContext {
-  explicit RenderingContext(OpenGLRenderer* renderer) : openGLRenderer{renderer} {
-    textureManager = openGLRenderer->createTextureManager();
-    entityManager = openGLRenderer->createEntityManager(textureManager.get());
-    openGLRenderer->setEntityManager(entityManager.get());
-  }
-
-  ~RenderingContext() {
-    makeCurrent();
-    entityManager.reset();
-    textureManager.reset();
-    doneCurrent();
-  }
-
-  void persistState(RenderingContext* other,
-                    EntityManager::DisplayMode displayMode,
-                    const std::vector<QVector2D>& featurePoints,
-                    const std::vector<float>& disparitiesPercent,
-                    bool featureDisplayed) {
-    if (other == nullptr) {
-      return;
-    }
-    entityManager->displayModeChanged(displayMode);
-    makeCurrent();
-    textureManager->setImageLeft(other->textureManager->getImageLeft());
-    textureManager->setImageRight(other->textureManager->getImageRight());
-    entityManager->setFeatures(featurePoints, disparitiesPercent);
-    entityManager->setFeaturesVisibility(featureDisplayed);
-    entityManager->setHorizontalShift(other->entityManager->getHorizontalShift());
-    doneCurrent();
-  }
-
-  void makeCurrent() { openGLRenderer->makeCurrent(); }
-
-  void doneCurrent() { openGLRenderer->doneCurrent(); }
-
-  std::unique_ptr<TextureManager> textureManager;
-  std::unique_ptr<EntityManager> entityManager;
-  OpenGLRenderer* openGLRenderer;
-};
-
 class OpenGLWindow;
 class DepthAnalyzer;
+class RenderingContext;
+class VideoSynchronizer;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

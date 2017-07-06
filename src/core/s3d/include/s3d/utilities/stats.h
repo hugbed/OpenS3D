@@ -10,7 +10,7 @@ T percentile(const std::vector<T>& values, float percentile) {
   assert(percentile <= 1.0f);
   assert(percentile >= 0.0f);
 
-  auto valuesCopy = values;  // todo : maybe rethink this fast change
+  auto valuesCopy = values;  // todo : maybe rethink this quick change
   std::sort(std::begin(valuesCopy), std::end(valuesCopy));
 
   auto N = static_cast<float>(valuesCopy.size());

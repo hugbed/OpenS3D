@@ -1,11 +1,9 @@
 #include "openglwidget.h"
 
-#include "entity/stereo/anaglyphrectangleentity.h"
-#include "entity/stereo/opacityrectangleentity.h"
-#include "entity/stereo/interlacedrectangleentity.h"
-#include "entity/stereo/stereosidebysideentity.h"
-#include "entity/stereo/leftrectangleentity.h"
-#include "entity/stereo/rightrectangleentity.h"
+#include "texturemanager.h"
+#include "entity/entitymanager.h"
+
+OpenGLWidget::OpenGLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
 
 OpenGLWidget::~OpenGLWidget() {
   makeCurrent();
@@ -16,8 +14,8 @@ OpenGLWidget::~OpenGLWidget() {
   doneCurrent();
 }
 
-void OpenGLWidget::update() {
-  QWidget::update();
+void OpenGLWidget::updateScene() {
+  QOpenGLWidget::update();
 }
 
 std::unique_ptr<TextureManager> OpenGLWidget::createTextureManager() {
@@ -56,7 +54,6 @@ void OpenGLWidget::resizeGL(int w, int h) {
 
 void OpenGLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT);
-
   if (m_entityManager != nullptr) {
     m_entityManager->drawEntities(m_viewportSize);
   }

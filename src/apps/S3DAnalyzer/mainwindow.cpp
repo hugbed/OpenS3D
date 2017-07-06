@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "rendering/openglwindow.h"
 
+#include "rendering/openglwindow.h"
+#include "rendering/renderingcontext.h"
+#include "rendering/texturemanager.h"
 #include "worker/depthanalyzer.h"
+#include "worker/videosynchronizer.h"
 
 #include <QDebug>
 #include <QMouseEvent>
@@ -19,7 +22,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
       m_currentContext->makeCurrent();
       m_currentContext->textureManager->setImageLeft(img);
       m_currentContext->doneCurrent();
-      m_currentContext->openGLRenderer->update();
+      m_currentContext->openGLRenderer->updateScene();
     });
   });
 
@@ -29,44 +32,44 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
       m_currentContext->makeCurrent();
       m_currentContext->textureManager->setImageRight(img);
       m_currentContext->doneCurrent();
-      m_currentContext->openGLRenderer->update();
+      m_currentContext->openGLRenderer->updateScene();
     });
   });
 
   connect(ui->actionAnaglyph, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Anaglyph);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionOpacity, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionInterlaced, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Interlaced);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionSide_by_side, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::SideBySide);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionLeft, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Left);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionRight, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Right);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
   });
 
   connect(ui->actionFeatures, &QAction::triggered,  //
           [this] {
             m_currentContext->entityManager->setFeaturesVisibility(ui->actionFeatures->isChecked());
-            m_currentContext->openGLRenderer->update();
+            m_currentContext->openGLRenderer->updateScene();
           });
 
   connect(ui->actionCompute, &QAction::triggered,  //
@@ -87,7 +90,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           [this](double value) {
             m_currentContext->entityManager->setHorizontalShift(value / 100.0f);
-            m_currentContext->openGLRenderer->update();
+            m_currentContext->openGLRenderer->updateScene();
             ui->depthWidget->setShift(value);
           });
 
@@ -95,16 +98,31 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_widgetRenderingContext = std::make_unique<RenderingContext>(ui->openGLWidget);
     m_currentContext = m_widgetRenderingContext.get();
 
-    m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
+    connect(ui->videoControls, &VideoControls::play, [this] {
+      if (m_videoSynchronizer == nullptr) {
+        m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
 
-    connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
-            [this](const QImage& imgLeft, const QImage& imgRight) {
-              m_currentContext->makeCurrent();
-              m_currentContext->textureManager->setImageLeft(imgLeft);
-              m_currentContext->textureManager->setImageRight(imgRight);
-              m_currentContext->doneCurrent();
-              computeAndUpdate();
-            });
+        connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
+                [this](const QImage& imgLeft, const QImage& imgRight) {
+                  m_currentContext->makeCurrent();
+                  m_currentContext->textureManager->setImages(imgLeft, imgRight);
+                  m_currentContext->doneCurrent();
+                  computeAndUpdate();
+                });
+      } else {
+        m_videoSynchronizer->resume();
+      }
+    });
+    connect(ui->videoControls, &VideoControls::pause, [this] {
+      if (m_videoSynchronizer != nullptr) {
+        m_videoSynchronizer->pause();
+      }
+    });
+    connect(ui->videoControls, &VideoControls::next, [this] {
+      if (m_videoSynchronizer != nullptr) {
+        m_videoSynchronizer->next();
+      }
+    });
   });
 }
 
@@ -120,9 +138,8 @@ void MainWindow::computeAndUpdate() {
   QImage imageLeft = m_widgetRenderingContext->textureManager->getImageLeft();
   QImage imageRight = m_widgetRenderingContext->textureManager->getImageRight();
 
-  m_analyzer->analyze(imageLeft, imageRight);
-
-  if (m_analyzer->maxDisparity - m_analyzer->minDisparity > 0.01) {
+  if (m_analyzer->analyze(imageLeft, imageRight) &&
+      m_analyzer->maxDisparity - m_analyzer->minDisparity > 0.01) {
     ui->depthWidget->setLowValue(m_analyzer->minDisparity);
     ui->depthWidget->setHighValue(m_analyzer->maxDisparity);
 
@@ -138,7 +155,12 @@ void MainWindow::computeAndUpdate() {
                                                  m_analyzer->disparitiesPercent);
     m_currentContext->doneCurrent();
     updateConvergenceHint(m_analyzer->minDisparity, m_analyzer->maxDisparity);
-    m_currentContext->openGLRenderer->update();
+    m_currentContext->openGLRenderer->updateScene();
+  } else {
+    m_currentContext->openGLRenderer->makeCurrent();
+    m_currentContext->entityManager->setFeatures({}, {});
+    m_currentContext->openGLRenderer->doneCurrent();
+    m_currentContext->openGLRenderer->updateScene();
   }
 }
 

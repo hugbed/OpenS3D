@@ -39,6 +39,8 @@ class MatchFinderCV : public MatchFinder {
 
   double matchesMinDistance(Matches matches) const;
 
+  static double computeThreshold(int imageWidth, int imageHeight);
+
   virtual cv::Ptr<cv::Feature2D> createFeatureDetector();
 
   virtual cv::Ptr<cv::DescriptorMatcher> createDescriptorMatcher();

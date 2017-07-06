@@ -60,6 +60,11 @@ void TextureManager::setImageRight(const QImage& image) {
   m_dirty[rightIdx] = true;
 }
 
+void TextureManager::setImages(const QImage& imageLeft, const QImage& imageRight) {
+  setImageLeft(imageLeft);
+  setImageRight(imageRight);
+}
+
 const QImage& TextureManager::getImageLeft() {
   return m_images[0];
 }
@@ -107,4 +112,8 @@ void TextureManager::update() {
       fromImage(m_images[i], i);
     }
   }
+}
+
+bool TextureManager::imagesDirty() {
+  return std::all_of(std::begin(m_dirty), std::end(m_dirty), [](bool val) { return val; });
 }

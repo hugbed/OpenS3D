@@ -40,8 +40,9 @@ class FileParserProducer : public s3d::concurrency::ProducerBarrier<std::vector<
   // todo: maybe exception is more appropriate than bool? dunno
   bool allocate(VideoCaptureFormat* format);
 
- private:
   void produce() override;
+
+ private:
   const std::vector<uint8_t>& getProduct() override;
 
   bool readingFile_{false};
@@ -62,8 +63,10 @@ class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<std::vector<
   void pause();
   void resume();
 
- private:
   void consume() override;
+  void consumeOnce();
+
+ private:
   void sleepUntilNextFrame();
 
   // pause synchronization
@@ -125,10 +128,15 @@ FileParserConsumer::FileParserConsumer(VideoCaptureDevice::Client* client,
                                        const Producers& producers)
     : ConsumerBarrier(mediator, producers),
       delayBetweenFrames(1.0f / outputFormat.frameRate),
-      client_(client) {}
+      client_(client),
+      format_{outputFormat} {}
 
 void FileParserConsumer::consume() {
   sleepUntilNextFrame();
+  consumeOnce();
+}
+
+void FileParserConsumer::consumeOnce() {
   const auto& producers = getProducers();
   auto& leftImage = producers[0]->getProduct();
   auto& rightImage = producers[1]->getProduct();
@@ -202,7 +210,7 @@ void FileVideoCaptureDevice3D::Allocate() {
   sync_ = std::make_unique<ProducerConsumerSynchronizer>();
 
   // todo: this should be taken from format parameter and validated by file parser
-  VideoCaptureFormat fileFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::UNKNOWN);
+  VideoCaptureFormat fileFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::UNKNOWN, true);
   producers_.first =
       std::make_unique<FileParserProducer>(filePaths_.first, fileFormat, &sync_->mediatorLeft);
   producers_.second =
@@ -217,6 +225,7 @@ void FileVideoCaptureDevice3D::Allocate() {
   std::vector<FileParserProducer::ProducerType*> producers = {producers_.first.get(),
                                                               producers_.second.get()};
 
+  captureFormat_.stereo3D = true;
   consumer_ = std::make_unique<FileParserConsumer>(client_, captureFormat_, &sync_->mediatorLeft,
                                                    producers);
 }
@@ -251,14 +260,24 @@ void FileVideoCaptureDevice3D::WaitUntilDone() {
 
 void FileVideoCaptureDevice3D::StopAndDeAllocate() {
   // this stops the producers
+  consumer_->resume();  // wake it up so it can stop
   consumer_->stop();
   WaitUntilDone();
+}
+
+void FileVideoCaptureDevice3D::RequestRefreshFrame() {
+  VideoCaptureDevice::RequestRefreshFrame();
+  // manual production and consumption
+  producers_.first->produce();
+  producers_.second->produce();
+  consumer_->consumeOnce();
 }
 
 VideoCaptureFormat FileVideoCaptureDevice3D::DefaultFormat() {
   VideoCaptureFormat format{};
   VideoFileParserFFmpeg p(filePaths_.first);
   p.Initialize(&format);
+  format.stereo3D = true;
   return format;
 }
 

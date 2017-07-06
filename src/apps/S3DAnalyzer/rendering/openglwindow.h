@@ -1,10 +1,9 @@
 #ifndef RENDERING_OPENGLWINDOW_H
 #define RENDERING_OPENGLWINDOW_H
 
-#include "rendering/openglrenderer.h"
-
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions>
+#include "rendering/openglrenderer.h"
 
 #include <memory>
 
@@ -22,7 +21,7 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
   void paintGL() override;
 
   // OpenGLRenderer
-  void update() override;
+  void updateScene() override;
   std::unique_ptr<TextureManager> createTextureManager() override;
   std::unique_ptr<EntityManager> createEntityManager(TextureManager* textureManager) override;
   void setEntityManager(EntityManager* entityManager) override;
@@ -32,7 +31,7 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
 
  protected:
   void mouseDoubleClickEvent(QMouseEvent* e) override;
-  void hideEvent(QHideEvent *) override;
+  void hideEvent(QHideEvent*) override;
 
  protected slots:
   void teardownGL();

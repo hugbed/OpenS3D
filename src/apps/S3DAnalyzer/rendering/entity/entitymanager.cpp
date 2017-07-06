@@ -35,8 +35,10 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
 EntityManager::~EntityManager() = default;
 
 void EntityManager::drawEntities(QSize viewportSize) {
-  // update dirty textures
-  m_textureManager->update();
+  // update outdated textures
+  if (m_textureManager->imagesDirty()) {
+    m_textureManager->update();
+  }
 
   // render entities using the updated textures
   auto ratio = m_textureManager->computeImageAspectRatio(viewportSize);
@@ -76,8 +78,7 @@ void EntityManager::setHorizontalShift(float horizontalShift) {
   m_horizontalShift = horizontalShift;
 }
 
-float EntityManager::getHorizontalShift() const
-{
+float EntityManager::getHorizontalShift() const {
   return m_horizontalShift;
 }
 
