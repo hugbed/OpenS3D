@@ -8,7 +8,8 @@ class VideoTestClient : public VideoCaptureDevice::Client {
   gsl::owner<VideoCaptureDevice::Client*> clone() const override { return new VideoTestClient; }
 
   void OnIncomingCapturedData(const Images& data,
-                              const VideoCaptureFormat& /*frameFormat*/) override {
+                              const VideoCaptureFormat& /*frameFormat*/,
+                              std::chrono::microseconds /*timestamp*/) override {
     std::cout << "Image arrived, size=" << data.size() << " bytes." << std::endl;
   }
 };

@@ -8,6 +8,7 @@
 #include "s3d/utilities/rule_of_five.h"
 #include "video_capture_types.h"
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,7 +29,8 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
 
     // can accept multiple images (mono/stereo cameras)
     virtual void OnIncomingCapturedData(const Images& data,
-                                        const VideoCaptureFormat& frameFormat) = 0;
+                                        const VideoCaptureFormat& frameFormat,
+                                        std::chrono::microseconds timestamp) = 0;
   };
 
   virtual void AllocateAndStart(const VideoCaptureFormat& format,

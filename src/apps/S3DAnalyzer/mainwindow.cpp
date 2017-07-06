@@ -11,6 +11,8 @@
 #include <QMouseEvent>
 #include <QFileDialog>
 
+#include <chrono>
+
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
@@ -77,7 +79,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
             m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
 
             connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
-                    [this](const QImage& imgLeft, const QImage& imgRight) {
+                    [this](const QImage& imgLeft, const QImage& imgRight,
+                           std::chrono::microseconds timestamp) {
                       m_currentContext->makeCurrent();
                       m_currentContext->textureManager->setImageLeft(imgLeft);
                       m_currentContext->textureManager->setImageRight(imgRight);
@@ -101,12 +104,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->videoControls, &VideoControls::play, [this] {
       if (m_videoSynchronizer == nullptr) {
         m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
+        ui->videoControls->setDuration(m_videoSynchronizer->videoDuration());
 
         connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
-                [this](const QImage& imgLeft, const QImage& imgRight) {
+                [this](const QImage& imgLeft, const QImage& imgRight,
+                       std::chrono::microseconds timestamp) {
                   m_currentContext->makeCurrent();
                   m_currentContext->textureManager->setImages(imgLeft, imgRight);
                   m_currentContext->doneCurrent();
+                  ui->videoControls->updateSlider(timestamp);
                   computeAndUpdate();
                 });
       } else {

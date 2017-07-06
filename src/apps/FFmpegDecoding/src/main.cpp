@@ -14,7 +14,8 @@ class FFmpegClient : public VideoCaptureDevice::Client {
 
  public:
   void OnIncomingCapturedData(const Images& images,
-                              const VideoCaptureFormat& frameFormat) override {
+                              const VideoCaptureFormat& frameFormat,
+                              std::chrono::microseconds /*timestamp*/) override {
     std::copy(std::begin(images[0]), std::end(images[0]), std::ostreambuf_iterator<char>{dstFile_});
     std::cout << ++frameCount_ << std::endl;
   }
@@ -61,19 +62,19 @@ int main(int argc, char** argv) {
   VideoCaptureFormat format{{}, -1.0f, VideoPixelFormat::BGR};
   captureDevice->AllocateAndStart(format, client.get());
 
-//  char c = ' ';
-//  while (c != 'q') {
-//    {
-//      std::unique_lock<std::mutex> g_ioMutex;
-//      std::cin.get(c);
-//    }
-//
-//    if (c == 'p') {
-//      captureDevice->MaybeSuspend();
-//    } else if (c == 'r') {
-//      captureDevice->Resume();
-//    }
-//  }
+  //  char c = ' ';
+  //  while (c != 'q') {
+  //    {
+  //      std::unique_lock<std::mutex> g_ioMutex;
+  //      std::cin.get(c);
+  //    }
+  //
+  //    if (c == 'p') {
+  //      captureDevice->MaybeSuspend();
+  //    } else if (c == 'r') {
+  //      captureDevice->Resume();
+  //    }
+  //  }
   captureDevice->StopAndDeAllocate();
 
   std::cout << "Play the output video file with the command:" << std::endl

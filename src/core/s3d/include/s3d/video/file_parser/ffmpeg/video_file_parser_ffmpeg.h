@@ -22,9 +22,14 @@ class VideoFileParserFFmpeg : public VideoFileParser {
 
   bool Initialize(VideoCaptureFormat* format) override;
   bool GetNextFrame(std::vector<uint8_t>& imageData) override;
+  std::chrono::microseconds CurrentFrameTimestamp() override;
+  std::chrono::microseconds VideoDuration() override;
 
  private:
   std::string filename_;
+  std::chrono::microseconds currentTimestamp_;
+  std::chrono::microseconds duration_;
+
   Demuxer demuxer_;
   std::unique_ptr<Decoder> decoder_;
   std::unique_ptr<Scaler> scaler_;

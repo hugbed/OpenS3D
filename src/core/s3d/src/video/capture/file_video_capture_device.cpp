@@ -79,7 +79,8 @@ void FileVideoCaptureDevice::OnAllocateAndStart() {
 
 void FileVideoCaptureDevice::OnCaptureTask() {
   if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(videoFrame_)) {
-    client_->OnIncomingCapturedData({videoFrame_}, captureFormat_);
+    client_->OnIncomingCapturedData({videoFrame_}, captureFormat_,
+                                    std::chrono::microseconds(0));  // todo: implement timestamp
   } else {
     StopAndDeAllocate();
   }

@@ -2,6 +2,7 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
+#include "s3d/video/video_frame.h"
 #include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 #include "s3d/utilities/concurrency/consumer_barrier.h"
 #include "s3d/utilities/file_io.h"
@@ -25,15 +26,12 @@ struct ProducerConsumerSynchronizer {
 using s3d::concurrency::ProducerBarrier;
 using s3d::concurrency::ConsumerBarrier;
 
-class FileParserProducer : public s3d::concurrency::ProducerBarrier<std::vector<uint8_t>> {
+class FileParserProducer : public s3d::concurrency::ProducerBarrier<VideoFrame> {
  public:
-  using Base = s3d::concurrency::ProducerBarrier<std::vector<uint8_t>>;
-  using ProducerType = s3d::concurrency::ProducerBarrier<std::vector<uint8_t>>;
+  using Base = s3d::concurrency::ProducerBarrier<VideoFrame>;
 
   // image size, etc
-  FileParserProducer(std::string filename,
-                     VideoCaptureFormat imageFileFormat,
-                     s3d::concurrency::ProducerConsumerMediator* mediator);
+  FileParserProducer(std::string filename, s3d::concurrency::ProducerConsumerMediator* mediator);
 
   bool shouldStopProducing() override;
 
@@ -43,17 +41,17 @@ class FileParserProducer : public s3d::concurrency::ProducerBarrier<std::vector<
   void produce() override;
 
  private:
-  const std::vector<uint8_t>& getProduct() override;
+  const VideoFrame& getProduct() override;
 
   bool readingFile_{false};
   std::unique_ptr<VideoFileParser> fileParser_;
-  std::vector<uint8_t> rgbBytes;
+  VideoFrame videoFrame_;
   std::string filePath_;
 };
 
-class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<std::vector<uint8_t>> {
+class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<VideoFrame> {
  public:
-  using Base = s3d::concurrency::ConsumerBarrier<std::vector<uint8_t>>;
+  using Base = s3d::concurrency::ConsumerBarrier<VideoFrame>;
 
   FileParserConsumer(VideoCaptureDevice::Client* client,
                      VideoCaptureFormat outputFormat,
@@ -81,12 +79,8 @@ class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<std::vector<
 };
 
 FileParserProducer::FileParserProducer(std::string filename,
-                                       VideoCaptureFormat imageFileFormat,
                                        s3d::concurrency::ProducerConsumerMediator* mediator)
-    : ProducerBarrier(mediator), filePath_{std::move(filename)} {
-  imageFileFormat.pixelFormat = VideoPixelFormat::BGR;
-  rgbBytes.resize(imageFileFormat.ImageAllocationSize());
-}
+    : ProducerBarrier(mediator), filePath_{std::move(filename)}, videoFrame_{{}, {}} {}
 
 bool FileParserProducer::shouldStopProducing() {
   return !readingFile_ || Base::shouldStopProducing();
@@ -106,6 +100,7 @@ bool FileParserProducer::allocate(VideoCaptureFormat* format) {
     fileParser_.reset();
     readingFile_ = false;
   }
+  videoFrame_.data_.resize(format->ImageAllocationSize());
   readingFile_ = true;
   return readingFile_;
 }
@@ -115,11 +110,12 @@ void FileParserProducer::produce() {
     readingFile_ = false;
     return;
   }
-  readingFile_ = fileParser_->GetNextFrame(rgbBytes);
+  readingFile_ = fileParser_->GetNextFrame(videoFrame_.data_);
+  videoFrame_.timestamp_ = fileParser_->CurrentFrameTimestamp();
 }
 
-const std::vector<uint8_t>& FileParserProducer::getProduct() {
-  return rgbBytes;
+const VideoFrame& FileParserProducer::getProduct() {
+  return videoFrame_;
 }
 
 FileParserConsumer::FileParserConsumer(VideoCaptureDevice::Client* client,
@@ -141,7 +137,8 @@ void FileParserConsumer::consumeOnce() {
   auto& leftImage = producers[0]->getProduct();
   auto& rightImage = producers[1]->getProduct();
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData({leftImage, rightImage}, format_);
+    client_->OnIncomingCapturedData({leftImage.data_, rightImage.data_}, format_,
+                                    leftImage.timestamp_);
   }
 }
 
@@ -201,6 +198,7 @@ FileVideoCaptureDevice3D::~FileVideoCaptureDevice3D() {
 void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format, Client* client) {
   client_ = client;
   captureFormat_ = format;
+
   Allocate();
   Start();
 }
@@ -210,11 +208,9 @@ void FileVideoCaptureDevice3D::Allocate() {
   sync_ = std::make_unique<ProducerConsumerSynchronizer>();
 
   // todo: this should be taken from format parameter and validated by file parser
-  VideoCaptureFormat fileFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::UNKNOWN, true);
-  producers_.first =
-      std::make_unique<FileParserProducer>(filePaths_.first, fileFormat, &sync_->mediatorLeft);
+  producers_.first = std::make_unique<FileParserProducer>(filePaths_.first, &sync_->mediatorLeft);
   producers_.second =
-      std::make_unique<FileParserProducer>(filePaths_.second, fileFormat, &sync_->mediatorRight);
+      std::make_unique<FileParserProducer>(filePaths_.second, &sync_->mediatorRight);
 
   if (!producers_.first->allocate(&captureFormat_) ||
       !producers_.second->allocate(&captureFormat_)) {
@@ -222,8 +218,8 @@ void FileVideoCaptureDevice3D::Allocate() {
         "Cannot open requested file(s)");  // todo: write the name of the files here
   }
 
-  std::vector<FileParserProducer::ProducerType*> producers = {producers_.first.get(),
-                                                              producers_.second.get()};
+  std::vector<FileParserProducer::Base*> producers = {producers_.first.get(),
+                                                      producers_.second.get()};
 
   captureFormat_.stereo3D = true;
   consumer_ = std::make_unique<FileParserConsumer>(client_, captureFormat_, &sync_->mediatorLeft,
@@ -232,8 +228,8 @@ void FileVideoCaptureDevice3D::Allocate() {
 
 void FileVideoCaptureDevice3D::Start() {
   captureThread_ = std::make_unique<std::thread>([this] {
-    std::vector<FileParserProducer::ProducerType*> producers = {producers_.first.get(),
-                                                                producers_.second.get()};
+    std::vector<FileParserProducer::Base*> producers = {producers_.first.get(),
+                                                        producers_.second.get()};
     // start thread for each producer
     std::vector<std::thread> producerThreads;
     for (auto& producer : producers) {

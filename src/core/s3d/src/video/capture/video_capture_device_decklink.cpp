@@ -291,11 +291,11 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       frameReceiver_->OnIncomingCapturedData(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()},
            {video_data_right, rgbFrameRight_->GetRowBytes() * rgbFrameRight_->GetHeight()}},
-          capture_format);
+          capture_format, std::chrono::microseconds(0));
     } else {
       frameReceiver_->OnIncomingCapturedData(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()}},
-          capture_format);
+          capture_format, std::chrono::microseconds(0));  // todo: implement timestamp
     }
   }
 
@@ -334,9 +334,8 @@ VideoCaptureDeviceDecklink::~VideoCaptureDeviceDecklink() {
   VideoCaptureDeviceDecklink::StopAndDeAllocate();
 }
 
-void VideoCaptureDeviceDecklink::AllocateAndStart(
-    const VideoCaptureFormat& format,
-    VideoCaptureDevice::Client* client) {
+void VideoCaptureDeviceDecklink::AllocateAndStart(const VideoCaptureFormat& format,
+                                                  VideoCaptureDevice::Client* client) {
   client_ = client;
   // todo: should verify that format is supported
   // todo: should get image size from capture delegate
@@ -349,9 +348,10 @@ void VideoCaptureDeviceDecklink::StopAndDeAllocate() {
 
 void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
     const VideoCaptureDevice::Client::Images& images,
-    const VideoCaptureFormat& frameFormat) {
+    const VideoCaptureFormat& frameFormat,
+    std::chrono::microseconds timestamp) {
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData(images, frameFormat);
+    client_->OnIncomingCapturedData(images, frameFormat, timestamp);  // todo: implement timestamp
   }
 }
 

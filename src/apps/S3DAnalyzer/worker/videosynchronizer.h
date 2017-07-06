@@ -31,10 +31,16 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
   void next();
   void stop();
 
-  void OnIncomingCapturedData(const Images& data, const VideoCaptureFormat& frameFormat) override;
+  std::chrono::microseconds videoDuration();
+
+  void OnIncomingCapturedData(const Images& data,
+                              const VideoCaptureFormat& frameFormat,
+                              std::chrono::microseconds timestamp) override;
 
  signals:
-  void incomingImagePair(const QImage& left, const QImage& right);
+  void incomingImagePair(const QImage& left,
+                         const QImage& right,
+                         std::chrono::microseconds timestamp);
 
  public slots:
   void checkForIncomingImage();
@@ -42,11 +48,13 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
  private:
   std::unique_ptr<VideoCaptureDevice> m_videoCaptureDevice;
   std::unique_ptr<QTimer> m_timer;
+  std::chrono::microseconds m_videoDuration;
 
   // synchronization
   std::mutex m_mutex;
   bool m_imagesDirty{false};
   std::vector<QImage> m_images;
+  std::chrono::microseconds m_timestamp;
 };
 
 #endif  // WORKER_VIDEOSYNCHRONIZER_H

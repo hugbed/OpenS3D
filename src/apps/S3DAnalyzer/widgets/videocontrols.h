@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include <chrono>
 #include <memory>
 
 class VideoButtons;
@@ -15,6 +16,9 @@ class VideoControls : public QWidget {
   VideoControls(QWidget* parent = nullptr);
   VideoControls(Qt::Orientation orientation, QWidget* parent = nullptr);
   ~VideoControls();
+
+  void setDuration(std::chrono::microseconds duration);
+  void updateSlider(std::chrono::microseconds timestamp);
 
  signals:
   void play();

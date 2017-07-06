@@ -29,7 +29,8 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
 
   // called from delegate
   void OnIncomingCapturedData(const VideoCaptureDevice::Client::Images& images,
-                              const VideoCaptureFormat& frameFormat);
+                              const VideoCaptureFormat& frameFormat,
+                              std::chrono::microseconds /*timestamp*/);
 
   VideoCaptureFormat DefaultFormat() override;
 

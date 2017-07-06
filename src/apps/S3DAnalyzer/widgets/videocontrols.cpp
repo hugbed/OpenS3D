@@ -43,4 +43,16 @@ void VideoControls::init(Qt::Orientation orientation) {
   // give up layout ownership
   m_layout = layout.get();
   setLayout(layout.release());
+
+  using namespace std::chrono_literals;
+  setDuration(11min);
+}
+
+void VideoControls::setDuration(std::chrono::microseconds duration) {
+  m_progressSlider->setMinimum(0);
+  m_progressSlider->setMaximum(duration.count());
+}
+
+void VideoControls::updateSlider(std::chrono::microseconds timestamp) {
+  m_progressSlider->setValue(timestamp.count());
 }

@@ -8,6 +8,7 @@
 VideoFileParserFFmpeg::VideoFileParserFFmpeg(const std::string& inputFilename)
     : filename_(inputFilename), demuxer_(inputFilename) {
   decoder_ = demuxer_.createDecoder();
+  duration_ = decoder_->getDuration();
 }
 
 gsl::owner<VideoFileParserFFmpeg*> VideoFileParserFFmpeg::clone() const {
@@ -53,8 +54,17 @@ bool VideoFileParserFFmpeg::GetNextFrame(std::vector<uint8_t>& imageData) {
 
   // copy received frame (converted to RGB24) to imageData vector
   if (frameReceived) {
+    currentTimestamp_ = decoder_->getFrameTimeStamp(frame);
     scaler_->scaleFrame(frame, &imageData);
   }
 
   return !decoder_->endOfFileReached();
+}
+
+std::chrono::microseconds VideoFileParserFFmpeg::CurrentFrameTimestamp() {
+  return currentTimestamp_;
+}
+
+std::chrono::microseconds VideoFileParserFFmpeg::VideoDuration() {
+  return duration_;
 }

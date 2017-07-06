@@ -18,13 +18,10 @@ class ProducerConsumerSynchronizer;
 class FileVideoCaptureDevice3D : public VideoCaptureDevice {
  public:
   explicit FileVideoCaptureDevice3D(const std::string& filePathsStr);
-
   gsl::owner<VideoCaptureDevice*> clone() const override;
-
   ~FileVideoCaptureDevice3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format, Client* client) override;
-
   void MaybeSuspend() override;
   void Resume() override;
   void WaitUntilDone();
@@ -42,9 +39,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
 
   Client* client_;
   std::unique_ptr<FileParserConsumer> consumer_;
-  std::pair<std::unique_ptr<FileParserProducer>,
-            std::unique_ptr<FileParserProducer>>
-      producers_;
+  std::pair<std::unique_ptr<FileParserProducer>, std::unique_ptr<FileParserProducer>> producers_;
 
   std::unique_ptr<ProducerConsumerSynchronizer> sync_;
   std::unique_ptr<std::thread> captureThread_{nullptr};

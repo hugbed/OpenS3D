@@ -34,8 +34,6 @@ int main(int argc, char* argv[]) {
   //  window.resize(QSize(800, 600));
   //  window.show();
 
-  VideoSynchronizer s;
-
   // Set up window
   MainWindow w;
   w.show();

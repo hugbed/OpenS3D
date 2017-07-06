@@ -5,6 +5,7 @@
 
 #include <s3d/geometry/size.h>
 
+#include <chrono>
 #include <cstdint>
 #include <vector>
 
@@ -27,6 +28,10 @@ class Decoder {
   Size getImageSize() const;
 
   float getFrameRate() const;
+
+  std::chrono::microseconds getDuration() const;
+
+  std::chrono::microseconds getFrameTimeStamp(AVFrame* frame) const;
 
  private:
   static int openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,

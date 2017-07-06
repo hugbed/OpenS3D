@@ -60,3 +60,9 @@ int SliderDirectJump::computeHorizontalValue(int x) {
 
   return newVal;
 }
+
+void SliderDirectJump::setPercentage(float percent) {
+  float range = maximum() - minimum();
+  float val = percent * range + minimum();
+  setValue(static_cast<int>(val));
+}

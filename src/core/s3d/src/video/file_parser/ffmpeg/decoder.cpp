@@ -3,6 +3,7 @@
 #include "s3d/video/file_parser/ffmpeg/scaler.h"
 
 #include <cassert>
+#include <s3d/utilities/time.h>
 
 Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext} {
   streamIndex_ = openCodexContext(codecContext_, formatContext, AVMEDIA_TYPE_VIDEO);
@@ -21,16 +22,22 @@ bool Decoder::sendPacketForDecoding(AVPacket* packet) {
   if (packet->stream_index != streamIndex_) {
     return false;
   }
+
   bool sendQueueWasFull;
   endOfFileReached_ = !ffmpeg::avcodec::send_packet(codecContext_.get(), packet, &sendQueueWasFull);
   return !sendQueueWasFull;
 }
 
 bool Decoder::receiveDecodedFrame(AVFrame** frame) {
-  *frame = frame_.get();
   bool receiveQueueWasEmpty;
   endOfFileReached_ =
       !ffmpeg::avcodec::receive_frame(codecContext_.get(), frame_.get(), &receiveQueueWasEmpty);
+
+  if (!receiveQueueWasEmpty) {
+    av_frame_get_best_effort_timestamp(frame_.get());
+    *frame = frame_.get();
+  }
+
   return !receiveQueueWasEmpty;
 }
 
@@ -79,6 +86,15 @@ Size Decoder::getImageSize() const {
 float Decoder::getFrameRate() const {
   // todo: this may return 0. estimate from bitrate?
   auto frameRate = formatContext_->streams[streamIndex_]->r_frame_rate;
-  return static_cast<float>(frameRate.num) /
-         static_cast<float>(frameRate.den);
+  return static_cast<float>(frameRate.num) / static_cast<float>(frameRate.den);
+}
+
+std::chrono::microseconds Decoder::getFrameTimeStamp(AVFrame* frame) const {
+  return s3d::seconds_to_us(static_cast<float>(frame->best_effort_timestamp) *
+                            av_q2d(formatContext_->streams[streamIndex_]->time_base));
+}
+
+std::chrono::microseconds Decoder::getDuration() const {
+  return s3d::seconds_to_us(formatContext_->streams[streamIndex_]->duration *
+                            av_q2d(formatContext_->streams[streamIndex_]->time_base));
 }

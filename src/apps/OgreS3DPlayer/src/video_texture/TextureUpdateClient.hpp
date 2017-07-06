@@ -19,8 +19,9 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
       : videoTextures_{videoTextures} {}
 
   void OnIncomingCapturedData(const Images& images,
-                              const VideoCaptureFormat& frameFormat) override {
-//    outputPerformanceMetrics(std::cout);
+                              const VideoCaptureFormat& frameFormat,
+                              std::chrono::microseconds timestamp) override {
+    //    outputPerformanceMetrics(std::cout);
 
     if (!images.empty() && !videoTextures_.empty()) {
       videoTextures_[0]->updateImage(images[0]);
@@ -31,31 +32,31 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
     }
   }
 
-//  void outputPerformanceMetrics(std::ostream& outStream) {
-//    using std::chrono::microseconds;
-//    using std::chrono::duration_cast;
-//
-//    auto now = std::chrono::high_resolution_clock::now();
-//    auto dt = now - lastTimeMesure;
-//    lastTimeMesure = now;
-//
-//    // skip first 100 frames
-//    if (skipCounter_ > 100) {
-//      float dtc = duration_cast<microseconds>(dt).count();
-//      sumFrameRate_ += 1000000.0f / dtc;
-//      outStream << sumFrameRate_ / ++numFrames_ << std::endl;
-//    } else {
-//      skipCounter_++;
-//    }
-//  }
+  //  void outputPerformanceMetrics(std::ostream& outStream) {
+  //    using std::chrono::microseconds;
+  //    using std::chrono::duration_cast;
+  //
+  //    auto now = std::chrono::high_resolution_clock::now();
+  //    auto dt = now - lastTimeMesure;
+  //    lastTimeMesure = now;
+  //
+  //    // skip first 100 frames
+  //    if (skipCounter_ > 100) {
+  //      float dtc = duration_cast<microseconds>(dt).count();
+  //      sumFrameRate_ += 1000000.0f / dtc;
+  //      outStream << sumFrameRate_ / ++numFrames_ << std::endl;
+  //    } else {
+  //      skipCounter_++;
+  //    }
+  //  }
 
  private:
   //
-//  int skipCounter_{0};
-//  float sumFrameRate_{0};
-//  int numFrames_{0};
-//  int drift{0};
-//  time_point lastTimeMesure{time_point::max()};
+  //  int skipCounter_{0};
+  //  float sumFrameRate_{0};
+  //  int numFrames_{0};
+  //  int drift{0};
+  //  time_point lastTimeMesure{time_point::max()};
 
   std::vector<DynamicTextureThreadSafe*> videoTextures_;
 };

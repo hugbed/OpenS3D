@@ -66,7 +66,8 @@ class FakeVideoCaptureDeviceClient : public VideoCaptureDevice::Client {
   }
 
   void OnIncomingCapturedData(const Images& images,
-                              const VideoCaptureFormat& frameFormat) override {
+                              const VideoCaptureFormat& frameFormat,
+                              std::chrono::microseconds timestamp) override {
     lastFormat_ = frameFormat;
   }
 
@@ -103,8 +104,8 @@ TEST(file_video_capture_device, start_starts_loop_with_correct_duration) {
 
   using ::testing::_;
   EXPECT_CALL(*captureLoopClient, callback());
-  device.Start(format, fakeVideoCaptureDeviceClient.get(),
-               std::move(captureLoopClient), std::make_unique<MockVideoFileParser>(),
+  device.Start(format, fakeVideoCaptureDeviceClient.get(), std::move(captureLoopClient),
+               std::make_unique<MockVideoFileParser>(),
                std::unique_ptr<FakeTimedLoop>(timedLoopPtr));
   EXPECT_EQ(timedLoopPtr->lastLoopDuration_.count(), 33);
 }

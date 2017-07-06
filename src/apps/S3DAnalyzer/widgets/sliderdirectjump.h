@@ -11,6 +11,8 @@ class SliderDirectJump : public QSlider {
   SliderDirectJump(Qt::Orientation orientation, QWidget* parent = nullptr);
   ~SliderDirectJump();
 
+  void setPercentage(float percent);
+
  private:
   void init();
 
