@@ -39,7 +39,6 @@ set ( SOURCES
   worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp
   utilities/depthintensitygradient.cpp
-  utilities/usersettings.cpp
   rendering/entity/billboard/billboardintensityworldentity.cpp)
 
 set ( MOC_HEADERS
