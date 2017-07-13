@@ -79,4 +79,4 @@ include(ProcessorCount)
 ProcessorCount(N)
 add_custom_target(
     Tests
-    COMMAND make -j${N} && make test)
+    COMMAND make -j${N} && make CTEST_OUTPUT_ON_FAILURE=1 test)
