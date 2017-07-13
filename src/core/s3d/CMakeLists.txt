@@ -13,7 +13,7 @@ file(GLOB_RECURSE SRC_FILES
     include/*.h
     src/*.cpp)
 
-add_library(${PROJECT_NAME} ${SRC_FILES})
+add_library(${PROJECT_NAME} ${SRC_FILES} src/disparity/viewer_depth_converter.cpp include/s3d/disparity/viewer_depth_converter.h test/disparity/tests_viewer_depth_converter.cpp)
 target_link_libraries(${PROJECT_NAME} gsl decklink_sdk ${FFMPEG_LIBRARIES} ${SWSCALE_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 

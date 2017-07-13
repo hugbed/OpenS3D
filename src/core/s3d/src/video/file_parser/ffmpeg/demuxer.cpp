@@ -9,7 +9,7 @@ Demuxer::Demuxer(const std::string& inputFilename) {
   formatContext_ = avformat::open_input(inputFilename.c_str());
   avformat::find_stream_info(formatContext_.get());
   avpacket::init(&packet_);
-//  av_dump_format(formatContext_.get(), 0, inputFilename.c_str(), 0);
+  //  av_dump_format(formatContext_.get(), 0, inputFilename.c_str(), 0);
 }
 
 bool Demuxer::readFrame(AVPacket** packet) {

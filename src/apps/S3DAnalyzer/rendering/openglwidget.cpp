@@ -55,6 +55,6 @@ void OpenGLWidget::resizeGL(int w, int h) {
 void OpenGLWidget::paintGL() {
   glClear(GL_COLOR_BUFFER_BIT);
   if (m_entityManager != nullptr) {
-    m_entityManager->drawEntities(m_viewportSize);
+    m_entityManager->drawEntities(this, m_viewportSize);
   }
 }

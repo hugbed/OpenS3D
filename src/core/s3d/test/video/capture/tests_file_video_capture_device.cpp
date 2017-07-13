@@ -107,7 +107,7 @@ TEST(file_video_capture_device, start_starts_loop_with_correct_duration) {
   device.Start(format, fakeVideoCaptureDeviceClient.get(), std::move(captureLoopClient),
                std::make_unique<MockVideoFileParser>(),
                std::unique_ptr<FakeTimedLoop>(timedLoopPtr));
-  EXPECT_EQ(timedLoopPtr->lastLoopDuration_.count(), 33);
+  EXPECT_EQ(timedLoopPtr->lastLoopDuration_.count(), 33333);
 }
 
 TEST(file_video_capture_device, on_capture_task_requests_next_frame) {

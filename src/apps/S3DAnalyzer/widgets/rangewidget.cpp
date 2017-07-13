@@ -9,6 +9,7 @@ RangeWidget::RangeWidget(QWidget* parent) : QWidget(parent) {
   m_maxValueLabel = std::make_unique<QLabel>();
   m_maxValueLabel->setFixedWidth(30);
 
+  // default values, will be replaced
   setDisplayRange(-5.0f, 5.0f);
   setExpectedRange(-1.1f, 3.1f);
   setLowValue(-3.8);

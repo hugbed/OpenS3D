@@ -19,12 +19,13 @@ class BillboardEntity : public Entity, QOpenGLFunctions {
   ~BillboardEntity() override;
 
   void init();
-  void setHorizontalShift(float shift);
+  virtual void setHorizontalShift(float shift);
   void setAspectRatio(float ratio);
-  void setImageSize(const QSize& imageSize);
+  virtual void setDisplayRange(float minX, float maxX, float minY, float maxY);
+  void setPointToScreen(const QMatrix3x3 pointToScreen);
   void clear();
 
-  void draw() override;
+  void draw(QPaintDevice* parent) override;
 
  protected:
   std::unique_ptr<QOpenGLShaderProgram> m_program;
@@ -43,6 +44,7 @@ class BillboardEntity : public Entity, QOpenGLFunctions {
   void createVertexArrayObject();
   void releaseAll();
 
+  // todo: necessary this image size?
   QSize m_imageSize;
 };
 

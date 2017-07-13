@@ -2,6 +2,8 @@
 
 #include <QPainter>
 
+#include "utilities/depthintensitygradient.h"
+
 // todo : validate with values that don't make sense
 
 RangeBar::RangeBar(QWidget* parent)
@@ -9,6 +11,7 @@ RangeBar::RangeBar(QWidget* parent)
       m_borderMargin(0.5f),
       m_lowValue{},
       m_highValue{},
+      // default values, will be replaced
       m_displayRangeMin(-3.0f),
       m_displayRangeMax(3.0f),
       m_expectedRangeMin(-0.7f),
@@ -49,14 +52,7 @@ void RangeBar::drawRange(QPainter* painter) {
   // to be able to set depth color from disparity
   // and to be able to access the same red/green/etc everywhere
   QRectF gradientRect = expectedRangeRectangle();
-  QLinearGradient gradient(gradientRect.topLeft(), gradientRect.bottomRight());
-  gradient.setColorAt(0.0f, QColor(214, 69, 65));   // red
-  gradient.setColorAt(0.1, QColor(235, 151, 78));   // orange
-  gradient.setColorAt(0.2, QColor(135, 211, 124));  // green
-  gradient.setColorAt(0.8, QColor(135, 211, 124));  // green
-  gradient.setColorAt(0.9, QColor(68, 108, 179));   // blue
-  gradient.setColorAt(1.0f, QColor(102, 51, 153));  // purple
-
+  DepthIntensityGradient gradient(gradientRect.topLeft(), gradientRect.bottomRight());
   painter->fillPath(path, gradient);
 }
 

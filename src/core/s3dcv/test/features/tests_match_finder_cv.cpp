@@ -158,11 +158,11 @@ TEST(match_finder_cv, matches_min_distance_returns_min) {
 
 TEST(match_finder_cv, find_matches_returns_correct) {
   FakeMatchFinderCV matchFinder;
-  auto res = matchFinder.findMatches({{}, {}});
+  auto res = matchFinder.findMatches({s3d::Image<uint8_t>(Size(1920, 1080)), s3d::Image<uint8_t>(Size(1920, 1080))});
 
   EXPECT_EQ(res.size(), 2);
-  EXPECT_EQ(res[0].size(), 1);
-  EXPECT_EQ(res[1].size(), 1);
+  ASSERT_EQ(res[0].size(), 1);
+  ASSERT_EQ(res[1].size(), 1);
 
   auto goldPt = FakeFeatureDetector().goldKeypoints[0].pt;
   EXPECT_EQ(res[0][0], Eigen::Vector2d(goldPt.x, goldPt.y));

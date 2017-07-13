@@ -9,17 +9,22 @@
 class TextureManager;
 class StereoImageEntity;
 class BillboardIntensityEntity;
+class BillboardIntensityWorldEntity;
+class QPaintDevice;
+class UserSettings;
+class ViewerCentricEntity;
 
 class EntityManager {
  public:
   enum class DisplayMode {
-    Anaglyph = 0,
-    Opacity = 1,
-    Interlaced = 2,
-    SideBySide = 3,
-    Left = 4,
-    Right = 5,
-    NB_DISPLAY_MODES = 6
+    Anaglyph,
+    Opacity,
+    Interlaced,
+    SideBySide,
+    Left,
+    Right,
+    ViewerCentric,
+    NB_DISPLAY_MODES
   };
 
   // must be created with OpenGL context current
@@ -27,25 +32,35 @@ class EntityManager {
 
   ~EntityManager();
 
-  template <class T>
-  void createEntity(DisplayMode mode);
-
-  void drawEntities(QSize viewportSize);
+  void drawEntities(QPaintDevice* parent, QSize viewportSize);
   void setFeaturesVisibility(bool display);
   void setFeatures(std::vector<QVector2D> points, std::vector<float> disparities);
   void setHorizontalShift(float horizontalShift);
   float getHorizontalShift() const;
+  void setUserSettings(UserSettings* displayParameters);
 
  public slots:
   void displayModeChanged(EntityManager::DisplayMode mode);
 
  private:
+  template <class T>
+  void createEntity(DisplayMode mode);
+
+  template <class T>
+  void createEntity(DisplayMode mode, std::unique_ptr<T> t);
+
+  UserSettings* m_userSettings{};
   DisplayMode m_currentMode;
   float m_horizontalShift{0};
   bool m_showOverlay{false};
   std::unique_ptr<StereoImageEntity>
       m_stereoEntities[static_cast<int>(DisplayMode::NB_DISPLAY_MODES)];
-  std::unique_ptr<BillboardIntensityEntity> m_overlay;
+  std::unique_ptr<BillboardIntensityEntity> m_billboardImage;
+  std::unique_ptr<BillboardIntensityWorldEntity> m_billboardWorld;
+
+  ViewerCentricEntity* m_viewerCentricEntity{};
+  BillboardIntensityEntity* m_currentBillboard{};
+
   TextureManager* m_textureManager;
 };
 

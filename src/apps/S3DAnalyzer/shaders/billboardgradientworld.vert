@@ -25,20 +25,13 @@ const float steps[6] = float[](
 
 void main()
 {
-    vec3 screenPos = uPointToScreen * vec3(position.x - 1, position.y - 1, 1);
+    vec3 screenPos = uPointToScreen * vec3(position.x - 1, position.y, 1);
 
-    vec4 pos;
-    if (uAspectRatio <= 1.0f) {
-        pos = vec4(screenPos.x + uHorizontalShift, screenPos.y * uAspectRatio, screenPos.z, 1.0);
-    } else {
-        pos = vec4((screenPos.x + uHorizontalShift) / uAspectRatio, screenPos.y, screenPos.z, 1.0);
-    }
-
-    gl_Position = pos;
+    gl_Position = vec4(screenPos.x, -screenPos.y, screenPos.z, 1.0);
     gl_PointSize = uPointSize;
 
     // normalize intensity in range
-    float intensity = (intensity + uHorizontalShift * 100.0f - uMinIntensity) / (uMaxIntensity - uMinIntensity);
+    float intensity = (intensity + uHorizontalShift*100 - uMinIntensity) / (uMaxIntensity - uMinIntensity);
 
     vec4 color = mix(colors[0], colors[1], smoothstep(steps[0], steps[1], intensity));
     color = mix(color, colors[2], smoothstep(steps[1], steps[2], intensity));
