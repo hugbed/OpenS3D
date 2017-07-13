@@ -25,6 +25,7 @@ make
 ```
 
 Continuous integration:
+- Codacity Grade: [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b1f285e4d9f34686910f4cc100c6f56d)](https://www.codacy.com/app/hugbed/OpenS3D?utm_source=github.com&utm_medium=referral&utm_content=hugbed/OpenS3D&utm_campaign=badger)
  - linux 64 bits, GCC (Build + tests): [![Build Status](https://travis-ci.org/hugbed/OpenS3D.svg?branch=master)](https://travis-ci.org/hugbed/OpenS3D)
  - Unit test coverage: [![codecov](https://codecov.io/gh/hugbed/OpenS3D/branch/master/graph/badge.svg)](https://codecov.io/gh/hugbed/OpenS3D)
 
