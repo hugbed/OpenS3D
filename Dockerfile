@@ -9,7 +9,15 @@ RUN apt-get update && \
         build-essential \
         gcc-5 g++-5 \
         cmake \
-        lcov
+        lcov \
+        software-properties-common \
+        pkg-config
+
+# install ffmpeg
+RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y && \
+    apt-get update && \
+    apt-get install ffmpeg libav-tools x264 x265 \
+    libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev libavcodec-dev -y
 
 ENV CC /usr/bin/gcc 
 ENV CXX /usr/bin/g++
