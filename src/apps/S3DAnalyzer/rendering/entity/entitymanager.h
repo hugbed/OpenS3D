@@ -32,7 +32,7 @@ class EntityManager {
 
   ~EntityManager();
 
-  void drawEntities(QPaintDevice* parent, QSize viewportSize);
+  void drawEntities(QPaintDevice* paintDevice);
   void setFeaturesVisibility(bool display);
   void setFeatures(std::vector<QVector2D> points, std::vector<float> disparities);
   void setHorizontalShift(float horizontalShift);
@@ -48,6 +48,10 @@ class EntityManager {
 
   template <class T>
   void createEntity(DisplayMode mode, std::unique_ptr<T> t);
+
+  void adjustDepthRanges();
+  void drawCurrentEntity(QPaintDevice* paintDevice, float aspectRatio);
+  void drawCurrentBillboard(QPaintDevice* paintDevice, float aspectRatio);
 
   UserSettings* m_userSettings{};
   DisplayMode m_currentMode;

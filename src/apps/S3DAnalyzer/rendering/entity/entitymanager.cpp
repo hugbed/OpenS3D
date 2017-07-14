@@ -53,46 +53,16 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
 EntityManager::~EntityManager() = default;
 
 // todo: compute viewportSize from parent?
-void EntityManager::drawEntities(QPaintDevice* parent, QSize viewportSize) {
+void EntityManager::drawEntities(QPaintDevice* paintDevice) {
   // update outdated textures
   if (m_textureManager->imagesDirty()) {
     m_textureManager->update();
   }
-
-  // render entities using the updated textures
-  auto ratio = m_textureManager->computeImageAspectRatio(viewportSize);
-
-  auto&& currentEntity = gsl::at(m_stereoEntities, static_cast<int>(m_currentMode));
-  currentEntity->setAspectRatio(ratio);
-  currentEntity->setHorizontalShift(m_horizontalShift);
-  currentEntity->draw(parent);
-
-  auto& viewerContext = m_userSettings->viewerContext;
-  auto& dispParams = m_userSettings->displayParameters;
-
-  // todo: this function is ugly
-  if (m_showOverlay && m_currentBillboard != nullptr) {
-    if (m_currentMode == DisplayMode::ViewerCentric) {
-      auto d = m_userSettings->viewerContext.viewerDistance;
-      float minD = -(d + d / 10.0f);
-      float maxD = -minD;
-      m_currentBillboard->setDisplayRange(0.0f, m_textureManager->getTextureSize().width(),  //
-                                          minD, maxD);
-      m_viewerCentricEntity->setViewerContext(&m_userSettings->viewerContext);
-      m_viewerCentricEntity->setDepthRangeMeters(minD, maxD);
-    } else {
-      m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(),  //
-                                          0, m_textureManager->getTextureSize().height());
-    }
-
-    if (m_currentMode != DisplayMode::SideBySide) {
-      m_currentBillboard->setAspectRatio(ratio);  // necessary?
-      m_currentBillboard->setHorizontalShift(m_horizontalShift);
-      m_currentBillboard->setMinIntensity(dispParams.expectedRangeMin);
-      m_currentBillboard->setMaxIntensity(dispParams.expectedRangeMax);
-      m_currentBillboard->draw(parent);
-    }
-  }
+  adjustDepthRanges();
+  auto deviceSize = QSize(paintDevice->width(), paintDevice->height());
+  auto ratio = m_textureManager->computeImageAspectRatio(deviceSize);
+  drawCurrentEntity(paintDevice, ratio);
+  drawCurrentBillboard(paintDevice, ratio);
 }
 
 template <class T>
@@ -136,4 +106,47 @@ void EntityManager::setUserSettings(UserSettings* userSettings) {
   m_userSettings = userSettings;
   m_billboardWorld->setViewerContext(&userSettings->viewerContext);
   m_viewerCentricEntity->setViewerContext(&userSettings->viewerContext);
+}
+
+void EntityManager::adjustDepthRanges() {
+  // adjust ranges
+  auto& viewerContext = m_userSettings->viewerContext;
+  auto& dispParams = m_userSettings->displayParameters;
+
+  float minY{0.0f};
+  float maxY = m_textureManager->getTextureSize().height();
+
+  if (m_currentMode == DisplayMode::ViewerCentric && m_viewerCentricEntity != nullptr) {
+    auto d = viewerContext.viewerDistance;
+    minY = -(d + d / 10.0f);
+    maxY = -minY;
+    m_viewerCentricEntity->setDepthRangeMeters(minY, maxY);
+    m_viewerCentricEntity->setViewerContext(&viewerContext);
+  }
+
+  if (m_currentBillboard != nullptr) {
+    m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(),  //
+                                        minY, maxY);
+  }
+}
+
+void EntityManager::drawCurrentEntity(QPaintDevice* paintDevice, float aspectRatio) {
+  auto&& currentEntity = gsl::at(m_stereoEntities, static_cast<int>(m_currentMode));
+  currentEntity->setAspectRatio(aspectRatio);
+  currentEntity->setHorizontalShift(m_horizontalShift);
+  currentEntity->draw(paintDevice);
+}
+
+void EntityManager::drawCurrentBillboard(QPaintDevice* paintDevice, float aspectRatio) {
+  // draw billboard
+  // todo: this function is ugly
+  if (m_showOverlay && m_currentBillboard != nullptr) {
+    if (m_currentMode != DisplayMode::SideBySide) {
+      m_currentBillboard->setAspectRatio(aspectRatio);  // necessary?
+      m_currentBillboard->setHorizontalShift(m_horizontalShift);
+      m_currentBillboard->setMinIntensity(m_userSettings->displayParameters.expectedRangeMin);
+      m_currentBillboard->setMaxIntensity(m_userSettings->displayParameters.expectedRangeMax);
+      m_currentBillboard->draw(paintDevice);
+    }
+  }
 }

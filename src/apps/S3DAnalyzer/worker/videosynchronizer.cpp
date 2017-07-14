@@ -7,11 +7,10 @@
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 
-VideoSynchronizer::VideoSynchronizer() {
-  m_videoCaptureDevice = std::unique_ptr<VideoCaptureDevice>(
-      std::make_unique<FileVideoCaptureDevice3D>("/home/jon/Videos/voyager_left.mp4;"
-                                                 "/home/jon/Videos/voyager_right.mp4"));
-
+VideoSynchronizer::VideoSynchronizer()
+    : m_videoCaptureDevice{std::unique_ptr<VideoCaptureDevice>(
+          std::make_unique<FileVideoCaptureDevice3D>("/home/jon/Videos/voyager_left.mp4;"
+                                                     "/home/jon/Videos/voyager_right.mp4"))} {
   // fetch video duration
   VideoFileParserFFmpeg parser("/home/jon/Videos/voyager_left.mp4");
   m_videoDuration = parser.VideoDuration();

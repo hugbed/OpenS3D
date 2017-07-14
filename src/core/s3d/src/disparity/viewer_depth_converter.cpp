@@ -20,8 +20,8 @@ std::vector<float> ViewerDepthConverter::computePerceivedDepth(
 // horizontal position and depth in meters
 std::vector<Pointf> ViewerDepthConverter::computeDepthPositions(
     const std::vector<Point>& imagePoints,
-    const std::vector<float>& disparities) {
-  auto perceivedDepth = computePerceivedDepth(disparities);
+    const std::vector<float>& disparitiesPercent) {
+  auto perceivedDepth = computePerceivedDepth(disparitiesPercent);
   auto horizontalPos = computeHorizontalPositions(imagePoints);
   assert(perceivedDepth.size() == horizontalPos.size());
 
@@ -37,8 +37,9 @@ float ViewerDepthConverter::computePerceivedDepth(float disparityPercent) {
   auto&& Z_0_e = viewerContext_->viewerDistance;
   auto&& b_e = viewerContext_->interocularDistance;
   // for disparities in percent
-  float S_r =
-      viewerContext_->screenWidth;  // / static_cast<float>(viewerContext_->imageWidthPixels);
+  float S_r = viewerContext_->screenWidth;  // /
+                                            // static_cast<float>(viewerContext_->imageWidthPixels);
+                                            // // for in pixels
   float d_s = S_r * disparityPercent / 100.0f;
   return Z_0_e - (Z_0_e * b_e) / (b_e - d_s);
 }

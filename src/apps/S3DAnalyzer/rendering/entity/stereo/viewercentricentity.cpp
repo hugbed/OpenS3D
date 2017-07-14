@@ -1,5 +1,6 @@
-#include <utilities/usersettings.h>
 #include "viewercentricentity.h"
+
+#include "utilities/usersettings.h"
 
 #include <QPaintEvent>
 #include <QPainter>

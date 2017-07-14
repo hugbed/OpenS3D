@@ -10,8 +10,6 @@ class TestDepthIntensityGradient : public QObject {
   void colorAtMax();
   void colorBeforeMin();
   void colorAfterMax();
-
-  // color before min, after min
 };
 
 // assuming zmin = -1, zmax = 3, screenWidth = 1.0f

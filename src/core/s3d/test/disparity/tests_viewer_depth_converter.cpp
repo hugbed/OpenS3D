@@ -5,7 +5,6 @@
 TEST(viewer_depth_converter, perceived_depth_correct) {
   ViewerContext context(2.0, 0.05, 1.0, 1920);
 
-  std::vector<Eigen::Vector2d> imagePoints = {Eigen::Vector2d{1, 2}};
   std::vector<float> disparities = {20};
 
   ViewerDepthConverter converter(&context);
@@ -20,7 +19,6 @@ TEST(viewer_depth_converter, horizontal_position_half_pixels_is_half_screen_widt
   ViewerContext context(2.0, 0.05, screenWidth, imgWidth);
 
   std::vector<Eigen::Vector2d> imagePoints = {Eigen::Vector2d{imgWidth / 2, 2}};
-  std::vector<float> disparities = {20};
 
   ViewerDepthConverter converter(&context);
   auto positions = converter.computeHorizontalPositions(imagePoints);

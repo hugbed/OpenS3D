@@ -1,9 +1,9 @@
 #include "depthintensitygradient.h"
 
 DepthIntensityGradient::DepthIntensityGradient(const QPointF& topLeft, const QPointF& bottomRight)
-    : QLinearGradient(topLeft, bottomRight) {
-  colors = {red, orange, green, green, blue, purple};
-  steps = {0.0f, 0.1f, 0.2f, 0.8f, 0.9f, 1.0f};
+    : QLinearGradient(topLeft, bottomRight),
+      colors{red, orange, green, green, blue, purple},
+      steps{0.0f, 0.1f, 0.2f, 0.8f, 0.9f, 1.0f} {
   for (int i = 0; i < colors.size(); ++i) {
     setColorAt(steps[i], colors[i]);
   }
