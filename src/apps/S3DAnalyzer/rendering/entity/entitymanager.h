@@ -8,8 +8,8 @@
 
 class TextureManager;
 class StereoImageEntity;
-class BillboardIntensityEntity;
-class BillboardIntensityWorldEntity;
+class BillboardDisparityEntity;
+class BillboardDepthEntity;
 class QPaintDevice;
 class UserSettings;
 class ViewerCentricEntity;
@@ -59,11 +59,11 @@ class EntityManager {
   bool m_showOverlay{false};
   std::unique_ptr<StereoImageEntity>
       m_stereoEntities[static_cast<int>(DisplayMode::NB_DISPLAY_MODES)];
-  std::unique_ptr<BillboardIntensityEntity> m_billboardImage;
-  std::unique_ptr<BillboardIntensityWorldEntity> m_billboardWorld;
+  std::unique_ptr<BillboardDisparityEntity> m_billboardImage;
+  std::unique_ptr<BillboardDepthEntity> m_billboardWorld;
 
   ViewerCentricEntity* m_viewerCentricEntity{};
-  BillboardIntensityEntity* m_currentBillboard{};
+  BillboardDisparityEntity* m_currentBillboard{};
 
   TextureManager* m_textureManager;
 };

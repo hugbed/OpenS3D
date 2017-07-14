@@ -25,7 +25,8 @@ set ( SOURCES
   rendering/entity/stereo/viewercentricentity.cpp
   rendering/entity/billboard/billboardentity.cpp
   rendering/entity/billboard/billboardcolorentity.cpp
-  rendering/entity/billboard/billboardintensityentity.cpp
+  rendering/entity/billboard/billboarddisparityentity.cpp
+  rendering/entity/billboard/billboarddepthentity.cpp
   widgets/parameterslistview.cpp
   widgets/parameterwidget.cpp
   widgets/doublespinboxnocursor.cpp
@@ -38,8 +39,7 @@ set ( SOURCES
   widgets/sliderdirectjump.cpp
   worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp
-  utilities/depthintensitygradient.cpp
-  rendering/entity/billboard/billboardintensityworldentity.cpp)
+  utilities/depthintensitygradient.cpp)
 
 set ( MOC_HEADERS
  mainwindow.h

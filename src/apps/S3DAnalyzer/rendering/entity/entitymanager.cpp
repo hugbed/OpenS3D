@@ -3,8 +3,8 @@
 
 #include "../texturemanager.h"
 
-#include "billboard/billboardintensityworldentity.h"
-#include "billboard/billboardintensityentity.h"
+#include "rendering/entity/billboard/billboarddepthentity.h"
+#include "rendering/entity/billboard/billboarddisparityentity.h"
 #include "stereo/rectangleentity.h"
 #include "stereo/stereoimageentity.h"
 #include "stereo/anaglyphrectangleentity.h"
@@ -32,7 +32,7 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   m_currentMode = DisplayMode::Anaglyph;
 
   auto billboardEntity =
-      std::make_unique<BillboardIntensityEntity>(m_textureManager->getTextureSize());
+      std::make_unique<BillboardDisparityEntity>(m_textureManager->getTextureSize());
   billboardEntity->init();
   billboardEntity->setPoints({}, {});
   billboardEntity->setMinIntensity(-1.0f);
@@ -40,7 +40,7 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   m_billboardImage = std::move(billboardEntity);
 
   auto billboardWorld =
-      std::make_unique<BillboardIntensityWorldEntity>(m_textureManager->getTextureSize());
+      std::make_unique<BillboardDepthEntity>(m_textureManager->getTextureSize());
   billboardWorld->init();
   billboardWorld->setPoints({}, {});
   billboardWorld->setMinIntensity(-1.0f);
@@ -111,7 +111,6 @@ void EntityManager::setUserSettings(UserSettings* userSettings) {
 void EntityManager::adjustDepthRanges() {
   // adjust ranges
   auto& viewerContext = m_userSettings->viewerContext;
-  auto& dispParams = m_userSettings->displayParameters;
 
   float minY{0.0f};
   float maxY = m_textureManager->getTextureSize().height();

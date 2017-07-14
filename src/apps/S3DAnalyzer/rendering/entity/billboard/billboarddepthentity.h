@@ -1,16 +1,16 @@
-#ifndef RENDERING_ENTITY_BILLBOARD_BILLBOARDINTENSITYWORLDENTITY_H
-#define RENDERING_ENTITY_BILLBOARD_BILLBOARDINTENSITYWORLDENTITY_H
+#ifndef RENDERING_ENTITY_BILLBOARD_BILLBOARDDEPTHENTITY_H
+#define RENDERING_ENTITY_BILLBOARD_BILLBOARDDEPTHENTITY_H
 
-#include "billboardintensityentity.h"
+#include "billboarddisparityentity.h"
 
 #include <s3d/disparity/viewer_depth_converter.h>
 
 #include <cassert>
 
 // todo: review names (difference: this does not have aspect ratio)
-class BillboardIntensityWorldEntity : public BillboardIntensityEntity {
+class BillboardDepthEntity : public BillboardDisparityEntity {
  public:
-  BillboardIntensityWorldEntity(const QSize& imageSize);
+  BillboardDepthEntity(const QSize& imageSize);
 
   void setDisplayRange(float minX, float maxX, float minY, float maxY) override;
   void addShaders() override;
@@ -26,4 +26,4 @@ class BillboardIntensityWorldEntity : public BillboardIntensityEntity {
   ViewerContext* viewerContext{};
 };
 
-#endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDINTENSITYWORLDENTITY_H
+#endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDDEPTHENTITY_H

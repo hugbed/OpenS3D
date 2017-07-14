@@ -1,9 +1,9 @@
-#include "billboardintensityworldentity.h"
+#include "billboarddepthentity.h"
 
-BillboardIntensityWorldEntity::BillboardIntensityWorldEntity(const QSize& imageSize)
-    : BillboardIntensityEntity(imageSize) {}
+BillboardDepthEntity::BillboardDepthEntity(const QSize& imageSize)
+    : BillboardDisparityEntity(imageSize) {}
 
-void BillboardIntensityWorldEntity::setDisplayRange(float minX,
+void BillboardDepthEntity::setDisplayRange(float minX,
                                                     float maxX,
                                                     float minY,
                                                     float maxY) {
@@ -14,14 +14,14 @@ void BillboardIntensityWorldEntity::setDisplayRange(float minX,
   setPointToScreen(QMatrix3x3(values));
 }
 
-void BillboardIntensityWorldEntity::addShaders() {
+void BillboardDepthEntity::addShaders() {
   // todo: better name for this class and for the shaders
   m_program->addShaderFromSourceFile(QOpenGLShader::Vertex,
                                      ":/shaders/billboardgradientworld.vert");
   m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color.frag");
 }
 
-void BillboardIntensityWorldEntity::setHorizontalShift(float shift) {
+void BillboardDepthEntity::setHorizontalShift(float shift) {
   m_horizontalShift = shift;
   setPoints(m_points, m_intensities);
   m_program->bind();
@@ -29,7 +29,7 @@ void BillboardIntensityWorldEntity::setHorizontalShift(float shift) {
   m_program->release();
 }
 
-std::vector<Vertex> BillboardIntensityWorldEntity::verticesFromPoints(
+std::vector<Vertex> BillboardDepthEntity::verticesFromPoints(
     const std::vector<QVector2D>& points,
     const std::vector<float>& intensities) {
   assert(points.size() == intensities.size());
@@ -51,6 +51,6 @@ std::vector<Vertex> BillboardIntensityWorldEntity::verticesFromPoints(
   return vertices;
 }
 
-void BillboardIntensityWorldEntity::setViewerContext(ViewerContext* context) {
+void BillboardDepthEntity::setViewerContext(ViewerContext* context) {
   viewerContext = context;
 }

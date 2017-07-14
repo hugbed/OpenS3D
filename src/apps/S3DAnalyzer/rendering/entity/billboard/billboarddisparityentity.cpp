@@ -1,18 +1,18 @@
-#include "billboardintensityentity.h"
+#include "billboarddisparityentity.h"
 
 #include <cassert>
 
-BillboardIntensityEntity::BillboardIntensityEntity(const QSize& imageSize)
+BillboardDisparityEntity::BillboardDisparityEntity(const QSize& imageSize)
     : BillboardEntity(imageSize) {}
 
-void BillboardIntensityEntity::setDefaultAttributeBuffers() {
+void BillboardDisparityEntity::setDefaultAttributeBuffers() {
   m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize,
                                 Vertex::stride());
   m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::intensityOffset(), Vertex::IntensitySize,
                                 Vertex::stride());
 }
 
-void BillboardIntensityEntity::setPoints(const std::vector<QVector2D>& points,
+void BillboardDisparityEntity::setPoints(const std::vector<QVector2D>& points,
                                          const std::vector<float>& intensities) {
   m_vertex.bind();
   {
@@ -27,25 +27,25 @@ void BillboardIntensityEntity::setPoints(const std::vector<QVector2D>& points,
   m_vertex.release();
 }
 
-void BillboardIntensityEntity::setDefaultUniforms() {
+void BillboardDisparityEntity::setDefaultUniforms() {
   BillboardEntity::setDefaultUniforms();
   setMinIntensity(0.0f);
   setMaxIntensity(1.0f);
 }
 
-void BillboardIntensityEntity::setMinIntensity(float value) {
+void BillboardDisparityEntity::setMinIntensity(float value) {
   m_program->bind();
   { m_program->setUniformValue("uMinIntensity", value); }
   m_program->release();
 }
 
-void BillboardIntensityEntity::setMaxIntensity(float value) {
+void BillboardDisparityEntity::setMaxIntensity(float value) {
   m_program->bind();
   { m_program->setUniformValue("uMaxIntensity", value); }
   m_program->release();
 }
 
-std::vector<Vertex> BillboardIntensityEntity::verticesFromPoints(
+std::vector<Vertex> BillboardDisparityEntity::verticesFromPoints(
     const std::vector<QVector2D>& points,
     const std::vector<float>& intensities) {
   assert(points.size() == intensities.size());
@@ -61,7 +61,7 @@ std::vector<Vertex> BillboardIntensityEntity::verticesFromPoints(
   return vertices;
 }
 
-void BillboardIntensityEntity::addShaders() {
+void BillboardDisparityEntity::addShaders() {
   m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/billboardgradient.vert");
   m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/color.frag");
 }
