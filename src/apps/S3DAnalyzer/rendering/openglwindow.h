@@ -17,7 +17,6 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
   // OpenGL Events
  public:
   void initializeGL() override;
-  void resizeGL(int w, int h) override;
   void paintGL() override;
 
   // OpenGLRenderer
@@ -41,7 +40,6 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
   void onClose();
 
  private:
-  QSize m_viewportSize;
   EntityManager* m_entityManager;
 
   // Private Helpers

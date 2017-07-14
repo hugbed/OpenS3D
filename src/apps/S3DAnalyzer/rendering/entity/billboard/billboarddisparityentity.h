@@ -3,9 +3,9 @@
 
 #include "billboardentity.h"
 
-class BillboardIntensityEntity : public BillboardEntity {
+class BillboardDisparityEntity : public BillboardEntity {
  public:
-  explicit BillboardIntensityEntity(const QSize& imageSize);
+  explicit BillboardDisparityEntity(const QSize& imageSize);
 
   void setPoints(const std::vector<QVector2D>& points, const std::vector<float>& intensities);
   void setMinIntensity(float value);
@@ -16,8 +16,8 @@ class BillboardIntensityEntity : public BillboardEntity {
   void setDefaultUniforms() override;
 
  private:
-  std::vector<Vertex> verticesFromPoints(const std::vector<QVector2D>& points,
-                                         const std::vector<float>& intensities);
+  virtual std::vector<Vertex> verticesFromPoints(const std::vector<QVector2D>& points,
+                                                 const std::vector<float>& intensities);
 };
 
 #endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDINTENSITYENTITY_H

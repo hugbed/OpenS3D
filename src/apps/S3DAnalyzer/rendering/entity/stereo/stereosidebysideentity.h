@@ -15,7 +15,7 @@ class StereoSideBySideEntity : public StereoImageEntity {
   void init() override;
   void setTextureLeft(QOpenGLTexture* texture) override;
   void setTextureRight(QOpenGLTexture* texture) override;
-  void draw() override;
+  void draw(QPaintDevice* parent) override;
   void setHorizontalShift(float shift) override;
   void setAspectRatio(float ratio) override;
 

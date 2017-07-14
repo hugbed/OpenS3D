@@ -15,9 +15,9 @@ void StereoSideBySideEntity::setTextureRight(QOpenGLTexture* texture) {
   m_rectangles[1].setTexture(1, texture);
 }
 
-void StereoSideBySideEntity::draw() {
+void StereoSideBySideEntity::draw(QPaintDevice* parent) {
   for (auto& rectangle : m_rectangles) {
-    rectangle.draw();
+    rectangle.draw(parent);
   }
 }
 

@@ -46,17 +46,12 @@ void OpenGLWindow::initializeGL() {
   emit GLInitialized();
 }
 
-void OpenGLWindow::resizeGL(int w, int h) {
-  // remember viewport size for drawing with correct aspect ratio
-  m_viewportSize = QSize(w, h);
-}
-
 void OpenGLWindow::paintGL() {
   // Clear
   glClear(GL_COLOR_BUFFER_BIT);
 
   if (m_entityManager != nullptr) {
-    m_entityManager->drawEntities(m_viewportSize);
+    m_entityManager->drawEntities(this);
   }
 }
 

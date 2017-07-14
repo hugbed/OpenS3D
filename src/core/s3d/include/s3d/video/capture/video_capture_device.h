@@ -33,8 +33,7 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
                                         std::chrono::microseconds timestamp) = 0;
   };
 
-  virtual void AllocateAndStart(const VideoCaptureFormat& format,
-                                Client* client) = 0;
+  virtual void AllocateAndStart(const VideoCaptureFormat& format, Client* client) = 0;
 
   virtual void RequestRefreshFrame() {}
 

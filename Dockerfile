@@ -1,23 +1,36 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && \
-    apt-get install -y \
-        git \
-        curl \
-        wget \
-        unzip \
-        build-essential \
-        gcc-5 g++-5 \
-        cmake \
-        lcov \
-        software-properties-common \
-        pkg-config
+    apt-get install -y --no-install-recommends \
+        git=1:2.7.4-0ubuntu1.1 \
+        curl=7.47.0-1ubuntu2.2 \
+        wget=1.17.1-1ubuntu1.2 \
+        unzip=6.0-20ubuntu1 \
+        build-essential=12.1ubuntu2 \
+        gcc-5=5.4.0-6ubuntu1~16.04.4 \
+        g++-5=5.4.0-6ubuntu1~16.04.4 \
+        cmake=3.5.1-1ubuntu3 \
+        lcov=1.12-2 \
+        software-properties-common=0.96.20.7 \
+        pkg-config=0.29.1-0ubuntu1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # install ffmpeg
 RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y && \
     apt-get update && \
-    apt-get install ffmpeg libav-tools x264 x265 \
-    libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev libavcodec-dev -y
+    apt-get install -y --no-install-recommends \ 
+        ffmpeg=7:3.3.2-1~16.04.york1 \
+        libav-tools=7:3.3.2-1~16.04.york1 \
+        x264=2:0.148.2795+gitaaa9aa8-1~16.04.york0 \
+        x265=2.4-1~16.04.york0 \
+        libavcodec-dev=7:3.3.2-1~16.04.york1 \
+        libavformat-dev=7:3.3.2-1~16.04.york1 \
+        libavutil-dev=7:3.3.2-1~16.04.york1 \
+        libswscale-dev=7:3.3.2-1~16.04.york1 \
+        libavresample-dev=7:3.3.2-1~16.04.york1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV CC /usr/bin/gcc 
 ENV CXX /usr/bin/g++

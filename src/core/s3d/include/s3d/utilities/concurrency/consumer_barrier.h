@@ -40,7 +40,6 @@ class ConsumerBarrier {
   const Producers& getProducers() { return producers_; }
 
  private:
-
   virtual bool shouldStopConsuming() {
     return std::any_of(std::begin(producers_), std::end(producers_),
                        [](const auto& producer) { return producer->shouldStopProducing(); });

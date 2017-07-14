@@ -12,11 +12,17 @@
 #include <QFileDialog>
 
 #include <chrono>
+#include <QtGui/QPainter>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
   m_analyzer = std::make_unique<DepthAnalyzer>();
+
+  ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
+                                   m_userSettings.displayParameters.displayRangeMax);
+  ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
+                                    m_userSettings.displayParameters.expectedRangeMax);
 
   connect(ui->actionOpen_Left_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
@@ -68,6 +74,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_currentContext->openGLRenderer->updateScene();
   });
 
+  connect(ui->actionViewer, &QAction::triggered, [this] {
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::ViewerCentric);
+    m_currentContext->openGLRenderer->updateScene();
+  });
+
   connect(ui->actionFeatures, &QAction::triggered,  //
           [this] {
             m_currentContext->entityManager->setFeaturesVisibility(ui->actionFeatures->isChecked());
@@ -75,19 +86,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
           });
 
   connect(ui->actionCompute, &QAction::triggered,  //
-          [this] {
-            m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
-
-            connect(m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
-                    [this](const QImage& imgLeft, const QImage& imgRight,
-                           std::chrono::microseconds timestamp) {
-                      m_currentContext->makeCurrent();
-                      m_currentContext->textureManager->setImageLeft(imgLeft);
-                      m_currentContext->textureManager->setImageRight(imgRight);
-                      m_currentContext->doneCurrent();
-                      computeAndUpdate();
-                    });
-          });
+          [this] { computeAndUpdate(); });
 
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -100,6 +99,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   connect(ui->openGLWidget, &OpenGLWidget::GLInitialized, [this] {
     m_widgetRenderingContext = std::make_unique<RenderingContext>(ui->openGLWidget);
     m_currentContext = m_widgetRenderingContext.get();
+    m_currentContext->entityManager->setUserSettings(&m_userSettings);
 
     connect(ui->videoControls, &VideoControls::play, [this] {
       if (m_videoSynchronizer == nullptr) {

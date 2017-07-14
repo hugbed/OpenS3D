@@ -27,15 +27,12 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions, public Op
   void doneCurrent() override { QOpenGLWidget::doneCurrent(); }
 
   void initializeGL() override;
-  void resizeGL(int w, int h) override;
   void paintGL() override;
 
  signals:
   void GLInitialized();
 
  private:
-  QSize m_viewportSize;
-
   EntityManager* m_entityManager;
 };
 

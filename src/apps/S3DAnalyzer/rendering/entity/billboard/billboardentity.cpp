@@ -62,24 +62,19 @@ void BillboardEntity::setAspectRatio(float ratio) {
   m_program->release();
 }
 
-void BillboardEntity::setImageSize(const QSize& imageSize) {
-  m_imageSize = imageSize;
-  float w = m_imageSize.width();
-  float h = m_imageSize.height();
-
+void BillboardEntity::setDisplayRange(float minX, float maxX, float minY, float maxY) {
+  float w = maxX - minX;
+  float h = maxY - minY;
+  m_imageSize = QSize(static_cast<int>(w), static_cast<int>(h));
   float values[] = {2.0f / w, 0.0f, -1.0f, 0.0f, -2.0f / h, 1.0f, 0.0f, 0.0f, 1.0f};
-  QMatrix3x3 imageToScreen(values);
-
-  m_program->bind();
-  { m_program->setUniformValue("uImageToScreen", imageToScreen); }
-  m_program->release();
+  setPointToScreen(QMatrix3x3(values));
 }
 
 void BillboardEntity::clear() {
   m_vertices.clear();
 }
 
-void BillboardEntity::draw() {
+void BillboardEntity::draw(QPaintDevice* parent) {
   if (!m_vertices.empty()) {
     // Render using our shader
     m_program->bind();
@@ -96,9 +91,15 @@ void BillboardEntity::setDefaultUniforms() {
   m_program->bind();
   {
     m_program->setUniformValue("uPointSize", 10.0f);
-    setImageSize(m_imageSize);
+    setDisplayRange(0, m_imageSize.width(), 0, m_imageSize.height());
     setHorizontalShift(0.0f);
     setAspectRatio(1.0f);
   }
+  m_program->release();
+}
+
+void BillboardEntity::setPointToScreen(const QMatrix3x3 pointToScreen) {
+  m_program->bind();
+  { m_program->setUniformValue("uPointToScreen", pointToScreen); }
   m_program->release();
 }

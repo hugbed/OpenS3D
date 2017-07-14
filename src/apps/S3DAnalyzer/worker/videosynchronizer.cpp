@@ -7,14 +7,12 @@
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 
-VideoSynchronizer::VideoSynchronizer() {
-  m_videoCaptureDevice =
-      std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
-          "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
-          "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"));
-
+VideoSynchronizer::VideoSynchronizer()
+    : m_videoCaptureDevice{std::unique_ptr<VideoCaptureDevice>(
+          std::make_unique<FileVideoCaptureDevice3D>("/home/jon/Videos/voyager_left.mp4;"
+                                                     "/home/jon/Videos/voyager_right.mp4"))} {
   // fetch video duration
-  VideoFileParserFFmpeg parser("/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4");
+  VideoFileParserFFmpeg parser("/home/jon/Videos/voyager_left.mp4");
   m_videoDuration = parser.VideoDuration();
 
   m_images.resize(2);
@@ -35,19 +33,27 @@ gsl::owner<VideoSynchronizer*> VideoSynchronizer::clone() const {
 VideoSynchronizer::~VideoSynchronizer() = default;
 
 void VideoSynchronizer::resume() {
-  m_videoCaptureDevice->Resume();
+  if (m_videoCaptureDevice != nullptr) {
+    m_videoCaptureDevice->Resume();
+  }
 }
 
 void VideoSynchronizer::pause() {
-  m_videoCaptureDevice->MaybeSuspend();
+  if (m_videoCaptureDevice != nullptr) {
+    m_videoCaptureDevice->MaybeSuspend();
+  }
 }
 
 void VideoSynchronizer::next() {
-  m_videoCaptureDevice->RequestRefreshFrame();
+  if (m_videoCaptureDevice != nullptr) {
+    m_videoCaptureDevice->RequestRefreshFrame();
+  }
 }
 
 void VideoSynchronizer::stop() {
-  m_videoCaptureDevice->StopAndDeAllocate();
+  if (m_videoCaptureDevice != nullptr) {
+    m_videoCaptureDevice->StopAndDeAllocate();
+  }
 }
 
 std::chrono::microseconds VideoSynchronizer::videoDuration() {
