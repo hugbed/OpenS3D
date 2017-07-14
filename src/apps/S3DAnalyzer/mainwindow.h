@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "utilities/usersettings.h"
 #include "rendering/entity/entitymanager.h"
 
 namespace Ui {
@@ -43,6 +44,8 @@ class MainWindow : public QMainWindow {
 
   // cached info
   std::unique_ptr<DepthAnalyzer> m_analyzer;
+
+  UserSettings m_userSettings{};
 
   Ui::MainWindow* ui;
 };

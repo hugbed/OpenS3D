@@ -8,11 +8,11 @@ uniform float uHorizontalShift = 0.0f;
 uniform float uAspectRatio = 1.0f;
 uniform float uPointSize = 10.0f;
 
-uniform mat3 uImageToScreen;
+uniform mat3 uPointToScreen;
 
 void main()
 {
-    vec3 screenPos = uImageToScreen * vec3(position.x - 1, position.y - 1, 1);
+    vec3 screenPos = uPointToScreen * vec3(position.x - 1, position.y - 1, 1);
 
     vec4 pos;
     if (uAspectRatio <= 1.0f) {

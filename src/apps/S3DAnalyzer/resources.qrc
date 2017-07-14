@@ -14,5 +14,6 @@
         <file>shaders/stereo/interlaced.frag</file>
         <file>shaders/billboard.vert</file>
         <file>shaders/billboardgradient.vert</file>
+        <file>shaders/billboardgradientworld.vert</file>
     </qresource>
 </RCC>

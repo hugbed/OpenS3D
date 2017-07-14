@@ -26,7 +26,7 @@ class RectangleEntity : public StereoImageEntity, QOpenGLFunctions {
   void setTextureLeft(QOpenGLTexture* texture) override;
   void setTextureRight(QOpenGLTexture* texture) override;
   void setAspectRatio(float ratio) override;
-  void draw() override;
+  void draw(QPaintDevice* /*parent*/) override;
 
   virtual void addShaders();
   virtual void setDefaultUniforms();

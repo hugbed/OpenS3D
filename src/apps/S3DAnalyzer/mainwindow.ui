@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>763</width>
+    <width>773</width>
     <height>670</height>
    </rect>
   </property>
@@ -127,6 +127,7 @@
     <addaction name="actionSide_by_side"/>
     <addaction name="actionLeft"/>
     <addaction name="actionRight"/>
+    <addaction name="actionViewer"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -177,6 +178,7 @@
    <addaction name="actionSide_by_side"/>
    <addaction name="actionLeft"/>
    <addaction name="actionRight"/>
+   <addaction name="actionViewer"/>
    <addaction name="separator"/>
    <addaction name="actionFeatures"/>
    <addaction name="actionCompute"/>
@@ -260,6 +262,14 @@
     </property>
     <property name="text">
      <string>Interlaced</string>
+    </property>
+   </action>
+   <action name="actionViewer">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Viewer</string>
     </property>
    </action>
   </actiongroup>

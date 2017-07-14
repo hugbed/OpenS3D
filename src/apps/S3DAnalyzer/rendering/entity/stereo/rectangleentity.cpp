@@ -104,7 +104,7 @@ void RectangleEntity::setCorners(float left, float top, float right, float botto
   m_vertex.release();
 }
 
-void RectangleEntity::draw() {
+void RectangleEntity::draw(QPaintDevice* /*parent*/) {
   // Render using our shader
   m_program->bind();
   {

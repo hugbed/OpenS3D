@@ -7,8 +7,6 @@
 
 #include <cassert>
 
-#include "worker/videosynchronizer.h"
-
 int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
 

@@ -22,6 +22,7 @@ set ( SOURCES
   rendering/entity/stereo/interlacedrectangleentity.cpp
   rendering/entity/stereo/leftrectangleentity.cpp
   rendering/entity/stereo/rightrectangleentity.cpp
+  rendering/entity/stereo/viewercentricentity.cpp
   rendering/entity/billboard/billboardentity.cpp
   rendering/entity/billboard/billboardcolorentity.cpp
   rendering/entity/billboard/billboardintensityentity.cpp
@@ -37,7 +38,8 @@ set ( SOURCES
   widgets/sliderdirectjump.cpp
   worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp
-)
+  utilities/depthintensitygradient.cpp
+  rendering/entity/billboard/billboardintensityworldentity.cpp)
 
 set ( MOC_HEADERS
  mainwindow.h
@@ -65,7 +67,8 @@ QT5_WRAP_UI( UI_HEADERS ${UIS} )
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/core/s3d/include
-    ${CMAKE_SOURCE_DIR}/core/s3dcv/include)
+    ${CMAKE_SOURCE_DIR}/core/s3dcv/include
+    ${CMAKE_SOURCE_DIR}/libs/gsl/include)
 
 # compile
 add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS})
