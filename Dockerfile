@@ -32,7 +32,6 @@ RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
 ENV CC /usr/bin/gcc 
 ENV CXX /usr/bin/g++
 ENV PATH "$PATH:/bin"
