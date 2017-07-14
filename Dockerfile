@@ -36,13 +36,14 @@ RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip \
 # build and test OpenS3D
 CMD cd /opt && \
     git clone https://github.com/hugbed/OpenS3D.git && \
-    cd OpenS3D/src && mkdir build && cd build && \ 
+    cd OpenS3D/src && git checkout -qf "$TRAVIS_COMMIT" && \
+    mkdir build && cd build && \ 
     cmake .. \
         -DOpenS3D_BUILD_APPS=OFF \
         -DOpenS3D_USE_CUDA=OFF \
         -DOpenS3D_BUILD_COVERAGE=ON \ 
         -DOpenS3D_USE_CV=ON && \
-    make -j2 && make test && \
+    make -j2 && make Tests && \
     ../scripts/coverage.sh && \
     curl -s https://codecov.io/bash > .codecov && chmod +x .codecov && \
     bash ./.codecov -X gcov
