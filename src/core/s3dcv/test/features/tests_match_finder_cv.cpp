@@ -158,7 +158,8 @@ TEST(match_finder_cv, matches_min_distance_returns_min) {
 
 TEST(match_finder_cv, find_matches_returns_correct) {
   FakeMatchFinderCV matchFinder;
-  auto res = matchFinder.findMatches({s3d::Image<uint8_t>(Size(1920, 1080)), s3d::Image<uint8_t>(Size(1920, 1080))});
+  auto res = matchFinder.findMatches(
+      {s3d::Image<uint8_t>(Size(1920, 1080)), s3d::Image<uint8_t>(Size(1920, 1080))});
 
   EXPECT_EQ(res.size(), 2);
   ASSERT_EQ(res[0].size(), 1);
