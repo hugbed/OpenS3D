@@ -8,4 +8,5 @@ services:
 
 script: 
   - ci_env=`bash <(curl -s https://codecov.io/env)`
-  - docker run $ci_env -e TRAVIS_COMMIT='$TRAVIS_COMMIT' hugbed/opens3d
+  - echo $TRAVIS_COMMIT
+  - docker run $ci_env -e TRAVIS_COMMIT=$TRAVIS_COMMIT hugbed/opens3d
