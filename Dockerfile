@@ -35,8 +35,13 @@ RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip \
 
 # build and test OpenS3D
 CMD cd /opt && \
+    git config --global user.email "hugbed@docker.com" && \
+    git config --global user.name "Travis-Docker" && \
     git clone https://github.com/hugbed/OpenS3D.git && \
-    cd OpenS3D/src && git checkout -qf "$TRAVIS_COMMIT" && \
+    cd OpenS3D/src &&  \
+    echo $(if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then git checkout -b build origin/"$TRAVIS_BRANCH" && \
+                                                     git merge origin/"$TRAVIS_PULL_REQUEST_BRANCH" --no-ff --no-commit; fi) && \
+    echo $(if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then git checkout -qf "$TRAVIS_COMMIT"; fi) && \
     mkdir build && cd build && \ 
     cmake .. \
         -DOpenS3D_BUILD_APPS=OFF \
