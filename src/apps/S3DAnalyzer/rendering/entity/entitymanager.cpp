@@ -114,7 +114,8 @@ void EntityManager::setFeaturesVisibility(bool display) {
 }
 
 void EntityManager::setFeatures(std::vector<QVector2D> points, std::vector<float> disparities) {
-  m_currentBillboard->setPoints(points, disparities);
+  m_billboardImage->setPoints(points, disparities);
+  m_billboardWorld->setPoints(points, disparities);
 }
 
 void EntityManager::setHorizontalShift(float horizontalShift) {

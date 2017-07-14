@@ -50,13 +50,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   });
 
   connect(ui->actionOpacity, &QAction::triggered, [this] {
-    //    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
-    // todo: put back Opacity and add ViewerCentric action
-    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::ViewerCentric);
-    m_currentContext->makeCurrent();
-    m_currentContext->entityManager->setFeatures(m_analyzer->featurePoints,
-                                                 m_analyzer->disparitiesPercent);
-    m_currentContext->doneCurrent();
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
     m_currentContext->openGLRenderer->updateScene();
   });
 
@@ -77,6 +71,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   connect(ui->actionRight, &QAction::triggered, [this] {
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Right);
+    m_currentContext->openGLRenderer->updateScene();
+  });
+
+  connect(ui->actionViewer, &QAction::triggered, [this] {
+    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::ViewerCentric);
     m_currentContext->openGLRenderer->updateScene();
   });
 
