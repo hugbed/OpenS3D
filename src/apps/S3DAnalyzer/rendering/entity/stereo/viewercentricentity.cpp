@@ -13,21 +13,13 @@ void ViewerCentricEntity::setTextureLeft(QOpenGLTexture* /*texture*/) {}
 void ViewerCentricEntity::setTextureRight(QOpenGLTexture* /*texture*/) {}
 
 void ViewerCentricEntity::setViewerContext(gsl::not_null<ViewerContext*> viewerContext) {
-  m_viewerContext = viewerContext; // todo: don't need the other things except viewer context
-  ViewerDepthConverter converter(viewerContext);
-  auto d = viewerContext->viewerDistance;
-
-  // todo: add setDepthRangeMeters(float min, float max); to be able to see far away features
-  m_maxZ = d + d/10.0f;
-  m_minZ = -(m_maxZ);
+  m_viewerContext = viewerContext;
 }
-
 
 void ViewerCentricEntity::setDepthRangeMeters(float min, float max) {
   m_minZ = min;
   m_maxZ = max;
 }
-
 
 void ViewerCentricEntity::draw(QPaintDevice* paintDevice) {
   if (paintDevice == nullptr || m_viewerContext == nullptr) {
@@ -71,7 +63,7 @@ void ViewerCentricEntity::drawScreen(QPainter* painter) {
 
 void ViewerCentricEntity::drawViewer(QPainter* painter) {
   float leftEyeY =
-          m_viewerContext->screenWidth / 2.0f - m_viewerContext->interocularDistance / 2.0f;
+      m_viewerContext->screenWidth / 2.0f - m_viewerContext->interocularDistance / 2.0f;
   float rightEyeY = leftEyeY + m_viewerContext->interocularDistance;
   float eyeZ = m_viewerContext->viewerDistance;
 

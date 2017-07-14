@@ -17,7 +17,7 @@ class BillboardIntensityEntity : public BillboardEntity {
 
  private:
   virtual std::vector<Vertex> verticesFromPoints(const std::vector<QVector2D>& points,
-                                         const std::vector<float>& intensities);
+                                                 const std::vector<float>& intensities);
 };
 
 #endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDINTENSITYENTITY_H

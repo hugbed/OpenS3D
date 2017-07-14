@@ -30,8 +30,7 @@ class ViewerDepthConverter {
 
   ViewerDepthConverter(gsl::not_null<ViewerContext*> context);
 
-  std::vector<float> computePerceivedDepth(
-                                           const std::vector<float>& disparities);
+  std::vector<float> computePerceivedDepth(const std::vector<float>& disparities);
 
   // horizontal position and depth in meters
   std::vector<Pointf> computeDepthPositions(const std::vector<Point>& imagePoints,

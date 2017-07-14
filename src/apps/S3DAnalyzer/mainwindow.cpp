@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
   });
 
   connect(ui->actionOpacity, &QAction::triggered, [this] {
-//    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
+    //    m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::Opacity);
     // todo: put back Opacity and add ViewerCentric action
     m_currentContext->entityManager->displayModeChanged(EntityManager::DisplayMode::ViewerCentric);
     m_currentContext->makeCurrent();

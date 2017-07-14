@@ -33,11 +33,12 @@ std::vector<Pointf> ViewerDepthConverter::computeDepthPositions(
   return depthPositions;
 }
 
-float ViewerDepthConverter::  computePerceivedDepth(float disparityPercent) {
+float ViewerDepthConverter::computePerceivedDepth(float disparityPercent) {
   auto&& Z_0_e = viewerContext_->viewerDistance;
   auto&& b_e = viewerContext_->interocularDistance;
   // for disparities in percent
-  float S_r = viewerContext_->screenWidth;// / static_cast<float>(viewerContext_->imageWidthPixels);
+  float S_r =
+      viewerContext_->screenWidth;  // / static_cast<float>(viewerContext_->imageWidthPixels);
   float d_s = S_r * disparityPercent / 100.0f;
   return Z_0_e - (Z_0_e * b_e) / (b_e - d_s);
 }

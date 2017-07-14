@@ -24,7 +24,7 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   createEntity<LeftRectangleEntity>(DisplayMode::Left);
   createEntity<RightRectangleEntity>(DisplayMode::Right);
 
-  // Viewer centric (keep reference for user settings)
+  // Viewer centric (keep reference for viewer context)
   auto viewerCentricEntity = std::make_unique<ViewerCentricEntity>();
   m_viewerCentricEntity = viewerCentricEntity.get();
   createEntity<ViewerCentricEntity>(DisplayMode::ViewerCentric, std::move(viewerCentricEntity));
@@ -40,7 +40,7 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   m_billboardImage = std::move(billboardEntity);
 
   auto billboardWorld =
-          std::make_unique<BillboardIntensityWorldEntity>(m_textureManager->getTextureSize());
+      std::make_unique<BillboardIntensityWorldEntity>(m_textureManager->getTextureSize());
   billboardWorld->init();
   billboardWorld->setPoints({}, {});
   billboardWorld->setMinIntensity(-1.0f);
@@ -74,17 +74,15 @@ void EntityManager::drawEntities(QPaintDevice* parent, QSize viewportSize) {
   if (m_showOverlay && m_currentBillboard != nullptr) {
     if (m_currentMode == DisplayMode::ViewerCentric) {
       auto d = m_userSettings->viewerContext.viewerDistance;
-      float minD = -(d + d/10.0f);
+      float minD = -(d + d / 10.0f);
       float maxD = -minD;
-      m_currentBillboard->setDisplayRange(0.0f,
-                                 m_textureManager->getTextureSize().width(),
-                                          minD,
-                                          maxD);
+      m_currentBillboard->setDisplayRange(0.0f, m_textureManager->getTextureSize().width(),  //
+                                          minD, maxD);
       m_viewerCentricEntity->setViewerContext(&m_userSettings->viewerContext);
       m_viewerCentricEntity->setDepthRangeMeters(minD, maxD);
     } else {
-      m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(), 0,
-                                 m_textureManager->getTextureSize().height());
+      m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(),  //
+                                          0, m_textureManager->getTextureSize().height());
     }
 
     if (m_currentMode != DisplayMode::SideBySide) {
@@ -103,7 +101,7 @@ void EntityManager::createEntity(DisplayMode mode) {
   createEntity(mode, std::move(stereoImageEntity));
 }
 
-template<class T>
+template <class T>
 void EntityManager::createEntity(EntityManager::DisplayMode mode, std::unique_ptr<T> t) {
   t->init();
   t->setTextureLeft(m_textureManager->getTexture(0));
@@ -129,8 +127,8 @@ float EntityManager::getHorizontalShift() const {
 
 void EntityManager::displayModeChanged(EntityManager::DisplayMode mode) {
   m_currentMode = mode;
-  m_currentBillboard = (mode == DisplayMode::ViewerCentric) ?
-                       m_billboardWorld.get() : m_billboardImage.get();
+  m_currentBillboard =
+      (mode == DisplayMode::ViewerCentric) ? m_billboardWorld.get() : m_billboardImage.get();
 }
 
 void EntityManager::setUserSettings(UserSettings* userSettings) {
@@ -138,4 +136,3 @@ void EntityManager::setUserSettings(UserSettings* userSettings) {
   m_billboardWorld->setViewerContext(&userSettings->viewerContext);
   m_viewerCentricEntity->setViewerContext(&userSettings->viewerContext);
 }
-
