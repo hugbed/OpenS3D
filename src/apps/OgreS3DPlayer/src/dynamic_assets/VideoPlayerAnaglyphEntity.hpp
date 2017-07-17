@@ -5,10 +5,10 @@
 
 class VideoPlayerAnaglyphEntity : public FullscreenRectangleEntity {
  public:
-  VideoPlayerAnaglyphEntity(std::string entityName,
+  VideoPlayerAnaglyphEntity(const std::string& entityName,
                             const std::string& textureNameLeft,
                             const std::string& textureNameRight)
-      : FullscreenRectangleEntity(std::move(entityName)) {
+      : FullscreenRectangleEntity(entityName) {
     // anaglyph material
     auto material = static_cast<Ogre::MaterialPtr>(
         Ogre::MaterialManager::getSingleton().getByName("Anaglyph", "General"));

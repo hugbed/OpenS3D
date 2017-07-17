@@ -3,7 +3,6 @@
 #include <QTimer>
 #include <QDebug>
 
-#include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 
@@ -61,7 +60,7 @@ std::chrono::microseconds VideoSynchronizer::videoDuration() {
 }
 
 void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
-                                               const VideoCaptureFormat& frameFormat,
+                                               const VideoCaptureFormat& /*frameFormat*/,
                                                std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex>(m_mutex);
   // if previous frame not consumed, skip frame

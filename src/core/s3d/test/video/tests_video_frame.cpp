@@ -5,7 +5,6 @@
 TEST(video_frame, num_bytes_per_pixel_ARGB_BGRA_4) {
   EXPECT_EQ(VideoFrame::AllocationSize(VideoPixelFormat::ARGB, Size(1, 1)), 4);
   EXPECT_EQ(VideoFrame::AllocationSize(VideoPixelFormat::BGRA, Size(1, 1)), 4);
-  int i = 0;
 }
 
 TEST(video_frame, num_bytes_per_pixel_UYVY_2) {

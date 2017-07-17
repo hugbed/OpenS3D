@@ -26,7 +26,7 @@ class MockProducerConsumerMediator : public s3d::concurrency::ProducerConsumerMe
 
 class FakeProducerInt : public s3d::concurrency::ProducerBarrier<int> {
  public:
-  FakeProducerInt(s3d::concurrency::ProducerConsumerMediator* mediator)
+  explicit FakeProducerInt(s3d::concurrency::ProducerConsumerMediator* mediator)
       : ProducerBarrier{mediator} {}
   const int& getProduct() override { return product_; }
   void produce() override { product_ = 1; }
@@ -70,7 +70,6 @@ TEST(producer_consumer_barrier, produce_then_consume_order_correct_integration_t
   ProducerConsumerBarrier b(&m, &c);
 
   int product = 0;
-  bool doneProducing = false;
   auto t = std::thread([&] {
     // wait, then produce 1
     b.waitUntilShouldProduce();

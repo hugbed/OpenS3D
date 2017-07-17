@@ -21,7 +21,7 @@ class Decoder {
 
   bool endOfFileReached();
 
-  void copyFrameData(AVFrame*, std::vector<uint8_t>* data);
+  void copyFrameData(AVFrame* frame, std::vector<uint8_t>* out);
 
   std::unique_ptr<Scaler> createScaler(enum AVPixelFormat dstFormat);
 

@@ -19,7 +19,8 @@ class TimedLoopSleep : public TimedLoop {
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::microseconds;
-    using namespace std::chrono_literals;
+    using std::chrono_literals::operator""ms;
+    using std::chrono_literals::operator""us;
 
     auto nextFrameTime = high_resolution_clock::now() + loopDuration;
     while (!stopLoopFlag_) {
@@ -66,7 +67,7 @@ class TimedLoopSleep : public TimedLoop {
     lastTimeMesure = now;
 
     if (tmpMesure != time_point::max()) {
-      long dtl = duration_cast<microseconds>(dt).count();
+      auto dtl = duration_cast<microseconds>(dt).count();
       outStream << dtl - baselineTime.count() << std::endl;
     }
   }

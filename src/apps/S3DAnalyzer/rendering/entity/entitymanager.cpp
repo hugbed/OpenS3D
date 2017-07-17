@@ -1,12 +1,9 @@
-#include <gsl/gsl_util>
 #include "entitymanager.h"
 
 #include "../texturemanager.h"
 
 #include "rendering/entity/billboard/billboarddepthentity.h"
-#include "rendering/entity/billboard/billboarddisparityentity.h"
 #include "stereo/rectangleentity.h"
-#include "stereo/stereoimageentity.h"
 #include "stereo/anaglyphrectangleentity.h"
 #include "stereo/opacityrectangleentity.h"
 #include "stereo/interlacedrectangleentity.h"
@@ -15,6 +12,8 @@
 #include "stereo/rightrectangleentity.h"
 #include "stereo/viewercentricentity.h"
 #include "utilities/usersettings.h"
+
+#include <gsl/gsl_util>
 
 EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{textureManager} {
   createEntity<AnaglyphRectangleEntity>(DisplayMode::Anaglyph);
@@ -39,8 +38,7 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
   billboardEntity->setMaxIntensity(3.0f);
   m_billboardImage = std::move(billboardEntity);
 
-  auto billboardWorld =
-      std::make_unique<BillboardDepthEntity>(m_textureManager->getTextureSize());
+  auto billboardWorld = std::make_unique<BillboardDepthEntity>(m_textureManager->getTextureSize());
   billboardWorld->init();
   billboardWorld->setPoints({}, {});
   billboardWorld->setMinIntensity(-1.0f);

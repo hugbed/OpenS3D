@@ -74,8 +74,8 @@ void BillboardEntity::clear() {
   m_vertices.clear();
 }
 
-void BillboardEntity::draw(QPaintDevice* parent) {
-  if (!m_vertices.empty()) {
+void BillboardEntity::draw(QPaintDevice* /*paintDevice*/) {
+  if (not m_vertices.empty()) {
     // Render using our shader
     m_program->bind();
     {

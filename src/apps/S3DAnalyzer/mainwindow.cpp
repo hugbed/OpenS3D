@@ -185,7 +185,7 @@ template <class Functor>
 void MainWindow::requestImageFilename(Functor f) {
   QString filename = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/jon/Videos",
                                                   tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
-  if (!filename.isEmpty()) {
+  if (not filename.isEmpty()) {
     f(filename);
   }
 }

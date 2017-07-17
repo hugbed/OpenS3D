@@ -18,7 +18,7 @@ class VideoFileParserFFmpeg : public VideoFileParser {
 
   gsl::owner<VideoFileParserFFmpeg*> clone() const override;
 
-  ~VideoFileParserFFmpeg();
+  ~VideoFileParserFFmpeg() override;
 
   bool Initialize(VideoCaptureFormat* format) override;
   bool GetNextFrame(std::vector<uint8_t>& imageData) override;

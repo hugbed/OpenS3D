@@ -23,9 +23,9 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
     return {{}, {}};
   }
 
-  double minDist = matchesMinDistance(matches);
   auto filteredMatches = filterMatches(featuresLeft, featuresRight, matches,
                                        computeThreshold(images[0].width(), images[0].height()));
+
   return filteredMatches;
 }
 

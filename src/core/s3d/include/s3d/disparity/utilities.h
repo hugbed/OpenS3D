@@ -28,8 +28,8 @@ inline std::pair<double, double> disparity_range(const std::vector<double>& disp
 };
 
 inline std::pair<double, double> disparity_range(
-    const std::vector<Eigen::Vector2d> positionsLeft,
-    const std::vector<Eigen::Vector2d> positionsRight) {
+    const std::vector<Eigen::Vector2d>& positionsLeft,
+    const std::vector<Eigen::Vector2d>& positionsRight) {
   assert(positionsLeft.size() == positionsRight.size());
 
   std::vector<double> disparities;

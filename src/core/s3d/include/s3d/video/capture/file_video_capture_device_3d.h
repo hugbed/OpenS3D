@@ -8,8 +8,8 @@
 #include "video_capture_device.h"
 
 #include <atomic>
-#include <utility>
 #include <thread>
+#include <utility>
 
 class FileParserProducer;
 class FileParserConsumer;

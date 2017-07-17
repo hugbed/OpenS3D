@@ -5,7 +5,7 @@
 
 class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDevice {
  public:
-  FileVideoCaptureDeviceFFmpeg(const std::string& filename);
+  explicit FileVideoCaptureDeviceFFmpeg(const std::string& filename);
 
   gsl::owner<FileVideoCaptureDeviceFFmpeg*> clone() const override;
 

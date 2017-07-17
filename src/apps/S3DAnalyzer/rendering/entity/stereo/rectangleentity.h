@@ -9,8 +9,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 
-#include "rendering/vertex.h"
 #include "rendering/entity/entity.h"
+#include "rendering/vertex.h"
 
 #include <memory>
 

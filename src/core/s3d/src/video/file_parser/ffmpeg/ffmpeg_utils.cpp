@@ -49,8 +49,8 @@ UniquePtr<AVFormatContext> avformat::open_input(const char* url,
   return ffmpeg::UniquePtr<AVFormatContext>(ps);
 }
 
-void avformat::find_stream_info(AVFormatContext* ic, AVDictionary** options) {
-  if (avformat_find_stream_info(ic, options) < 0) {
+void avformat::find_stream_info(AVFormatContext* formatContext, AVDictionary** options) {
+  if (avformat_find_stream_info(formatContext, options) < 0) {
     throw FFmpegException("Could not find stream information");
   }
 }

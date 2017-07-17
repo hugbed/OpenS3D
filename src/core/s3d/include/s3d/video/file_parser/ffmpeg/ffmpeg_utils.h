@@ -71,11 +71,11 @@ UniquePtr<AVFormatContext> open_input(const char* url,
                                       AVInputFormat* fmt = nullptr,
                                       AVDictionary** options = nullptr);
 
-void find_stream_info(AVFormatContext* ic, AVDictionary** options = nullptr);
+void find_stream_info(AVFormatContext* formatContext, AVDictionary** options = nullptr);
 
-int find_best_stream(AVFormatContext* ic, enum AVMediaType type);
+int find_best_stream(AVFormatContext* formatContext, enum AVMediaType type);
 
-int find_best_stream(AVFormatContext* ic,
+int find_best_stream(AVFormatContext* formatContext,
                      enum AVMediaType type,
                      int wanted_stream_nb,
                      int related_stream,
@@ -122,11 +122,11 @@ int image_alloc(uint8_t* pointers[4],
 
 namespace avframe {
 AVFrame* alloc();
-}
+}  // namespace avframe
 
 namespace avpacket {
 void init(AVPacket* pkt);
-}
+}  // namespace avpacket
 
 }  // namespace ffmpeg
 

@@ -76,7 +76,7 @@ class FakeVideoCaptureDeviceClient : public VideoCaptureDevice::Client {
 
 class MockCaptureLoopClient : public FileVideoCaptureDevice::CaptureLoopClient {
  public:
-  MockCaptureLoopClient(FileVideoCaptureDevice* device) : CaptureLoopClient(device) {}
+  explicit MockCaptureLoopClient(FileVideoCaptureDevice* device) : CaptureLoopClient(device) {}
   MOCK_METHOD0(callback, void());
 };
 

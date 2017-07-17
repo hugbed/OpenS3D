@@ -32,7 +32,6 @@ class ViewerCentricEntity : public StereoImageEntity {
  private:
   void drawScreen(QPainter* painter);
   void drawViewer(QPainter* painter);
-  void drawPoints(QPainter* painter) {}
 
  private:
   ViewerContext* m_viewerContext{};

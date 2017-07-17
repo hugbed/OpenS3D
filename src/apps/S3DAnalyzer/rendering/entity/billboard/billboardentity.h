@@ -25,7 +25,7 @@ class BillboardEntity : public Entity, QOpenGLFunctions {
   void setPointToScreen(const QMatrix3x3 pointToScreen);
   void clear();
 
-  void draw(QPaintDevice* parent) override;
+  void draw(QPaintDevice* /*paintDevice*/) override;
 
  protected:
   std::unique_ptr<QOpenGLShaderProgram> m_program;

@@ -1,13 +1,11 @@
+#include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 
-#include <memory>
 #include <fstream>
-#include <thread>
-#include <s3d/video/capture/file_video_capture_device_3d.h>
 
 class FFmpegClient : public VideoCaptureDevice::Client {
  public:
-  FFmpegClient(const std::string& dstFilename)
+  explicit FFmpegClient(const std::string& dstFilename)
       : frame_{}, dstFilename_{dstFilename}, dstFile_{dstFilename, std::ios::binary} {}
 
   VideoCaptureDevice::Client* clone() const override { return new FFmpegClient{dstFilename_}; }
@@ -50,8 +48,7 @@ int main(int argc, char** argv) {
   const char* video_dst_filename = argv[2];
 
   // create client
-  std::unique_ptr<VideoCaptureDevice::Client> client =
-      std::make_unique<FFmpegClient>(video_dst_filename);
+  std::unique_ptr<VideoCaptureDevice::Client> client = std::make_unique<FFmpegClient>(src_filename);
 
   // create video capture device
   std::unique_ptr<VideoCaptureDevice> captureDevice = std::make_unique<FileVideoCaptureDevice3D>(

@@ -29,7 +29,6 @@ void ViewerCentricEntity::draw(QPaintDevice* paintDevice) {
   QPainter painter(paintDevice);
   drawScreen(&painter);
   drawViewer(&painter);
-  drawPoints(&painter);
 }
 
 QPoint ViewerCentricEntity::worldToWidget(QPointF pos, int deviceWidth, int deviceHeight) {

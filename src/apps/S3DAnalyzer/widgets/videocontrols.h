@@ -13,9 +13,9 @@ class QBoxLayout;
 class VideoControls : public QWidget {
   Q_OBJECT
  public:
-  VideoControls(QWidget* parent = nullptr);
-  VideoControls(Qt::Orientation orientation, QWidget* parent = nullptr);
-  ~VideoControls();
+  explicit VideoControls(QWidget* parent = nullptr);
+  explicit VideoControls(Qt::Orientation orientation, QWidget* parent = nullptr);
+  ~VideoControls() override;
 
   void setDuration(std::chrono::microseconds duration);
   void updateSlider(std::chrono::microseconds timestamp);

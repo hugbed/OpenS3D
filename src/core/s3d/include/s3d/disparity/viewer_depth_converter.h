@@ -28,7 +28,7 @@ class ViewerDepthConverter {
   using Point = Eigen::Vector2d;
   using Pointf = Eigen::Vector2f;
 
-  ViewerDepthConverter(gsl::not_null<ViewerContext*> context);
+  explicit ViewerDepthConverter(gsl::not_null<ViewerContext*> context);
 
   std::vector<float> computePerceivedDepth(const std::vector<float>& disparitiesPercent);
 
@@ -36,7 +36,7 @@ class ViewerDepthConverter {
   std::vector<Pointf> computeDepthPositions(const std::vector<Point>& imagePoints,
                                             const std::vector<float>& disparities);
 
-  float computePerceivedDepth(float disparitiesPercent);
+  float computePerceivedDepth(float disparityPercent);
 
   std::vector<float> computeHorizontalPositions(const std::vector<Point>& imagePoints);
 

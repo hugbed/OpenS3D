@@ -141,7 +141,7 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
   std::unique_ptr<RGB8VideoFrame> rgbFrameLeft_;
   std::unique_ptr<RGB8VideoFrame> rgbFrameRight_;
 
-  size_t refCount_;
+  size_t refCount_{};
 
   std::chrono::high_resolution_clock::time_point firstRefTime_;
 };
@@ -231,21 +231,18 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     SendErrorString("Left frame, no input signal");
     return S_FALSE;
   }
-
-  void* raw_data_left = nullptr;
-  void* raw_data_right = nullptr;
-
-  uint8_t* video_data_left = nullptr;
-  uint8_t* video_data_right = nullptr;
-
   // get left frame
   rgbFrameLeft_->resize(videoFrameLeft->GetWidth(), videoFrameLeft->GetHeight());
 
   videoConversion_->ConvertFrame(videoFrameLeft,
                                  static_cast<IDeckLinkVideoFrame*>(rgbFrameLeft_.get()));
-  rgbFrameLeft_->GetBytes(&raw_data_left);
-  video_data_left = static_cast<uint8_t*>(raw_data_left);
 
+  void* raw_data_left = nullptr;
+  rgbFrameLeft_->GetBytes(&raw_data_left);
+  uint8_t* video_data_left = static_cast<uint8_t*>(raw_data_left);
+
+  void* raw_data_right = nullptr;
+  uint8_t* video_data_right = nullptr;
   if (captureFormat_.stereo3D) {
     auto threeDExtension = make_decklink_ptr<IDeckLinkVideoFrame3DExtensions>(videoFrameLeft);
 

@@ -16,8 +16,8 @@
 
 class VideoFrame {
  public:
-  VideoFrame(std::vector<uint8_t> data,
-             std::chrono::microseconds timestamp = std::chrono::microseconds(0))
+  explicit VideoFrame(std::vector<uint8_t> data,
+                      std::chrono::microseconds timestamp = std::chrono::microseconds(0))
       : data_(std::move(data)), timestamp_(timestamp) {}
 
   static size_t AllocationSize(VideoPixelFormat format, const Size& size);

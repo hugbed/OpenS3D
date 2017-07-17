@@ -28,21 +28,6 @@ T percentile(const std::vector<T>& values, float percentile) {
   return valuesCopy[index - 1] + remainder * (valuesCopy[index] - valuesCopy[index - 1]);
 }
 
-std::vector<int> histogram(std::vector<double> values,
-                           int nbBins,
-                           double* min,
-                           double* max,
-                           double* binSize) {
-  // compute min, max
-  *min = std::floor(*std::min_element(std::begin(values), std::end(values)));
-  *max = std::ceil(*std::max_element(std::begin(values), std::end(values)));
-  *binSize = std::ceil((max - min) / static_cast<float>(nbBins));
-
-  std::vector<int> hist;
-  hist.resize(nbBins);
-  return hist;
-}
-
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_STATS_H

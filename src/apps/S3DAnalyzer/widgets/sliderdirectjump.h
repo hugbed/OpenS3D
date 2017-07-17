@@ -1,5 +1,5 @@
-#ifndef PROJECT_SLIDERDIRECTJUMP_H
-#define PROJECT_SLIDERDIRECTJUMP_H
+#ifndef WIDGETS_SLIDERDIRECTJUMP_H
+#define WIDGETS_SLIDERDIRECTJUMP_H
 
 #include <QSlider>
 
@@ -7,9 +7,9 @@ class QMouseEvent;
 
 class SliderDirectJump : public QSlider {
  public:
-  SliderDirectJump(QWidget* parent = nullptr);
-  SliderDirectJump(Qt::Orientation orientation, QWidget* parent = nullptr);
-  ~SliderDirectJump();
+  explicit SliderDirectJump(QWidget* parent = nullptr);
+  explicit SliderDirectJump(Qt::Orientation orientation, QWidget* parent = nullptr);
+  ~SliderDirectJump() override;
 
   void setPercentage(float percent);
 
@@ -25,4 +25,4 @@ class SliderDirectJump : public QSlider {
   int m_handleWidth{0};
 };
 
-#endif  // PROJECT_SLIDERDIRECTJUMP_H
+#endif  // WIDGETS_SLIDERDIRECTJUMP_H

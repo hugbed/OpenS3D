@@ -11,12 +11,13 @@
 
 class SplitscreenRectangleEntity : public Ogre::MovableObject {
  public:
-  explicit SplitscreenRectangleEntity(std::string entityName) : Ogre::MovableObject(entityName) {
+  explicit SplitscreenRectangleEntity(const std::string& entityName)
+      : Ogre::MovableObject(entityName) {
     rectangles_.first = RectangleFactory::createRectangle({-1.0f, 0.0f});
     rectangles_.second = RectangleFactory::createRectangle({0.0f, 1.0f});
   }
 
-  SplitscreenRectangleEntity(std::string entityName,
+  SplitscreenRectangleEntity(const std::string& entityName,
                              std::string materialNameLeft,
                              std::string materialNameRight)
       : Ogre::MovableObject(entityName),

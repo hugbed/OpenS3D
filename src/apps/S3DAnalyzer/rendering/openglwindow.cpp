@@ -95,6 +95,6 @@ void OpenGLWindow::mouseDoubleClickEvent(QMouseEvent* e) {
   }
 }
 
-void OpenGLWindow::hideEvent(QHideEvent* event) {
+void OpenGLWindow::hideEvent(QHideEvent* /*event*/) {
   emit onClose();
 }

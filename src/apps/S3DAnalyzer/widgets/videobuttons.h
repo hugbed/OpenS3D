@@ -11,8 +11,8 @@ class QHBoxLayout;
 class VideoButtons : public QWidget {
   Q_OBJECT
  public:
-  VideoButtons(QWidget* parent = nullptr);
-  ~VideoButtons();
+  explicit VideoButtons(QWidget* parent = nullptr);
+  ~VideoButtons() override;
 
   void togglePlayingState();
 

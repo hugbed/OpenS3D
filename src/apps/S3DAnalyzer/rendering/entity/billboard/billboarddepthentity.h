@@ -10,7 +10,7 @@
 // todo: review names (difference: this does not have aspect ratio)
 class BillboardDepthEntity : public BillboardDisparityEntity {
  public:
-  BillboardDepthEntity(const QSize& imageSize);
+  explicit BillboardDepthEntity(const QSize& imageSize);
 
   void setDisplayRange(float minX, float maxX, float minY, float maxY) override;
   void addShaders() override;

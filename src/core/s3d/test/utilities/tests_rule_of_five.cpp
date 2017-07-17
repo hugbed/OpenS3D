@@ -9,7 +9,7 @@ struct Probe {
 struct FakeInterface : rule_of_five_interface<FakeInterface> {};
 
 struct FakeImplementation : public FakeInterface {
-  FakeImplementation(Probe* p) : p_{p} { p_->counter++; }
+  explicit FakeImplementation(Probe* p) : p_{p} { p_->counter++; }
   ~FakeImplementation() override { p_->counter--; }
   gsl::owner<FakeInterface*> clone() const override { return new FakeImplementation(p_); }
 

@@ -20,7 +20,7 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
 
   void OnIncomingCapturedData(const Images& images,
                               const VideoCaptureFormat& frameFormat,
-                              std::chrono::microseconds timestamp) override {
+                              std::chrono::microseconds /*timestamp*/) override {
     //    outputPerformanceMetrics(std::cout);
 
     if (!images.empty() && !videoTextures_.empty()) {

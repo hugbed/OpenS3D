@@ -45,7 +45,6 @@ import subprocess
 import sys
 import tempfile
 import threading
-import re
 
 def find_compilation_database(path):
   """Adjusts the directory until a compilation database is found."""
@@ -151,7 +150,7 @@ def main():
   parser.add_argument('-file-filter', default=None,
                       help='regular expression matching the names of the '
                       'files to exclude diagnostics.'
-                      'Invokes re.compile().search(files_filter)') 
+                      'Invokes re.compile().search(files_filter)')
 
   args = parser.parse_args()
 
@@ -170,8 +169,8 @@ def main():
       invocation.append('-checks=' + args.checks)
     invocation.append('-')
     print subprocess.check_output(invocation)
-  except:
-    print >>sys.stderr, "Unable to run clang-tidy."
+  except subprocess.CalledProcessError as e:
+    print >> e.output, "Unable to run clang-tidy."
     sys.exit(1)
 
   # Load the database and extract all files.
@@ -181,7 +180,7 @@ def main():
   # filter files
   if not args.file_filter == None:
     filter_pattern = re.compile(args.file_filter)
-    files = filter(lambda f: not filter_pattern.search(f), files)
+    files = [file for file in files if not filter_pattern.search(file)]
 
   max_task = args.j
   if max_task == 0:

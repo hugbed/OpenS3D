@@ -1,5 +1,5 @@
-#ifndef PROJECT_USERSETTINGS_H
-#define PROJECT_USERSETTINGS_H
+#ifndef UTILITIES_USERSETTINGS_H
+#define UTILITIES_USERSETTINGS_H
 
 #include <s3d/disparity/viewer_depth_converter.h>
 
@@ -15,4 +15,4 @@ struct UserSettings {
   DisplayParameters displayParameters;
 };
 
-#endif  // PROJECT_USERSETTINGS_H
+#endif  // UTILITIES_USERSETTINGS_H

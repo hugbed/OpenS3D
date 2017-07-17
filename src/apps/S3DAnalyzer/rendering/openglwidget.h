@@ -33,7 +33,7 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions, public Op
   void GLInitialized();
 
  private:
-  EntityManager* m_entityManager;
+  EntityManager* m_entityManager{};
 };
 
 #endif  // RENDERING_OPENGLWIDGET_H

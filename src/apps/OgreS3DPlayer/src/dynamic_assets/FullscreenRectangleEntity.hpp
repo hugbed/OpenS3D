@@ -11,14 +11,15 @@
 
 class FullscreenRectangleEntity : public Ogre::MovableObject {
  public:
-  explicit FullscreenRectangleEntity(std::string entityName) : Ogre::MovableObject(entityName) {
+  explicit FullscreenRectangleEntity(const std::string& entityName)
+      : Ogre::MovableObject(entityName) {
     rectangle_ = RectangleFactory::createRectangle({-1.0f, 1.0f});
   }
 
-  FullscreenRectangleEntity(std::string entityName, std::string materialName)
-      : Ogre::MovableObject(entityName), materialName_{std::move(materialName)} {
-    rectangle_ = RectangleFactory::createRectangle({-1.0f, 1.0f}, materialName_);
-  }
+  FullscreenRectangleEntity(const std::string& entityName, std::string materialName)
+      : Ogre::MovableObject(entityName),
+        materialName_{std::move(materialName)},
+        rectangle_{RectangleFactory::createRectangle({-1.0f, 1.0f}, materialName_)} {}
 
   const void setMaterialName(std::string name) {
     materialName_ = std::move(name);

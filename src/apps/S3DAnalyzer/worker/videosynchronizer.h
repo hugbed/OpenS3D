@@ -22,7 +22,7 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
 
  public:
   VideoSynchronizer();
-  ~VideoSynchronizer();
+  ~VideoSynchronizer() override;
 
   gsl::owner<VideoSynchronizer*> clone() const override;
 

@@ -7,12 +7,12 @@ ViewerDepthConverter::ViewerDepthConverter(gsl::not_null<ViewerContext*> context
     : viewerContext_(context) {}
 
 std::vector<float> ViewerDepthConverter::computePerceivedDepth(
-    const std::vector<float>& disparities) {  // todo: in percent, S_r = screenWidth
+    const std::vector<float>& disparitiesPercent) {
   std::vector<float> perceivedDepth_;
   perceivedDepth_.reserve(perceivedDepth_.size());
 
-  for (int i = 0; i < disparities.size(); ++i) {
-    perceivedDepth_.emplace_back(computePerceivedDepth(disparities[i]));
+  for (auto & disparityPercent : disparitiesPercent) {
+    perceivedDepth_.emplace_back(computePerceivedDepth(disparityPercent));
   }
   return perceivedDepth_;
 }
@@ -37,7 +37,7 @@ float ViewerDepthConverter::computePerceivedDepth(float disparityPercent) {
   auto&& Z_0_e = viewerContext_->viewerDistance;
   auto&& b_e = viewerContext_->interocularDistance;
   // for disparities in percent
-  float S_r = viewerContext_->screenWidth;  // /
+  auto&& S_r = viewerContext_->screenWidth;  // /
                                             // static_cast<float>(viewerContext_->imageWidthPixels);
                                             // // for in pixels
   float d_s = S_r * disparityPercent / 100.0f;

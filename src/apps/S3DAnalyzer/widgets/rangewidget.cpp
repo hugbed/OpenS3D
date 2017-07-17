@@ -2,11 +2,12 @@
 
 #include <QHBoxLayout>
 
-RangeWidget::RangeWidget(QWidget* parent) : QWidget(parent) {
-  m_minValueLabel = std::make_unique<QLabel>();
+RangeWidget::RangeWidget(QWidget* parent)
+    : QWidget(parent),
+      m_minValueLabel{std::make_unique<QLabel>()},
+      m_rangeBar{std::make_unique<RangeBar>()},
+      m_maxValueLabel{std::make_unique<QLabel>()} {
   m_minValueLabel->setFixedWidth(30);
-  m_rangeBar = std::make_unique<RangeBar>();
-  m_maxValueLabel = std::make_unique<QLabel>();
   m_maxValueLabel->setFixedWidth(30);
 
   // default values, will be replaced

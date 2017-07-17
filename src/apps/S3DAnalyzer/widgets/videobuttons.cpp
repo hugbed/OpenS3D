@@ -84,7 +84,7 @@ std::unique_ptr<QAbstractButton> VideoButtons::createButton(const QString& iconF
 }
 
 void VideoButtons::togglePlayingState() {
-  m_isPlaying = !m_isPlaying;
+  m_isPlaying = not m_isPlaying;
   if (m_isPlaying) {
     QPixmap pixmap(":icons/player_pause.png");
     QIcon buttonIcon(pixmap);

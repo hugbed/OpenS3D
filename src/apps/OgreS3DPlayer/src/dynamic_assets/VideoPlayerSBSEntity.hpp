@@ -5,10 +5,10 @@
 
 class VideoPlayerSBSEntity : public SplitscreenRectangleEntity {
  public:
-  VideoPlayerSBSEntity(std::string entityName,
+  VideoPlayerSBSEntity(const std::string& entityName,
                        const std::string& textureNameLeft,
                        const std::string& textureNameRight)
-      : SplitscreenRectangleEntity(std::move(entityName)) {
+      : SplitscreenRectangleEntity(entityName) {
     auto materialLeft = static_cast<Ogre::MaterialPtr>(
         Ogre::MaterialManager::getSingleton().getByName("StereoSide", "General"));
     materialLeft->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false);

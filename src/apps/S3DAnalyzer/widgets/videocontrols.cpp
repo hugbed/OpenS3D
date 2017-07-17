@@ -44,7 +44,7 @@ void VideoControls::init(Qt::Orientation orientation) {
   m_layout = layout.get();
   setLayout(layout.release());
 
-  using namespace std::chrono_literals;
+  using std::chrono_literals::operator""min;
   setDuration(11min);
 }
 
