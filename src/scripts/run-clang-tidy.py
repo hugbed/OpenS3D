@@ -180,7 +180,7 @@ def main():
   # filter files
   if not args.file_filter == None:
     filter_pattern = re.compile(args.file_filter)
-    files = [file for file in files if not filter_pattern.search(file)]
+    files = [f for f in files if not filter_pattern.search(f)]
 
   max_task = args.j
   if max_task == 0:

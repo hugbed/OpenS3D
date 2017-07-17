@@ -28,7 +28,7 @@ class MockTimedLoop : public TimedLoop {
 
 class FakeVideoFileParser : public VideoFileParser {
  public:
-  FakeVideoFileParser(const VideoCaptureFormat& fakeFileFormat)
+  explicit FakeVideoFileParser(const VideoCaptureFormat& fakeFileFormat)
       : VideoFileParser(), fakeFileFormat_{fakeFileFormat} {}
   gsl::owner<VideoFileParser*> clone() const override {
     return new FakeVideoFileParser(fakeFileFormat_);
