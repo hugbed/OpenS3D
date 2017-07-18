@@ -9,8 +9,7 @@ class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDevice {
 
   gsl::owner<FileVideoCaptureDeviceFFmpeg*> clone() const override;
 
-  std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath,
-                                                      VideoCaptureFormat* format) override;
+  std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override;
 
  private:
   std::string filename_;

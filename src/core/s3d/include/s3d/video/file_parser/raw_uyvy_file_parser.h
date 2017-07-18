@@ -17,11 +17,15 @@ class RawUYVYFileParser : public VideoFileParser {
   bool Initialize(VideoCaptureFormat* format) override;
   bool GetNextFrame(std::vector<uint8_t>& frame) override;
 
+  const std::string& getFilePath() const;
+
  private:
+  virtual bool createStream(std::unique_ptr<std::istream>& stream);
+
   std::string filePath_;
   size_t frameSize_;
 
-  std::unique_ptr<std::ifstream> fileStream_;
+  std::unique_ptr<std::istream> fileStream_;
   std::vector<uint8_t> frameUYVY_;
 };
 

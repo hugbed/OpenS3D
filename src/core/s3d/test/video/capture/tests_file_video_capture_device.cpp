@@ -24,6 +24,8 @@ class MockTimedLoop : public TimedLoop {
   gsl::owner<TimedLoop*> clone() const override { return new MockTimedLoop; }
   MOCK_METHOD2(start, void(Client* client, std::chrono::microseconds loopDuration));
   MOCK_METHOD0(stop, void());
+  MOCK_METHOD0(maybePause, void());
+  MOCK_METHOD0(resume, void());
 };
 
 class FakeVideoFileParser : public VideoFileParser {
@@ -56,6 +58,18 @@ class FakeFileVideoCaptureDevice : public FileVideoCaptureDevice {
 
   // gtest callback mock is not thread friendly
   void StartCaptureThread() override { FileVideoCaptureDevice::OnAllocateAndStart(); }
+
+   std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
+     return std::make_unique<FakeVideoFileParser>(FakeParserFormat());
+   }
+
+   std::unique_ptr<TimedLoop> GetTimedLoop() override {
+     return std::make_unique<FakeTimedLoop>();
+   }
+
+  static VideoCaptureFormat FakeParserFormat() {
+    return VideoCaptureFormat{Size(4, 4), 60.0f, VideoPixelFormat::RGB};
+  }
 };
 
 class FakeVideoCaptureDeviceClient : public VideoCaptureDevice::Client {
@@ -91,6 +105,29 @@ TEST(file_video_capture_device, start_starts_loop_and_stop_stops_loop) {
                std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
                std::unique_ptr<MockTimedLoop>(timedLoopPtr));
+  EXPECT_CALL(*timedLoopPtr, stop());
+  device.StopAndDeAllocate();
+}
+
+TEST(file_video_capture_device, pause_resume_calls_loop) {
+  FakeFileVideoCaptureDevice device;
+  auto timedLoopPtr = new MockTimedLoop;
+  auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+
+  using ::testing::_;
+  EXPECT_CALL(*timedLoopPtr, start(_, _));
+  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+                 std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+                 std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
+                 std::unique_ptr<MockTimedLoop>(timedLoopPtr));
+
+
+  EXPECT_CALL(*timedLoopPtr, maybePause());
+  device.MaybeSuspend();
+
+  EXPECT_CALL(*timedLoopPtr, resume());
+  device.Resume();
+
   EXPECT_CALL(*timedLoopPtr, stop());
   device.StopAndDeAllocate();
 }
@@ -135,4 +172,42 @@ TEST(file_video_capture_device, on_capture_task_calls_on_incoming_data_with_file
                std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(format), std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(videoCaptureClientPtr->lastFormat_, format);
+}
+
+TEST(file_video_capture_device, allocate_and_start_file_parser_format) {
+  FakeFileVideoCaptureDevice device;
+  VideoCaptureFormat format(Size(2, 2), 30.0f, VideoPixelFormat::UYVY);
+
+  auto videoCaptureClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+  auto videoCaptureClientPtr = videoCaptureClient.get();
+
+  using ::testing::_;
+  device.AllocateAndStart(format, videoCaptureClient.get());
+  EXPECT_EQ(videoCaptureClientPtr->lastFormat_, FakeFileVideoCaptureDevice::FakeParserFormat());
+}
+
+TEST(file_video_capture_device, default_format) {
+  FakeFileVideoCaptureDevice device;
+  auto fileParserPtr = new FakeVideoFileParser({});
+  auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+
+  using ::testing::_;
+  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
+               std::make_unique<FakeTimedLoop>());
+  EXPECT_EQ(device.DefaultFormat(), FakeFileVideoCaptureDevice::FakeParserFormat());
+}
+
+TEST(file_video_capture_device, file_parser_file_not_found) {
+  FakeFileVideoCaptureDevice device;
+  auto fileParserPtr = new FakeVideoFileParser({});
+  auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+
+  using ::testing::_;
+  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
+               std::make_unique<FakeTimedLoop>());
+  EXPECT_EQ(device.DefaultFormat(), FakeFileVideoCaptureDevice::FakeParserFormat());
 }

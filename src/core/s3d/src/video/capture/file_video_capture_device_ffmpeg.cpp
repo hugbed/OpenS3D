@@ -10,14 +10,6 @@ gsl::owner<FileVideoCaptureDeviceFFmpeg*> FileVideoCaptureDeviceFFmpeg::clone() 
 }
 
 std::unique_ptr<VideoFileParser> FileVideoCaptureDeviceFFmpeg::GetVideoFileParser(
-    const std::string& filePath,
-    VideoCaptureFormat* format) {
-  auto fileParser =
-      std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath));
-
-  if (!fileParser->Initialize(format)) {
-    fileParser.reset();
-  }
-
-  return fileParser;
+    const std::string& filePath) {
+  return std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath));
 }

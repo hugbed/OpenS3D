@@ -33,9 +33,9 @@ FileVideoCaptureDevice::~FileVideoCaptureDevice() {
 void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
                                               VideoCaptureDevice::Client* client) {
   captureFormat_ = format;
-  auto captureLoopClient =
-      std::unique_ptr<TimedLoop::Client>(std::make_unique<CaptureLoopClient>(this));
-  auto fileParser = GetVideoFileParser(filePath_, &captureFormat_);
+  auto captureLoopClient = GetTimedLoopClient();
+  auto fileParser = GetVideoFileParser(filePath_);
+  InitializeFileParser(fileParser, &captureFormat_);
   Start(captureFormat_, client, std::move(captureLoopClient), std::move(fileParser),
         GetTimedLoop());
 }
@@ -89,25 +89,31 @@ void FileVideoCaptureDevice::OnCaptureTask() {
 // todo: should this be done outside the class?
 // todo: should unit test this
 std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
-    const std::string& filePath,
-    VideoCaptureFormat* format) {
-  // currently only RawUYVY supported
-  auto fileParser = std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
+    const std::string& filePath) {
+  // RawUYVY is default
+  return std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
+}
 
-  if (!fileParser->Initialize(format)) {
+bool FileVideoCaptureDevice::InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser, VideoCaptureFormat *format) {
+  if (fileParser == nullptr || !fileParser->Initialize(format)) {
     fileParser.reset();
+    return false;
   }
-
-  return fileParser;
+  return true;
 }
 
 std::unique_ptr<TimedLoop> FileVideoCaptureDevice::GetTimedLoop() {
   return std::make_unique<TimedLoopSleep>();
 }
 
+std::unique_ptr<TimedLoop::Client>  FileVideoCaptureDevice::GetTimedLoopClient() {
+  return std::unique_ptr<TimedLoop::Client>(std::make_unique<CaptureLoopClient>(this));
+}
+
 VideoCaptureFormat FileVideoCaptureDevice::DefaultFormat() {
   VideoCaptureFormat format{};
-  GetVideoFileParser(filePath_, &format);
+  auto parser = GetVideoFileParser(filePath_);
+  InitializeFileParser(parser, &format);
   return format;
 }
 

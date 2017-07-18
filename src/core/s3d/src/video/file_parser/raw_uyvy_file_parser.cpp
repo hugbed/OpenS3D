@@ -18,11 +18,8 @@ bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
   format->frameSize = Size{1920, 1080};
   format->pixelFormat = VideoPixelFormat::BGR;
   frameSize_ = format->ImageAllocationSize();
-
   frameUYVY_.resize(VideoFrame::AllocationSize(VideoPixelFormat::UYVY, format->frameSize));
-
-  fileStream_ = std::make_unique<std::ifstream>(filePath_, std::ios::binary);
-  return fileStream_->is_open();
+  return createStream(fileStream_);
 }
 
 bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
@@ -35,6 +32,16 @@ bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
     color_conversion<UYVY, BGR> cvt;
     cvt(std::begin(frameUYVY_), std::end(frameUYVY_), std::begin(frame));
   }
+  return res;
+}
 
+const std::string &RawUYVYFileParser::getFilePath() const {
+  return filePath_;
+}
+
+bool RawUYVYFileParser::createStream(std::unique_ptr<std::istream>& stream) {
+  auto fileStream = std::make_unique<std::ifstream>(filePath_, std::ios::binary);
+  bool res = fileStream->is_open();
+  stream = std::move(stream);
   return res;
 }
