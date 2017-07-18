@@ -24,16 +24,6 @@ class TimedLoopSleep : public TimedLoop {
 
     auto nextFrameTime = high_resolution_clock::now() + loopDuration;
     while (!stopLoopFlag_) {
-      // if should pause, wait
-      {
-        std::unique_lock<std::mutex> lk(pauseMutex);
-        while (pauseFlag) {
-          pauseCondition.wait(lk, [this] { return !pauseFlag; });
-          // reset time
-          nextFrameTime = high_resolution_clock::now() + loopDuration;
-        }
-      }
-
       // sleep until time has come (thread sleep then a bit of CPU burning)
       auto sleepDuration = nextFrameTime - high_resolution_clock::now();
 
@@ -51,6 +41,16 @@ class TimedLoopSleep : public TimedLoop {
 
       // update next frame time
       nextFrameTime += loopDuration;
+
+      // if should pause, wait
+      {
+        std::unique_lock<std::mutex> lk(pauseMutex);
+        while (pauseFlag) {
+          pauseCondition.wait(lk, [this] { return !pauseFlag; });
+          // reset time
+          nextFrameTime = high_resolution_clock::now() + loopDuration;
+        }
+      }
     }
     // reset flag
     stopLoopFlag_ = false;
@@ -73,13 +73,13 @@ class TimedLoopSleep : public TimedLoop {
   }
 
   void maybePause() override {
-    std::unique_lock<std::mutex> lock;
+    std::unique_lock<std::mutex> lock(pauseMutex);
     pauseFlag = true;
   }
 
   void resume() override {
     {
-      std::unique_lock<std::mutex> lock;
+      std::unique_lock<std::mutex> lock(pauseMutex);
       pauseFlag = false;
     }
     pauseCondition.notify_all();

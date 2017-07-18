@@ -26,11 +26,13 @@ class MockProducerConsumerMediator : public s3d::concurrency::ProducerConsumerMe
 
 class FakeProducerInt : public s3d::concurrency::ProducerBarrier<int> {
  public:
+  using Base = s3d::concurrency::ProducerBarrier<int>;
+
   explicit FakeProducerInt(s3d::concurrency::ProducerConsumerMediator* mediator)
       : ProducerBarrier{mediator} {}
   const int& getProduct() override { return product_; }
   void produce() override { product_ = 1; }
-  bool shouldStopProducing() override { return product_ == 1; }
+  bool shouldStopProducing() override { return Base::shouldStopProducing() || product_ == 1; }
   int product_{0};
 };
 
@@ -105,14 +107,22 @@ TEST(producer_consumer_barrier, produce_then_consume_order_correct_integration_t
 
 class FakeConsumerInt : public s3d::concurrency::ConsumerBarrier<int> {
  public:
+  using Base = s3d::concurrency::ConsumerBarrier<int>;
+
   FakeConsumerInt(s3d::concurrency::ProducerConsumerMediator* mediator, Producers producers)
       : ConsumerBarrier{mediator, producers} {}
   void consume() override { stopConsuming = true; }
-  bool shouldStopConsuming() override { return stopConsuming; }
+  bool shouldStopConsuming() override {
+    return Base::shouldStopConsuming() || stopConsuming;
+  }
+
+  bool BaseAllAreDoneProducing() {
+    return Base::allAreDoneProducing();
+  }
   bool stopConsuming{false};
 };
 
-TEST(consummer_barrier, consumer_loop_notify_wait_acknowledge) {
+TEST(consumer_barrier, consumer_loop_notify_wait_acknowledge) {
   MockProducerConsumerMediator mediator;
   FakeProducerInt producer(&mediator);
   FakeConsumerInt consumer(&mediator, {&producer});
@@ -123,4 +133,24 @@ TEST(consummer_barrier, consumer_loop_notify_wait_acknowledge) {
   EXPECT_CALL(mediator, waitUntilAllDoneProducing(_));
   EXPECT_CALL(mediator, acknowledgeDoneProducing());
   consumer.startConsuming();
+}
+
+TEST(consumer_barrier, should_stop_consuming_if_one_producer_said_so) {
+  MockProducerConsumerMediator mediator;
+  FakeProducerInt producer1(&mediator);
+  FakeProducerInt producer2(&mediator);
+  FakeConsumerInt consumer(&mediator, {&producer1, &producer2});
+
+  EXPECT_CALL(mediator, notifyDoneProducing());
+  producer1.stop();
+  EXPECT_TRUE(consumer.shouldStopConsuming());
+}
+
+TEST(consumer_barrier, all_done_producing) {
+  MockProducerConsumerMediator mediator;
+  FakeProducerInt producer1(&mediator);
+  FakeProducerInt producer2(&mediator);
+  FakeConsumerInt consumer(&mediator, {&producer1, &producer2});
+  EXPECT_CALL(mediator, isDoneProducing()).Times(1); // since producer1 is not done
+  EXPECT_FALSE(consumer.BaseAllAreDoneProducing());
 }

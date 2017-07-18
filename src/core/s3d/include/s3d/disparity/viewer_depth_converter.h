@@ -7,21 +7,7 @@
 
 #include <gsl/gsl>
 
-struct ViewerContext {
-  ViewerContext(float viewerDistance,
-                float interocularDistance,
-                float screenWidth,
-                int imageWidthPixels)
-      : viewerDistance{viewerDistance},
-        interocularDistance{interocularDistance},
-        screenWidth{screenWidth},
-        imageWidthPixels{imageWidthPixels} {}
-
-  float viewerDistance;
-  float interocularDistance;
-  float screenWidth;
-  int imageWidthPixels;
-};
+struct ViewerContext;
 
 class ViewerDepthConverter {
  public:

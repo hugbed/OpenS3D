@@ -1,5 +1,7 @@
 #include "s3d/disparity/viewer_depth_converter.h"
 
+#include "s3d/disparity/viewer_context.h"
+
 using Point = ViewerDepthConverter::Point;
 using Pointf = ViewerDepthConverter::Pointf;
 

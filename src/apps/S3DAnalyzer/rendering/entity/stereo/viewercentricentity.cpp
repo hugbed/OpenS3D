@@ -5,6 +5,8 @@
 #include <QPaintEvent>
 #include <QPainter>
 
+#include <s3d/disparity/viewer_depth_converter.h>
+
 ViewerCentricEntity::ViewerCentricEntity() = default;
 
 void ViewerCentricEntity::init() {}

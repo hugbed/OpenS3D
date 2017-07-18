@@ -3,8 +3,6 @@
 
 #include "stereoimageentity.h"
 
-#include <s3d/disparity/viewer_depth_converter.h>
-
 #include <gsl/gsl>
 
 class QPaintEvent;

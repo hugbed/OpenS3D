@@ -2,6 +2,8 @@
 
 #include "rendering/entity/stereo/viewercentricentity.h"
 
+#include <s3d/disparity/viewer_context.h>
+
 class TestViewerCentricEntity : public QObject {
   Q_OBJECT
  private slots:

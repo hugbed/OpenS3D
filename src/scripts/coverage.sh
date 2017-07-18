@@ -8,3 +8,6 @@ lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out sy
 lcov --remove coverage.info 'src/libs/*' --output-file coverage.info # filter out libs
 lcov --remove coverage.info 'test/*' --output-file coverage.info # filter out libs
 lcov --list coverage.info #debug info
+
+# generate HTML
+# genhtml coverage.info --output-directory cov-html

@@ -1,6 +1,7 @@
 #ifndef UTILITIES_USERSETTINGS_H
 #define UTILITIES_USERSETTINGS_H
 
+#include <s3d/disparity/viewer_context.h>
 #include <s3d/disparity/viewer_depth_converter.h>
 
 struct DisplayParameters {

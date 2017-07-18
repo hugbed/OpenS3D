@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "s3d/disparity/viewer_depth_converter.h"
+#include "s3d/disparity/viewer_context.h"
 
 TEST(viewer_depth_converter, perceived_depth_correct) {
   ViewerContext context(2.0, 0.05, 1.0, 1920);
@@ -35,6 +36,7 @@ TEST(viewer_depth_converter, depth_positions_correct) {
   std::vector<float> disparities = {20};
 
   ViewerDepthConverter converter(&context);
+  converter.setViewerContext(&context); // test set context
   auto positions = converter.computeDepthPositions(imagePoints, disparities);
   EXPECT_EQ(positions.size(), 1);
   EXPECT_NEAR(positions[0].x(), screenWidth / 2.0f, 0.01f);

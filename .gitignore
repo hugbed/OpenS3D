@@ -44,3 +44,5 @@ src/cmake-build-release/
 src/cmake-build-relwithdebinfo/
 
 src/cmake-build-coverage/
+
+src/build-coverage/
