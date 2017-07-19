@@ -4,6 +4,8 @@
 #include <QSize>
 #include <QVector2D>
 
+#include <Eigen/Dense>
+
 #include <memory>
 
 class TextureManager;
@@ -34,7 +36,7 @@ class EntityManager {
 
   void drawEntities(QPaintDevice* paintDevice);
   void setFeaturesVisibility(bool display);
-  void setFeatures(std::vector<QVector2D> points, std::vector<float> disparities);
+  void setFeatures(std::vector<Eigen::Vector2f> points, std::vector<float> disparities);
   void setHorizontalShift(float horizontalShift);
   float getHorizontalShift() const;
   void setUserSettings(UserSettings* userSettings);

@@ -11,6 +11,7 @@
 class StereoSideBySideEntity : public StereoImageEntity {
  public:
   StereoSideBySideEntity();
+  explicit StereoSideBySideEntity(bool halfWidthResolution);
 
   void init() override;
   void setTextureLeft(QOpenGLTexture* texture) override;
@@ -21,6 +22,7 @@ class StereoSideBySideEntity : public StereoImageEntity {
 
  private:
   RectangleEntity m_rectangles[2];
+  bool m_halfWidthResolution{false};
 };
 
 #endif  // RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H

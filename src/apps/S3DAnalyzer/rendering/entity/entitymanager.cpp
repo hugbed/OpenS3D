@@ -81,7 +81,7 @@ void EntityManager::setFeaturesVisibility(bool display) {
   m_showOverlay = display;
 }
 
-void EntityManager::setFeatures(std::vector<QVector2D> points, std::vector<float> disparities) {
+void EntityManager::setFeatures(std::vector<Eigen::Vector2f> points, std::vector<float> disparities) {
   m_billboardImage->setPoints(points, disparities);
   m_billboardWorld->setPoints(points, disparities);
 }

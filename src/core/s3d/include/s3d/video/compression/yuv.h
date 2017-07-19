@@ -47,7 +47,7 @@ struct color_conversion<UYVY, BGR> {
     int D = static_cast<int>(yuv.u) - 128;
     int E = static_cast<int>(yuv.v) - 128;
 
-    using s3d::math::clamp;
+    using s3d::clamp;
     auto R = static_cast<uint8_t>(clamp((298 * C + 409 * E + 128) >> 8, 0, 255));
     auto G = static_cast<uint8_t>(clamp((298 * C - 100 * D - 208 * E + 128) >> 8, 0, 255));
     auto B = static_cast<uint8_t>(clamp((298 * C + 516 * D + 128) >> 8, 0, 255));

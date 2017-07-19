@@ -30,7 +30,7 @@ void BillboardDepthEntity::setHorizontalShift(float shift) {
 }
 
 std::vector<Vertex> BillboardDepthEntity::verticesFromPoints(
-    const std::vector<QVector2D>& points,
+    const std::vector<Eigen::Vector2f>& points,
     const std::vector<float>& intensities) {
   assert(points.size() == intensities.size());
   if (viewerContext == nullptr) {

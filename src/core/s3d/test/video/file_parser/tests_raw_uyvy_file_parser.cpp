@@ -8,7 +8,7 @@
 
 class FakeRawUYVYFileParser : public RawUYVYFileParser {
  public:
-  FakeRawUYVYFileParser(std::string filePath) : RawUYVYFileParser(std::move(filePath)) {}
+  explicit FakeRawUYVYFileParser(std::string filePath) : RawUYVYFileParser(std::move(filePath)) {}
 
   bool createStream(std::unique_ptr<std::istream>& stream) override {
     std::unique_ptr<std::istream> s = std::make_unique<std::istringstream>("hello");

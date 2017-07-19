@@ -4,20 +4,21 @@
 #include "rendering/openglwindow.h"
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
-#include "worker/depthanalyzer.h"
 #include "worker/videosynchronizer.h"
+#include "utilities/cv.h"
+
+#include <s3d/cv/disparity/disparity_analyzer_stan.h>
 
 #include <QDebug>
 #include <QMouseEvent>
 #include <QFileDialog>
 
-#include <chrono>
 #include <QtGui/QPainter>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  m_analyzer = std::make_unique<DepthAnalyzer>();
+  m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(20.0f);
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
@@ -134,7 +135,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() {
   // delete here to make OpenGL context current
-  m_videoSynchronizer->stop();
+  if (m_videoSynchronizer != nullptr) {
+    m_videoSynchronizer->stop();
+  }
   m_widgetRenderingContext.reset();
   m_windowRenderingContext.reset();
   delete ui;
@@ -144,23 +147,23 @@ void MainWindow::computeAndUpdate() {
   QImage imageLeft = m_widgetRenderingContext->textureManager->getImageLeft();
   QImage imageRight = m_widgetRenderingContext->textureManager->getImageRight();
 
-  if (m_analyzer->analyze(imageLeft, imageRight) &&
-      m_analyzer->maxDisparity - m_analyzer->minDisparity > 0.01) {
-    ui->depthWidget->setLowValue(m_analyzer->minDisparity);
-    ui->depthWidget->setHighValue(m_analyzer->maxDisparity);
+  if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
+      (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) > 0.01) {
+    ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
+    ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
-    ui->parametersListView->setParameter("Roll", m_analyzer->roll);
-    ui->parametersListView->setParameter("Vertical", m_analyzer->vertical);
-    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->panKeystone);
-    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->tiltKeystone);
-    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->tiltOffset);
-    ui->parametersListView->setParameter("Zoom", m_analyzer->zoom);
+    ui->parametersListView->setParameter("Roll", m_analyzer->results.roll);
+    ui->parametersListView->setParameter("Vertical", m_analyzer->results.vertical);
+    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.panKeystone);
+    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.tiltKeystone);
+    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
+    ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
 
     m_currentContext->makeCurrent();
-    m_currentContext->entityManager->setFeatures(m_analyzer->featurePoints,
-                                                 m_analyzer->disparitiesPercent);
+    m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePoints,
+                                                 m_analyzer->results.disparitiesPercent);
     m_currentContext->doneCurrent();
-    updateConvergenceHint(m_analyzer->minDisparity, m_analyzer->maxDisparity);
+    updateConvergenceHint(m_analyzer->results.minDisparityPercent, m_analyzer->results.maxDisparityPercent);
     m_currentContext->openGLRenderer->updateScene();
   } else {
     m_currentContext->openGLRenderer->makeCurrent();
@@ -168,6 +171,8 @@ void MainWindow::computeAndUpdate() {
     m_currentContext->openGLRenderer->doneCurrent();
     m_currentContext->openGLRenderer->updateScene();
   }
+
+  m_currentContext->openGLRenderer->updateScene();
 }
 
 void MainWindow::updateConvergenceHint(float minDisparity, float maxDisparity) {
@@ -208,8 +213,8 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
         m_windowRenderingContext = std::make_unique<RenderingContext>(m_openGLWindow.get());
         m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->featurePoints,
-                                               m_analyzer->disparitiesPercent,
+                                               m_analyzer->results.featurePoints,
+                                               m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_currentContext = m_windowRenderingContext.get();
       });
@@ -217,16 +222,16 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
       connect(m_openGLWindow.get(), &OpenGLWindow::onClose, [this] {
         m_widgetRenderingContext->persistState(m_windowRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->featurePoints,
-                                               m_analyzer->disparitiesPercent,
+                                               m_analyzer->results.featurePoints,
+                                               m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_currentContext = m_widgetRenderingContext.get();
       });
     } else {
       m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                              getCurrentDisplayMode(),         //
-                                             m_analyzer->featurePoints,
-                                             m_analyzer->disparitiesPercent,
+                                             m_analyzer->results.featurePoints,
+                                             m_analyzer->results.disparitiesPercent,
                                              ui->actionFeatures->isChecked());
       m_currentContext = m_windowRenderingContext.get();
     }

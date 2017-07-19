@@ -12,7 +12,7 @@ void BillboardDisparityEntity::setDefaultAttributeBuffers() {
                                 Vertex::stride());
 }
 
-void BillboardDisparityEntity::setPoints(const std::vector<QVector2D>& points,
+void BillboardDisparityEntity::setPoints(const std::vector<Eigen::Vector2f>& points,
                                          const std::vector<float>& intensities) {
   m_vertex.bind();
   {
@@ -46,7 +46,7 @@ void BillboardDisparityEntity::setMaxIntensity(float value) {
 }
 
 std::vector<Vertex> BillboardDisparityEntity::verticesFromPoints(
-    const std::vector<QVector2D>& points,
+    const std::vector<Eigen::Vector2f>& points,
     const std::vector<float>& intensities) {
   assert(points.size() == intensities.size());
 

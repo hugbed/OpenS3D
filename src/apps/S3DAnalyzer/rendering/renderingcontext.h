@@ -3,6 +3,8 @@
 
 #include "rendering/entity/entitymanager.h"
 
+#include <Eigen/Dense>
+
 class OpenGLRenderer;
 class TextureManager;
 
@@ -18,7 +20,7 @@ struct RenderingContext {
 
   void persistState(RenderingContext* other,
                     EntityManager::DisplayMode displayMode,
-                    const std::vector<QVector2D>& featurePoints,
+                    const std::vector<Eigen::Vector2f>& featurePoints,
                     const std::vector<float>& disparitiesPercent,
                     bool featureDisplayed);
 
