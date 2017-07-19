@@ -37,7 +37,6 @@ set ( SOURCES
   widgets/videocontrols.cpp
   widgets/videobuttons.cpp
   widgets/sliderdirectjump.cpp
-  worker/depthanalyzer.cpp
   worker/videosynchronizer.cpp
   utilities/depthintensitygradient.cpp)
 
@@ -58,7 +57,7 @@ set ( RESOURCES
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5Widgets REQUIRED )
+find_package(Qt5 5.9 COMPONENTS Widgets REQUIRED )
 find_package(OpenCV REQUIRED)
 
 # using Qt meta-system (precompiler)

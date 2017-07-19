@@ -20,3 +20,14 @@ Will be merged into [OpenS3D](https://github.com/hugbed/OpenS3D), when mature en
 
 ![Preview](http://i.imgur.com/TsjIdvP.png)
 
+## Building
+
+Make sure that the right Qt version (>= 5.9) is linked using cmake.
+Failure to do so may lead to QPainter not working well with OpenGL rendering.
+For example, if Qt is installed in /opt/Qt, could do add this line 
+to its ~/.bashrc or other file that is sourced:
+
+```
+export CMAKE_PREFIX_PATH=/opt/Qt/5.9/gcc_64:$CMAKE_PREFIX_PATH
+```
+

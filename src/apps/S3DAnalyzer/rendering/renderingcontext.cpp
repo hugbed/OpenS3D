@@ -18,7 +18,7 @@ RenderingContext::~RenderingContext() {
 
 void RenderingContext::persistState(RenderingContext* other,
                                     EntityManager::DisplayMode displayMode,
-                                    const std::vector<QVector2D>& featurePoints,
+                                    const std::vector<Eigen::Vector2f>& featurePoints,
                                     const std::vector<float>& disparitiesPercent,
                                     bool featureDisplayed) {
   if (other == nullptr) {
@@ -31,6 +31,7 @@ void RenderingContext::persistState(RenderingContext* other,
   entityManager->setFeatures(featurePoints, disparitiesPercent);
   entityManager->setFeaturesVisibility(featureDisplayed);
   entityManager->setHorizontalShift(other->entityManager->getHorizontalShift());
+  entityManager->displayModeChanged(other->entityManager->getDisplayMode());
   doneCurrent();
 }
 

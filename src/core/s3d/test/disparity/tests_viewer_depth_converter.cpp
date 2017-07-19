@@ -36,7 +36,7 @@ TEST(viewer_depth_converter, depth_positions_correct) {
   std::vector<float> disparities = {20};
 
   ViewerDepthConverter converter(&context);
-  converter.setViewerContext(&context); // test set context
+  converter.setViewerContext(&context);  // test set context
   auto positions = converter.computeDepthPositions(imagePoints, disparities);
   EXPECT_EQ(positions.size(), 1);
   EXPECT_NEAR(positions[0].x(), screenWidth / 2.0f, 0.01f);

@@ -22,11 +22,9 @@ TEST(timed_loop, resume_does_nothing) {
 }
 
 struct ClientStop : public TimedLoop::Client {
-  gsl::owner<ClientStop*> clone() const {
-    return new ClientStop;
-  }
+  gsl::owner<ClientStop*> clone() const { return new ClientStop; }
 
-  TimedLoopSleep *loop{};
+  TimedLoopSleep* loop{};
 
   void callback() override {
     if (loop != nullptr) {
@@ -38,11 +36,9 @@ struct ClientStop : public TimedLoop::Client {
 };
 
 struct ClientPause : public TimedLoop::Client {
-  gsl::owner<ClientPause*> clone() const {
-    return new ClientPause;
-  }
+  gsl::owner<ClientPause*> clone() const { return new ClientPause; }
 
-  TimedLoopSleep *loop{};
+  TimedLoopSleep* loop{};
 
   void callback() override {
     if (loop != nullptr) {
@@ -69,10 +65,9 @@ TEST(timed_loop_sleep, pause_resume) {
   TimedLoopSleep loop;
   client.loop = &loop;
 
-  auto t = std::thread([&loop, &client] {
-    loop.start(&client, std::chrono::microseconds(0));
-  });
-  while (not client.paused) {}
+  auto t = std::thread([&loop, &client] { loop.start(&client, std::chrono::microseconds(0)); });
+  while (not client.paused) {
+  }
   loop.stop();
   loop.resume();
 

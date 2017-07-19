@@ -3,10 +3,7 @@
 BillboardDepthEntity::BillboardDepthEntity(const QSize& imageSize)
     : BillboardDisparityEntity(imageSize) {}
 
-void BillboardDepthEntity::setDisplayRange(float minX,
-                                                    float maxX,
-                                                    float minY,
-                                                    float maxY) {
+void BillboardDepthEntity::setDisplayRange(float minX, float maxX, float minY, float maxY) {
   float w = maxX - minX;
   float h = maxY - minY;
   float values[] = {2.0f / w, 0.0f, -1.0f, 0.0f, 2.0f / h, -2.0f * minY / h - 1.0f,
@@ -30,7 +27,7 @@ void BillboardDepthEntity::setHorizontalShift(float shift) {
 }
 
 std::vector<Vertex> BillboardDepthEntity::verticesFromPoints(
-    const std::vector<QVector2D>& points,
+    const std::vector<Eigen::Vector2f>& points,
     const std::vector<float>& intensities) {
   assert(points.size() == intensities.size());
   if (viewerContext == nullptr) {

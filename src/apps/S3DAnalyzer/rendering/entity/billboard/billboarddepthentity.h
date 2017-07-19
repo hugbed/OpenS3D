@@ -15,12 +15,12 @@ class BillboardDepthEntity : public BillboardDisparityEntity {
   void setDisplayRange(float minX, float maxX, float minY, float maxY) override;
   void addShaders() override;
   void setHorizontalShift(float shift) override;
-  std::vector<Vertex> verticesFromPoints(const std::vector<QVector2D>& points,
+  std::vector<Vertex> verticesFromPoints(const std::vector<Eigen::Vector2f>& points,
                                          const std::vector<float>& intensities) override;
   void setViewerContext(ViewerContext* context);
 
  private:
-  std::vector<QVector2D> m_points;
+  std::vector<Eigen::Vector2f> m_points;
   std::vector<float> m_intensities;
   float m_horizontalShift{0.0};
   ViewerContext* viewerContext{};

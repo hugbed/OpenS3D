@@ -81,7 +81,8 @@ void EntityManager::setFeaturesVisibility(bool display) {
   m_showOverlay = display;
 }
 
-void EntityManager::setFeatures(std::vector<QVector2D> points, std::vector<float> disparities) {
+void EntityManager::setFeatures(std::vector<Eigen::Vector2f> points,
+                                std::vector<float> disparities) {
   m_billboardImage->setPoints(points, disparities);
   m_billboardWorld->setPoints(points, disparities);
 }
@@ -104,6 +105,10 @@ void EntityManager::setUserSettings(UserSettings* userSettings) {
   m_userSettings = userSettings;
   m_billboardWorld->setViewerContext(&userSettings->viewerContext);
   m_viewerCentricEntity->setViewerContext(&userSettings->viewerContext);
+}
+
+EntityManager::DisplayMode EntityManager::getDisplayMode() const {
+  return m_currentMode;
 }
 
 void EntityManager::adjustDepthRanges() {

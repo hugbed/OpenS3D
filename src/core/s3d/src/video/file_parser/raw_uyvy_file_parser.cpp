@@ -35,7 +35,7 @@ bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
   return res;
 }
 
-const std::string &RawUYVYFileParser::getFilePath() const {
+const std::string& RawUYVYFileParser::getFilePath() const {
   return filePath_;
 }
 

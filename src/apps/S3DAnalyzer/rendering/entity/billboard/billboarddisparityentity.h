@@ -3,11 +3,13 @@
 
 #include "billboardentity.h"
 
+#include <Eigen/Dense>
+
 class BillboardDisparityEntity : public BillboardEntity {
  public:
   explicit BillboardDisparityEntity(const QSize& imageSize);
 
-  void setPoints(const std::vector<QVector2D>& points, const std::vector<float>& intensities);
+  void setPoints(const std::vector<Eigen::Vector2f>& points, const std::vector<float>& intensities);
   void setMinIntensity(float value);
   void setMaxIntensity(float value);
 
@@ -16,7 +18,7 @@ class BillboardDisparityEntity : public BillboardEntity {
   void setDefaultUniforms() override;
 
  private:
-  virtual std::vector<Vertex> verticesFromPoints(const std::vector<QVector2D>& points,
+  virtual std::vector<Vertex> verticesFromPoints(const std::vector<Eigen::Vector2f>& points,
                                                  const std::vector<float>& intensities);
 };
 

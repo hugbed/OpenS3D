@@ -47,9 +47,7 @@ void OpenGLWindow::initializeGL() {
 }
 
 void OpenGLWindow::paintGL() {
-  // Clear
   glClear(GL_COLOR_BUFFER_BIT);
-
   if (m_entityManager != nullptr) {
     m_entityManager->drawEntities(this);
   }

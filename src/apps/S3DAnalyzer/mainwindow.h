@@ -15,6 +15,10 @@ class DepthAnalyzer;
 class RenderingContext;
 class VideoSynchronizer;
 
+namespace s3d {
+class DisparityAnalyzerSTAN;
+}
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -43,7 +47,7 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
   // cached info
-  std::unique_ptr<DepthAnalyzer> m_analyzer;
+  std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
 
   UserSettings m_userSettings{};
 

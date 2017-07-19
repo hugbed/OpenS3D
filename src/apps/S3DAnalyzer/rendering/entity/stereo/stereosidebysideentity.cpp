@@ -2,6 +2,9 @@
 
 StereoSideBySideEntity::StereoSideBySideEntity() = default;
 
+StereoSideBySideEntity::StereoSideBySideEntity(bool halfWidthResolution)
+    : m_halfWidthResolution{halfWidthResolution} {}
+
 void StereoSideBySideEntity::init() {
   m_rectangles[0].init(-1.0f, 1.0f, 0.0, -1.0f);
   m_rectangles[1].init(0.0f, 1.0f, 1.0, -1.0f);
@@ -27,7 +30,11 @@ void StereoSideBySideEntity::setHorizontalShift(float shift) {
 }
 
 void StereoSideBySideEntity::setAspectRatio(float ratio) {
+  if (m_halfWidthResolution) {
+    ratio /= 2.0f;
+  }
+
   for (auto& rectangle : m_rectangles) {
-    rectangle.setAspectRatio(ratio / 2.0f);
+    rectangle.setAspectRatio(ratio);
   }
 }
