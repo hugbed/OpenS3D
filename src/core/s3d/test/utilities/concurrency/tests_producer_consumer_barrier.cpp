@@ -112,13 +112,9 @@ class FakeConsumerInt : public s3d::concurrency::ConsumerBarrier<int> {
   FakeConsumerInt(s3d::concurrency::ProducerConsumerMediator* mediator, Producers producers)
       : ConsumerBarrier{mediator, producers} {}
   void consume() override { stopConsuming = true; }
-  bool shouldStopConsuming() override {
-    return Base::shouldStopConsuming() || stopConsuming;
-  }
+  bool shouldStopConsuming() override { return Base::shouldStopConsuming() || stopConsuming; }
 
-  bool BaseAllAreDoneProducing() {
-    return Base::allAreDoneProducing();
-  }
+  bool BaseAllAreDoneProducing() { return Base::allAreDoneProducing(); }
   bool stopConsuming{false};
 };
 
@@ -151,6 +147,6 @@ TEST(consumer_barrier, all_done_producing) {
   FakeProducerInt producer1(&mediator);
   FakeProducerInt producer2(&mediator);
   FakeConsumerInt consumer(&mediator, {&producer1, &producer2});
-  EXPECT_CALL(mediator, isDoneProducing()).Times(1); // since producer1 is not done
+  EXPECT_CALL(mediator, isDoneProducing()).Times(1);  // since producer1 is not done
   EXPECT_FALSE(consumer.BaseAllAreDoneProducing());
 }

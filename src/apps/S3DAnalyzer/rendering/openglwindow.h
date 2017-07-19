@@ -30,7 +30,7 @@ class OpenGLWindow : public QOpenGLWindow, protected QOpenGLFunctions, public Op
 
  protected:
   void mouseDoubleClickEvent(QMouseEvent* e) override;
-  void hideEvent(QHideEvent*  /*event*/) override;
+  void hideEvent(QHideEvent* /*event*/) override;
 
  protected slots:
   void teardownGL();

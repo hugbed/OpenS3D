@@ -7,9 +7,10 @@
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 
 VideoSynchronizer::VideoSynchronizer()
-    : m_videoCaptureDevice{std::unique_ptr<VideoCaptureDevice>(
-          std::make_unique<FileVideoCaptureDevice3D>("/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
-                                                     "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"))} {
+    : m_videoCaptureDevice{
+          std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+              "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
+              "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"))} {
   // fetch video duration
   VideoFileParserFFmpeg parser("/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4");
   m_videoDuration = parser.VideoDuration();

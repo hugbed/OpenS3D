@@ -15,7 +15,6 @@
 
 #include <gsl/gsl>
 
-
 namespace s3d {
 class StanAlignment;
 

@@ -16,7 +16,7 @@ class RenderingContext;
 class VideoSynchronizer;
 
 namespace s3d {
-  class DisparityAnalyzerSTAN;
+class DisparityAnalyzerSTAN;
 }
 
 class MainWindow : public QMainWindow {

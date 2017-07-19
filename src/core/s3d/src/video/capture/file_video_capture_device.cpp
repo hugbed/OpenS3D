@@ -94,7 +94,8 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
   return std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
 }
 
-bool FileVideoCaptureDevice::InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser, VideoCaptureFormat *format) {
+bool FileVideoCaptureDevice::InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser,
+                                                  VideoCaptureFormat* format) {
   if (fileParser == nullptr || !fileParser->Initialize(format)) {
     fileParser.reset();
     return false;
@@ -106,7 +107,7 @@ std::unique_ptr<TimedLoop> FileVideoCaptureDevice::GetTimedLoop() {
   return std::make_unique<TimedLoopSleep>();
 }
 
-std::unique_ptr<TimedLoop::Client>  FileVideoCaptureDevice::GetTimedLoopClient() {
+std::unique_ptr<TimedLoop::Client> FileVideoCaptureDevice::GetTimedLoopClient() {
   return std::unique_ptr<TimedLoop::Client>(std::make_unique<CaptureLoopClient>(this));
 }
 

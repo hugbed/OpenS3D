@@ -59,13 +59,11 @@ class FakeFileVideoCaptureDevice : public FileVideoCaptureDevice {
   // gtest callback mock is not thread friendly
   void StartCaptureThread() override { FileVideoCaptureDevice::OnAllocateAndStart(); }
 
-   std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
-     return std::make_unique<FakeVideoFileParser>(FakeParserFormat());
-   }
+  std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
+    return std::make_unique<FakeVideoFileParser>(FakeParserFormat());
+  }
 
-   std::unique_ptr<TimedLoop> GetTimedLoop() override {
-     return std::make_unique<FakeTimedLoop>();
-   }
+  std::unique_ptr<TimedLoop> GetTimedLoop() override { return std::make_unique<FakeTimedLoop>(); }
 
   static VideoCaptureFormat FakeParserFormat() {
     return VideoCaptureFormat{Size(4, 4), 60.0f, VideoPixelFormat::RGB};
@@ -117,10 +115,9 @@ TEST(file_video_capture_device, pause_resume_calls_loop) {
   using ::testing::_;
   EXPECT_CALL(*timedLoopPtr, start(_, _));
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-                 std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
-                 std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
-                 std::unique_ptr<MockTimedLoop>(timedLoopPtr));
-
+               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
+               std::unique_ptr<MockTimedLoop>(timedLoopPtr));
 
   EXPECT_CALL(*timedLoopPtr, maybePause());
   device.MaybeSuspend();

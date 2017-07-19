@@ -148,7 +148,7 @@ void MainWindow::computeAndUpdate() {
   QImage imageRight = m_currentContext->textureManager->getImageRight();
 
   if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
-      (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) > 0.01) {
+      (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) > 0.005) {
     ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
     ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
@@ -163,7 +163,8 @@ void MainWindow::computeAndUpdate() {
     m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePoints,
                                                  m_analyzer->results.disparitiesPercent);
     m_currentContext->doneCurrent();
-    updateConvergenceHint(m_analyzer->results.minDisparityPercent, m_analyzer->results.maxDisparityPercent);
+    updateConvergenceHint(m_analyzer->results.minDisparityPercent,
+                          m_analyzer->results.maxDisparityPercent);
     m_currentContext->openGLRenderer->updateScene();
   } else {
     m_currentContext->openGLRenderer->makeCurrent();

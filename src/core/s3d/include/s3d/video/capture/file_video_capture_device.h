@@ -58,13 +58,14 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
 
   virtual std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath);
 
-  virtual bool InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser, VideoCaptureFormat* format);
+  virtual bool InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser,
+                                    VideoCaptureFormat* format);
 
   virtual std::unique_ptr<TimedLoop> GetTimedLoop();
 
   virtual std::unique_ptr<TimedLoop::Client> GetTimedLoopClient();
 
-    // belongs to capture thread
+  // belongs to capture thread
   std::string filePath_;
   std::unique_ptr<TimedLoop::Client> captureLoopClient_;
   std::unique_ptr<TimedLoop> captureLoop_;

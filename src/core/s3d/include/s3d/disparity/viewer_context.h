@@ -17,4 +17,4 @@ struct ViewerContext {
   int imageWidthPixels;
 };
 
-#endif //S3D_DISPARITY_VIEWER_CONTEXT_H
+#endif  // S3D_DISPARITY_VIEWER_CONTEXT_H

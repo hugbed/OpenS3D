@@ -14,8 +14,7 @@ template <class T>
 class MovingAverage {
  public:
   MovingAverage() : value_{}, smoothingFactor_{1.0} {}
-  MovingAverage(T value, T smoothingFactor)
-      : value_{value}, smoothingFactor_{smoothingFactor} {}
+  MovingAverage(T value, T smoothingFactor) : value_{value}, smoothingFactor_{smoothingFactor} {}
 
   const T& addToAverage(const T& newValue) {
     value_ -= value_ / smoothingFactor_;

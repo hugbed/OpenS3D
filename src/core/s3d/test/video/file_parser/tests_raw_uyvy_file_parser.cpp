@@ -47,7 +47,7 @@ TEST(raw_uyvy_file_parser, get_next_frame_hardcoded_size_and_format) {
 
   std::vector<uint8_t> frame;
   parser.GetNextFrame(frame);
-  EXPECT_EQ(frame.size(), 1920*1080*3);
+  EXPECT_EQ(frame.size(), 1920 * 1080 * 3);
 }
 
 TEST(raw_uyvy_file_parser, create_stream_file_not_found) {
