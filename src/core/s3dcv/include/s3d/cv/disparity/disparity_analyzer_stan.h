@@ -15,6 +15,7 @@
 
 #include <gsl/gsl>
 
+
 namespace s3d {
 class StanAlignment;
 
@@ -66,7 +67,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
  private:
   void resizeImage(gsl::not_null<cv::Mat*> mat, float ratio);
 
-  s3d::MatchFinder::Matches findMatches(const cv::Mat& left, const cv::Mat& right);
+  MatchFinder::Matches findMatches(const cv::Mat& left, const cv::Mat& right);
 
   bool enoughMatches(size_t nbOfMatches);
 

@@ -41,6 +41,8 @@ class EntityManager {
   float getHorizontalShift() const;
   void setUserSettings(UserSettings* userSettings);
 
+  DisplayMode getDisplayMode() const;
+
  public slots:
   void displayModeChanged(EntityManager::DisplayMode mode);
 

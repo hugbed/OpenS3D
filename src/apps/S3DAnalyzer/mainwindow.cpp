@@ -144,8 +144,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::computeAndUpdate() {
-  QImage imageLeft = m_widgetRenderingContext->textureManager->getImageLeft();
-  QImage imageRight = m_widgetRenderingContext->textureManager->getImageRight();
+  QImage imageLeft = m_currentContext->textureManager->getImageLeft();
+  QImage imageRight = m_currentContext->textureManager->getImageRight();
 
   if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
       (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) > 0.01) {
@@ -216,6 +216,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
                                                m_analyzer->results.featurePoints,
                                                m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
+        m_windowRenderingContext->entityManager->setUserSettings(&m_userSettings);
         m_currentContext = m_windowRenderingContext.get();
       });
 

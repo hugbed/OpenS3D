@@ -31,6 +31,7 @@ void RenderingContext::persistState(RenderingContext* other,
   entityManager->setFeatures(featurePoints, disparitiesPercent);
   entityManager->setFeaturesVisibility(featureDisplayed);
   entityManager->setHorizontalShift(other->entityManager->getHorizontalShift());
+  entityManager->displayModeChanged(other->entityManager->getDisplayMode());
   doneCurrent();
 }
 
