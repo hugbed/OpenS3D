@@ -1,0 +1,45 @@
+#include "s3d/video/file_parser/file_parser_producer.h"
+
+#include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
+
+#include "s3d/video/capture/video_capture_types.h"
+
+FileParserProducer::FileParserProducer(std::string filename,
+                                       s3d::concurrency::ProducerConsumerMediator* mediator)
+    : ProducerBarrier(mediator), filePath_{std::move(filename)}, videoFrame_{{}, {}} {}
+
+bool FileParserProducer::shouldStopProducing() {
+  return !readingFile_ || Base::shouldStopProducing();
+
+  //    if (fileStream.eof()) {
+  //      fileStream.clear();
+  //      fileStream.seekg(0, std::ios::beg);
+  //    }
+  //    return fileStream.eof();
+}
+
+bool FileParserProducer::allocate(VideoCaptureFormat* format) {
+  fileParser_ =
+      std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath_));
+
+  if (!fileParser_->Initialize(format)) {
+    fileParser_.reset();
+    readingFile_ = false;
+  }
+  videoFrame_.data_.resize(format->ImageAllocationSize());
+  readingFile_ = true;
+  return readingFile_;
+}
+
+void FileParserProducer::produce() {
+  if (fileParser_ == nullptr) {
+    readingFile_ = false;
+    return;
+  }
+  readingFile_ = fileParser_->GetNextFrame(videoFrame_.data_);
+  videoFrame_.timestamp_ = fileParser_->CurrentFrameTimestamp();
+}
+
+const VideoFrame& FileParserProducer::getProduct() {
+  return videoFrame_;
+}
