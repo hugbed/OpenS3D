@@ -5,6 +5,10 @@
 
 #include "s3d/video/video_frame.h"
 
+#include <atomic>
+#include <chrono>
+#include <mutex>
+
 class VideoCaptureFormat;
 class VideoFileParser;
 
@@ -36,8 +40,15 @@ class FileParserProducer : public s3d::concurrency::ProducerBarrier<VideoFrame> 
 
   void produce() override;
 
+  void seekTo(std::chrono::microseconds timestamp);
+
  private:
   const VideoFrame& getProduct() override;
+
+  // seeking
+  std::atomic<bool> shouldSeek_{false};
+  std::chrono::microseconds seekingTimestamp_;
+  std::mutex seekingMutex_;
 
   bool readingFile_{false};
   std::unique_ptr<VideoFileParser> fileParser_;

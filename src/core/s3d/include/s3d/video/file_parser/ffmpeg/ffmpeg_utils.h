@@ -84,6 +84,8 @@ int find_best_stream(AVFormatContext* formatContext,
 
 bool read_frame(AVFormatContext* s, AVPacket* pkt);
 
+bool seek_frame(AVFormatContext* s, int stream_index, int64_t timestamp, int flags);
+
 }  // namespace avformat
 
 namespace avcodec {

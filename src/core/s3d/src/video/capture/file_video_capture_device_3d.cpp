@@ -124,4 +124,9 @@ void FileVideoCaptureDevice3D::Resume() {
   consumer_->resume();
 }
 
-//void FileVideoCaptureDevice3D::MaybeSeekTo(std::chrono::microseconds timestamp) {}
+void FileVideoCaptureDevice3D::MaybeSeekTo(std::chrono::microseconds timestamp) {
+  VideoCaptureDevice::MaybeSeekTo(timestamp);
+  producers_.first->seekTo(timestamp);
+  producers_.second->seekTo(timestamp);
+  RequestRefreshFrame();
+}

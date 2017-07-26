@@ -36,10 +36,23 @@ void FileParserProducer::produce() {
     readingFile_ = false;
     return;
   }
-  readingFile_ = fileParser_->GetNextFrame(videoFrame_.data_);
+
+  std::unique_lock<std::mutex> l(seekingMutex_);
+  if (shouldSeek_) {
+      shouldSeek_ = false;
+      fileParser_->SeekToFrame(seekingTimestamp_);
+  }
+
+  readingFile_ = fileParser_->GetNextFrame(&videoFrame_.data_);
   videoFrame_.timestamp_ = fileParser_->CurrentFrameTimestamp();
 }
 
 const VideoFrame& FileParserProducer::getProduct() {
   return videoFrame_;
+}
+
+void FileParserProducer::seekTo(std::chrono::microseconds timestamp) {
+  std::unique_lock<std::mutex> l(seekingMutex_);
+  seekingTimestamp_ = timestamp;
+  shouldSeek_ = true;
 }

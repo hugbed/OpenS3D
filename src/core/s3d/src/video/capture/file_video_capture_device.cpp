@@ -78,7 +78,9 @@ void FileVideoCaptureDevice::OnAllocateAndStart() {
 }
 
 void FileVideoCaptureDevice::OnCaptureTask() {
-  if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(videoFrame_)) {
+  // don't read while seeking
+  std::unique_lock<std::mutex> l{seekingMutex_};
+  if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(&videoFrame_)) {
     client_->OnIncomingCapturedData({videoFrame_}, captureFormat_,
                                     std::chrono::microseconds(0));  // todo: implement timestamp
   } else {
@@ -126,4 +128,9 @@ void FileVideoCaptureDevice::MaybeSuspend() {
 void FileVideoCaptureDevice::Resume() {
   VideoCaptureDevice::Resume();
   captureLoop_->resume();
+}
+
+void FileVideoCaptureDevice::MaybeSeekTo(std::chrono::microseconds timestamp) {
+  std::unique_lock<std::mutex> l{seekingMutex_};
+  fileParser_->SeekToFrame(timestamp);
 }

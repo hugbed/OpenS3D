@@ -16,7 +16,8 @@ class VideoCaptureFormat;
 class VideoFileParser : rule_of_five_interface<VideoFileParser> {
  public:
   virtual bool Initialize(VideoCaptureFormat* format) = 0;
-  virtual bool GetNextFrame(std::vector<uint8_t>& frame) = 0;
+  virtual bool GetNextFrame(std::vector<uint8_t>* frame) = 0;
+  virtual void SeekToFrame(std::chrono::microseconds timestamp) {}  // todo: pure virtual
   virtual std::chrono::microseconds CurrentFrameTimestamp() {
     return {};
   };                                                                 // todo: make it pure virtual?
