@@ -48,7 +48,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   void WaitUntilDone();
   void StopAndDeAllocate() override;
   VideoCaptureFormat DefaultFormat() override;
-  void MaybeSeekTo(std::chrono::microseconds timestamp);
+  void MaybeSeekTo(std::chrono::microseconds timestamp) override;
 
  protected:
   void OnAllocateAndStart();

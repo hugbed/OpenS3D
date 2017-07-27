@@ -1,10 +1,12 @@
 #include "s3d/video/file_parser/file_parser_consumer.h"
 
+using Base = FileParserConsumer::Base;
+
 FileParserConsumer::FileParserConsumer(VideoCaptureDevice::Client* client,
                                        VideoCaptureFormat outputFormat,
-                                       s3d::concurrency::ProducerConsumerMediator* mediator,
+                                       Base::Mediators mediators,
                                        const Producers& producers)
-    : ConsumerBarrier(mediator, producers),
+    : ConsumerBarrier(mediators, producers),
       delayBetweenFrames(1.0f / outputFormat.frameRate),
       client_(client),
       format_{outputFormat} {}

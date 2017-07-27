@@ -3,6 +3,9 @@
 
 #include "producer_consumer_mediator.h"
 
+#include "binary_semaphore.h"
+#include "cyclic_countdown_latch.h"
+
 #include <algorithm>
 #include <atomic>
 #include <condition_variable>
@@ -19,64 +22,32 @@ namespace concurrency {
 // This way it could be implemented with other threading primitives
 class ProducerConsumerBarrier : public ProducerConsumerMediator {
  public:
-  ProducerConsumerBarrier(std::mutex* doneProducingMutex, std::condition_variable* shouldConsumeCV)
-      : doneProducingMutex_{doneProducingMutex}, shouldConsumeCV_{shouldConsumeCV} {}
+  ProducerConsumerBarrier(CyclicCountDownLatch* consumerLatch, BinarySemaphore* producerSemaphore)
+      : consumerLatch_{consumerLatch}, producerSemaphore_{producerSemaphore} {}
 
   gsl::owner<ProducerConsumerMediator*> clone() const override {
-    return new ProducerConsumerBarrier(doneProducingMutex_, shouldConsumeCV_);
+    return new ProducerConsumerBarrier(consumerLatch_, producerSemaphore_);
   }
 
   // called/checked by consumer
-  void acknowledgeDoneProducing() override { doneProducingCondition_ = false; }
-  bool isDoneProducing() override { return doneProducingCondition_; }
-  bool isDoneConsuming() override { return doneConsumingCondition_; }
-  void notifyShouldProduce() override { shouldProduceCV_.notify_one(); }
+  void notifyDoneConsuming() override { producerSemaphore_->notify(); }
 
-  void notifyDoneConsuming() override {
-    std::unique_lock<std::mutex> lk(doneConsumingMutex_);
-    doneConsumingCondition_ = true;
-  }
+  void notifyDoneProducing() override { consumerLatch_->countDown(); }
 
-  void waitUntilAllDoneProducing(std::function<bool()> allDoneProducingCheck) override {
-    std::unique_lock<std::mutex> lk(*doneProducingMutex_);
-    while (!allDoneProducingCheck()) {
-      shouldConsumeCV_->wait(lk, [&allDoneProducingCheck] { return allDoneProducingCheck(); });
-    }
-  }
+  void waitUntilShouldProduce() override { producerSemaphore_->await(); }
 
-  // called by producer
-  void notifyDoneProducing() override {
-    {
-      std::unique_lock<std::mutex> lk(*doneProducingMutex_);
-      doneProducingCondition_ = true;
-    }
-    shouldConsumeCV_->notify_one();
-  }
-
-  void waitUntilShouldProduce() override {
-    // wait until doneConsuming
-    std::unique_lock<std::mutex> lk(doneConsumingMutex_);
-    while (!(doneConsumingCondition_)) {
-      shouldProduceCV_.wait(lk, [this] { return doneConsumingCondition_; });
-    }
-    // we acknowledged it, set it back to default state
-    doneConsumingCondition_ = false;
-  }
+  void waitUntilShouldConsume() override { consumerLatch_->await(); }
 
  private:
-  gsl::not_null<std::mutex*> doneProducingMutex_;
-  gsl::not_null<std::condition_variable*> shouldConsumeCV_;
-  bool doneProducingCondition_{false};
-  bool doneConsumingCondition_{false};
-  std::condition_variable shouldProduceCV_;
-  std::mutex doneConsumingMutex_;
+  CyclicCountDownLatch* consumerLatch_;  // all should share this pointer
+  BinarySemaphore* producerSemaphore_;
 };
 
 template <class T>
 class ProducerBarrier {
  public:
-  ProducerBarrier() = delete;
-  explicit ProducerBarrier(ProducerConsumerMediator* mediator) : mediator_(mediator) {}
+  explicit ProducerBarrier(gsl::not_null<ProducerConsumerMediator*> mediator)
+      : mediator_(mediator) {}
   virtual const T& getProduct() = 0;
 
   void startProducing() {
@@ -85,31 +56,27 @@ class ProducerBarrier {
     shouldStop_ = false;
     onStartProducing();
     while (!shouldStopProducing()) {
-      mediator_->waitUntilShouldProduce();
       produce();
       mediator_->notifyDoneProducing();
+      mediator_->waitUntilShouldProduce();
     }
   }
 
   void stop() {
     shouldStop_ = true;
-    mediator_->notifyDoneProducing();
+    mediator_->notifyDoneProducing();  // todo: not sure
   }
 
   virtual void produce() = 0;  // where the work happens : set product
 
   // called/checked by consumer
-  void acknowledgeDoneProducing() { mediator_->acknowledgeDoneProducing(); }
-  bool isDoneProducing() { return mediator_->isDoneProducing(); }
-  void notifyShouldProduce() { mediator_->notifyShouldProduce(); }
-  void notifyDoneConsuming() { mediator_->notifyDoneConsuming(); }
   virtual bool shouldStopProducing() { return shouldStop_; }
 
  private:
   virtual void onStartProducing() {}
 
   std::atomic<bool> shouldStop_{false};
-  gsl::not_null<ProducerConsumerMediator*> mediator_;
+  ProducerConsumerMediator* mediator_;
 };
 }  // namespace concurrency
 }  // namespace s3d

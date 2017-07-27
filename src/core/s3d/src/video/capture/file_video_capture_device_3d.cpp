@@ -47,9 +47,9 @@ void FileVideoCaptureDevice3D::Allocate() {
   sync_ = std::make_unique<ProducerConsumerSynchronizer>();
 
   // todo: this should be taken from format parameter and validated by file parser
-  producers_.first = std::make_unique<FileParserProducer>(filePaths_.first, &sync_->mediatorLeft);
+  producers_.first = std::make_unique<FileParserProducer>(filePaths_.first, sync_->mediator1.get());
   producers_.second =
-      std::make_unique<FileParserProducer>(filePaths_.second, &sync_->mediatorRight);
+      std::make_unique<FileParserProducer>(filePaths_.second, sync_->mediator2.get());
 
   if (!producers_.first->allocate(&captureFormat_) ||
       !producers_.second->allocate(&captureFormat_)) {
@@ -61,8 +61,11 @@ void FileVideoCaptureDevice3D::Allocate() {
                                                       producers_.second.get()};
 
   captureFormat_.stereo3D = true;
-  consumer_ = std::make_unique<FileParserConsumer>(client_, captureFormat_, &sync_->mediatorLeft,
-                                                   producers);
+  consumer_ =
+      std::make_unique<FileParserConsumer>(client_, captureFormat_,
+                                           std::vector<s3d::concurrency::ProducerConsumerMediator*>{
+                                               sync_->mediator1.get(), sync_->mediator2.get()},
+                                           producers);
 }
 
 void FileVideoCaptureDevice3D::Start() {

@@ -12,19 +12,23 @@
 class VideoCaptureFormat;
 class VideoFileParser;
 
-struct ProducerConsumerSynchronizer {
-  ProducerConsumerSynchronizer()
-      : mediatorLeft{&doneProducingMutexLeft, &shouldConsumeCV},
-        mediatorRight{&doneProducingMutexRight, &shouldConsumeCV} {}
-
-  std::mutex doneProducingMutexLeft{};
-  std::mutex doneProducingMutexRight{};
-  std::condition_variable shouldConsumeCV{};
-  s3d::concurrency::ProducerConsumerBarrier mediatorLeft;
-  s3d::concurrency::ProducerConsumerBarrier mediatorRight;
-};
-
 using s3d::concurrency::ProducerBarrier;
+
+struct ProducerConsumerSynchronizer {
+  ProducerConsumerSynchronizer() {
+    mediator1 = std::make_unique<s3d::concurrency::ProducerConsumerBarrier>(&consumerLatch,
+                                                                            &producer1Semaphore);
+    mediator2 = std::make_unique<s3d::concurrency::ProducerConsumerBarrier>(&consumerLatch,
+                                                                            &producer2Semaphore);
+  }
+
+  BinarySemaphore producer1Semaphore{};
+  BinarySemaphore producer2Semaphore{};
+  CyclicCountDownLatch consumerLatch{2};
+
+  std::unique_ptr<s3d::concurrency::ProducerConsumerBarrier> mediator1;
+  std::unique_ptr<s3d::concurrency::ProducerConsumerBarrier> mediator2;
+};
 
 class FileParserProducer : public s3d::concurrency::ProducerBarrier<VideoFrame> {
  public:
