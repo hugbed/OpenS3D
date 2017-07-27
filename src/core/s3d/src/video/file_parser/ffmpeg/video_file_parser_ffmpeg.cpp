@@ -40,38 +40,30 @@ bool VideoFileParserFFmpeg::Initialize(VideoCaptureFormat* format) {
 
 void VideoFileParserFFmpeg::SeekToFrame(std::chrono::microseconds timestamp) {
   float fps = decoder_->getFrameRate();
+  int frame = timestampToFrameNumber(timestamp, fps);
+  int currentFrame = timestampToFrameNumber(currentTimestamp_, fps);
 
-  int frame = static_cast<int>(fps * static_cast<float>(timestamp.count()) /
-                               static_cast<float>(std::micro::den) / 10.0f);
-  int currentFrame = static_cast<int>(fps * static_cast<float>(currentTimestamp_.count()) /
-                                      static_cast<float>(std::micro::den) / 10.0f);
   int frameDelta = frame - currentFrame;
-
-  auto seekTime = timestamp;
-
   if (frameDelta < 0 || frameDelta > 5) {
-    seeker_->seekTo(seekTime);
+    seeker_->seekTo(timestamp);
   }
 
-  float eps = static_cast<float>(std::micro::den) / fps;
-  int64_t check = timestamp.count() - currentTimestamp_.count();
+  std::chrono::microseconds frameDuration = frameNumberToTimestamp(1, fps);
 
   // find keypoint before timestamp
   if (frameDelta < 0) {
-    while (GetNextFrame(nullptr) &&
-           currentTimestamp_.count() - timestamp.count() >
-               static_cast<float>(std::micro::den) / fps) {
-      using std::chrono_literals::operator""ms;
-      seekTime -=
-          std::chrono::microseconds(static_cast<int>(static_cast<float>(std::micro::den) / fps));
+    auto seekTime = timestamp;
+    while (GetNextFrame(nullptr) &&  //
+           currentTimestamp_ - timestamp > frameDuration) {
+      seekTime -= frameDuration;
       seeker_->seekTo(seekTime);
     }
   }
 
   // navigate forward
-  while (GetNextFrame(nullptr) &&
-         timestamp.count() - currentTimestamp_.count() >
-             static_cast<float>(std::micro::den) / fps) {
+  while (GetNextFrame(nullptr) &&  //
+         timestamp - currentTimestamp_ > frameDuration) {
+    continue;
   }
 }
 
@@ -110,4 +102,14 @@ std::chrono::microseconds VideoFileParserFFmpeg::CurrentFrameTimestamp() {
 
 std::chrono::microseconds VideoFileParserFFmpeg::VideoDuration() {
   return duration_;
+}
+
+int VideoFileParserFFmpeg::timestampToFrameNumber(std::chrono::microseconds timestamp, float fps) {
+  return static_cast<int>(fps * static_cast<float>(timestamp.count()) /
+                          static_cast<float>(std::micro::den) / 10.0f);
+}
+
+std::chrono::microseconds VideoFileParserFFmpeg::frameNumberToTimestamp(int frame, float fps) {
+  return std::chrono::microseconds(
+      static_cast<int>(static_cast<float>(frame * std::micro::den) / fps));
 }

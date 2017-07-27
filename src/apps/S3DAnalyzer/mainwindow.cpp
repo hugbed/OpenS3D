@@ -130,17 +130,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
         m_videoSynchronizer->next();
       }
     });
-    connect(ui->videoControls, &VideoControls::, [this] {
-      if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->next();
-      }
-    });
   });
 
   connect(ui->videoControls, &VideoControls::seekingRequested,
-          [this](std::chrono::microseconds timestamp) {
-            m_videoSynchronizer->seekTo(timestamp);
-          });
+          [this](std::chrono::microseconds timestamp) { m_videoSynchronizer->seekTo(timestamp); });
 }
 
 MainWindow::~MainWindow() {
