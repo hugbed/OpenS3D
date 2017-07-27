@@ -39,8 +39,8 @@ void FileParserProducer::produce() {
 
   std::unique_lock<std::mutex> l(seekingMutex_);
   if (shouldSeek_) {
-      shouldSeek_ = false;
-      fileParser_->SeekToFrame(seekingTimestamp_);
+    shouldSeek_ = false;
+    fileParser_->SeekToFrame(seekingTimestamp_);
   }
 
   readingFile_ = fileParser_->GetNextFrame(&videoFrame_.data_);

@@ -31,7 +31,6 @@ class VideoFileParserFFmpeg : public VideoFileParser {
   int timestampToFrameNumber(std::chrono::microseconds timestamp, float fps);
   std::chrono::microseconds frameNumberToTimestamp(int frameNumber, float fps);
 
-
   std::string filename_;
   std::chrono::microseconds currentTimestamp_;
   size_t currentFrameID_{0};
