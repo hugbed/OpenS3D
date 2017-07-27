@@ -1,7 +1,7 @@
 #ifndef S3D_VIDEO_FILE_PARSER_FILE_PARSER_PRODUCER_H
 #define S3D_VIDEO_FILE_PARSER_FILE_PARSER_PRODUCER_H
 
-#include "s3d/utilities/concurrency/producer_barrier.h"
+#include "s3d/concurrency/producer_barrier.h"
 
 #include "s3d/video/video_frame.h"
 
@@ -12,30 +12,28 @@
 class VideoCaptureFormat;
 class VideoFileParser;
 
-using s3d::concurrency::ProducerBarrier;
+using s3d::ProducerBarrier;
 
 struct ProducerConsumerSynchronizer {
   ProducerConsumerSynchronizer() {
-    mediator1 = std::make_unique<s3d::concurrency::ProducerConsumerBarrier>(&consumerLatch,
-                                                                            &producer1Semaphore);
-    mediator2 = std::make_unique<s3d::concurrency::ProducerConsumerBarrier>(&consumerLatch,
-                                                                            &producer2Semaphore);
+    mediator1 = std::make_unique<s3d::ProducerConsumerBarrier>(&consumerLatch, &producer1Semaphore);
+    mediator2 = std::make_unique<s3d::ProducerConsumerBarrier>(&consumerLatch, &producer2Semaphore);
   }
 
-  BinarySemaphore producer1Semaphore{};
-  BinarySemaphore producer2Semaphore{};
-  CyclicCountDownLatch consumerLatch{2};
+  s3d::BinarySemaphore producer1Semaphore{};
+  s3d::BinarySemaphore producer2Semaphore{};
+  s3d::CyclicCountDownLatch consumerLatch{2};
 
-  std::unique_ptr<s3d::concurrency::ProducerConsumerBarrier> mediator1;
-  std::unique_ptr<s3d::concurrency::ProducerConsumerBarrier> mediator2;
+  std::unique_ptr<s3d::ProducerConsumerBarrier> mediator1;
+  std::unique_ptr<s3d::ProducerConsumerBarrier> mediator2;
 };
 
-class FileParserProducer : public s3d::concurrency::ProducerBarrier<VideoFrame> {
+class FileParserProducer : public s3d::ProducerBarrier<VideoFrame> {
  public:
-  using Base = s3d::concurrency::ProducerBarrier<VideoFrame>;
+  using Base = s3d::ProducerBarrier<VideoFrame>;
 
   // image size, etc
-  FileParserProducer(std::string filename, s3d::concurrency::ProducerConsumerMediator* mediator);
+  FileParserProducer(std::string filename, s3d::ProducerConsumerMediator* mediator);
 
   bool shouldStopProducing() override;
 

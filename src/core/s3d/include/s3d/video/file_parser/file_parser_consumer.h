@@ -1,17 +1,15 @@
 #ifndef S3D_VIDEO_FILE_PARSER_FILE_PARSER_CONSUMER_H
 #define S3D_VIDEO_FILE_PARSER_FILE_PARSER_CONSUMER_H
 
-#include "s3d/utilities/concurrency/consumer_barrier.h"
+#include "s3d/concurrency/consumer_barrier.h"
 
 #include "s3d/video/capture/video_capture_device.h"
 
 #include "s3d/video/video_frame.h"
 
-using s3d::concurrency::ConsumerBarrier;
-
-class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<VideoFrame> {
+class FileParserConsumer : public s3d::ConsumerBarrier<VideoFrame> {
  public:
-  using Base = s3d::concurrency::ConsumerBarrier<VideoFrame>;
+  using Base = s3d::ConsumerBarrier<VideoFrame>;
 
   FileParserConsumer(VideoCaptureDevice::Client* client,
                      VideoCaptureFormat outputFormat,

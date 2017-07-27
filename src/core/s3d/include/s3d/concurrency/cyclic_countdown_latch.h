@@ -5,6 +5,8 @@
 
 #include <mutex>
 
+namespace s3d {
+
 class CyclicCountDownLatch {
  public:
   CyclicCountDownLatch(int64_t parties) : count_{parties}, parties_{parties} {}
@@ -19,5 +21,7 @@ class CyclicCountDownLatch {
   int64_t count_{1};
   int64_t parties_{1};
 };
+
+} // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_CYCLIC_COUNTDOWN_LATCH_H

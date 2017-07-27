@@ -1,4 +1,6 @@
-#include "s3d/utilities/concurrency/binary_semaphore.h"
+#include "s3d/concurrency/binary_semaphore.h"
+
+namespace s3d {
 
 void BinarySemaphore::await() {
   std::unique_lock<std::mutex> lk(mutex_);
@@ -16,3 +18,5 @@ void BinarySemaphore::notify() {
   }
   cv_.notify_one();
 }
+
+}  // namespace s3d

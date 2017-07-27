@@ -1,14 +1,16 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "s3d/utilities/concurrency/producer_barrier.h"
-#include "s3d/utilities/concurrency/consumer_barrier.h"
+#include "s3d/concurrency/producer_barrier.h"
+#include "s3d/concurrency/consumer_barrier.h"
 
-using s3d::concurrency::ProducerConsumerMediator;
-using s3d::concurrency::ProducerConsumerBarrier;
-using s3d::concurrency::ProducerBarrier;
+using s3d::ProducerConsumerMediator;
+using s3d::ProducerConsumerBarrier;
+using s3d::ProducerBarrier;
+using s3d::BinarySemaphore;
+using s3d::CyclicCountDownLatch;
 
-class MockProducerConsumerMediator : public s3d::concurrency::ProducerConsumerMediator {
+class MockProducerConsumerMediator : public s3d::ProducerConsumerMediator {
  public:
   gsl::owner<ProducerConsumerMediator*> clone() const override {
     return new MockProducerConsumerMediator;
@@ -34,11 +36,11 @@ class MockBinarySemaphore : public BinarySemaphore {
   MOCK_METHOD0(notify, void());
 };
 
-class FakeProducerInt : public s3d::concurrency::ProducerBarrier<int> {
+class FakeProducerInt : public s3d::ProducerBarrier<int> {
  public:
-  using Base = s3d::concurrency::ProducerBarrier<int>;
+  using Base = s3d::ProducerBarrier<int>;
 
-  explicit FakeProducerInt(s3d::concurrency::ProducerConsumerMediator* mediator)
+  explicit FakeProducerInt(s3d::ProducerConsumerMediator* mediator)
       : ProducerBarrier{mediator} {}
   const int& getProduct() override { return product_; }
   void produce() override { product_ = 1; }
@@ -109,9 +111,9 @@ TEST(producer_consumer_barrier, produce_then_consume_order_correct_integration_t
   t.join();
 }
 
-class FakeConsumerInt : public s3d::concurrency::ConsumerBarrier<int> {
+class FakeConsumerInt : public s3d::ConsumerBarrier<int> {
  public:
-  using Base = s3d::concurrency::ConsumerBarrier<int>;
+  using Base = s3d::ConsumerBarrier<int>;
 
   FakeConsumerInt(Base::Mediators mediators, Producers producers)
       : ConsumerBarrier{mediators, producers} {}

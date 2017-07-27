@@ -7,7 +7,6 @@
 #include <vector>
 
 namespace s3d {
-namespace concurrency {
 
 template <class T>
 class ConsumerBarrier {
@@ -55,7 +54,6 @@ class ConsumerBarrier {
   Mediators mediators_;
   Producers producers_;
 };
-}  // namespace concurrency
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_CONSUMER_BARRIER_H

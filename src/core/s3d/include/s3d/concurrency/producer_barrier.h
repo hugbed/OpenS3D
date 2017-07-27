@@ -16,7 +16,6 @@
 #include "gsl/gsl"
 
 namespace s3d {
-namespace concurrency {
 
 // Separate class to handle thread locks and condition variables
 // This way it could be implemented with other threading primitives
@@ -78,7 +77,6 @@ class ProducerBarrier {
   std::atomic<bool> shouldStop_{false};
   ProducerConsumerMediator* mediator_;
 };
-}  // namespace concurrency
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_PRODUCER_BARRIER_H

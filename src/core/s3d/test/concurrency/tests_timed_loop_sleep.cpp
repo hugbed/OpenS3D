@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "s3d/utilities/concurrency/timed_loop_sleep.h"
+#include "s3d/concurrency/timed_loop_sleep.h"
 
 #include <chrono>
 

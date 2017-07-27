@@ -5,7 +5,7 @@
 #include "s3d/video/capture/video_capture_types.h"
 
 FileParserProducer::FileParserProducer(std::string filename,
-                                       s3d::concurrency::ProducerConsumerMediator* mediator)
+                                       s3d::ProducerConsumerMediator* mediator)
     : ProducerBarrier(mediator), filePath_{std::move(filename)}, videoFrame_{{}, {}} {}
 
 bool FileParserProducer::shouldStopProducing() {

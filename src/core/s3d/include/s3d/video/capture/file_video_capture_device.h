@@ -7,7 +7,7 @@
 
 #include "video_capture_device.h"
 
-#include "s3d/utilities/concurrency/timed_loop_sleep.h"
+#include "s3d/concurrency/timed_loop_sleep.h"
 
 #include <atomic>
 #include <thread>

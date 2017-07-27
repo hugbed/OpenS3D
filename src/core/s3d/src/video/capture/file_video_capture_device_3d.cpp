@@ -63,7 +63,7 @@ void FileVideoCaptureDevice3D::Allocate() {
   captureFormat_.stereo3D = true;
   consumer_ =
       std::make_unique<FileParserConsumer>(client_, captureFormat_,
-                                           std::vector<s3d::concurrency::ProducerConsumerMediator*>{
+                                           std::vector<s3d::ProducerConsumerMediator*>{
                                                sync_->mediator1.get(), sync_->mediator2.get()},
                                            producers);
 }

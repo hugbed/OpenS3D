@@ -4,6 +4,8 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace s3d {
+
 // todo: move concurrency folder out of utilities
 class BinarySemaphore {
  public:
@@ -15,5 +17,7 @@ class BinarySemaphore {
   std::condition_variable cv_;
   bool condition_{false};
 };
+
+} // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_BINARY_SEMAPHORE_H
