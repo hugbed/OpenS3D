@@ -2,6 +2,8 @@
 
 #include "s3d/utilities/histogram.h"
 
+using s3d::Histogram;
+
 TEST(histogram, min) {
   std::vector<double> v;
   v.resize(10);

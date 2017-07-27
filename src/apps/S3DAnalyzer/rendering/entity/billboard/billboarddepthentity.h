@@ -3,9 +3,9 @@
 
 #include "billboarddisparityentity.h"
 
-#include <s3d/disparity/viewer_depth_converter.h>
-
-#include <cassert>
+namespace s3d {
+class ViewerContext;
+}
 
 // todo: review names (difference: this does not have aspect ratio)
 class BillboardDepthEntity : public BillboardDisparityEntity {
@@ -17,13 +17,13 @@ class BillboardDepthEntity : public BillboardDisparityEntity {
   void setHorizontalShift(float shift) override;
   std::vector<Vertex> verticesFromPoints(const std::vector<Eigen::Vector2f>& points,
                                          const std::vector<float>& intensities) override;
-  void setViewerContext(ViewerContext* context);
+  void setViewerContext(s3d::ViewerContext* context);
 
  private:
   std::vector<Eigen::Vector2f> m_points;
   std::vector<float> m_intensities;
   float m_horizontalShift{0.0};
-  ViewerContext* viewerContext{};
+  s3d::ViewerContext* viewerContext{};
 };
 
 #endif  // RENDERING_ENTITY_BILLBOARD_BILLBOARDDEPTHENTITY_H

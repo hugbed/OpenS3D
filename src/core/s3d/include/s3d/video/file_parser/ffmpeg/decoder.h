@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <vector>
 
+namespace s3d {
+
 class Scaler;
 class Seeker;
 
@@ -54,5 +56,7 @@ class Decoder {
   ffmpeg::UniquePtr<uint8_t> outputBufferPtr_{nullptr};
   int outputBufferLineSize_[4];
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_DECODER_H

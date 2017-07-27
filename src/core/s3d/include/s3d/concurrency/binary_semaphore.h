@@ -18,6 +18,6 @@ class BinarySemaphore {
   bool condition_{false};
 };
 
-} // namespace s3d
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_BINARY_SEMAPHORE_H

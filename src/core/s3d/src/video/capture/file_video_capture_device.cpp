@@ -3,9 +3,12 @@
 // Simplified and stripped from internal base code
 
 #include "s3d/video/capture/file_video_capture_device.h"
+
 #include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/time.h"
+
+namespace s3d {
 
 FileVideoCaptureDevice::CaptureLoopClient::CaptureLoopClient(FileVideoCaptureDevice* captureDevice)
     : captureDevice_{captureDevice} {}
@@ -134,3 +137,5 @@ void FileVideoCaptureDevice::MaybeSeekTo(std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex> l{seekingMutex_};
   fileParser_->SeekToFrame(timestamp);
 }
+
+}  // namespace s3d

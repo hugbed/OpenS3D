@@ -1,5 +1,7 @@
 #include "s3d/video/file_parser/ffmpeg/scaler.h"
 
+namespace s3d {
+
 Scaler::Scaler(AVCodecContext* codecContext, enum AVPixelFormat dstFormat)
     : codecContext_(codecContext) {
   // get this from codec context
@@ -31,3 +33,5 @@ void Scaler::scaleFrame(AVFrame* frame, std::vector<uint8_t>* out) {
   out->resize(dstBufferSize_);
   std::copy(dstBufferPtr_.get(), dstBufferPtr_.get() + dstBufferSize_, std::begin(*out));
 }
+
+}  // namespace s3d

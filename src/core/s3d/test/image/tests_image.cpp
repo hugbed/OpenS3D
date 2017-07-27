@@ -4,6 +4,7 @@
 
 using s3d::Image;
 using s3d::RgbColor;
+using s3d::Size;
 
 TEST(image_container, default_construction_size_0) {
   Image<uint8_t> i;

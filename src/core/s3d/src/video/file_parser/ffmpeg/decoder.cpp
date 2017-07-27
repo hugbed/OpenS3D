@@ -7,6 +7,8 @@
 
 #include <cassert>
 
+namespace s3d {
+
 Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext} {
   streamIndex_ = openCodexContext(codecContext_, formatContext, AVMEDIA_TYPE_VIDEO);
   frame_ = ffmpeg::UniquePtr<AVFrame>(ffmpeg::avframe::alloc());
@@ -107,3 +109,5 @@ std::chrono::microseconds Decoder::getDuration() const {
       static_cast<float>(formatContext_->streams[streamIndex_]->duration) *
       static_cast<float>(av_q2d(formatContext_->streams[streamIndex_]->time_base)));
 }
+
+}  // namespace s3d

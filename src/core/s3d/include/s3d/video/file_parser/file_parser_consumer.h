@@ -7,6 +7,8 @@
 
 #include "s3d/video/video_frame.h"
 
+namespace s3d {
+
 class FileParserConsumer : public s3d::ConsumerBarrier<VideoFrame> {
  public:
   using Base = s3d::ConsumerBarrier<VideoFrame>;
@@ -35,5 +37,7 @@ class FileParserConsumer : public s3d::ConsumerBarrier<VideoFrame> {
   VideoCaptureDevice::Client* client_;
   std::chrono::high_resolution_clock::time_point lastConsumeTime;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FILE_PARSER_CONSUMER_H

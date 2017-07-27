@@ -5,6 +5,8 @@
 #include "s3d/video/compression/yuv.h"
 #include "s3d/video/video_frame.h"
 
+namespace s3d {
+
 RawUYVYFileParser::RawUYVYFileParser(std::string filePath) : filePath_(std::move(filePath)) {}
 
 gsl::owner<RawUYVYFileParser*> RawUYVYFileParser::clone() const {
@@ -49,3 +51,5 @@ bool RawUYVYFileParser::createStream(std::unique_ptr<std::istream>& stream) {
   stream = std::move(stream);
   return res;
 }
+
+}  // namespace s3d

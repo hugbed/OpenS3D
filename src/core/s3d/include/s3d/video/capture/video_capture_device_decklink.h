@@ -12,6 +12,8 @@
 
 #include <chrono>
 
+namespace s3d {
+
 class DecklinkCaptureDelegate;
 
 class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
@@ -38,5 +40,7 @@ class VideoCaptureDeviceDecklink : public VideoCaptureDevice {
   VideoCaptureDevice::Client* client_{};
   std::unique_ptr<DecklinkCaptureDelegate> captureDelegate_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H

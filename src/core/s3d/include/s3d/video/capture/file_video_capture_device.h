@@ -12,16 +12,16 @@
 #include <atomic>
 #include <thread>
 
-// todo(hugbed): put in s3d namespace
+namespace s3d {
 
 class VideoFileParser;
 
 class FileVideoCaptureDevice : public VideoCaptureDevice {
  public:
-  class CaptureLoopClient : public TimedLoop::Client {
+  class CaptureLoopClient : public s3d::TimedLoop::Client {
    public:
     explicit CaptureLoopClient(FileVideoCaptureDevice* captureDevice);
-    gsl::owner<TimedLoop::Client*> clone() const override;
+    gsl::owner<s3d::TimedLoop::Client*> clone() const override;
     void callback() override;
 
    private:
@@ -39,9 +39,9 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
 
   void Start(const VideoCaptureFormat& format,
              VideoCaptureDevice::Client* client,
-             std::unique_ptr<TimedLoop::Client> captureLoopClient,
+             std::unique_ptr<s3d::TimedLoop::Client> captureLoopClient,
              std::unique_ptr<VideoFileParser> fileParser,
-             std::unique_ptr<TimedLoop> timedLoop);
+             std::unique_ptr<s3d::TimedLoop> timedLoop);
 
   void MaybeSuspend() override;
   void Resume() override;
@@ -78,5 +78,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   std::vector<uint8_t> videoFrame_;
   VideoCaptureFormat captureFormat_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_H

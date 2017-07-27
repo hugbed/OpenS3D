@@ -1,6 +1,8 @@
 #ifndef S3D_DISPARITY_VIEWER_CONTEXT_H
 #define S3D_DISPARITY_VIEWER_CONTEXT_H
 
+namespace s3d {
+
 struct ViewerContext {
   ViewerContext(float viewerDistance,
                 float interocularDistance,
@@ -16,5 +18,6 @@ struct ViewerContext {
   float screenWidth;
   int imageWidthPixels;
 };
+}
 
 #endif  // S3D_DISPARITY_VIEWER_CONTEXT_H

@@ -17,4 +17,4 @@ void CyclicCountDownLatch::await() {
   semaphore_.await();
 }
 
-} // namespace s3d
+}  // namespace s3d

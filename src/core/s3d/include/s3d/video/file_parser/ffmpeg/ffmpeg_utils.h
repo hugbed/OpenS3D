@@ -13,6 +13,8 @@ extern "C" {
 #include <stdexcept>
 #include <memory>
 
+namespace s3d {
+
 namespace ffmpeg {
 
 AVPixelFormat pixelFormatToAV(VideoPixelFormat pixelFormat);
@@ -131,5 +133,7 @@ void init(AVPacket* pkt);
 }  // namespace avpacket
 
 }  // namespace ffmpeg
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_FFMPEG_UTILS_H

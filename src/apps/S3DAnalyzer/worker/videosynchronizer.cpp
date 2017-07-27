@@ -9,11 +9,11 @@
 
 VideoSynchronizer::VideoSynchronizer()
     : m_videoCaptureDevice{
-          std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+          std::unique_ptr<s3d::VideoCaptureDevice>(std::make_unique<s3d::FileVideoCaptureDevice3D>(
               "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
               "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"))} {
   // fetch video duration
-  VideoFileParserFFmpeg parser("/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4");
+  s3d::VideoFileParserFFmpeg parser("/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4");
   m_videoDuration = parser.VideoDuration();
 
   m_images.resize(2);
@@ -23,7 +23,7 @@ VideoSynchronizer::VideoSynchronizer()
   connect(m_timer.get(), SIGNAL(timeout()), this, SLOT(checkForIncomingImage()));
   m_timer->start(10);
 
-  VideoCaptureFormat format{{}, -1, VideoPixelFormat::BGRA};
+  s3d::VideoCaptureFormat format{{}, -1, s3d::VideoPixelFormat::BGRA};
   m_videoCaptureDevice->AllocateAndStart(format, this);
 }
 
@@ -68,7 +68,7 @@ std::chrono::microseconds VideoSynchronizer::videoDuration() {
 }
 
 void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
-                                               const VideoCaptureFormat& /*frameFormat*/,
+                                               const s3d::VideoCaptureFormat& /*frameFormat*/,
                                                std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex>(m_mutex);
   // if previous frame not consumed, skip frame

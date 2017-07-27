@@ -12,6 +12,8 @@
 #include "s3d/video/file_parser/file_parser_consumer.h"
 #include "s3d/video/file_parser/file_parser_producer.h"
 
+namespace s3d {
+
 FileVideoCaptureDevice3D::FileVideoCaptureDevice3D(const std::string& filePathsStr) {
   std::vector<std::string> filePaths;
   s3d::split(filePathsStr, ';', std::back_inserter(filePaths));
@@ -61,11 +63,10 @@ void FileVideoCaptureDevice3D::Allocate() {
                                                       producers_.second.get()};
 
   captureFormat_.stereo3D = true;
-  consumer_ =
-      std::make_unique<FileParserConsumer>(client_, captureFormat_,
-                                           std::vector<s3d::ProducerConsumerMediator*>{
-                                               sync_->mediator1.get(), sync_->mediator2.get()},
-                                           producers);
+  consumer_ = std::make_unique<FileParserConsumer>(
+      client_, captureFormat_,
+      std::vector<s3d::ProducerConsumerMediator*>{sync_->mediator1.get(), sync_->mediator2.get()},
+      producers);
 }
 
 void FileVideoCaptureDevice3D::Start() {
@@ -133,3 +134,5 @@ void FileVideoCaptureDevice3D::MaybeSeekTo(std::chrono::microseconds timestamp) 
   producers_.second->seekTo(timestamp);
   RequestRefreshFrame();
 }
+
+}  // namespace s3d

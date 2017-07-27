@@ -4,6 +4,8 @@
 
 #include "s3d/video/capture/video_capture_types.h"
 
+namespace s3d {
+
 FileParserProducer::FileParserProducer(std::string filename,
                                        s3d::ProducerConsumerMediator* mediator)
     : ProducerBarrier(mediator), filePath_{std::move(filename)}, videoFrame_{{}, {}} {}
@@ -56,3 +58,5 @@ void FileParserProducer::seekTo(std::chrono::microseconds timestamp) {
   seekingTimestamp_ = timestamp;
   shouldSeek_ = true;
 }
+
+}  // namespace s3d

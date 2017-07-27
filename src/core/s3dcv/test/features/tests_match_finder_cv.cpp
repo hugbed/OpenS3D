@@ -7,6 +7,7 @@
 #include <vector>
 
 using s3d::MatchFinderCV;
+using s3d::Size;
 
 class FakeFeatureDetector : public cv::Feature2D {
  public:

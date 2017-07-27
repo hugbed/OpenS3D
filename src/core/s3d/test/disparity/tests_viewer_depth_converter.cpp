@@ -3,6 +3,9 @@
 #include "s3d/disparity/viewer_depth_converter.h"
 #include "s3d/disparity/viewer_context.h"
 
+using s3d::ViewerContext;
+using s3d::ViewerDepthConverter;
+
 TEST(viewer_depth_converter, perceived_depth_correct) {
   ViewerContext context(2.0, 0.05, 1.0, 1920);
 

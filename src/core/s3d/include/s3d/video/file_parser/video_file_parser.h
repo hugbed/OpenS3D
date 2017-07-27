@@ -11,6 +11,8 @@
 #include <cstdint>
 #include <vector>
 
+namespace s3d {
+
 class VideoCaptureFormat;
 
 class VideoFileParser : rule_of_five_interface<VideoFileParser> {
@@ -23,5 +25,7 @@ class VideoFileParser : rule_of_five_interface<VideoFileParser> {
   };                                                                 // todo: make it pure virtual?
   virtual std::chrono::microseconds VideoDuration() { return {}; };  // todo: make it pure virtual?
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_FILE_PARSER_H

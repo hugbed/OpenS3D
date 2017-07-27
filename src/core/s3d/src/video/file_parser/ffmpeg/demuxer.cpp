@@ -2,6 +2,8 @@
 
 #include "s3d/video/file_parser/ffmpeg/decoder.h"
 
+namespace s3d {
+
 Demuxer::Demuxer(const std::string& inputFilename) {
   using namespace ffmpeg;
   av_register_all();
@@ -20,3 +22,5 @@ bool Demuxer::readFrame(AVPacket** packet) {
 std::unique_ptr<Decoder> Demuxer::createDecoder() {
   return std::make_unique<Decoder>(formatContext_.get());
 }
+
+}  // namespace s3d

@@ -6,6 +6,8 @@
 #include <cassert>
 #include <vector>
 
+namespace s3d {
+
 // converts from codec type to dstFormat
 class Scaler {
  public:
@@ -23,5 +25,7 @@ class Scaler {
   uint8_t* dstBuffer_[4]{nullptr};
   ffmpeg::UniquePtr<uint8_t> dstBufferPtr_{nullptr};
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_SCALER_H

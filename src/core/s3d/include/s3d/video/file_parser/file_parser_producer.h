@@ -9,6 +9,8 @@
 #include <chrono>
 #include <mutex>
 
+namespace s3d {
+
 class VideoCaptureFormat;
 class VideoFileParser;
 
@@ -57,5 +59,7 @@ class FileParserProducer : public s3d::ProducerBarrier<VideoFrame> {
   VideoFrame videoFrame_;
   std::string filePath_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FILE_PARSER_PRODUCER_H

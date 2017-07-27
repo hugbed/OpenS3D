@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
   s3d::compute_disparities(pts1, pts2, back_inserter(disparities));
 
   // disparity histogram
-  auto hist = Histogram::Compute(disparities, 10);
+  auto hist = s3d::Histogram::Compute(disparities, 10);
 
   double minDisp, maxDisp;
   std::tie(minDisp, maxDisp) = s3d::disparity_range(disparities);

@@ -2,6 +2,10 @@
 
 #include "s3d/video/capture/video_capture_types.h"
 
+using s3d::VideoCaptureFormat;
+using s3d::VideoPixelFormat;
+using s3d::Size;
+
 TEST(video_capture_format, default_values) {
   VideoCaptureFormat format{};
 

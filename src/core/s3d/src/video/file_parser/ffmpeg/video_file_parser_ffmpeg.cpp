@@ -8,6 +8,8 @@
 
 #include <ratio>
 
+namespace s3d {
+
 VideoFileParserFFmpeg::VideoFileParserFFmpeg(const std::string& inputFilename)
     : filename_(inputFilename), demuxer_(inputFilename) {
   decoder_ = demuxer_.createDecoder();
@@ -104,7 +106,6 @@ std::chrono::microseconds VideoFileParserFFmpeg::VideoDuration() {
   return duration_;
 }
 
-
 // static
 int VideoFileParserFFmpeg::timestampToFrameNumber(std::chrono::microseconds timestamp, float fps) {
   return static_cast<int>(fps * static_cast<float>(timestamp.count()) /
@@ -116,3 +117,5 @@ std::chrono::microseconds VideoFileParserFFmpeg::frameNumberToTimestamp(int fram
   return std::chrono::microseconds(
       static_cast<int>(static_cast<float>(frame * std::micro::den) / fps));
 }
+
+}  // namespace s3d

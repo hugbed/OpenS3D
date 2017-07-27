@@ -22,6 +22,6 @@ class CyclicCountDownLatch {
   int64_t parties_{1};
 };
 
-} // namespace s3d
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_CYCLIC_COUNTDOWN_LATCH_H

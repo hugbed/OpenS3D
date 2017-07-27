@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+namespace s3d {
+
 class Decoder;
 class Seeker;
 class Scaler;
@@ -42,5 +44,7 @@ class VideoFileParserFFmpeg : public VideoFileParser {
   std::unique_ptr<Scaler> scaler_;
   std::unique_ptr<Seeker> seeker_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_VIDEO_FILE_PARSER_FFMPEG_H

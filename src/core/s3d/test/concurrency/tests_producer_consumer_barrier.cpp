@@ -40,8 +40,7 @@ class FakeProducerInt : public s3d::ProducerBarrier<int> {
  public:
   using Base = s3d::ProducerBarrier<int>;
 
-  explicit FakeProducerInt(s3d::ProducerConsumerMediator* mediator)
-      : ProducerBarrier{mediator} {}
+  explicit FakeProducerInt(s3d::ProducerConsumerMediator* mediator) : ProducerBarrier{mediator} {}
   const int& getProduct() override { return product_; }
   void produce() override { product_ = 1; }
   bool shouldStopProducing() override { return Base::shouldStopProducing() || product_ == 1; }

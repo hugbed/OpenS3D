@@ -17,7 +17,7 @@ class QTimer;
 // with the main thread using a timer to check when
 // a new frame is ready
 
-class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
+class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client {
   Q_OBJECT
 
  public:
@@ -35,7 +35,7 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
   std::chrono::microseconds videoDuration();
 
   void OnIncomingCapturedData(const Images& data,
-                              const VideoCaptureFormat& frameFormat,
+                              const s3d::VideoCaptureFormat& frameFormat,
                               std::chrono::microseconds timestamp) override;
 
  signals:
@@ -47,7 +47,7 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
   void checkForIncomingImage();
 
  private:
-  std::unique_ptr<VideoCaptureDevice> m_videoCaptureDevice;
+  std::unique_ptr<s3d::VideoCaptureDevice> m_videoCaptureDevice;
   std::unique_ptr<QTimer> m_timer;
   std::chrono::microseconds m_videoDuration;
 

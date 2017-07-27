@@ -3,6 +3,10 @@
 
 #include <fstream>
 
+using s3d::VideoCaptureDevice;
+using s3d::VideoCaptureFormat;
+using s3d::VideoPixelFormat;
+
 class FFmpegClient : public VideoCaptureDevice::Client {
  public:
   explicit FFmpegClient(const std::string& dstFilename)
@@ -51,9 +55,10 @@ int main(int argc, char** argv) {
   std::unique_ptr<VideoCaptureDevice::Client> client = std::make_unique<FFmpegClient>(src_filename);
 
   // create video capture device
-  std::unique_ptr<VideoCaptureDevice> captureDevice = std::make_unique<FileVideoCaptureDevice3D>(
-      "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
-      "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4");
+  std::unique_ptr<VideoCaptureDevice> captureDevice =
+      std::make_unique<s3d::FileVideoCaptureDevice3D>(
+          "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
+          "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4");
 
   // start "capture"
   VideoCaptureFormat format{{}, -1.0f, VideoPixelFormat::BGR};

@@ -5,6 +5,8 @@
 #include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/decklink.h"
 
+namespace s3d {
+
 // inspiration: https://forum.blackmagicdesign.com/viewtopic.php?f=12&t=33269
 // todo: should verify which pixel format we need (BGRA or RGBA)
 // todo: should test int64_t instead of long
@@ -355,3 +357,5 @@ void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
 VideoCaptureFormat VideoCaptureDeviceDecklink::DefaultFormat() {
   return VideoCaptureFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::ARGB);
 }
+
+}  // namespace s3d

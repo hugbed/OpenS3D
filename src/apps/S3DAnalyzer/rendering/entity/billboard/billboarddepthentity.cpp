@@ -1,5 +1,12 @@
 #include "billboarddepthentity.h"
 
+#include <s3d/disparity/viewer_depth_converter.h>
+
+#include <cassert>
+
+using s3d::ViewerContext;
+using s3d::ViewerDepthConverter;
+
 BillboardDepthEntity::BillboardDepthEntity(const QSize& imageSize)
     : BillboardDisparityEntity(imageSize) {}
 

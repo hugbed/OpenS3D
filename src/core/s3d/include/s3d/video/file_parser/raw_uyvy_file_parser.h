@@ -3,6 +3,8 @@
 
 #include "video_file_parser.h"
 
+namespace s3d {
+
 class VideoFileFormat;
 
 // Reads UYVY, outputs RGB
@@ -28,5 +30,7 @@ class RawUYVYFileParser : public VideoFileParser {
   std::unique_ptr<std::istream> fileStream_;
   std::vector<uint8_t> frameUYVY_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_RAW_UYVY_FILE_PARSER_H

@@ -4,6 +4,8 @@
 
 #include "s3d/video/video_frame.h"
 
+namespace s3d {
+
 // static
 size_t VideoFrame::AllocationSize(VideoPixelFormat format, const Size& size) {
   return NumBytesPerPixel(format) * size.getWidth() * size.getHeight();
@@ -24,3 +26,5 @@ size_t VideoFrame::NumBytesPerPixel(VideoPixelFormat format) {
       return 0;
   }
 }
+
+}  // namespace s3d

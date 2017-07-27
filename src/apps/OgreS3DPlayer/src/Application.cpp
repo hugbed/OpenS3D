@@ -8,6 +8,7 @@
 #include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
+#include "s3d/video/capture/video_capture_types.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -27,7 +28,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 void Application::createScene() {
   // todo: this should be chosen from possible input formats
   // todo: it's actually BGRA, I think?
-  VideoCaptureFormat format({1920, 1080}, 60.0f, VideoPixelFormat::BGR, true);
+  s3d::VideoCaptureFormat format({1920, 1080}, 60.0f, s3d::VideoPixelFormat::BGR, true);
 
   // videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
   //     std::make_unique<VideoCaptureDeviceDecklink>(VideoCaptureDeviceDescriptor("")));
@@ -37,12 +38,13 @@ void Application::createScene() {
   // create capture device
   if (format.stereo3D) {
     videoCaptureDevice_ =
-        std::unique_ptr<VideoCaptureDevice>(std::make_unique<FileVideoCaptureDevice3D>(
+        std::unique_ptr<s3d::VideoCaptureDevice>(std::make_unique<s3d::FileVideoCaptureDevice3D>(
             "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_left.mp4;"
             "/home/jon/Videos/bbb_sunflower_1080p_30fps_stereo_right.mp4"));
   } else {
-    videoCaptureDevice_ = std::unique_ptr<VideoCaptureDevice>(
-        std::make_unique<FileVideoCaptureDeviceFFmpeg>("/home/jon/Videos/BeautifulPlaces.mp4"));
+    videoCaptureDevice_ = std::unique_ptr<s3d::VideoCaptureDevice>(
+        std::make_unique<s3d::FileVideoCaptureDeviceFFmpeg>(
+            "/home/jon/Videos/BeautifulPlaces.mp4"));
   }
 
   format = videoCaptureDevice_->DefaultFormat();
@@ -55,7 +57,7 @@ void Application::createScene() {
   m_frameListeners.push_back(m_videoTextures.first.get());
   m_frameListeners.push_back(m_videoTextures.second.get());
 
-  captureClient_ = std::unique_ptr<VideoCaptureDevice::Client>(
+  captureClient_ = std::unique_ptr<s3d::VideoCaptureDevice::Client>(
       new TextureUpdateClient(std::vector<DynamicTextureThreadSafe*>{
           m_videoTextures.first.get(), m_videoTextures.second.get()}));
 
@@ -114,16 +116,16 @@ void Application::createGroundPlane() {
 
 std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
     const std::string& name,
-    const VideoCaptureFormat& format) {
+    const s3d::VideoCaptureFormat& format) {
   Ogre::PixelFormat pixelFormat = Ogre::PixelFormat::PF_UNKNOWN;
 
   switch (format.pixelFormat) {
-    case VideoPixelFormat::RGB:
-    case VideoPixelFormat::BGR:
+    case s3d::VideoPixelFormat::RGB:
+    case s3d::VideoPixelFormat::BGR:
       pixelFormat = Ogre::PixelFormat::PF_R8G8B8;
       break;
-    case VideoPixelFormat::ARGB:
-    case VideoPixelFormat::BGRA:
+    case s3d::VideoPixelFormat::ARGB:
+    case s3d::VideoPixelFormat::BGRA:
       // todo : ARGB or BGRA!!
       pixelFormat = Ogre::PixelFormat::PF_B8G8R8A8;
       break;

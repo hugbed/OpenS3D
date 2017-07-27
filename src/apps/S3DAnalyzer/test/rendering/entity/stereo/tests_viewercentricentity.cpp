@@ -4,6 +4,8 @@
 
 #include <s3d/disparity/viewer_context.h>
 
+using s3d::ViewerContext;
+
 class TestViewerCentricEntity : public QObject {
   Q_OBJECT
  private slots:

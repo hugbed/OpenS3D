@@ -2,6 +2,8 @@
 
 #include "s3d/video/file_parser/ffmpeg/ffmpeg_utils.h"
 
+namespace s3d {
+
 Seeker::Seeker(gsl::not_null<AVFormatContext*> formatContext, int streamIndex)
     : formatContext_{formatContext}, streamIndex_{streamIndex} {}
 
@@ -13,3 +15,5 @@ void Seeker::seekTo(std::chrono::microseconds timestamp) {
       static_cast<int>(s * static_cast<float>(timebase.den) / static_cast<float>(timebase.num));
   ffmpeg::avformat::seek_frame(formatContext_, streamIndex_, seekTimestamp, AVSEEK_FLAG_BACKWARD);
 }
+
+}  // namespace s3d

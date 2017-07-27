@@ -6,6 +6,9 @@
 
 #include <istream>
 
+using s3d::RawUYVYFileParser;
+using s3d::VideoCaptureFormat;
+
 class FakeRawUYVYFileParser : public RawUYVYFileParser {
  public:
   explicit FakeRawUYVYFileParser(std::string filePath) : RawUYVYFileParser(std::move(filePath)) {}

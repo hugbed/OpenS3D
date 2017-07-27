@@ -13,13 +13,13 @@
 #include <string>
 #include <vector>
 
+namespace s3d {
+
 class VideoCaptureDeviceAllocationException : std::runtime_error {
  public:
   explicit VideoCaptureDeviceAllocationException(std::string reason)
       : std::runtime_error(std::move(reason)) {}
 };
-
-// todo(hugbed): put in s3d namespace
 
 class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
  public:
@@ -47,5 +47,7 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
 
   virtual VideoCaptureFormat DefaultFormat() = 0;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_H

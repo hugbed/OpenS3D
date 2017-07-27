@@ -8,7 +8,8 @@
 #include <memory>
 #include <string>
 
-// todo(hugbed): put in s3d namespace
+namespace s3d {
+
 // todo(hugbed): must elaborate
 struct VideoCaptureDeviceDescriptor {
   explicit VideoCaptureDeviceDescriptor(std::string name) : name(std::move(name)) {}
@@ -26,5 +27,7 @@ class VideoCaptureDeviceFactory {
   virtual std::unique_ptr<VideoCaptureDevice> CreateDevice(
       const VideoCaptureDeviceDescriptor& deviceDescriptor) const = 0;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_FACTORY_H

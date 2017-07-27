@@ -12,7 +12,7 @@
 #include <vector>
 #include <chrono>
 
-// todo(hugbed): put in s3d namespace
+namespace s3d {
 
 class VideoFrame {
  public:
@@ -28,5 +28,7 @@ class VideoFrame {
  private:
   static size_t NumBytesPerPixel(VideoPixelFormat format);
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_VIDEO_FRAME_H

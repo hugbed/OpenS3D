@@ -8,7 +8,10 @@
 class DynamicTexture;
 class DynamicTextureThreadSafe;
 class PointCloudMesh;
+
+namespace s3d {
 class VideoCaptureFormat;
+}
 
 class Application : public BaseApplication {
  public:
@@ -26,15 +29,15 @@ class Application : public BaseApplication {
 
   static std::unique_ptr<DynamicTextureThreadSafe> createDynamicTexture(
       const std::string& name,
-      const VideoCaptureFormat& format);
+      const s3d::VideoCaptureFormat& format);
 
   void createVideoPlane(const std::string& materialName);
 
   void createPointCloud();
 
   std::unique_ptr<Ogre::MovableObject> videoPlayerEntity_;
-  std::unique_ptr<VideoCaptureDevice> videoCaptureDevice_;
-  std::unique_ptr<VideoCaptureDevice::Client> captureClient_;
+  std::unique_ptr<s3d::VideoCaptureDevice> videoCaptureDevice_;
+  std::unique_ptr<s3d::VideoCaptureDevice::Client> captureClient_;
 
   // to stream image to texture (L, R)
   std::pair<std::unique_ptr<DynamicTextureThreadSafe>, std::unique_ptr<DynamicTextureThreadSafe>>

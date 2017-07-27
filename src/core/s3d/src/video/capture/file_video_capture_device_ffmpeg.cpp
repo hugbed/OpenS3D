@@ -2,6 +2,8 @@
 
 #include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 
+namespace s3d {
+
 FileVideoCaptureDeviceFFmpeg::FileVideoCaptureDeviceFFmpeg(const std::string& filename)
     : filename_(filename), FileVideoCaptureDevice(filename) {}
 
@@ -13,3 +15,5 @@ std::unique_ptr<VideoFileParser> FileVideoCaptureDeviceFFmpeg::GetVideoFileParse
     const std::string& filePath) {
   return std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath));
 }
+
+}  // namespace s3d

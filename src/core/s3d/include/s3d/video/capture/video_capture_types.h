@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <tuple>
 
-// todo(hugbed): put in s3d namespace
+namespace s3d {
 
 struct VideoCaptureFormat {
   constexpr VideoCaptureFormat()
@@ -42,5 +42,7 @@ struct VideoCaptureFormat {
   VideoPixelFormat pixelFormat;
   bool stereo3D;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_TYPES_H

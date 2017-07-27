@@ -7,11 +7,11 @@
 
 #include <iomanip>
 
-class TextureUpdateClient : public VideoCaptureDevice::Client {
+class TextureUpdateClient : public s3d::VideoCaptureDevice::Client {
  public:
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
-  gsl::owner<VideoCaptureDevice::Client*> clone() const override {
+  gsl::owner<s3d::VideoCaptureDevice::Client*> clone() const override {
     return new TextureUpdateClient(videoTextures_);
   }
 
@@ -19,7 +19,7 @@ class TextureUpdateClient : public VideoCaptureDevice::Client {
       : videoTextures_{videoTextures} {}
 
   void OnIncomingCapturedData(const Images& images,
-                              const VideoCaptureFormat& frameFormat,
+                              const s3d::VideoCaptureFormat& frameFormat,
                               std::chrono::microseconds /*timestamp*/) override {
     //    outputPerformanceMetrics(std::cout);
 

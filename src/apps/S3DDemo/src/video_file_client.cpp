@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+using s3d::VideoCaptureDevice;
+using s3d::VideoCaptureFormat;
+using s3d::VideoCaptureDeviceDescriptor;
+using s3d::VideoCaptureDeviceFactory;
+using s3d::FileVideoCaptureDeviceFactory;
+
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
   gsl::owner<VideoCaptureDevice::Client*> clone() const override { return new VideoTestClient; }

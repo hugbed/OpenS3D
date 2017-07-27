@@ -11,6 +11,8 @@
 #include <thread>
 #include <utility>
 
+namespace s3d {
+
 class FileParserProducer;
 class FileParserConsumer;
 class ProducerConsumerSynchronizer;
@@ -45,5 +47,7 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   std::unique_ptr<ProducerConsumerSynchronizer> sync_;
   std::unique_ptr<std::thread> captureThread_{nullptr};
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H

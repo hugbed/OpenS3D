@@ -4,6 +4,14 @@
 #include "s3d/video/capture/file_video_capture_device.h"
 #include "s3d/video/file_parser/video_file_parser.h"
 
+using s3d::TimedLoop;
+using s3d::VideoFileParser;
+using s3d::VideoCaptureFormat;
+using s3d::VideoPixelFormat;
+using s3d::FileVideoCaptureDevice;
+using s3d::VideoCaptureDevice;
+using s3d::Size;
+
 class FakeTimedLoop : public TimedLoop {
  public:
   FakeTimedLoop() = default;

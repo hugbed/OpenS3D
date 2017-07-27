@@ -2,6 +2,8 @@
 
 #include "s3d/disparity/viewer_context.h"
 
+namespace s3d {
+
 using Point = ViewerDepthConverter::Point;
 using Pointf = ViewerDepthConverter::Pointf;
 
@@ -64,4 +66,5 @@ std::vector<float> ViewerDepthConverter::computeHorizontalPositions(
 
 void ViewerDepthConverter::setViewerContext(gsl::not_null<ViewerContext*> viewerContext) {
   viewerContext_ = viewerContext;
+}
 }

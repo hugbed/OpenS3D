@@ -7,6 +7,8 @@
 
 #include <gsl/gsl>
 
+namespace s3d {
+
 struct ViewerContext;
 
 class ViewerDepthConverter {
@@ -31,5 +33,6 @@ class ViewerDepthConverter {
  private:
   ViewerContext* viewerContext_;
 };
+}
 
 #endif  // S3D_DISPARITY_VIEWER_DEPTH_CONVERTER_H

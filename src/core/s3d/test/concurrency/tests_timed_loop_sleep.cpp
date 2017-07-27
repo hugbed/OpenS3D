@@ -5,6 +5,9 @@
 
 #include <chrono>
 
+using s3d::TimedLoop;
+using s3d::TimedLoopSleep;
+
 class FakeTimedLoop : public TimedLoop {
   gsl::owner<FakeTimedLoop*> clone() const { return new FakeTimedLoop; }
   void start(TimedLoop::Client* /*client*/, std::chrono::microseconds /*loopDuration*/) override {}

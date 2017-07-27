@@ -5,6 +5,8 @@
 
 #include <chrono>
 
+namespace s3d {
+
 class TimedLoop : rule_of_five_interface<TimedLoop> {
  public:
   class Client : rule_of_five_interface<Client> {
@@ -17,5 +19,7 @@ class TimedLoop : rule_of_five_interface<TimedLoop> {
   virtual void maybePause() {}
   virtual void resume() {}
 };
+
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_H

@@ -7,7 +7,7 @@
 
 #include "video_capture_device_factory.h"
 
-// todo(hugbed): put in s3d namespace
+namespace s3d {
 
 class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
  public:
@@ -16,5 +16,7 @@ class FileVideoCaptureDeviceFactory : public VideoCaptureDeviceFactory {
   std::unique_ptr<VideoCaptureDevice> CreateDevice(
       const VideoCaptureDeviceDescriptor& deviceDescriptor) const override;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FACTORY_H

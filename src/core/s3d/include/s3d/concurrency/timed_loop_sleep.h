@@ -7,6 +7,8 @@
 #include <thread>
 #include <condition_variable>
 
+namespace s3d {
+
 class TimedLoopSleep : public TimedLoop {
  public:
   using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
@@ -98,5 +100,7 @@ class TimedLoopSleep : public TimedLoop {
   bool pauseFlag{false};
   std::condition_variable pauseCondition;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_UTILITIES_CONCURRENCY_TIMED_LOOP_SLEEP_H

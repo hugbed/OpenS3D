@@ -5,6 +5,8 @@
 
 #include <cassert>
 
+namespace s3d {
+
 class Decoder;
 
 class Demuxer {
@@ -21,5 +23,7 @@ class Demuxer {
   ffmpeg::UniquePtr<AVFormatContext> formatContext_{nullptr};
   AVPacket packet_;
 };
+
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_DEMUXER_H

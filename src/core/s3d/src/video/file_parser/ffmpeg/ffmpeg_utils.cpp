@@ -1,5 +1,7 @@
 #include "s3d/video/file_parser/ffmpeg/ffmpeg_utils.h"
 
+namespace s3d {
+
 namespace ffmpeg {
 
 AVPixelFormat pixelFormatToAV(VideoPixelFormat pixelFormat) {
@@ -182,3 +184,4 @@ void avpacket::init(AVPacket* pkt) {
 }
 
 }  // namespace ffmpeg
+}  // namespace s3d

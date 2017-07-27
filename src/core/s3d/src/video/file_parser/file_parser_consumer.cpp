@@ -1,5 +1,7 @@
 #include "s3d/video/file_parser/file_parser_consumer.h"
 
+namespace s3d {
+
 using Base = FileParserConsumer::Base;
 
 FileParserConsumer::FileParserConsumer(VideoCaptureDevice::Client* client,
@@ -56,3 +58,5 @@ void FileParserConsumer::resume() {
   }
   pauseCondition.notify_all();
 }
+
+}  // namespace s3d

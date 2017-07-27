@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <tuple>
 
-// todo(hugbed): put in namespace s3d
+namespace s3d {
 
 struct negative_size_exception : public std::invalid_argument {
   negative_size_exception() : std::invalid_argument{"Negative size"} {}
@@ -40,5 +40,7 @@ struct Size {
   value_type width_{0};
   value_type height_{0};
 };
+
+}  // namespace s3d
 
 #endif  // S3D_GEOMETRY_SIZE_H

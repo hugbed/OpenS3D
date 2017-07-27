@@ -2,6 +2,9 @@
 
 #include "s3d/geometry/size.h"
 
+using s3d::Size;
+using s3d::negative_size_exception;
+
 TEST(geometry_size, default_creation) {
   Size s;
   EXPECT_EQ(s.getWidth(), 0);
