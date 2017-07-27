@@ -104,11 +104,13 @@ std::chrono::microseconds VideoFileParserFFmpeg::VideoDuration() {
   return duration_;
 }
 
+// static
 int VideoFileParserFFmpeg::timestampToFrameNumber(std::chrono::microseconds timestamp, float fps) {
   return static_cast<int>(fps * static_cast<float>(timestamp.count()) /
                           static_cast<float>(std::micro::den) / 10.0f);
 }
 
+// static
 std::chrono::microseconds VideoFileParserFFmpeg::frameNumberToTimestamp(int frame, float fps) {
   return std::chrono::microseconds(
       static_cast<int>(static_cast<float>(frame * std::micro::den) / fps));
