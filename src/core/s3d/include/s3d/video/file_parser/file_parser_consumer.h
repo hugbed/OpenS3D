@@ -15,7 +15,7 @@ class FileParserConsumer : public s3d::concurrency::ConsumerBarrier<VideoFrame> 
 
   FileParserConsumer(VideoCaptureDevice::Client* client,
                      VideoCaptureFormat outputFormat,
-                     s3d::concurrency::ProducerConsumerMediator* mediator,
+                     Base::Mediators mediators,
                      const Producers& producers);
 
   void pause();

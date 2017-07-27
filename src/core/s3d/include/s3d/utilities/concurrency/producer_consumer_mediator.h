@@ -8,14 +8,10 @@ namespace concurrency {
 
 class ProducerConsumerMediator : rule_of_five_interface<ProducerConsumerMediator> {
  public:
-  virtual void acknowledgeDoneProducing() = 0;
-  virtual bool isDoneProducing() = 0;
-  virtual bool isDoneConsuming() = 0;
-  virtual void notifyShouldProduce() = 0;
   virtual void notifyDoneConsuming() = 0;
   virtual void notifyDoneProducing() = 0;
-  virtual void waitUntilAllDoneProducing(std::function<bool()> allDoneProducingCheck) = 0;
   virtual void waitUntilShouldProduce() = 0;
+  virtual void waitUntilShouldConsume() = 0;
 };
 
 }  // namespace concurrency

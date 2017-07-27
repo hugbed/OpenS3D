@@ -13,15 +13,16 @@ template <class T>
 class ConsumerBarrier {
  public:
   using Producers = std::vector<ProducerBarrier<T>*>;
+  using Mediators = std::vector<ProducerConsumerMediator*>;
 
-  ConsumerBarrier(ProducerConsumerMediator* mediator, Producers producers)
-      : mediator_(mediator), producers_(std::move(producers)) {}
+  ConsumerBarrier(Mediators mediators, Producers producers)
+      : mediators_(std::move(mediators)), producers_(std::move(producers)) {}
 
   void startConsuming() {
     while (!shouldStopConsuming()) {
-      notifyShouldProduce();
-      waitUntilAllDoneProducing();
+      mediators_[0]->waitUntilShouldConsume();
       consume();
+      notifyDoneConsuming();
     }
   }
 
@@ -31,7 +32,7 @@ class ConsumerBarrier {
     for (auto* producer : producers_) {
       producer->stop();
     }
-    notifyShouldProduce();
+    notifyDoneConsuming();
   }
 
   virtual void consume() = 0;  // use producer->getProduct()
@@ -41,34 +42,17 @@ class ConsumerBarrier {
 
   virtual bool shouldStopConsuming() {
     return std::any_of(std::begin(producers_), std::end(producers_),
-                       [](const auto& producer) { return producer->shouldStopProducing(); });
-  }
-
-  bool allAreDoneProducing() {
-    return std::all_of(std::begin(producers_), std::end(producers_),
-                       [](auto& p) { return p->isDoneProducing(); });
+                       [](auto* producer) { return producer->shouldStopProducing(); });
   }
 
  private:
-  void waitUntilAllDoneProducing() {
-    mediator_->waitUntilAllDoneProducing([this]() { return allAreDoneProducing(); });
-
-    // acknowledge done producing, set it back to default state
-    for (auto& producer : producers_) {
-      producer->acknowledgeDoneProducing();
+  void notifyDoneConsuming() {
+    for (auto* mediator : mediators_) {
+      mediator->notifyDoneConsuming();
     }
   }
 
-  void notifyShouldProduce() {
-    for (auto& producer : producers_) {
-      producer->notifyDoneConsuming();
-    }
-    for (auto& producer : producers_) {
-      producer->notifyShouldProduce();
-    }
-  }
-
-  gsl::not_null<ProducerConsumerMediator*> mediator_;
+  Mediators mediators_;
   Producers producers_;
 };
 }  // namespace concurrency
