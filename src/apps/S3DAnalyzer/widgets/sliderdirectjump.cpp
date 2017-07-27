@@ -35,23 +35,16 @@ void SliderDirectJump::mousePressEvent(QMouseEvent* event) {
 
   // only horizontal slider supported
   if (event->button() == Qt::LeftButton) {
-    int min = minimum();
-    int max = maximum();
-
     int value = computeHorizontalValue(event->x());
     setValue(value);
-//    emit valueClicked(value);
     event->accept();
   }
   QSlider::mousePressEvent(event);
 }
 
-void SliderDirectJump::mouseReleaseEvent(QMouseEvent *event){
+void SliderDirectJump::mouseReleaseEvent(QMouseEvent* event) {
   // only horizontal slider supported
   if (event->button() == Qt::LeftButton) {
-    int min = minimum();
-    int max = maximum();
-
     int value = computeHorizontalValue(event->x());
     setValue(value);
     emit valueClicked(value);
