@@ -39,6 +39,8 @@ class VideoCaptureDevice : rule_of_five_interface<VideoCaptureDevice> {
 
   virtual void MaybeSuspend() {}
 
+  virtual void MaybeSeekTo(std::chrono::microseconds timestamp) {}  // todo: pure virtual
+
   virtual void Resume() {}
 
   virtual void StopAndDeAllocate() = 0;

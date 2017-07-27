@@ -11,7 +11,8 @@ class FakeRawUYVYFileParser : public RawUYVYFileParser {
   explicit FakeRawUYVYFileParser(std::string filePath) : RawUYVYFileParser(std::move(filePath)) {}
 
   bool createStream(std::unique_ptr<std::istream>& stream) override {
-    std::unique_ptr<std::istream> s = std::make_unique<std::istringstream>("hello");
+    std::string frameString(1920 * 1080 * 3, 'A');
+    std::unique_ptr<std::istream> s = std::make_unique<std::istringstream>(frameString);
     stream = std::move(s);
     return true;
   }
@@ -46,7 +47,7 @@ TEST(raw_uyvy_file_parser, get_next_frame_hardcoded_size_and_format) {
   parser.Initialize(&format);
 
   std::vector<uint8_t> frame;
-  parser.GetNextFrame(frame);
+  parser.GetNextFrame(&frame);
   EXPECT_EQ(frame.size(), 1920 * 1080 * 3);
 }
 
@@ -54,4 +55,16 @@ TEST(raw_uyvy_file_parser, create_stream_file_not_found) {
   VideoCaptureFormat format;
   RawUYVYFileParser parser("file_not_found.txt");
   EXPECT_FALSE(parser.Initialize(&format));
+}
+
+TEST(video_file_parser, seek_to_frame_does_nothing) {
+  VideoCaptureFormat format;
+  RawUYVYFileParser parser("file_not_found.txt");
+  parser.SeekToFrame({});
+}
+
+TEST(raw_uyvy_file_parser, get_next_frame_nullptr_returns_false) {
+  VideoCaptureFormat format;
+  FakeRawUYVYFileParser parser("somepath.txt");
+  EXPECT_FALSE(parser.GetNextFrame(nullptr));
 }

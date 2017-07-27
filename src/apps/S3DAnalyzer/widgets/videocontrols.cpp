@@ -23,6 +23,8 @@ void VideoControls::init(Qt::Orientation orientation) {
   connect(m_videoButtons.get(), &VideoButtons::play, this, &VideoControls::play);
   connect(m_videoButtons.get(), &VideoButtons::pause, this, &VideoControls::pause);
   connect(m_videoButtons.get(), &VideoButtons::next, this, &VideoControls::next);
+  connect(m_progressSlider.get(), &SliderDirectJump::valueClicked,
+          [this](int value) { emit seekingRequested(std::chrono::microseconds{value}); });
 
   auto layout = orientation == Qt::Horizontal ? std::unique_ptr<QBoxLayout>(new QHBoxLayout(this))
                                               : std::unique_ptr<QBoxLayout>(new QVBoxLayout(this));
@@ -49,10 +51,11 @@ void VideoControls::init(Qt::Orientation orientation) {
 }
 
 void VideoControls::setDuration(std::chrono::microseconds duration) {
-  m_progressSlider->setMinimum(0);
-  m_progressSlider->setMaximum(duration.count());
+  m_progressSlider->setRange(0, duration.count());
 }
 
 void VideoControls::updateSlider(std::chrono::microseconds timestamp) {
-  m_progressSlider->setValue(timestamp.count());
+  if (not m_progressSlider->isPressed()) {
+    m_progressSlider->setValue(timestamp.count());
+  }
 }

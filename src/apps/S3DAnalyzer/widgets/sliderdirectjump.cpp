@@ -31,12 +31,27 @@ void SliderDirectJump::init() {
 }
 
 void SliderDirectJump::mousePressEvent(QMouseEvent* event) {
+  m_isPressed = true;
+
   // only horizontal slider supported
   if (event->button() == Qt::LeftButton) {
-    setValue(computeHorizontalValue(event->x()));
+    int value = computeHorizontalValue(event->x());
+    setValue(value);
     event->accept();
   }
   QSlider::mousePressEvent(event);
+}
+
+void SliderDirectJump::mouseReleaseEvent(QMouseEvent* event) {
+  // only horizontal slider supported
+  if (event->button() == Qt::LeftButton) {
+    int value = computeHorizontalValue(event->x());
+    setValue(value);
+    emit valueClicked(value);
+    event->accept();
+  }
+  QSlider::mouseReleaseEvent(event);
+  m_isPressed = false;
 }
 
 int SliderDirectJump::computeHorizontalValue(int x) {
@@ -61,8 +76,6 @@ int SliderDirectJump::computeHorizontalValue(int x) {
   return newVal;
 }
 
-void SliderDirectJump::setPercentage(float percent) {
-  float range = maximum() - minimum();
-  float val = percent * range + minimum();
-  setValue(static_cast<int>(val));
+bool SliderDirectJump::isPressed() {
+  return m_isPressed;
 }

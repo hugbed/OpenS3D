@@ -1,9 +1,11 @@
 #include "s3d/video/file_parser/ffmpeg/decoder.h"
 
 #include "s3d/video/file_parser/ffmpeg/scaler.h"
+#include "s3d/video/file_parser/ffmpeg/seeker.h"
+
+#include <s3d/utilities/time.h>
 
 #include <cassert>
-#include <s3d/utilities/time.h>
 
 Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext} {
   streamIndex_ = openCodexContext(codecContext_, formatContext, AVMEDIA_TYPE_VIDEO);
@@ -79,6 +81,11 @@ int Decoder::openCodexContext(ffmpeg::UniquePtr<AVCodecContext>& codecContext,
 std::unique_ptr<Scaler> Decoder::createScaler(enum AVPixelFormat dstFormat) {
   return std::make_unique<Scaler>(codecContext_.get(), dstFormat);
 }
+
+std::unique_ptr<Seeker> Decoder::createSeeker() {
+  return std::make_unique<Seeker>(formatContext_, streamIndex_);
+}
+
 Size Decoder::getImageSize() const {
   return Size(codecContext_->width, codecContext_->height);
 }
@@ -90,11 +97,13 @@ float Decoder::getFrameRate() const {
 }
 
 std::chrono::microseconds Decoder::getFrameTimeStamp(AVFrame* frame) const {
-  return s3d::seconds_to_us(static_cast<float>(frame->best_effort_timestamp) *
-                            av_q2d(formatContext_->streams[streamIndex_]->time_base));
+  return s3d::seconds_to_us(
+      static_cast<float>(frame->best_effort_timestamp) *
+      static_cast<float>(av_q2d(formatContext_->streams[streamIndex_]->time_base)));
 }
 
 std::chrono::microseconds Decoder::getDuration() const {
-  return s3d::seconds_to_us(formatContext_->streams[streamIndex_]->duration *
-                            av_q2d(formatContext_->streams[streamIndex_]->time_base));
+  return s3d::seconds_to_us(
+      static_cast<float>(formatContext_->streams[streamIndex_]->duration) *
+      static_cast<float>(av_q2d(formatContext_->streams[streamIndex_]->time_base)));
 }

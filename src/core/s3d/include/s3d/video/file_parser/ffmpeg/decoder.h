@@ -10,6 +10,7 @@
 #include <vector>
 
 class Scaler;
+class Seeker;
 
 class Decoder {
  public:
@@ -24,6 +25,7 @@ class Decoder {
   void copyFrameData(AVFrame* frame, std::vector<uint8_t>* out);
 
   std::unique_ptr<Scaler> createScaler(enum AVPixelFormat dstFormat);
+  std::unique_ptr<Seeker> createSeeker();
 
   Size getImageSize() const;
 

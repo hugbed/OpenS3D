@@ -15,7 +15,7 @@ class RawUYVYFileParser : public VideoFileParser {
   ~RawUYVYFileParser() override;
 
   bool Initialize(VideoCaptureFormat* format) override;
-  bool GetNextFrame(std::vector<uint8_t>& frame) override;
+  bool GetNextFrame(std::vector<uint8_t>* frame) override;
 
   const std::string& getFilePath() const;
 

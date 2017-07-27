@@ -30,6 +30,7 @@ class VideoSynchronizer : public QObject, public VideoCaptureDevice::Client {
   void pause();
   void next();
   void stop();
+  void seekTo(std::chrono::microseconds timestamp);
 
   std::chrono::microseconds videoDuration();
 

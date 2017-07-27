@@ -79,6 +79,11 @@ bool avformat::read_frame(AVFormatContext* s, AVPacket* pkt) {
   return av_read_frame(s, pkt) >= 0;
 }
 
+bool avformat::seek_frame(AVFormatContext* s, int stream_index, int64_t timestamp, int flags) {
+  auto res = av_seek_frame(s, stream_index, timestamp, flags);
+  return res >= 0;
+}
+
 AVCodec* avcodec::find_decoder(AVStream* stream) {
   return find_decoder(stream->codecpar->codec_id);
 }

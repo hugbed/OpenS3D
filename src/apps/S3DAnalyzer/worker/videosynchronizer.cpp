@@ -5,6 +5,7 @@
 
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
+#include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 
 VideoSynchronizer::VideoSynchronizer()
     : m_videoCaptureDevice{
@@ -56,6 +57,12 @@ void VideoSynchronizer::stop() {
   }
 }
 
+void VideoSynchronizer::seekTo(std::chrono::microseconds timestamp) {
+  if (m_videoCaptureDevice != nullptr) {
+    m_videoCaptureDevice->MaybeSeekTo(timestamp);
+  }
+}
+
 std::chrono::microseconds VideoSynchronizer::videoDuration() {
   return m_videoDuration;
 }
@@ -67,7 +74,10 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
   // if previous frame not consumed, skip frame
   // copy data to a QImage
   m_images[0] = QImage(data[0].data(), 1920, 1080, QImage::Format_ARGB32).copy();
-  m_images[1] = QImage(data[1].data(), 1920, 1080, QImage::Format_ARGB32).copy();
+
+  if (data.size() > 1) {
+    m_images[1] = QImage(data[1].data(), 1920, 1080, QImage::Format_ARGB32).copy();
+  }
   m_timestamp = timestamp;
   m_imagesDirty = true;
 }

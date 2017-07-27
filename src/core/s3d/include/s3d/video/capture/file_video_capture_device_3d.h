@@ -22,12 +22,13 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   ~FileVideoCaptureDevice3D() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format, Client* client) override;
-  void MaybeSuspend() override;
-  void Resume() override;
   void WaitUntilDone();
   void StopAndDeAllocate() override;
   void RequestRefreshFrame() override;
   VideoCaptureFormat DefaultFormat() override;
+  void MaybeSuspend() override;
+  void Resume() override;
+  void MaybeSeekTo(std::chrono::microseconds timestamp) override;
 
  protected:
   void Allocate();

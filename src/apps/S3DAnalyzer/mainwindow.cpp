@@ -131,6 +131,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
       }
     });
   });
+
+  connect(ui->videoControls, &VideoControls::seekingRequested,
+          [this](std::chrono::microseconds timestamp) { m_videoSynchronizer->seekTo(timestamp); });
 }
 
 MainWindow::~MainWindow() {
@@ -165,12 +168,10 @@ void MainWindow::computeAndUpdate() {
     m_currentContext->doneCurrent();
     updateConvergenceHint(m_analyzer->results.minDisparityPercent,
                           m_analyzer->results.maxDisparityPercent);
-    m_currentContext->openGLRenderer->updateScene();
   } else {
     m_currentContext->openGLRenderer->makeCurrent();
     m_currentContext->entityManager->setFeatures({}, {});
     m_currentContext->openGLRenderer->doneCurrent();
-    m_currentContext->openGLRenderer->updateScene();
   }
 
   m_currentContext->openGLRenderer->updateScene();

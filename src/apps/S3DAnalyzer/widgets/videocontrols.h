@@ -9,6 +9,7 @@
 class VideoButtons;
 class QAbstractSlider;
 class QBoxLayout;
+class SliderDirectJump;
 
 class VideoControls : public QWidget {
   Q_OBJECT
@@ -24,13 +25,14 @@ class VideoControls : public QWidget {
   void play();
   void pause();
   void next();
+  void seekingRequested(std::chrono::microseconds timestamp);
 
  private:
   void init(Qt::Orientation orientation);
 
   QBoxLayout* m_layout;
   std::unique_ptr<VideoButtons> m_videoButtons;
-  std::unique_ptr<QAbstractSlider> m_progressSlider;
+  std::unique_ptr<SliderDirectJump> m_progressSlider;
 };
 
 #endif  // WIDGETS_VIDEOCONTROLS_H

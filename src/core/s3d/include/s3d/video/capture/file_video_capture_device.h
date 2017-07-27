@@ -48,6 +48,7 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   void WaitUntilDone();
   void StopAndDeAllocate() override;
   VideoCaptureFormat DefaultFormat() override;
+  void MaybeSeekTo(std::chrono::microseconds timestamp);
 
  protected:
   void OnAllocateAndStart();
@@ -64,6 +65,8 @@ class FileVideoCaptureDevice : public VideoCaptureDevice {
   virtual std::unique_ptr<TimedLoop> GetTimedLoop();
 
   virtual std::unique_ptr<TimedLoop::Client> GetTimedLoopClient();
+
+  std::mutex seekingMutex_;
 
   // belongs to capture thread
   std::string filePath_;

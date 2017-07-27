@@ -22,15 +22,19 @@ bool RawUYVYFileParser::Initialize(VideoCaptureFormat* format) {
   return createStream(fileStream_);
 }
 
-bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>& frame) {
-  frame.resize(frameSize_);
+bool RawUYVYFileParser::GetNextFrame(std::vector<uint8_t>* frame) {
+  if (frame == nullptr) {
+    return false;
+  }
+
+  frame->resize(frameSize_);
   auto res = s3d::file_io::read_n_bytes(*fileStream_, frameUYVY_.size(), std::begin(frameUYVY_));
   if (res) {
     using s3d::compression::UYVY;
     using s3d::compression::BGR;
     using s3d::compression::color_conversion;
     color_conversion<UYVY, BGR> cvt;
-    cvt(std::begin(frameUYVY_), std::end(frameUYVY_), std::begin(frame));
+    cvt(std::begin(frameUYVY_), std::end(frameUYVY_), std::begin(*frame));
   }
   return res;
 }
