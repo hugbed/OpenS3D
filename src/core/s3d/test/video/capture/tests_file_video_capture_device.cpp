@@ -208,3 +208,50 @@ TEST(file_video_capture_device, file_parser_file_not_found) {
                std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(device.DefaultFormat(), FakeFileVideoCaptureDevice::FakeParserFormat());
 }
+
+class FakeFileVideoCaptureDeviceNoParser : public FileVideoCaptureDevice {
+ public:
+  FakeFileVideoCaptureDeviceNoParser() : FileVideoCaptureDevice("") {}
+
+  // gtest callback mock is not thread friendly
+  void StartCaptureThread() override { FileVideoCaptureDevice::OnAllocateAndStart(); }
+
+  std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
+    return nullptr;
+  }
+
+  std::unique_ptr<TimedLoop> GetTimedLoop() override { return std::make_unique<FakeTimedLoop>(); }
+
+  static VideoCaptureFormat FakeParserFormat() { return {}; }
+};
+
+TEST(file_video_capture_device, no_file_parser_does_not_crash) {
+  FakeFileVideoCaptureDeviceNoParser device;
+  auto fileParserPtr = new FakeVideoFileParser({});
+  auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+
+  device.AllocateAndStart(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get());
+}
+
+TEST(file_video_capture_device, no_file_parser_default_format) {
+  FakeFileVideoCaptureDeviceNoParser device;
+  auto fileParserPtr = new FakeVideoFileParser({});
+  auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
+
+  device.AllocateAndStart(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get());
+  EXPECT_EQ(device.DefaultFormat(), VideoCaptureFormat{});
+}
+
+class FakeVideoCaptureDevice : public VideoCaptureDevice {
+  gsl::owner<FakeVideoCaptureDevice*> clone() const override {
+    return new FakeVideoCaptureDevice();
+  }
+  void AllocateAndStart(const VideoCaptureFormat& format, Client* client) override {}
+  void StopAndDeAllocate() override {}
+  VideoCaptureFormat DefaultFormat() override { return {}; }
+};
+
+TEST(video_capture_device, maybe_seek_does_nothing) {
+  FakeVideoCaptureDevice device;
+  device.MaybeSuspend();
+}

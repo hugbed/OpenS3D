@@ -55,3 +55,15 @@ TEST(raw_uyvy_file_parser, create_stream_file_not_found) {
   RawUYVYFileParser parser("file_not_found.txt");
   EXPECT_FALSE(parser.Initialize(&format));
 }
+
+TEST(video_file_parser, seek_to_frame_does_nothing) {
+  VideoCaptureFormat format;
+  RawUYVYFileParser parser("file_not_found.txt");
+  parser.SeekToFrame({});
+}
+
+TEST(raw_uyvy_file_parser, get_next_frame_nullptr_returns_false) {
+  VideoCaptureFormat format;
+  FakeRawUYVYFileParser parser("somepath.txt");
+  EXPECT_FALSE(parser.GetNextFrame(nullptr));
+}
