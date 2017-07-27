@@ -253,5 +253,5 @@ class FakeVideoCaptureDevice : public VideoCaptureDevice {
 
 TEST(video_capture_device, maybe_seek_does_nothing) {
   FakeVideoCaptureDevice device;
-  device.MaybeSuspend();
+  device.MaybeSeekTo({});
 }

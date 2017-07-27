@@ -2,7 +2,6 @@
 
 #include <QBoxLayout>
 #include <QSlider>
-#include <QDebug>
 
 #include "sliderdirectjump.h"
 #include "videobuttons.h"

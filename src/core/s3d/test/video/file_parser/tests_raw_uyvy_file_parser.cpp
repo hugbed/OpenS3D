@@ -11,7 +11,8 @@ class FakeRawUYVYFileParser : public RawUYVYFileParser {
   explicit FakeRawUYVYFileParser(std::string filePath) : RawUYVYFileParser(std::move(filePath)) {}
 
   bool createStream(std::unique_ptr<std::istream>& stream) override {
-    std::unique_ptr<std::istream> s = std::make_unique<std::istringstream>("hello");
+    std::string frameString(1920 * 1080 * 3, 'A');
+    std::unique_ptr<std::istream> s = std::make_unique<std::istringstream>(frameString);
     stream = std::move(s);
     return true;
   }

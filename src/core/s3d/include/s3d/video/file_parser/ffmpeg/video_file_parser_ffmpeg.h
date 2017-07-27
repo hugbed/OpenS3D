@@ -28,6 +28,10 @@ class VideoFileParserFFmpeg : public VideoFileParser {
   std::chrono::microseconds VideoDuration() override;
 
  private:
+  int timestampToFrameNumber(std::chrono::microseconds timestamp, float fps);
+  std::chrono::microseconds frameNumberToTimestamp(int frameNumber, float fps);
+
+
   std::string filename_;
   std::chrono::microseconds currentTimestamp_;
   size_t currentFrameID_{0};
@@ -35,8 +39,8 @@ class VideoFileParserFFmpeg : public VideoFileParser {
 
   Demuxer demuxer_;
   std::unique_ptr<Decoder> decoder_;
-  std::unique_ptr<Seeker> seeker_;
   std::unique_ptr<Scaler> scaler_;
+  std::unique_ptr<Seeker> seeker_;
 };
 
 #endif  // S3D_VIDEO_FILE_PARSER_FFMPEG_VIDEO_FILE_PARSER_FFMPEG_H
