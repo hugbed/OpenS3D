@@ -28,7 +28,7 @@ class SliderDirectJump : public QSlider {
   int computeHorizontalValue(int x);
 
  private:
-  bool m_isPressed;
+  bool m_isPressed{false};
   int m_handleWidth{0};
 };
 
