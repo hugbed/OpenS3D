@@ -120,6 +120,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
         m_videoSynchronizer->resume();
       }
     });
+    connect(ui->videoControls, &VideoControls::first, [this] {
+      if (m_videoSynchronizer != nullptr) {
+        m_videoSynchronizer->seekTo(std::chrono::microseconds{0});
+      }
+    });
     connect(ui->videoControls, &VideoControls::pause, [this] {
       if (m_videoSynchronizer != nullptr) {
         m_videoSynchronizer->pause();

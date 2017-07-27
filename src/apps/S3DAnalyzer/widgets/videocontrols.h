@@ -22,6 +22,7 @@ class VideoControls : public QWidget {
   void updateSlider(std::chrono::microseconds timestamp);
 
  signals:
+  void first();
   void play();
   void pause();
   void next();

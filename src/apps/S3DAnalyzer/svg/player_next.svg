@@ -15,10 +15,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="next.svg"
-   inkscape:export-filename="/home/jon/ClionProjects/OpenS3D/src/apps/S3DAnalyzer/style/icons/next.png"
-   inkscape:export-xdpi="25.4"
-   inkscape:export-ydpi="25.4">
+   sodipodi:docname="player_next.svg"
+   inkscape:export-filename="/home/jon/ClionProjects/OpenS3D/src/apps/S3DAnalyzer/style/icons/player_next.png"
+   inkscape:export-xdpi="19.050001"
+   inkscape:export-ydpi="19.050001">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,16 +28,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="44.326873"
-     inkscape:cy="-3.0690006"
+     inkscape:zoom="1.979899"
+     inkscape:cx="-67.389877"
+     inkscape:cy="21.338422"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="mm"
      inkscape:window-width="1855"
      inkscape:window-height="1056"
-     inkscape:window-x="65"
+     inkscape:window-x="1985"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +59,7 @@
      transform="translate(0,-967.32283)">
     <g
        id="g4209"
-       transform="matrix(-1,0,0,1,91.248151,-0.08519041)"
+       transform="matrix(-1,0,0,1,91.248151,-100.08519)"
        inkscape:export-filename="/home/jon/ClionProjects/OpenS3D/src/apps/S3DAnalyzer/style/icons/previous.png"
        inkscape:export-xdpi="25.4"
        inkscape:export-ydpi="25.4">
@@ -78,7 +78,7 @@
          style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1" />
     </g>
     <g
-       transform="translate(-6.2087807,99.91481)"
+       transform="translate(-6.2087807,-0.08519)"
        id="g4281">
       <path
          id="path4283"

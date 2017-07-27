@@ -49,19 +49,20 @@ VideoButtons::VideoButtons(QWidget* parent) : QWidget(parent) {
   auto layout = std::make_unique<QHBoxLayout>();
 
   m_firstButton = createButton(":icons/player_first.png");
-  m_previousButton = createButton(":icons/player_previous.png");
+  //  m_previousButton = createButton(":icons/player_previous.png");
   m_playButton = createButton(":icons/player_play.png");
   m_nextButton = createButton(":icons/player_next.png");
-  m_lastButton = createButton(":icons/player_last.png");
+  //  m_lastButton = createButton(":icons/player_last.png");
 
+  connect(m_firstButton.get(), &QAbstractButton::clicked, this, &VideoButtons::first);
   connect(m_playButton.get(), &QAbstractButton::clicked, this, &VideoButtons::togglePlayingState);
   connect(m_nextButton.get(), &QAbstractButton::clicked, this, &VideoButtons::next);
 
   layout->addWidget(m_firstButton.get());
-  layout->addWidget(m_previousButton.get());
+  //  layout->addWidget(m_previousButton.get());
   layout->addWidget(m_playButton.get());
   layout->addWidget(m_nextButton.get());
-  layout->addWidget(m_lastButton.get());
+  //  layout->addWidget(m_lastButton.get());
 
   // give up layout ownership
   m_layout = layout.get();
@@ -77,6 +78,7 @@ std::unique_ptr<QAbstractButton> VideoButtons::createButton(const QString& iconF
   QPixmap pixmap(iconFileName);
   QIcon buttonIcon(pixmap);
   button->setIcon(buttonIcon);
+  button->setIconSize(pixmap.size());
   button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   button->setCheckable(false);
 
