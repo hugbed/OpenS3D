@@ -27,7 +27,7 @@ class VideoFileParserFFmpeg : public VideoFileParser {
   std::chrono::microseconds CurrentFrameTimestamp() override;
   std::chrono::microseconds VideoDuration() override;
 
- private:
+ private
   // todo: move this somewhere else
   static int timestampToFrameNumber(std::chrono::microseconds timestamp, float fps);
   static std::chrono::microseconds frameNumberToTimestamp(int frameNumber, float fps);

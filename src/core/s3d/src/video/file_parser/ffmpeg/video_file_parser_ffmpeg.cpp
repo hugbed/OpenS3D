@@ -104,6 +104,7 @@ std::chrono::microseconds VideoFileParserFFmpeg::VideoDuration() {
   return duration_;
 }
 
+
 // static
 int VideoFileParserFFmpeg::timestampToFrameNumber(std::chrono::microseconds timestamp, float fps) {
   return static_cast<int>(fps * static_cast<float>(timestamp.count()) /
