@@ -39,7 +39,7 @@ class FakeVideoFileParser : public VideoFileParser {
     *format = fakeFileFormat_;
     return true;
   }
-  bool GetNextFrame(std::vector<uint8_t>& frame) override { return true; }
+  bool GetNextFrame(std::vector<uint8_t>* frame) override { return true; }
 
   VideoCaptureFormat fakeFileFormat_;
 };
@@ -49,7 +49,7 @@ class MockVideoFileParser : public VideoFileParser {
   MockVideoFileParser() : VideoFileParser() {}
   gsl::owner<VideoFileParser*> clone() const override { return new MockVideoFileParser; }
   MOCK_METHOD1(Initialize, bool(VideoCaptureFormat* format));
-  MOCK_METHOD1(GetNextFrame, bool(std::vector<uint8_t>& frame));
+  MOCK_METHOD1(GetNextFrame, bool(std::vector<uint8_t>* frame));
 };
 
 class FakeFileVideoCaptureDevice : public FileVideoCaptureDevice {
