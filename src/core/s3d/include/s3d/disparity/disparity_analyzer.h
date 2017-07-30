@@ -4,6 +4,8 @@
 #include "s3d/image/image_container.h"
 #include "s3d/utilities/rule_of_five.h"
 
+#include <vector>
+
 namespace s3d {
 
 // todo: this is DisparityAnalyzerSparse, could have a DisparityAnalyzerDense

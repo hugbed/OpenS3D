@@ -2,6 +2,8 @@
 
 #include "s3d/utilities/stats.h"
 
+#include <numeric>
+
 TEST(percentile, first_last_elements) {
   std::vector<float> v;
   v.resize(100);

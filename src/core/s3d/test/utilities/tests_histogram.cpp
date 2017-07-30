@@ -2,6 +2,8 @@
 
 #include "s3d/utilities/histogram.h"
 
+#include <numeric>
+
 using s3d::Histogram;
 
 TEST(histogram, min) {

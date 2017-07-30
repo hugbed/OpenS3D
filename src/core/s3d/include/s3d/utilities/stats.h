@@ -1,6 +1,8 @@
 #ifndef S3D_UTILITIES_STATS_H
 #define S3D_UTILITIES_STATS_H
 
+#include <cmath>
+
 namespace s3d {
 
 // percentile in range [0.0f, 1.0f]

@@ -5,6 +5,8 @@
 
 #include "Eigen/Dense"
 
+#include <vector>
+
 namespace s3d {
 
 class MatchFinder {
