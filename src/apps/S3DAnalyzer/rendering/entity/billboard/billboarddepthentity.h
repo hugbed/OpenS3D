@@ -18,8 +18,10 @@ class BillboardDepthEntity : public BillboardDisparityEntity {
   std::vector<Vertex> verticesFromPoints(const std::vector<Eigen::Vector2f>& points,
                                          const std::vector<float>& intensities) override;
   void setViewerContext(s3d::ViewerContext* context);
+  void setDisplayZoom(float displayZoom);
 
  private:
+  float m_displayZoom{1.0f};
   std::vector<Eigen::Vector2f> m_points;
   std::vector<float> m_intensities;
   float m_horizontalShift{0.0};

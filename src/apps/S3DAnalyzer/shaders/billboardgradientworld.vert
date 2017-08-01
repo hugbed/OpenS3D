@@ -26,7 +26,7 @@ const float steps[6] = float[](
 void main()
 {
     // x : image column, y : depth (meters) with shift
-    vec3 screenPos = uPointToScreen * vec3(position.x - 1, position.y, 1);
+    vec3 screenPos = uPointToScreen * vec3(position.x, position.y, 1);
 
     gl_Position = vec4(screenPos.x, -screenPos.y, screenPos.z, 1.0);
     gl_PointSize = uPointSize;

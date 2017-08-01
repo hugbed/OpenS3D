@@ -38,34 +38,40 @@ QPoint ViewerCentricEntity::worldToWidget(QPointF pos, int deviceWidth, int devi
     return {};
   }
 
-  float y = static_cast<float>(pos.x());
-  float z = static_cast<float>(pos.y());
-  return {static_cast<int>(worldYToWidgetX(y, deviceWidth)),
+  auto y = static_cast<float>(pos.x());
+  auto z = static_cast<float>(pos.y());
+  return {static_cast<int>(worldYToWidgetX(y, deviceWidth, deviceHeight)),
           static_cast<int>(worldZToWidgetY(z, deviceHeight))};
 }
 
-float ViewerCentricEntity::worldYToWidgetX(float y, int deviceWidth) {
-  float widthRatio =
-      static_cast<float>(deviceWidth) / static_cast<float>(m_viewerContext->screenWidth);
-  return y * widthRatio;
+float ViewerCentricEntity::worldYToWidgetX(float y, int deviceWidth, int deviceHeight) {
+  return y * m_displayZoom * getPixelToWorldRatio(deviceHeight) + deviceWidth / 2;
 }
 
 float ViewerCentricEntity::worldZToWidgetY(float z, int deviceHeight) {
-  float heightRatio = static_cast<float>(deviceHeight) / (m_maxZ - m_minZ);
-  return (z - m_minZ) * heightRatio;
+  float widgetY = (z - m_minZ) * getPixelToWorldRatio(deviceHeight);
+  auto mid = static_cast<float>(deviceHeight) / 2.0f;
+  widgetY = (widgetY - mid) * m_displayZoom + mid;
+  return widgetY;
+}
+
+float ViewerCentricEntity::getPixelToWorldRatio(float deviceHeight) {
+  return deviceHeight / (m_maxZ - m_minZ);
 }
 
 void ViewerCentricEntity::drawScreen(QPainter* painter) {
-  QPoint rectTopLeft =
-      worldToWidget({0, 0}, painter->device()->width(), painter->device()->height());
+  float halfScreenWidth = m_viewerContext->screenWidth;
 
-  painter->drawRect(
-      QRect(rectTopLeft + QPoint(0, 5), rectTopLeft + QPoint(painter->device()->width(), -5)));
+  QPoint rectMidLeft =
+      worldToWidget({-halfScreenWidth, 0}, painter->device()->width(), painter->device()->height());
+  QPoint rectMidRight =
+      worldToWidget({halfScreenWidth, 0}, painter->device()->width(), painter->device()->height());
+
+  painter->drawRect(QRect(rectMidLeft + QPoint(0, 5), rectMidRight + QPoint(0, -5)));
 }
 
 void ViewerCentricEntity::drawViewer(QPainter* painter) {
-  float leftEyeY =
-      m_viewerContext->screenWidth / 2.0f - m_viewerContext->interocularDistance / 2.0f;
+  float leftEyeY = -m_viewerContext->interocularDistance / 2.0f;
   float rightEyeY = leftEyeY + m_viewerContext->interocularDistance;
   float eyeZ = m_viewerContext->viewerDistance;
 
@@ -76,4 +82,8 @@ void ViewerCentricEntity::drawViewer(QPainter* painter) {
 
   painter->drawEllipse(leftEyePos, 5, 5);
   painter->drawEllipse(rightEyePos, 5, 5);
+}
+
+void ViewerCentricEntity::setDisplayZoom(float displayZoom) {
+  m_displayZoom = displayZoom;
 }

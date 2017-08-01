@@ -53,7 +53,7 @@ class EntityManager {
   template <class T>
   void createEntity(DisplayMode mode, std::unique_ptr<T> t);
 
-  void adjustDepthRanges();
+  void adjustDepthRanges(float deviceWidth, float deviceHeight);
   void drawCurrentEntity(QPaintDevice* paintDevice, float aspectRatio);
   void drawCurrentBillboard(QPaintDevice* paintDevice, float aspectRatio);
 

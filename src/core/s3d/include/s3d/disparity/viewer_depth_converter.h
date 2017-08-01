@@ -26,6 +26,9 @@ class ViewerDepthConverter {
 
   float computePerceivedDepth(float disparityPercent);
 
+  // 0 in the middle of the image
+  float computeHorizontalPosition(float imageX);
+
   std::vector<float> computeHorizontalPositions(const std::vector<Point>& imagePoints);
 
   void setViewerContext(gsl::not_null<ViewerContext*> viewerContext);

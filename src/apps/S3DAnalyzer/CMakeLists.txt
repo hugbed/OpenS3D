@@ -37,15 +37,19 @@ set ( SOURCES
   widgets/videocontrols.cpp
   widgets/videobuttons.cpp
   widgets/sliderdirectjump.cpp
+  widgets/settingswidget.cpp
+  widgets/settingsdialog.cpp
   worker/videosynchronizer.cpp
   utilities/depthintensitygradient.cpp)
 
 set ( MOC_HEADERS
  mainwindow.h
+ widgets/settingswidget.h
 )
 
 set ( UIS
  mainwindow.ui
+ widgets/settingswidget.ui
 )
 
 set ( RESOURCES

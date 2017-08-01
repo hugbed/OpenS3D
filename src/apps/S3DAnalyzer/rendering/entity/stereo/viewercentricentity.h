@@ -23,12 +23,14 @@ class ViewerCentricEntity : public StereoImageEntity {
   void setTextureRight(QOpenGLTexture* texture) override;
   void setViewerContext(gsl::not_null<s3d::ViewerContext*> viewerContext);
   void setDepthRangeMeters(float min, float max);
+  void setDisplayZoom(float displayZoom);
 
   void draw(QPaintDevice* paintDevice) override;
 
   QPoint worldToWidget(QPointF pos, int deviceWidth, int deviceHeight);
-  float worldYToWidgetX(float y, int deviceWidth);
+  float worldYToWidgetX(float y, int deviceWidth, int deviceHeight);
   float worldZToWidgetY(float z, int deviceHeight);
+  float getPixelToWorldRatio(float deviceHeight);
 
  private:
   void drawScreen(QPainter* painter);
@@ -36,6 +38,7 @@ class ViewerCentricEntity : public StereoImageEntity {
 
  private:
   s3d::ViewerContext* m_viewerContext{};
+  float m_displayZoom{1.0f};
 
   float m_minZ{-1.0f};
   float m_maxZ{3.0f};

@@ -13,8 +13,8 @@ BillboardDepthEntity::BillboardDepthEntity(const QSize& imageSize)
 void BillboardDepthEntity::setDisplayRange(float minX, float maxX, float minY, float maxY) {
   float w = maxX - minX;
   float h = maxY - minY;
-  float values[] = {2.0f / w, 0.0f, -1.0f, 0.0f, 2.0f / h, -2.0f * minY / h - 1.0f,
-                    0.0f,     0.0f, 1.0f};
+  float values[] = {2.0f * m_displayZoom / w, 0.0f, 0.0f, 0.0f, 2.0f * m_displayZoom / h,
+                    -2.0f * minY / h - 1.0f,  0.0f, 0.0f, 1.0f};
   setPointToScreen(QMatrix3x3(values));
 }
 
@@ -47,14 +47,18 @@ std::vector<Vertex> BillboardDepthEntity::verticesFromPoints(
   ViewerDepthConverter converter(viewerContext);
   std::vector<Vertex> vertices(points.size());
   for (auto i = 0ULL; i < points.size(); ++i) {
-    const auto& point = points[i];
+    const auto& position = converter.computeHorizontalPosition(points[i].x());
     auto intensity = intensities[i];
     auto d = converter.computePerceivedDepth(intensity + m_horizontalShift * 100);
-    vertices[i] = Vertex(QVector3D(point.x(), d, 1.0f), intensity);
+    vertices[i] = Vertex(QVector3D(position, d, 1.0f), intensity);
   }
   return vertices;
 }
 
 void BillboardDepthEntity::setViewerContext(ViewerContext* context) {
   viewerContext = context;
+}
+
+void BillboardDepthEntity::setDisplayZoom(float displayZoom) {
+  m_displayZoom = displayZoom;
 }

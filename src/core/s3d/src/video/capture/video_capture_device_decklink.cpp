@@ -282,8 +282,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       Size(rgbFrameLeft_->GetWidth(),
            rgbFrameLeft_->GetHeight()),  // todo: cast or something (int64_t-> int)
       -1.0f,                             // Frame rate is not needed for captured data callback.
-      pixelFormat,
-      captureFormat_.stereo3D);
+      pixelFormat, captureFormat_.stereo3D);
 
   if (frameReceiver_ != nullptr) {
     if (captureFormat_.stereo3D) {

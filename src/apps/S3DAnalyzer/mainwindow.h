@@ -14,6 +14,7 @@ class OpenGLWindow;
 class DepthAnalyzer;
 class RenderingContext;
 class VideoSynchronizer;
+class SettingsDialog;
 
 namespace s3d {
 class DisparityAnalyzerSTAN;
@@ -31,6 +32,7 @@ class MainWindow : public QMainWindow {
 
  protected:
   void mouseDoubleClickEvent(QMouseEvent* e) override;
+  void closeEvent(QCloseEvent* event) override;
 
  private:
   EntityManager::DisplayMode getCurrentDisplayMode();
@@ -50,6 +52,7 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
 
   UserSettings m_userSettings{};
+  std::unique_ptr<SettingsDialog> m_settingsDialog;
 
   Ui::MainWindow* ui;
 };

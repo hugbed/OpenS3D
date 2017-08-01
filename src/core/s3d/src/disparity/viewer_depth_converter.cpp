@@ -64,6 +64,12 @@ std::vector<float> ViewerDepthConverter::computeHorizontalPositions(
   return horizontalPos_;
 }
 
+float ViewerDepthConverter::computeHorizontalPosition(float imageX) {
+  auto imageWidth = static_cast<float>(viewerContext_->imageWidthPixels);
+  float S_r = viewerContext_->screenWidth / imageWidth;
+  return S_r * (imageX - imageWidth / 2.0f);
+}
+
 void ViewerDepthConverter::setViewerContext(gsl::not_null<ViewerContext*> viewerContext) {
   viewerContext_ = viewerContext;
 }

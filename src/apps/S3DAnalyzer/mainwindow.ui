@@ -113,8 +113,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>763</width>
-     <height>22</height>
+     <width>773</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDisplay_Mode">
@@ -135,6 +135,8 @@
     </property>
     <addaction name="actionOpen_Left_Image"/>
     <addaction name="actionOpen_Right_Image"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuOverlay">
     <property name="title">
@@ -210,6 +212,11 @@
   <action name="actionFormat">
    <property name="text">
     <string>Format</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings...</string>
    </property>
   </action>
   <actiongroup name="display3DMode">

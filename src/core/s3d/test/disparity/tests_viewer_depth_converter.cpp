@@ -45,3 +45,24 @@ TEST(viewer_depth_converter, depth_positions_correct) {
   EXPECT_NEAR(positions[0].x(), screenWidth / 2.0f, 0.01f);
   EXPECT_NEAR(positions[0].y(), 2.66f, 0.01f);
 }
+
+TEST(viewer_depth_converter, horizontal_position_half_pixels_is_0) {
+  constexpr float screenWidth = 1.0f;
+  constexpr int imgWidth = 1920;
+  ViewerContext context(2.0, 0.05, screenWidth, imgWidth);
+
+  float imagePoint = imgWidth / 2;
+
+  ViewerDepthConverter converter(&context);
+  auto position = converter.computeHorizontalPosition(imagePoint);
+  EXPECT_NEAR(position, 0.0f, 0.01f);
+}
+
+TEST(viewer_depth_converter, horizontal_position_0_is_half_screen_width) {
+  constexpr float screenWidth = 1.0f;
+  constexpr int imgWidth = 1920;
+  ViewerContext context(2.0, 0.05, screenWidth, imgWidth);
+  ViewerDepthConverter converter(&context);
+  EXPECT_NEAR(converter.computeHorizontalPosition(0), -screenWidth / 2.0f, 0.01f);
+  EXPECT_NEAR(converter.computeHorizontalPosition(imgWidth), screenWidth / 2.0f, 0.01f);
+}

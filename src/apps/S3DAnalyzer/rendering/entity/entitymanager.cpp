@@ -50,13 +50,12 @@ EntityManager::EntityManager(TextureManager* textureManager) : m_textureManager{
 
 EntityManager::~EntityManager() = default;
 
-// todo: compute viewportSize from parent?
 void EntityManager::drawEntities(QPaintDevice* paintDevice) {
   // update outdated textures
   if (m_textureManager->imagesDirty()) {
     m_textureManager->update();
   }
-  adjustDepthRanges();
+  adjustDepthRanges(paintDevice->width(), paintDevice->height());
   auto deviceSize = QSize(paintDevice->width(), paintDevice->height());
   auto ratio = m_textureManager->computeImageAspectRatio(deviceSize);
   drawCurrentEntity(paintDevice, ratio);
@@ -104,14 +103,16 @@ void EntityManager::displayModeChanged(EntityManager::DisplayMode mode) {
 void EntityManager::setUserSettings(UserSettings* userSettings) {
   m_userSettings = userSettings;
   m_billboardWorld->setViewerContext(&userSettings->viewerContext);
+  m_billboardWorld->setDisplayZoom(userSettings->viewerDisplayZoom);
   m_viewerCentricEntity->setViewerContext(&userSettings->viewerContext);
+  m_viewerCentricEntity->setDisplayZoom(userSettings->viewerDisplayZoom);
 }
 
 EntityManager::DisplayMode EntityManager::getDisplayMode() const {
   return m_currentMode;
 }
 
-void EntityManager::adjustDepthRanges() {
+void EntityManager::adjustDepthRanges(float deviceWidth, float deviceHeight) {
   // adjust ranges
   auto& viewerContext = m_userSettings->viewerContext;
 
@@ -124,11 +125,12 @@ void EntityManager::adjustDepthRanges() {
     maxY = -minY;
     m_viewerCentricEntity->setDepthRangeMeters(minY, maxY);
     m_viewerCentricEntity->setViewerContext(&viewerContext);
-  }
 
-  if (m_currentBillboard != nullptr) {
-    m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(),  //
-                                        minY, maxY);
+    float maxX = deviceWidth / 2.0f / m_viewerCentricEntity->getPixelToWorldRatio(deviceHeight);
+    float minX = -maxX;
+    m_currentBillboard->setDisplayRange(minX, maxX, minY, maxY);
+  } else if (m_currentBillboard != nullptr) {
+    m_currentBillboard->setDisplayRange(0, m_textureManager->getTextureSize().width(), minY, maxY);
   }
 }
 

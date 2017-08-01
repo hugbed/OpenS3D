@@ -5,18 +5,40 @@
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
 #include "worker/videosynchronizer.h"
+#include "widgets/settingsdialog.h"
 #include "utilities/cv.h"
 
 #include <s3d/cv/disparity/disparity_analyzer_stan.h>
 
-#include <QDebug>
-#include <QMouseEvent>
 #include <QFileDialog>
-
+#include <QMouseEvent>
 #include <QtGui/QPainter>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      m_settingsDialog{std::make_unique<SettingsDialog>()} {
   ui->setupUi(this);
+
+  m_settingsDialog->setUserSettings(&m_userSettings);
+
+  connect(m_settingsDialog.get(), &SettingsDialog::settingsUpdated,
+          [this](UserSettings userSettings) {
+            // keep image width in pixels that is not controlled by the user
+            int imageWidthPixels = m_userSettings.viewerContext.imageWidthPixels;
+            m_userSettings = std::move(userSettings);
+            m_userSettings.viewerContext.imageWidthPixels = imageWidthPixels;
+
+            m_currentContext->entityManager->setUserSettings(&m_userSettings);
+            m_currentContext->openGLRenderer->updateScene();
+
+            ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
+                                             m_userSettings.displayParameters.displayRangeMax);
+            ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
+                                              m_userSettings.displayParameters.expectedRangeMax);
+
+            ui->convergenceIndicator->update();
+          });
 
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(20.0f);
 
@@ -24,6 +46,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
                                    m_userSettings.displayParameters.displayRangeMax);
   ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
                                     m_userSettings.displayParameters.expectedRangeMax);
+
+  connect(ui->actionSettings, &QAction::triggered, [this] { m_settingsDialog->show(); });
 
   connect(ui->actionOpen_Left_Image, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
@@ -101,6 +125,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_widgetRenderingContext = std::make_unique<RenderingContext>(ui->openGLWidget);
     m_currentContext = m_widgetRenderingContext.get();
     m_currentContext->entityManager->setUserSettings(&m_userSettings);
+    m_userSettings.viewerContext.imageWidthPixels =
+        m_currentContext->textureManager->getTextureSize().width();
 
     connect(ui->videoControls, &VideoControls::play, [this] {
       if (m_videoSynchronizer == nullptr) {
@@ -114,6 +140,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
                   m_currentContext->textureManager->setImages(imgLeft, imgRight);
                   m_currentContext->doneCurrent();
                   ui->videoControls->updateSlider(timestamp);
+                  m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
                   computeAndUpdate();
                 });
       } else {
@@ -269,4 +296,10 @@ EntityManager::DisplayMode MainWindow::getCurrentDisplayMode() {
   }
 
   return EntityManager::DisplayMode::Anaglyph;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+  if (m_settingsDialog != nullptr) {
+    m_settingsDialog->close();
+  }
 }
