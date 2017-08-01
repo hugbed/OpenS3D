@@ -17,7 +17,7 @@ as textures.
 
 ## Preview
 
-![Preview](http://imgur.com/iVtXtv3)
+![Preview](http://i.imgur.com/iVtXtv3.png)
 
 ## Building
 
