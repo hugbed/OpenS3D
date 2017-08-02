@@ -32,9 +32,9 @@ class RangeWidget : public QWidget {
   std::unique_ptr<RangeBar> m_rangeBar;
   std::unique_ptr<QLabel> m_maxValueLabel;
 
-  float m_minValue;
-  float m_maxValue;
-  float m_shift;
+  float m_minValue{0.0f};
+  float m_maxValue{0.0f};
+  float m_shift{0.0f};
 };
 
 #endif  // WIDGETS_DEPTHWIDGET_H
