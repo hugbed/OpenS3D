@@ -17,6 +17,11 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
   auto featuresLeft = findFeatures(*imgIt++);
   auto featuresRight = findFeatures(*imgIt++);
 
+  if (featuresLeft.descriptors.rows == 0 || featuresRight.descriptors.rows == 0 ||
+      featuresLeft.keypoints.size() == 0 || featuresRight.keypoints.size() == 0) {
+    return {{}, {}};
+  }
+
   auto matches = matchFeatures(featuresLeft, featuresRight);
 
   if (matches.empty()) {

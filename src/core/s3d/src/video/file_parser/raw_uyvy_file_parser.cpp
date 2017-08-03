@@ -48,7 +48,7 @@ const std::string& RawUYVYFileParser::getFilePath() const {
 bool RawUYVYFileParser::createStream(std::unique_ptr<std::istream>& stream) {
   auto fileStream = std::make_unique<std::ifstream>(filePath_, std::ios::binary);
   bool res = fileStream->is_open();
-  stream = std::move(stream);
+  stream = std::move(fileStream);
   return res;
 }
 

@@ -1,4 +1,4 @@
-#include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 #include "s3d/video/capture/file_video_capture_device_factory.h"
 
 #include <iostream>

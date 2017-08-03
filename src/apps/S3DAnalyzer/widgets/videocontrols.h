@@ -20,12 +20,13 @@ class VideoControls : public QWidget {
 
   void setDuration(std::chrono::microseconds duration);
   void updateSlider(std::chrono::microseconds timestamp);
+  void pause();
 
  signals:
-  void first();
-  void play();
-  void pause();
-  void next();
+  void firstClicked();
+  void playClicked();
+  void pauseClicked();
+  void nextClicked();
   void seekingRequested(std::chrono::microseconds timestamp);
 
  private:

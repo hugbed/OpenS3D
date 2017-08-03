@@ -20,10 +20,10 @@ void VideoControls::init(Qt::Orientation orientation) {
   m_videoButtons = std::make_unique<VideoButtons>(this);
   m_progressSlider = std::make_unique<SliderDirectJump>(Qt::Horizontal, this);
 
-  connect(m_videoButtons.get(), &VideoButtons::first, this, &VideoControls::first);
-  connect(m_videoButtons.get(), &VideoButtons::play, this, &VideoControls::play);
-  connect(m_videoButtons.get(), &VideoButtons::pause, this, &VideoControls::pause);
-  connect(m_videoButtons.get(), &VideoButtons::next, this, &VideoControls::next);
+  connect(m_videoButtons.get(), &VideoButtons::firstClicked, this, &VideoControls::firstClicked);
+  connect(m_videoButtons.get(), &VideoButtons::playClicked, this, &VideoControls::playClicked);
+  connect(m_videoButtons.get(), &VideoButtons::pauseClicked, this, &VideoControls::pauseClicked);
+  connect(m_videoButtons.get(), &VideoButtons::nextClicked, this, &VideoControls::nextClicked);
   connect(m_progressSlider.get(), &SliderDirectJump::valueClicked,
           [this](int value) { emit seekingRequested(std::chrono::microseconds{value}); });
 
@@ -59,4 +59,8 @@ void VideoControls::updateSlider(std::chrono::microseconds timestamp) {
   if (not m_progressSlider->isPressed()) {
     m_progressSlider->setValue(timestamp.count());
   }
+}
+
+void VideoControls::pause() {
+  m_videoButtons->pause();
 }

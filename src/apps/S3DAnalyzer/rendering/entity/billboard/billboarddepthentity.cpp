@@ -10,11 +10,17 @@ using s3d::ViewerDepthConverter;
 BillboardDepthEntity::BillboardDepthEntity(const QSize& imageSize)
     : BillboardDisparityEntity(imageSize) {}
 
-void BillboardDepthEntity::setDisplayRange(float minX, float maxX, float minY, float maxY) {
-  float w = maxX - minX;
-  float h = maxY - minY;
-  float values[] = {2.0f * m_displayZoom / w, 0.0f, 0.0f, 0.0f, 2.0f * m_displayZoom / h,
-                    -2.0f * minY / h - 1.0f,  0.0f, 0.0f, 1.0f};
+void BillboardDepthEntity::setDisplayRange(float /*minX*/, float /*maxX*/, float minY, float maxY) {
+  float pixelToWorldRatio = maxY - minY;
+  float values[] = {2.0f * m_displayZoom / pixelToWorldRatio,
+                    0.0f,
+                    0.0f,
+                    0.0f,
+                    2.0f * m_displayZoom / pixelToWorldRatio,
+                    -2.0f * minY / pixelToWorldRatio - 1.0f,
+                    0.0f,
+                    0.0f,
+                    1.0f};
   setPointToScreen(QMatrix3x3(values));
 }
 

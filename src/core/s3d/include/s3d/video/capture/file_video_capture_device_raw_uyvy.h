@@ -16,23 +16,23 @@ namespace s3d {
 
 class VideoFileParser;
 
-class FileVideoCaptureDevice : public VideoCaptureDevice {
+class FileVideoCaptureDeviceRawUYVY : public VideoCaptureDevice {
  public:
   class CaptureLoopClient : public s3d::TimedLoop::Client {
    public:
-    explicit CaptureLoopClient(FileVideoCaptureDevice* captureDevice);
+    explicit CaptureLoopClient(FileVideoCaptureDeviceRawUYVY* captureDevice);
     gsl::owner<s3d::TimedLoop::Client*> clone() const override;
     void callback() override;
 
    private:
-    gsl::not_null<FileVideoCaptureDevice*> captureDevice_;
+    gsl::not_null<FileVideoCaptureDeviceRawUYVY*> captureDevice_;
   };
 
-  explicit FileVideoCaptureDevice(std::string filePath);
+  explicit FileVideoCaptureDeviceRawUYVY(std::string filePath);
 
   gsl::owner<VideoCaptureDevice*> clone() const override;
 
-  ~FileVideoCaptureDevice() override;
+  ~FileVideoCaptureDeviceRawUYVY() override;
 
   void AllocateAndStart(const VideoCaptureFormat& format,
                         VideoCaptureDevice::Client* client) override;

@@ -1,14 +1,14 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 #include "s3d/video/file_parser/video_file_parser.h"
 
 using s3d::TimedLoop;
 using s3d::VideoFileParser;
 using s3d::VideoCaptureFormat;
 using s3d::VideoPixelFormat;
-using s3d::FileVideoCaptureDevice;
+using s3d::FileVideoCaptureDeviceRawUYVY;
 using s3d::VideoCaptureDevice;
 using s3d::Size;
 
@@ -60,12 +60,12 @@ class MockVideoFileParser : public VideoFileParser {
   MOCK_METHOD1(GetNextFrame, bool(std::vector<uint8_t>* frame));
 };
 
-class FakeFileVideoCaptureDevice : public FileVideoCaptureDevice {
+class FakeFileVideoCaptureDevice : public FileVideoCaptureDeviceRawUYVY {
  public:
-  FakeFileVideoCaptureDevice() : FileVideoCaptureDevice("") {}
+  FakeFileVideoCaptureDevice() : FileVideoCaptureDeviceRawUYVY("") {}
 
   // gtest callback mock is not thread friendly
-  void StartCaptureThread() override { FileVideoCaptureDevice::OnAllocateAndStart(); }
+  void StartCaptureThread() override { FileVideoCaptureDeviceRawUYVY::OnAllocateAndStart(); }
 
   std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
     return std::make_unique<FakeVideoFileParser>(FakeParserFormat());
@@ -94,9 +94,10 @@ class FakeVideoCaptureDeviceClient : public VideoCaptureDevice::Client {
   VideoCaptureFormat lastFormat_;
 };
 
-class MockCaptureLoopClient : public FileVideoCaptureDevice::CaptureLoopClient {
+class MockCaptureLoopClient : public FileVideoCaptureDeviceRawUYVY::CaptureLoopClient {
  public:
-  explicit MockCaptureLoopClient(FileVideoCaptureDevice* device) : CaptureLoopClient(device) {}
+  explicit MockCaptureLoopClient(FileVideoCaptureDeviceRawUYVY* device)
+      : CaptureLoopClient(device) {}
   MOCK_METHOD0(callback, void());
 };
 
@@ -108,7 +109,7 @@ TEST(file_video_capture_device, start_starts_loop_and_stop_stops_loop) {
   using ::testing::_;
   EXPECT_CALL(*timedLoopPtr, start(_, _));
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
                std::unique_ptr<MockTimedLoop>(timedLoopPtr));
   EXPECT_CALL(*timedLoopPtr, stop());
@@ -123,7 +124,7 @@ TEST(file_video_capture_device, pause_resume_calls_loop) {
   using ::testing::_;
   EXPECT_CALL(*timedLoopPtr, start(_, _));
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
                std::unique_ptr<MockTimedLoop>(timedLoopPtr));
 
@@ -160,7 +161,7 @@ TEST(file_video_capture_device, on_capture_task_requests_next_frame) {
   using ::testing::_;
   EXPECT_CALL(*fileParserPtr, GetNextFrame(_));
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<MockVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());
 }
@@ -174,7 +175,7 @@ TEST(file_video_capture_device, on_capture_task_calls_on_incoming_data_with_file
 
   using ::testing::_;
   device.Start(format, videoCaptureClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(format), std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(videoCaptureClientPtr->lastFormat_, format);
 }
@@ -198,7 +199,7 @@ TEST(file_video_capture_device, default_format) {
 
   using ::testing::_;
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(device.DefaultFormat(), FakeFileVideoCaptureDevice::FakeParserFormat());
@@ -211,18 +212,18 @@ TEST(file_video_capture_device, file_parser_file_not_found) {
 
   using ::testing::_;
   device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
-               std::make_unique<FileVideoCaptureDevice::CaptureLoopClient>(&device),
+               std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(device.DefaultFormat(), FakeFileVideoCaptureDevice::FakeParserFormat());
 }
 
-class FakeFileVideoCaptureDeviceNoParser : public FileVideoCaptureDevice {
+class FakeFileVideoCaptureDeviceNoParser : public FileVideoCaptureDeviceRawUYVY {
  public:
-  FakeFileVideoCaptureDeviceNoParser() : FileVideoCaptureDevice("") {}
+  FakeFileVideoCaptureDeviceNoParser() : FileVideoCaptureDeviceRawUYVY("") {}
 
   // gtest callback mock is not thread friendly
-  void StartCaptureThread() override { FileVideoCaptureDevice::OnAllocateAndStart(); }
+  void StartCaptureThread() override { FileVideoCaptureDeviceRawUYVY::OnAllocateAndStart(); }
 
   std::unique_ptr<VideoFileParser> GetVideoFileParser(const std::string& filePath) override {
     return nullptr;

@@ -21,12 +21,10 @@ class VideoFrame {
       : data_(std::move(data)), timestamp_(timestamp) {}
 
   static size_t AllocationSize(VideoPixelFormat format, const Size& size);
+  static size_t NumBytesPerPixel(VideoPixelFormat format);
 
   std::vector<uint8_t> data_;
   std::chrono::microseconds timestamp_;
-
- private:
-  static size_t NumBytesPerPixel(VideoPixelFormat format);
 };
 
 }  // namespace s3d

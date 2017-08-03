@@ -26,6 +26,8 @@ class MovingAverage {
 
   const T& getSmoothingFactor() const { return smoothingFactor_; }
 
+  void setSmoothingFactor(T t) { smoothingFactor_ = t; }
+
  private:
   T value_;
   T smoothingFactor_;

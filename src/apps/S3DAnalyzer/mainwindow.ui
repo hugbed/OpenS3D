@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>670</height>
+    <width>771</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,7 +113,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>773</width>
+     <width>771</width>
      <height>25</height>
     </rect>
    </property>
@@ -133,8 +133,12 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen_Left_Image"/>
-    <addaction name="actionOpen_Right_Image"/>
+    <addaction name="actionOpenLeftImage"/>
+    <addaction name="actionOpenRightImage"/>
+    <addaction name="actionOpenLeftVideo"/>
+    <addaction name="actionOpenRightVideo"/>
+    <addaction name="actionOpenImage"/>
+    <addaction name="actionOpenVideo"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
    </widget>
@@ -152,20 +156,29 @@
      <property name="title">
       <string>3D Format</string>
      </property>
-     <addaction name="actionSeparate_files"/>
-     <addaction name="actionSide_by_side_H"/>
-     <addaction name="actionSide_by_side_V"/>
+     <addaction name="actionFormatSeparateFiles"/>
+     <addaction name="actionFormatSideBySide"/>
+     <addaction name="actionFormatAboveBelow"/>
+     <addaction name="separator"/>
+     <addaction name="actionFormatHalfResolution"/>
     </widget>
     <addaction name="menuFormat"/>
     <addaction name="separator"/>
-    <addaction name="actionImage"/>
-    <addaction name="actionVideo"/>
-    <addaction name="actionLive"/>
+    <addaction name="actionInputImage"/>
+    <addaction name="actionInputVideo"/>
+    <addaction name="actionInputLive"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionEnableComputations"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuInput_Mode"/>
    <addaction name="menuDisplay_Mode"/>
    <addaction name="menuOverlay"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -183,15 +196,15 @@
    <addaction name="actionViewer"/>
    <addaction name="separator"/>
    <addaction name="actionFeatures"/>
-   <addaction name="actionCompute"/>
+   <addaction name="actionEnableComputations"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionOpen_Left_Image">
+  <action name="actionOpenLeftImage">
    <property name="text">
     <string>Open Left Image...</string>
    </property>
   </action>
-  <action name="actionOpen_Right_Image">
+  <action name="actionOpenRightImage">
    <property name="text">
     <string>Open Right Image...</string>
    </property>
@@ -217,6 +230,45 @@
   <action name="actionSettings">
    <property name="text">
     <string>Settings...</string>
+   </property>
+  </action>
+  <action name="actionEnableComputations">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Compute</string>
+   </property>
+  </action>
+  <action name="actionFormatHalfResolution">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Half resolution</string>
+   </property>
+  </action>
+  <action name="actionOpenLeftVideo">
+   <property name="text">
+    <string>Open Left Video...</string>
+   </property>
+  </action>
+  <action name="actionOpenRightVideo">
+   <property name="text">
+    <string>Open Right Video...</string>
+   </property>
+  </action>
+  <action name="actionOpenVideo">
+   <property name="text">
+    <string>Open Video...</string>
+   </property>
+  </action>
+  <action name="actionOpenImage">
+   <property name="text">
+    <string>Open Image...</string>
    </property>
   </action>
   <actiongroup name="display3DMode">
@@ -281,7 +333,15 @@
    </action>
   </actiongroup>
   <actiongroup name="">
-   <action name="actionImage">
+   <action name="actionInputImage">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>Image</string>
+    </property>
+   </action>
+   <action name="actionInputVideo">
     <property name="checkable">
      <bool>true</bool>
     </property>
@@ -289,18 +349,10 @@
      <bool>true</bool>
     </property>
     <property name="text">
-     <string>Image</string>
-    </property>
-   </action>
-   <action name="actionVideo">
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="text">
      <string>Video</string>
     </property>
    </action>
-   <action name="actionLive">
+   <action name="actionInputLive">
     <property name="checkable">
      <bool>true</bool>
     </property>
@@ -310,7 +362,7 @@
    </action>
   </actiongroup>
   <actiongroup name="">
-   <action name="actionSeparate_files">
+   <action name="actionFormatSeparateFiles">
     <property name="checkable">
      <bool>true</bool>
     </property>
@@ -321,20 +373,20 @@
      <string>Separate files</string>
     </property>
    </action>
-   <action name="actionSide_by_side_H">
+   <action name="actionFormatSideBySide">
     <property name="checkable">
      <bool>true</bool>
     </property>
     <property name="text">
-     <string>Side-by-side (H)</string>
+     <string>Side-by-side</string>
     </property>
    </action>
-   <action name="actionSide_by_side_V">
+   <action name="actionFormatAboveBelow">
     <property name="checkable">
      <bool>true</bool>
     </property>
     <property name="text">
-     <string>Side-by-side (V)</string>
+     <string>Above Below</string>
     </property>
    </action>
   </actiongroup>

@@ -1,11 +1,11 @@
 #ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FFMPEG_H
 #define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_FFMPEG_H
 
-#include <s3d/video/capture/file_video_capture_device.h>
+#include <s3d/video/capture/file_video_capture_device_raw_uyvy.h>
 
 namespace s3d {
 
-class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDevice {
+class FileVideoCaptureDeviceFFmpeg : public FileVideoCaptureDeviceRawUYVY {
  public:
   explicit FileVideoCaptureDeviceFFmpeg(const std::string& filename);
 

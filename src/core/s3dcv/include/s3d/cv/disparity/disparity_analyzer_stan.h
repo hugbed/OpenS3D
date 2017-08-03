@@ -37,6 +37,8 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
                       float widthRatio,
                       float resizeRatio);
 
+    void setSmoothingFactor(double smoothingFactor);
+
     s3d::MovingAverage<double> minDisparityPercent{};
     s3d::MovingAverage<double> maxDisparityPercent{};
     s3d::MovingAverage<double> roll{};
@@ -57,15 +59,14 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   bool analyze(const cv::Mat& left, const cv::Mat& right);
 
   bool analyze(const Image<uint8_t>& left, const Image<uint8_t>& right) override;
-  const std::vector<float>& getDisparitiesPercent() override { return results.disparitiesPercent; }
-  const std::vector<Eigen::Vector2f>& getFeaturePoints() override { return results.featurePoints; }
+  const std::vector<float>& getDisparitiesPercent() const override;
+  const std::vector<Eigen::Vector2f>& getFeaturePoints() const override;
+  void setSmoothingFactor(double smoothingFactor);
 
   // outputs
   Results results;
 
  private:
-  void resizeImage(gsl::not_null<cv::Mat*> mat, float ratio);
-
   MatchFinder::Matches findMatches(const cv::Mat& left, const cv::Mat& right);
 
   bool enoughMatches(size_t nbOfMatches);

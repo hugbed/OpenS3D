@@ -28,15 +28,7 @@ void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
 
 namespace s3d {
 
-DisparityAnalyzerSTAN::Results::Results()
-    : minDisparityPercent{},
-      maxDisparityPercent{},
-      roll{},
-      vertical{},
-      panKeystone{},
-      tiltKeystone{},
-      tiltOffset{},
-      zoom{} {}
+DisparityAnalyzerSTAN::Results::Results() = default;
 
 DisparityAnalyzerSTAN::Results::Results(double smoothingFactor)
     : minDisparityPercent{0.0, smoothingFactor},
@@ -80,6 +72,17 @@ void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vecto
   }
 }
 
+void DisparityAnalyzerSTAN::Results::setSmoothingFactor(double smoothingFactor) {
+  minDisparityPercent.setSmoothingFactor(smoothingFactor);
+  maxDisparityPercent.setSmoothingFactor(smoothingFactor);
+  roll.setSmoothingFactor(smoothingFactor);
+  vertical.setSmoothingFactor(smoothingFactor);
+  panKeystone.setSmoothingFactor(smoothingFactor);
+  tiltKeystone.setSmoothingFactor(smoothingFactor);
+  tiltOffset.setSmoothingFactor(smoothingFactor);
+  zoom.setSmoothingFactor(smoothingFactor);
+}
+
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN() : results{} {}
 
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN(double smoothingFactor) : results{smoothingFactor} {}
@@ -99,8 +102,8 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 
   // resize images
   constexpr float resizeRatio = 2.0f;
-  resizeImage(&leftOrig, resizeRatio);
-  resizeImage(&rightOrig, resizeRatio);
+  resizeMat(&leftOrig, 1.0f / resizeRatio);
+  resizeMat(&rightOrig, 1.0f / resizeRatio);
 
   // find matches
   auto matches = findMatches(leftOrig, rightOrig);
@@ -120,7 +123,13 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 
   // solve F with RANSAC
   auto ransac = createRansac(Size(leftOrig.rows, leftOrig.cols));
-  auto model = ransac(pts1h, pts2h);
+
+  RansacAlgorithmSTAN::ModelType model;
+  try {
+    model = ransac(pts1h, pts2h);
+  } catch (const s3d::NotEnoughInliersFound& /*exception*/) {
+    return false;
+  }
 
   // filter inliers
   std::vector<Eigen::Vector3d> bestPts1h, bestPts2h;
@@ -147,6 +156,17 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   return true;
 }
 
+const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
+  return results.disparitiesPercent;
+}
+const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePoints() const {
+  return results.featurePoints;
+}
+
+void DisparityAnalyzerSTAN::setSmoothingFactor(double smoothingFactor) {
+  results.setSmoothingFactor(smoothingFactor);
+}
+
 s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left,
                                                              const cv::Mat& right) {
   // find matches
@@ -160,12 +180,6 @@ s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left
 bool DisparityAnalyzerSTAN::enoughMatches(size_t nbOfMatches) {
   return nbOfMatches >=
          s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 3;
-}
-
-void DisparityAnalyzerSTAN::resizeImage(gsl::not_null<cv::Mat*> mat, float ratio) {
-  float cols = mat->cols;
-  float rows = mat->rows;
-  cv::resize(*mat, *mat, cv::Size2f(cols / ratio, rows / ratio), cv::INTER_AREA);
 }
 
 DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size imageSize) {

@@ -2,7 +2,7 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include "s3d/video/capture/file_video_capture_device.h"
+#include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 
 #include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/utilities/file_io.h"
@@ -10,31 +10,32 @@
 
 namespace s3d {
 
-FileVideoCaptureDevice::CaptureLoopClient::CaptureLoopClient(FileVideoCaptureDevice* captureDevice)
+FileVideoCaptureDeviceRawUYVY::CaptureLoopClient::CaptureLoopClient(
+    FileVideoCaptureDeviceRawUYVY* captureDevice)
     : captureDevice_{captureDevice} {}
 
-gsl::owner<TimedLoop::Client*> FileVideoCaptureDevice::CaptureLoopClient::clone() const {
+gsl::owner<TimedLoop::Client*> FileVideoCaptureDeviceRawUYVY::CaptureLoopClient::clone() const {
   return new CaptureLoopClient(captureDevice_);
 }
 
-void FileVideoCaptureDevice::CaptureLoopClient::callback() {
+void FileVideoCaptureDeviceRawUYVY::CaptureLoopClient::callback() {
   captureDevice_->OnCaptureTask();
 }
 
-FileVideoCaptureDevice::FileVideoCaptureDevice(std::string filePath)
+FileVideoCaptureDeviceRawUYVY::FileVideoCaptureDeviceRawUYVY(std::string filePath)
     : filePath_(std::move(filePath)) {}
 
-gsl::owner<VideoCaptureDevice*> FileVideoCaptureDevice::clone() const {
-  return new FileVideoCaptureDevice(filePath_);
+gsl::owner<VideoCaptureDevice*> FileVideoCaptureDeviceRawUYVY::clone() const {
+  return new FileVideoCaptureDeviceRawUYVY(filePath_);
 }
 
-FileVideoCaptureDevice::~FileVideoCaptureDevice() {
+FileVideoCaptureDeviceRawUYVY::~FileVideoCaptureDeviceRawUYVY() {
   // todo: is this the correct behaviour?
   WaitUntilDone();
 }
 
-void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
-                                              VideoCaptureDevice::Client* client) {
+void FileVideoCaptureDeviceRawUYVY::AllocateAndStart(const VideoCaptureFormat& format,
+                                                     VideoCaptureDevice::Client* client) {
   captureFormat_ = format;
   auto captureLoopClient = GetTimedLoopClient();
   auto fileParser = GetVideoFileParser(filePath_);
@@ -43,11 +44,11 @@ void FileVideoCaptureDevice::AllocateAndStart(const VideoCaptureFormat& format,
         GetTimedLoop());
 }
 
-void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
-                                   VideoCaptureDevice::Client* client,
-                                   std::unique_ptr<TimedLoop::Client> captureLoopClient,
-                                   std::unique_ptr<VideoFileParser> fileParser,
-                                   std::unique_ptr<TimedLoop> timedLoop) {
+void FileVideoCaptureDeviceRawUYVY::Start(const VideoCaptureFormat& format,
+                                          VideoCaptureDevice::Client* client,
+                                          std::unique_ptr<TimedLoop::Client> captureLoopClient,
+                                          std::unique_ptr<VideoFileParser> fileParser,
+                                          std::unique_ptr<TimedLoop> timedLoop) {
   captureFormat_ = format;
   client_ = client;
   captureLoopClient_ = std::move(captureLoopClient);
@@ -56,51 +57,54 @@ void FileVideoCaptureDevice::Start(const VideoCaptureFormat& format,
   StartCaptureThread();
 }
 
-void FileVideoCaptureDevice::WaitUntilDone() {
+void FileVideoCaptureDeviceRawUYVY::WaitUntilDone() {
   if (captureThread_ != nullptr) {
     captureThread_->join();
     captureThread_.reset();
   }
 }
 
-void FileVideoCaptureDevice::StopAndDeAllocate() {
+void FileVideoCaptureDeviceRawUYVY::StopAndDeAllocate() {
   if (captureLoop_ != nullptr) {
+    // if paused, resume to allow to stop
+    captureLoop_->resume();
     captureLoop_->stop();
+    WaitUntilDone();
   }
 }
 
-void FileVideoCaptureDevice::StartCaptureThread() {
-  captureThread_ = std::make_unique<std::thread>(&FileVideoCaptureDevice::OnAllocateAndStart, this);
+void FileVideoCaptureDeviceRawUYVY::StartCaptureThread() {
+  captureThread_ =
+      std::make_unique<std::thread>(&FileVideoCaptureDeviceRawUYVY::OnAllocateAndStart, this);
 }
 
-void FileVideoCaptureDevice::OnAllocateAndStart() {
+void FileVideoCaptureDeviceRawUYVY::OnAllocateAndStart() {
   // blocking loop start
   assert(captureFormat_.frameRate != 0.0f);
   auto loopDuration = s3d::seconds_to_us(1.0f / captureFormat_.frameRate);
   captureLoop_->start(captureLoopClient_.get(), loopDuration);
 }
 
-void FileVideoCaptureDevice::OnCaptureTask() {
+void FileVideoCaptureDeviceRawUYVY::OnCaptureTask() {
   // don't read while seeking
   std::unique_lock<std::mutex> l{seekingMutex_};
   if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(&videoFrame_)) {
     client_->OnIncomingCapturedData({videoFrame_}, captureFormat_,
                                     std::chrono::microseconds(0));  // todo: implement timestamp
-  } else {
-    StopAndDeAllocate();
   }
 }
 
 // todo: should this be done outside the class?
 // todo: should unit test this
-std::unique_ptr<VideoFileParser> FileVideoCaptureDevice::GetVideoFileParser(
+std::unique_ptr<VideoFileParser> FileVideoCaptureDeviceRawUYVY::GetVideoFileParser(
     const std::string& filePath) {
   // RawUYVY is default
   return std::unique_ptr<VideoFileParser>(std::make_unique<RawUYVYFileParser>(filePath));
 }
 
-bool FileVideoCaptureDevice::InitializeFileParser(std::unique_ptr<VideoFileParser>& fileParser,
-                                                  VideoCaptureFormat* format) {
+bool FileVideoCaptureDeviceRawUYVY::InitializeFileParser(
+    std::unique_ptr<VideoFileParser>& fileParser,
+    VideoCaptureFormat* format) {
   if (fileParser == nullptr || !fileParser->Initialize(format)) {
     fileParser.reset();
     return false;
@@ -108,32 +112,32 @@ bool FileVideoCaptureDevice::InitializeFileParser(std::unique_ptr<VideoFileParse
   return true;
 }
 
-std::unique_ptr<TimedLoop> FileVideoCaptureDevice::GetTimedLoop() {
+std::unique_ptr<TimedLoop> FileVideoCaptureDeviceRawUYVY::GetTimedLoop() {
   return std::make_unique<TimedLoopSleep>();
 }
 
-std::unique_ptr<TimedLoop::Client> FileVideoCaptureDevice::GetTimedLoopClient() {
+std::unique_ptr<TimedLoop::Client> FileVideoCaptureDeviceRawUYVY::GetTimedLoopClient() {
   return std::unique_ptr<TimedLoop::Client>(std::make_unique<CaptureLoopClient>(this));
 }
 
-VideoCaptureFormat FileVideoCaptureDevice::DefaultFormat() {
+VideoCaptureFormat FileVideoCaptureDeviceRawUYVY::DefaultFormat() {
   VideoCaptureFormat format{};
   auto parser = GetVideoFileParser(filePath_);
   InitializeFileParser(parser, &format);
   return format;
 }
 
-void FileVideoCaptureDevice::MaybeSuspend() {
+void FileVideoCaptureDeviceRawUYVY::MaybeSuspend() {
   VideoCaptureDevice::MaybeSuspend();
   captureLoop_->maybePause();
 }
 
-void FileVideoCaptureDevice::Resume() {
+void FileVideoCaptureDeviceRawUYVY::Resume() {
   VideoCaptureDevice::Resume();
   captureLoop_->resume();
 }
 
-void FileVideoCaptureDevice::MaybeSeekTo(std::chrono::microseconds timestamp) {
+void FileVideoCaptureDeviceRawUYVY::MaybeSeekTo(std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex> l{seekingMutex_};
   fileParser_->SeekToFrame(timestamp);
 }

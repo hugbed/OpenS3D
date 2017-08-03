@@ -40,6 +40,12 @@ class MainWindow : public QMainWindow {
   template <class Functor>
   void requestImageFilename(Functor f);
 
+  template <class Functor>
+  void requestVideoFilename(Functor f);
+
+  void updateInputMode();
+  void updateStereo3DFormat();
+
   // does this belong here
   std::unique_ptr<VideoSynchronizer> m_videoSynchronizer;
 
@@ -48,7 +54,7 @@ class MainWindow : public QMainWindow {
   RenderingContext* m_currentContext;
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
-  // cached info
+  double m_analyzerSmoothingFactor{20.0};
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
 
   UserSettings m_userSettings{};

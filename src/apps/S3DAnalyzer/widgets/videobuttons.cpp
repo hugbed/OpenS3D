@@ -54,9 +54,9 @@ VideoButtons::VideoButtons(QWidget* parent) : QWidget(parent) {
   m_nextButton = createButton(":icons/player_next.png");
   //  m_lastButton = createButton(":icons/player_last.png");
 
-  connect(m_firstButton.get(), &QAbstractButton::clicked, this, &VideoButtons::first);
+  connect(m_firstButton.get(), &QAbstractButton::clicked, this, &VideoButtons::firstClicked);
   connect(m_playButton.get(), &QAbstractButton::clicked, this, &VideoButtons::togglePlayingState);
-  connect(m_nextButton.get(), &QAbstractButton::clicked, this, &VideoButtons::next);
+  connect(m_nextButton.get(), &QAbstractButton::clicked, this, &VideoButtons::nextClicked);
 
   layout->addWidget(m_firstButton.get());
   //  layout->addWidget(m_previousButton.get());
@@ -86,16 +86,25 @@ std::unique_ptr<QAbstractButton> VideoButtons::createButton(const QString& iconF
 }
 
 void VideoButtons::togglePlayingState() {
-  m_isPlaying = not m_isPlaying;
   if (m_isPlaying) {
-    QPixmap pixmap(":icons/player_pause.png");
-    QIcon buttonIcon(pixmap);
-    m_playButton->setIcon(buttonIcon);
-    emit play();
+    pause();
+    emit pauseClicked();
   } else {
-    QPixmap pixmap(":icons/player_play.png");
-    QIcon buttonIcon(pixmap);
-    m_playButton->setIcon(buttonIcon);
-    emit pause();
+    play();
+    emit playClicked();
   }
+}
+
+void VideoButtons::pause() {
+  QPixmap pixmap(":icons/player_play.png");
+  QIcon buttonIcon(pixmap);
+  m_playButton->setIcon(buttonIcon);
+  m_isPlaying = false;
+}
+
+void VideoButtons::play() {
+  QPixmap pixmap(":icons/player_pause.png");
+  QIcon buttonIcon(pixmap);
+  m_playButton->setIcon(buttonIcon);
+  m_isPlaying = true;
 }

@@ -16,11 +16,14 @@ class VideoButtons : public QWidget {
 
   void togglePlayingState();
 
- signals:
-  void first();
   void play();
   void pause();
-  void next();
+
+ signals:
+  void firstClicked();
+  void playClicked();
+  void pauseClicked();
+  void nextClicked();
 
  private:
   std::unique_ptr<QAbstractButton> createButton(const QString& iconFileName);
