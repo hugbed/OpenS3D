@@ -20,12 +20,14 @@ MainWindow::MainWindow(QWidget* parent)
       m_settingsDialog{std::make_unique<SettingsDialog>(this)} {
   ui->setupUi(this);
 
-  ui->actionOpenLeftVideo->setVisible(true);
-  ui->actionOpenRightVideo->setVisible(true);
-  ui->actionOpenLeftImage->setVisible(false);
-  ui->actionOpenRightImage->setVisible(false);
+  ui->actionOpenLeftVideo->setVisible(false);
+  ui->actionOpenRightVideo->setVisible(false);
+  ui->actionOpenLeftImage->setVisible(true);
+  ui->actionOpenRightImage->setVisible(true);
   ui->actionOpenVideo->setVisible(false);
   ui->actionOpenImage->setVisible(false);
+
+  ui->videoControls->setVisible(false);
 
   m_settingsDialog->setUserSettings(&m_userSettings);
   m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
@@ -34,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   // todo: group connects in separate functions
   // this function is getting laaarge
 
-  m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(m_analyzerSmoothingFactor);
+  m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(1.0f);
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
@@ -442,8 +444,10 @@ void MainWindow::updateInputMode() {
   // no value smoothing for image
   if (ui->actionInputImage->isChecked()) {
     m_analyzer->setSmoothingFactor(1.0f);
+    ui->videoControls->setVisible(false);
   } else {
     m_analyzer->setSmoothingFactor(m_analyzerSmoothingFactor);
+    ui->videoControls->setVisible(true);
   }
 }
 

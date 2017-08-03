@@ -337,15 +337,15 @@
     <property name="checkable">
      <bool>true</bool>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
     <property name="text">
      <string>Image</string>
     </property>
    </action>
    <action name="actionInputVideo">
     <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
      <bool>true</bool>
     </property>
     <property name="text">
