@@ -12,7 +12,7 @@ class SettingsDialog : public QDialog {
   Q_OBJECT
 
  public:
-  SettingsDialog();
+  SettingsDialog(QWidget* parent = nullptr);
   void setUserSettings(gsl::not_null<UserSettings*> userSettings);
 
  signals:

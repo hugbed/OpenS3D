@@ -2,7 +2,8 @@
 
 #include <QVBoxLayout>
 
-SettingsDialog::SettingsDialog() : m_settingsWidget{std::make_unique<SettingsWidget>()} {
+SettingsDialog::SettingsDialog(QWidget* parent)
+    : QDialog(parent), m_settingsWidget{std::make_unique<SettingsWidget>()} {
   setWindowTitle("Settings");
 
   connect(m_settingsWidget.get(), &SettingsWidget::settingsUpdated,
