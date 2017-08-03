@@ -134,6 +134,7 @@ TEST(file_video_capture_device, pause_resume_calls_loop) {
   EXPECT_CALL(*timedLoopPtr, resume());
   device.Resume();
 
+  EXPECT_CALL(*timedLoopPtr, resume());
   EXPECT_CALL(*timedLoopPtr, stop());
   device.StopAndDeAllocate();
 }
