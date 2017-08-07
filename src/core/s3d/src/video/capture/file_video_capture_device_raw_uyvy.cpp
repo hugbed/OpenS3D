@@ -96,11 +96,13 @@ void FileVideoCaptureDeviceRawUYVY::OnCaptureTask() {
       std::chrono::microseconds seekingTimestamp{};
       fileParser_->SeekToFrame(seekingTimestamp_);
     }
-    frameReceived = fileParser_->GetNextFrame(&videoFrame_);
-    timestamp = fileParser_->CurrentFrameTimestamp();
+    if (fileParser_ != nullptr) {
+      frameReceived = fileParser_->GetNextFrame(&videoFrame_);
+      timestamp = fileParser_->CurrentFrameTimestamp();
+    }
   }
 
-  if (fileParser_ != nullptr && client_ != nullptr && frameReceived) {
+  if (client_ != nullptr && frameReceived) {
     client_->OnIncomingCapturedData({videoFrame_}, captureFormat_, timestamp);
   }
 }
