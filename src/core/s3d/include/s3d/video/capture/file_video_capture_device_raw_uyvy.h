@@ -49,6 +49,7 @@ class FileVideoCaptureDeviceRawUYVY : public VideoCaptureDevice {
   void StopAndDeAllocate() override;
   VideoCaptureFormat DefaultFormat() override;
   void MaybeSeekTo(std::chrono::microseconds timestamp) override;
+  void RequestRefreshFrame() override;
 
  protected:
   void OnAllocateAndStart();
@@ -66,6 +67,9 @@ class FileVideoCaptureDeviceRawUYVY : public VideoCaptureDevice {
 
   virtual std::unique_ptr<TimedLoop::Client> GetTimedLoopClient();
 
+  // seeking
+  std::atomic<bool> shouldSeek_{false};
+  std::chrono::microseconds seekingTimestamp_;
   std::mutex seekingMutex_;
 
   // belongs to capture thread

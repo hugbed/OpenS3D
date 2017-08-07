@@ -86,11 +86,22 @@ void FileVideoCaptureDeviceRawUYVY::OnAllocateAndStart() {
 }
 
 void FileVideoCaptureDeviceRawUYVY::OnCaptureTask() {
-  // don't read while seeking
-  std::unique_lock<std::mutex> l{seekingMutex_};
-  if (fileParser_ != nullptr && client_ != nullptr && fileParser_->GetNextFrame(&videoFrame_)) {
-    client_->OnIncomingCapturedData({videoFrame_}, captureFormat_,
-                                    std::chrono::microseconds(0));  // todo: implement timestamp
+  // not two can read/seek at once
+  bool frameReceived = false;
+  std::chrono::microseconds timestamp = {};
+  {
+    std::unique_lock<std::mutex> l(seekingMutex_);
+    if (shouldSeek_) {
+      shouldSeek_ = false;
+      std::chrono::microseconds seekingTimestamp{};
+      fileParser_->SeekToFrame(seekingTimestamp_);
+    }
+    frameReceived = fileParser_->GetNextFrame(&videoFrame_);
+    timestamp = fileParser_->CurrentFrameTimestamp();
+  }
+
+  if (fileParser_ != nullptr && client_ != nullptr && frameReceived) {
+    client_->OnIncomingCapturedData({videoFrame_}, captureFormat_, timestamp);
   }
 }
 
@@ -138,8 +149,17 @@ void FileVideoCaptureDeviceRawUYVY::Resume() {
 }
 
 void FileVideoCaptureDeviceRawUYVY::MaybeSeekTo(std::chrono::microseconds timestamp) {
-  std::unique_lock<std::mutex> l{seekingMutex_};
-  fileParser_->SeekToFrame(timestamp);
+  {
+    std::unique_lock<std::mutex> l{seekingMutex_};
+    seekingTimestamp_ = timestamp;
+    shouldSeek_ = true;
+  }
+  RequestRefreshFrame();
+}
+
+void FileVideoCaptureDeviceRawUYVY::RequestRefreshFrame() {
+  VideoCaptureDevice::RequestRefreshFrame();
+  OnCaptureTask();
 }
 
 }  // namespace s3d

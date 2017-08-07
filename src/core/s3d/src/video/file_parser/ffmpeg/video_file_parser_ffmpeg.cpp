@@ -55,9 +55,11 @@ void VideoFileParserFFmpeg::SeekToFrame(std::chrono::microseconds timestamp) {
   // find keypoint before timestamp
   if (frameDelta < 0) {
     auto seekTime = timestamp;
-    while (GetNextFrame(nullptr) &&  //
-           currentTimestamp_ - timestamp > frameDuration) {
-      seekTime -= frameDuration;
+    while (GetNextFrame(nullptr) &&  // up to 3 frame precision to seek at 0
+           currentTimestamp_ - timestamp > 3 * frameDuration) {
+      // prevent seeking too far before 0
+      auto nextSeekTime = seekTime - frameDuration;
+      seekTime = nextSeekTime;
       seeker_->seekTo(seekTime);
     }
   }
