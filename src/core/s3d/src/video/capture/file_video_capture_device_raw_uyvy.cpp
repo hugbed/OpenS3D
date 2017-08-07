@@ -93,7 +93,6 @@ void FileVideoCaptureDeviceRawUYVY::OnCaptureTask() {
     std::unique_lock<std::mutex> l(seekingMutex_);
     if (shouldSeek_) {
       shouldSeek_ = false;
-      std::chrono::microseconds seekingTimestamp{};
       fileParser_->SeekToFrame(seekingTimestamp_);
     }
     if (fileParser_ != nullptr) {
