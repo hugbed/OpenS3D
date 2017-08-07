@@ -40,6 +40,10 @@ set ( SOURCES
   widgets/settingswidget.cpp
   widgets/settingsdialog.cpp
   worker/videosynchronizer.cpp
+  worker/stereo_demuxer_qimage.cpp
+  worker/stereo_demuxer_qimage_side_by_side.cpp
+  worker/stereo_demuxer_qimage_above_below.cpp
+  worker/stereo_demuxer_factory_qimage.cpp
   utilities/depthintensitygradient.cpp)
 
 set ( MOC_HEADERS

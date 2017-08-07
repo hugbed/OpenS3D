@@ -14,7 +14,7 @@ class StereoDemuxerCVSideBySide : public StereoDemuxerCV {
 
   gsl::owner<StereoDemuxerCVSideBySide*> clone() const override;
 
-  std::pair<cv::Mat, cv::Mat> demuxCV(const cv::Mat& originalImg);
+  std::pair<cv::Mat, cv::Mat> demuxCV(const cv::Mat& originalImg) override;
 
   Size demuxedSize() const override;
   Stereo3DFormat getStereoFormat() const override;

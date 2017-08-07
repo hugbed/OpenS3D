@@ -23,17 +23,6 @@ std::pair<StereoDemuxer::ImageData, StereoDemuxer::ImageData> StereoDemuxerCV::d
   return {std::move(leftData), std::move(rightData)};
 }
 
-Size StereoDemuxerCV::demuxedSize() const {
-  if (halfResolution_) {
-    return frameSize_;
-  }
-  return {frameSize_.getWidth() / 2, frameSize_.getHeight()};
-}
-
-Stereo3DFormat StereoDemuxerCV::getStereoFormat() const {
-  return halfResolution_ ? Stereo3DFormat::SideBySideHalf : Stereo3DFormat::SideBySide;
-}
-
 void StereoDemuxerCV::setSize(Size size) {
   frameSize_ = size;
 }

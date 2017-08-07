@@ -5,6 +5,8 @@
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
 #include "worker/videosynchronizer.h"
+#include "worker/stereo_demuxer_factory_qimage.h"
+#include "worker/stereo_demuxer_qimage.h"
 #include "widgets/settingsdialog.h"
 #include "utilities/cv.h"
 
@@ -17,21 +19,15 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow),
-      m_settingsDialog{std::make_unique<SettingsDialog>(this)} {
+      m_settingsDialog{std::make_unique<SettingsDialog>(this)},
+      m_stereoDemuxerFactory{std::make_unique<StereoDemuxerFactoryQImage>()},
+      m_stereoDemuxer{} {
   ui->setupUi(this);
-
-  ui->actionOpenLeftVideo->setVisible(false);
-  ui->actionOpenRightVideo->setVisible(false);
-  ui->actionOpenLeftImage->setVisible(true);
-  ui->actionOpenRightImage->setVisible(true);
-  ui->actionOpenVideo->setVisible(false);
-  ui->actionOpenImage->setVisible(false);
-
-  ui->videoControls->setVisible(false);
 
   m_settingsDialog->setUserSettings(&m_userSettings);
   m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
-  m_videoSynchronizer->setStereoVideoFormat(s3d::Stereo3DFormat::Separate);
+  m_videoSynchronizer->setStereoVideoFormat(s3d::Stereo3DFormat::AboveBelow);
+  m_stereoFormat = s3d::Stereo3DFormat::AboveBelow;
 
   // todo: group connects in separate functions
   // this function is getting laaarge
@@ -42,6 +38,11 @@ MainWindow::MainWindow(QWidget* parent)
                                    m_userSettings.displayParameters.displayRangeMax);
   ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
                                     m_userSettings.displayParameters.expectedRangeMax);
+
+  ui->actionInputVideo->setChecked(true);
+  ui->actionFormatAboveBelow->setChecked(true);
+  updateInputMode();
+  updateStereo3DFormat();
 
   connect(m_settingsDialog.get(), &SettingsDialog::settingsUpdated,
           [this](UserSettings userSettings) {
@@ -88,11 +89,12 @@ MainWindow::MainWindow(QWidget* parent)
         ui->videoControls->pause();
       }
 
-      QImage img(filename);
-      m_currentContext->makeCurrent();
-      m_currentContext->textureManager->setImageLeft(img);
-      m_currentContext->doneCurrent();
-      m_currentContext->openGLRenderer->updateScene();
+      m_imageLeft = QImage(filename);
+      m_imageLeftReady = true;
+
+      if (m_imageLeftReady && m_imageRightReady) {
+        handleNewImagePair(m_imageLeft, m_imageRight, {});
+      }
     });
   });
 
@@ -103,27 +105,26 @@ MainWindow::MainWindow(QWidget* parent)
         ui->videoControls->pause();
       }
 
-      QImage img(filename);
-      m_currentContext->makeCurrent();
-      m_currentContext->textureManager->setImageRight(img);
-      m_currentContext->doneCurrent();
-      m_currentContext->openGLRenderer->updateScene();
+      m_imageRight = QImage(filename);
+      m_imageRightReady = true;
+
+      if (m_imageLeftReady && m_imageRightReady) {
+        handleNewImagePair(m_imageLeft, m_imageRight, {});
+      }
     });
   });
 
   connect(ui->actionOpenImage, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
+      QImage image(filename);
+
       if (m_videoSynchronizer != nullptr) {
         m_videoSynchronizer->stop();
         ui->videoControls->pause();
       }
 
-      // todo: DEMUX THIS IMAGE
-      QImage img(filename);
-      m_currentContext->makeCurrent();
-      m_currentContext->textureManager->setImageLeft(img);
-      m_currentContext->doneCurrent();
-      m_currentContext->openGLRenderer->updateScene();
+      m_imageLeft = image;
+      demuxImage(m_imageLeft);
     });
   });
 
@@ -233,13 +234,7 @@ MainWindow::MainWindow(QWidget* parent)
     connect(
         m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
         [this](const QImage& imgLeft, const QImage& imgRight, std::chrono::microseconds timestamp) {
-          m_currentContext->makeCurrent();
-          m_currentContext->textureManager->setImages(imgLeft, imgRight);
-          m_currentContext->doneCurrent();
-          ui->videoControls->updateSlider(timestamp);
-          m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
-          m_currentContext->entityManager->setUserSettings(&m_userSettings);
-          computeAndUpdate();
+          handleNewImagePair(imgLeft, imgRight, timestamp);
         });
 
     connect(ui->videoControls, &VideoControls::playClicked, [this] {
@@ -464,5 +459,58 @@ void MainWindow::updateStereo3DFormat() {
   }
   if (m_videoSynchronizer != nullptr) {
     m_videoSynchronizer->setStereoVideoFormat(format);
+    m_stereoFormat = format;
   }
+
+  // update image to demux
+  if (ui->actionInputImage->isChecked()) {
+    if (ui->actionFormatSeparateFiles->isChecked() && m_imageLeftReady && m_imageRightReady) {
+      handleNewImagePair(m_imageLeft, m_imageRight, {});
+    } else if (not ui->actionFormatSeparateFiles->isChecked()) {
+      demuxImage(m_imageLeft);
+    }
+  }
+}
+
+void MainWindow::handleNewImagePair(const QImage& imgLeft,
+                                    const QImage& imgRight,
+                                    std::chrono::microseconds timestamp) {
+  // don't display video frames when in image mode
+  if (ui->actionInputImage->isChecked() && timestamp != std::chrono::microseconds{}) {
+    return;
+  }
+
+  m_currentContext->makeCurrent();
+  m_currentContext->textureManager->setImages(imgLeft, imgRight);
+  m_currentContext->doneCurrent();
+  ui->videoControls->updateSlider(timestamp);
+  m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
+  m_currentContext->entityManager->setUserSettings(&m_userSettings);
+  computeAndUpdate();
+}
+
+bool MainWindow::stereoFormatChanged() {
+  return m_stereoDemuxer != nullptr && m_stereoDemuxer->getStereoFormat() != m_stereoFormat;
+}
+
+void MainWindow::updateStereoDemuxer() {
+  m_stereoDemuxer = m_stereoDemuxerFactory->createStereoDemuxerQImage(m_stereoFormat);
+}
+
+bool MainWindow::stereoDemuxerRequired() {
+  return m_stereoFormat != s3d::Stereo3DFormat::Separate;
+}
+
+void MainWindow::demuxImage(const QImage& image) {
+  m_imageLeftReady = false;
+  m_imageRightReady = false;
+
+  if (m_stereoDemuxer == nullptr && stereoDemuxerRequired() || stereoFormatChanged()) {
+    updateStereoDemuxer();
+  }
+
+  QImage imgLeft, imgRight;
+  std::tie(imgLeft, imgRight) = m_stereoDemuxer->demuxQImage(image);
+
+  handleNewImagePair(imgLeft, imgRight, {});
 }

@@ -6,6 +6,8 @@
 #include "utilities/usersettings.h"
 #include "rendering/entity/entitymanager.h"
 
+#include <s3d/video/video_types.h>
+
 namespace Ui {
 class MainWindow;
 }  // namespace Ui
@@ -15,9 +17,12 @@ class DepthAnalyzer;
 class RenderingContext;
 class VideoSynchronizer;
 class SettingsDialog;
+class StereoDemuxerQImage;
+class StereoDemuxerFactoryQImage;
 
 namespace s3d {
 class DisparityAnalyzerSTAN;
+class VideoCaptureFormat;
 }
 
 class MainWindow : public QMainWindow {
@@ -37,6 +42,10 @@ class MainWindow : public QMainWindow {
  private:
   EntityManager::DisplayMode getCurrentDisplayMode();
 
+  void handleNewImagePair(const QImage& imgLeft,
+                          const QImage& imgRight,
+                          std::chrono::microseconds timestamp);
+
   template <class Functor>
   void requestImageFilename(Functor f);
 
@@ -46,8 +55,21 @@ class MainWindow : public QMainWindow {
   void updateInputMode();
   void updateStereo3DFormat();
 
+  void demuxImage(const QImage& image);
+  bool stereoFormatChanged();
+  void updateStereoDemuxer();
+  bool stereoDemuxerRequired();
+
   // does this belong here
   std::unique_ptr<VideoSynchronizer> m_videoSynchronizer;
+  std::unique_ptr<StereoDemuxerQImage> m_stereoDemuxer;
+  std::unique_ptr<StereoDemuxerFactoryQImage> m_stereoDemuxerFactory;
+  s3d::Stereo3DFormat m_stereoFormat;
+
+  QImage m_imageLeft{};
+  QImage m_imageRight{};
+  bool m_imageLeftReady{false};
+  bool m_imageRightReady{false};
 
   std::unique_ptr<RenderingContext> m_widgetRenderingContext;
   std::unique_ptr<RenderingContext> m_windowRenderingContext;
