@@ -16,6 +16,48 @@
 #include <QMouseEvent>
 #include <QtGui/QPainter>
 
+namespace {
+std::pair<cv::Mat, cv::Mat> rectifyImages(const cv::Mat& left,
+                                          const cv::Mat& right,
+                                          const s3d::DisparityAnalyzerSTAN::Results& results) {
+  float ch_y = static_cast<double>(results.vertical);
+  float a_z = static_cast<double>(results.roll);
+  float a_f = static_cast<double>(results.zoom);
+  float f_a_x = static_cast<double>(results.tiltOffset);
+  float a_x_f = static_cast<double>(results.tiltKeystone);
+  float a_y_f = static_cast<double>(results.panKeystone);            // convergence
+  float ch_z_f = static_cast<double>(results.zParallaxDeformation);  // ch_z = 0.0
+
+  // to rotate around center
+  std::vector<float> Hoffdata{1.0f, 0.0f, static_cast<float>(left.cols / 2),
+                              0.0f, 1.0f, static_cast<float>(left.rows / 2),
+                              0.0f, 0.0f, 1.0f};
+
+  std::vector<float> HoffTdata{1.0f, 0.0f, -static_cast<float>(left.cols / 2),
+                               0.0f, 1.0f, -static_cast<float>(left.rows / 2),
+                               0.0f, 0.0f, 1.0f};
+
+  std::vector<float> Hdata{1.0f,  ch_y, 0.0f,  // f * ch_z = 0
+                           -ch_y, 1,    0,    -ch_z_f, 0, 1};
+
+  std::vector<float> Hpdata{1 - a_f,        a_z + ch_y, 0, -(a_z + ch_y), 1 - a_f, -f_a_x,
+                            a_y_f - ch_z_f, -a_x_f,     1};
+
+  cv::Mat HoffT(3, 3, CV_32F, Hoffdata.data());
+  cv::Mat Hoff(3, 3, CV_32F, HoffTdata.data());
+  cv::Mat H(3, 3, CV_32F, Hdata.data());
+  cv::Mat Hp(3, 3, CV_32F, Hpdata.data());
+
+  cv::Mat leftWarped = left.clone();
+  cv::Mat rightWarped = right.clone();
+
+  cv::warpPerspective(left, leftWarped, HoffT * H * Hoff, cv::Size(left.cols, left.rows));
+  cv::warpPerspective(right, rightWarped, HoffT * Hp * Hoff, right.size());
+
+  return {leftWarped, rightWarped};
+}
+}
+
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow),
@@ -131,12 +173,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenLeftVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setLeftFilename(filename.toUtf8().toStdString());
 
         // if both files set, load video
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -146,12 +187,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenRightVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setRightFilename(filename.toUtf8().toStdString());
 
         // if both files set, load video
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -161,11 +201,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setLeftFilename(filename.toUtf8().toStdString());
 
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -279,25 +318,42 @@ void MainWindow::computeAndUpdate() {
     QImage imageLeft = m_currentContext->textureManager->getImageLeft();
     QImage imageRight = m_currentContext->textureManager->getImageRight();
 
-    if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
-        (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) >
-            0.005) {
-      ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
-      ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
+    cv::Mat leftMat = QImage2Mat(imageLeft);
+    cv::Mat rightMat = QImage2Mat(imageRight);
 
-      ui->parametersListView->setParameter("Roll", m_analyzer->results.roll);
-      ui->parametersListView->setParameter("Vertical", m_analyzer->results.vertical);
-      ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.panKeystone);
-      ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.tiltKeystone);
-      ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
-      ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
+    cv::Mat leftMatGray, rightMatGray;
+    cv::cvtColor(leftMat, leftMatGray, CV_BGRA2GRAY);
+    cv::cvtColor(rightMat, rightMatGray, CV_BGRA2GRAY);
+
+    if (m_analyzer->analyze(leftMatGray, rightMatGray) &&
+        (static_cast<double>(m_analyzer->results.maxDisparityPercent) -
+         static_cast<double>(m_analyzer->results.minDisparityPercent)) > 0.005) {
+      ui->depthWidget->setLowValue(static_cast<double>(m_analyzer->results.minDisparityPercent));
+      ui->depthWidget->setHighValue(static_cast<double>(m_analyzer->results.maxDisparityPercent));
+
+      ui->parametersListView->setParameter(
+          "Roll", static_cast<double>(m_analyzer->results.roll) * 180.0 / 3.141592653589793);
+      ui->parametersListView->setParameter(
+          "Vertical",
+          static_cast<double>(m_analyzer->results.vertical) * 180.0 / 3.141592653589793);
+      ui->parametersListView->setParameter("Pan Keystone",
+                                           static_cast<double>(m_analyzer->results.panKeystone));
+      ui->parametersListView->setParameter("Tilt Keystone",
+                                           static_cast<double>(m_analyzer->results.tiltKeystone));
+      ui->parametersListView->setParameter("Tilt Offset",
+                                           static_cast<double>(m_analyzer->results.tiltOffset));
+      ui->parametersListView->setParameter("Zoom", static_cast<double>(m_analyzer->results.zoom));
+
+      cv::Mat leftRect, rightRect;
+      std::tie(leftRect, rightRect) = rectifyImages(leftMat, rightMat, m_analyzer->results);
 
       m_currentContext->makeCurrent();
+      m_currentContext->textureManager->setImages(Mat2QImage(leftRect), Mat2QImage(rightRect));
       m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePoints,
                                                    m_analyzer->results.disparitiesPercent);
       m_currentContext->doneCurrent();
-      updateConvergenceHint(m_analyzer->results.minDisparityPercent,
-                            m_analyzer->results.maxDisparityPercent);
+      updateConvergenceHint(static_cast<double>(m_analyzer->results.minDisparityPercent),
+                            static_cast<double>(m_analyzer->results.maxDisparityPercent));
     } else {
       m_currentContext->openGLRenderer->makeCurrent();
       m_currentContext->entityManager->setFeatures({}, {});
@@ -433,6 +489,10 @@ void MainWindow::updateInputMode() {
     } else if (ui->actionInputVideo->isChecked()) {
       ui->actionOpenLeftVideo->setVisible(true);
       ui->actionOpenRightVideo->setVisible(true);
+    } else if (ui->actionInputLive->isChecked()) {
+      // load live camera
+      ui->videoControls->setVisible(false);
+      m_videoSynchronizer->loadLiveCamera();
     }
   }
 

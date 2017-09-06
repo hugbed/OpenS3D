@@ -1,5 +1,8 @@
 #include "s3d/robust_estimation/ransac.h"
 
+// todo: remove this
+#include <iostream>
+
 namespace s3d {
 
 // Inliers
@@ -14,7 +17,9 @@ bool Ransac::Inliers::currentInliersAreBetter() const noexcept {
 
 void Ransac::Inliers::chooseCurrentInliersAsBest() {
   bestNb_ = currentNb_;
-  std::copy(std::begin(current_), std::end(current_), std::begin(best_));
+  bestDistances_ = distances_;
+  best_ = current_;
+//  std::copy(std::begin(current_), std::end(current_), std::begin(best_));
 }
 
 void Ransac::Inliers::updateBest() {
@@ -24,13 +29,17 @@ void Ransac::Inliers::updateBest() {
 }
 
 void Ransac::Inliers::updateCurrent(const Distances& distances, double distanceThreshold) {
+  distances_.clear();
   current_.clear();
   current_.resize(distances.size());
   currentNb_ = 0;
   for (auto i = 0ULL; i < distances.size(); ++i) {
     if (distances[i] < distanceThreshold) {
       current_[i] = true;
+      distances_.push_back(distances[i]);
       currentNb_++;
+    } else {
+      current_[i] = false;
     }
   }
 }
@@ -45,6 +54,10 @@ size_t Ransac::Inliers::getBestNb() const noexcept {
 
 const std::vector<bool>& Ransac::Inliers::getBest() const noexcept {
   return best_;
+}
+
+const std::vector<float>& Ransac::Inliers::getBestDistances() const noexcept {
+  return bestDistances_;
 }
 
 // Trials
@@ -77,6 +90,9 @@ void Ransac::Trials::updateNb(double currentNbInliers) {
 bool Ransac::Trials::reachedMaxNb() {
   bool hasReached = curNb_ >= maxNb_;
   curNb_++;
+
+  std::cout << "Iteration:" << curNb_ << std::endl;
+
   return hasReached;
 }
 }  // namespace s3d

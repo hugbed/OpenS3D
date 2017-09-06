@@ -9,6 +9,7 @@
 #include <s3d/video/stereo_demuxer/stereo_demuxer.h>
 #include <s3d/cv/video/stereo_demuxer/stereo_demuxer_cv_side_by_side.h>
 #include <s3d/cv/video/stereo_demuxer/stereo_demuxer_factory_cv.h>
+#include <s3d/video/capture/video_capture_device_decklink.h>
 
 VideoSynchronizer::VideoSynchronizer()
     : m_videoCaptureDevice{},
@@ -136,6 +137,9 @@ void VideoSynchronizer::loadStereoVideo() {
 void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
                                         const std::string& rightFile,
                                         s3d::Stereo3DFormat stereoFormat) {
+  // stop the video before loading the next
+  stop();
+
   // reset file state
   m_leftFileReady = false;
   m_rightFileReady = false;
@@ -168,6 +172,22 @@ void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
   // start paused
   m_videoCaptureDevice->MaybeSuspend();
   m_videoCaptureDevice->RequestRefreshFrame();
+}
+
+void VideoSynchronizer::loadLiveCamera() {
+  // stop the currently playing video
+  stop();
+
+  m_videoCaptureDevice =
+      std::make_unique<s3d::VideoCaptureDeviceDecklink>(s3d::VideoCaptureDeviceDescriptor({}));
+
+  // 1920x1080, 30fps, BGRA, 2D or 3D supported
+  s3d::VideoCaptureFormat format;
+  format.frameSize = {1920, 1080};
+  format.pixelFormat = s3d::VideoPixelFormat::BGRA;
+  format.frameRate = 30.0f;  // fps
+  format.stereo3D = true;
+  m_videoCaptureDevice->AllocateAndStart(format, this);
 }
 
 std::unique_ptr<QTimer> VideoSynchronizer::createAndStartTimer() {

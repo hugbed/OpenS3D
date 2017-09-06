@@ -15,7 +15,7 @@ file(GLOB_RECURSE SRC_FILES
     include/*.h
     src/*.cpp)
 
-add_library(${PROJECT_NAME} ${SRC_FILES})
+add_library(${PROJECT_NAME} ${SRC_FILES} src/utilities/rand.cpp)
 target_link_libraries(${PROJECT_NAME} gsl decklink_sdk ${FFMPEG_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 

@@ -21,7 +21,8 @@ void compute_disparities(const std::vector<Eigen::Vector2d>& positionsLeft,
   }
 };
 
-inline std::pair<double, double> disparity_range(const std::vector<double>& disparities) {
+template <class T>
+std::pair<T, T> disparity_range(const std::vector<T>& disparities) {
   auto min = s3d::percentile(disparities, 0.03);
   auto max = s3d::percentile(disparities, 0.97);
   return {min, max};

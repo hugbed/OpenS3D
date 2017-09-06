@@ -44,6 +44,12 @@ class MatchFinderCV : public MatchFinder {
   virtual cv::Ptr<cv::Feature2D> createFeatureDetector();
 
   virtual cv::Ptr<cv::DescriptorMatcher> createDescriptorMatcher();
+
+ private:
+  void displayKeypoints(const cv::Mat& imgLeft,
+                        const cv::Mat& imgRight,
+                        const MatchFinderCV::Features& featuresLeft,
+                        const MatchFinderCV::Features& featuresRight);
 };
 
 }  // namespace s3d

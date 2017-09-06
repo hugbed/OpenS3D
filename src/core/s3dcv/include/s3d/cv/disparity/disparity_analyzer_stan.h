@@ -24,7 +24,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
       s3d::RansacAlgorithm<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction>;
 
   struct Results {
-    explicit Results();
+    Results();
     explicit Results(double smoothingFactor);
 
     void updateParameters(double minDisparity,
@@ -32,22 +32,29 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
                           float widthRatio,
                           RansacAlgorithmSTAN::ModelType model);
 
-    void updatePoints(const std::vector<Eigen::Vector2d>& bestPts,
+    void updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
+                      const std::vector<Eigen::Vector2d>& bestPtsRight,
                       std::vector<double> disparities,
                       float widthRatio,
                       float resizeRatio);
 
     void setSmoothingFactor(double smoothingFactor);
 
+    const std::vector<Eigen::Vector2f> getFeaturePointsRight(float widthRatio) const;
+
+    StanAlignment getStanAlignment() const;
+
     s3d::MovingAverage<double> minDisparityPercent{};
     s3d::MovingAverage<double> maxDisparityPercent{};
     s3d::MovingAverage<double> roll{};
     s3d::MovingAverage<double> vertical{};
-    s3d::MovingAverage<double> panKeystone{};
-    s3d::MovingAverage<double> tiltKeystone{};
     s3d::MovingAverage<double> tiltOffset{};
+    s3d::MovingAverage<double> tiltKeystone{};
+    s3d::MovingAverage<double> panKeystone{};
     s3d::MovingAverage<double> zoom{};
+    s3d::MovingAverage<double> zParallaxDeformation{};
     std::vector<Eigen::Vector2f> featurePoints{};
+    std::vector<Eigen::Vector2f> featurePointsLeft{};
     std::vector<float> disparitiesPercent{};
   };
 

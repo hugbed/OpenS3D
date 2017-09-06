@@ -1,0 +1,10 @@
+#ifndef S3D_MULTIVIEW_RECTIFIER_H
+#define S3D_MULTIVIEW_RECTIFIER_H
+
+
+class Rectifier {
+
+};
+
+
+#endif //S3D_MULTIVIEW_RECTIFIER_H

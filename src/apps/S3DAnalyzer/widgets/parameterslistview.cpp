@@ -7,7 +7,7 @@ ParametersListView::ParametersListView(QWidget* parent) : QWidget(parent) {
                             {"Vertical", "%"},
                             {"Pan Keystone", "%"},
                             {"Tilt Keystone", "%"},
-                            {"Tilt Offset", "%"},
+                            {"Tilt Offset", "pi"},
                             {"Zoom", "%"}});
   setParameter("Roll", 0.1);
   setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));

@@ -35,10 +35,11 @@ DisparityAnalyzerSTAN::Results::Results(double smoothingFactor)
       maxDisparityPercent{0.0, smoothingFactor},
       roll{0.0, smoothingFactor},
       vertical{0.0, smoothingFactor},
-      panKeystone{0.0, smoothingFactor},
-      tiltKeystone{0.0, smoothingFactor},
       tiltOffset{0.0, smoothingFactor},
-      zoom{0.0, smoothingFactor} {}
+      tiltKeystone{0.0, smoothingFactor},
+      panKeystone{0.0, smoothingFactor},
+      zoom{0.0, smoothingFactor},
+      zParallaxDeformation{0.0, smoothingFactor} {}
 
 void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
                                                       double maxDisparity,
@@ -48,25 +49,30 @@ void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
   auto maxDisparityPercent = maxDisparity * widthRatio;
   this->minDisparityPercent.addToAverage(minDisparityPercent);
   this->maxDisparityPercent.addToAverage(maxDisparityPercent);
-  vertical.addToAverage(model.ch_y);
-  roll.addToAverage(model.a_z);
-  zoom.addToAverage(model.a_f);
-  tiltOffset.addToAverage(model.f_a_x);
-  panKeystone.addToAverage(model.a_x_f);
-  tiltKeystone.addToAverage(model.a_y_f);
+  vertical.addToAverage(model.ch_y);       // * 180.0 / PI  degrees
+  roll.addToAverage(model.a_z);            // model.a_z * 180.0 / 3.141592653589793) : degrees
+  zoom.addToAverage(model.a_f);            // (model.a_f + 1.0) * 100.0 : %
+  tiltOffset.addToAverage(model.f_a_x);    // pixels
+  tiltKeystone.addToAverage(model.a_x_f);  // radians / m
+  panKeystone.addToAverage(model.a_y_f);   // radians / m
+  zParallaxDeformation.addToAverage(model.ch_z_f);  // ratio (m/m)
 }
 
-void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPts,
+void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
+                                                  const std::vector<Eigen::Vector2d>& bestPtsRight,
                                                   std::vector<double> disparities,
                                                   float widthRatio,
                                                   float resizeRatio) {
   featurePoints.clear();
   disparitiesPercent.clear();
-  for (int i = 0; i < bestPts.size(); ++i) {
+  for (int i = 0; i < bestPtsRight.size(); ++i) {
     // filter out extreme percentiles
-    if (minDisparityPercent / widthRatio <= disparities[i] &&
-        disparities[i] <= maxDisparityPercent / widthRatio) {
-      featurePoints.emplace_back(bestPts[i].x() * resizeRatio, bestPts[i].y() * resizeRatio);
+    if (static_cast<double>(minDisparityPercent) / widthRatio <= disparities[i] &&
+        disparities[i] <= static_cast<double>(maxDisparityPercent) / widthRatio) {
+      featurePointsLeft.emplace_back(bestPtsLeft[i].x() * resizeRatio,
+                                     bestPtsLeft[i].y() * resizeRatio);
+      featurePoints.emplace_back(bestPtsRight[i].x() * resizeRatio,
+                                 bestPtsRight[i].y() * resizeRatio);
       disparitiesPercent.push_back(static_cast<float>(disparities[i] * widthRatio));
     }
   }
@@ -81,6 +87,19 @@ void DisparityAnalyzerSTAN::Results::setSmoothingFactor(double smoothingFactor) 
   tiltKeystone.setSmoothingFactor(smoothingFactor);
   tiltOffset.setSmoothingFactor(smoothingFactor);
   zoom.setSmoothingFactor(smoothingFactor);
+  zParallaxDeformation.setSmoothingFactor(smoothingFactor);
+}
+
+StanAlignment DisparityAnalyzerSTAN::Results::getStanAlignment() const {
+  StanAlignment alignment;
+  alignment.ch_y = static_cast<double>(vertical);
+  alignment.a_z = static_cast<double>(roll);
+  alignment.a_f = static_cast<double>(zoom);
+  alignment.f_a_x = static_cast<double>(tiltOffset);
+  alignment.a_y_f = static_cast<double>(tiltKeystone);
+  alignment.a_x_f = static_cast<double>(panKeystone);
+  alignment.ch_z_f = static_cast<double>(zParallaxDeformation);
+  return alignment;
 }
 
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN() : results{} {}
@@ -110,6 +129,8 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   if (not enoughMatches(matches[0].size())) {
     return false;
   }
+
+  // display matches.
 
   // to homogeneous
   std::vector<Eigen::Vector3d> pts1h, pts2h;
@@ -151,7 +172,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   // Set outputs (moving average of smoothingFactor_)
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
   results.updateParameters(minDisparity, maxDisparity, widthRatio, model);
-  results.updatePoints(bestPts2, disparities, widthRatio, resizeRatio);
+  results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
 
   return true;
 }
@@ -187,8 +208,8 @@ DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(S
   int w = imageSize.getWidth();
 
   s3d::Ransac::Params params;
-  params.nbTrials = 500;
-  params.distanceThreshold = 0.01 * sqrt(h * h + w * w);
+  params.nbTrials = 100000;
+  params.distanceThreshold = 1;//0.000000000001 * sqrt(h * h + w * w);
 
   return DisparityAnalyzerSTAN::RansacAlgorithmSTAN(params);
 }

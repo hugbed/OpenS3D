@@ -41,6 +41,8 @@ class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client
 
   void loadStereoVideo();
 
+  void loadLiveCamera();
+
   void resume();
   void pause();
   void next();

@@ -9,8 +9,8 @@ class math_clamp_int : public ::testing::Test {
     lowBound = 5;
     highBound = 10;
   }
-  value_type lowBound;
-  value_type highBound;
+  value_type lowBound{};
+  value_type highBound{};
 };
 
 TEST_F(math_clamp_int, smaller_gives_low_bound) {
@@ -88,14 +88,14 @@ TEST(math_moving_average, default_smooth_is_one) {
   s3d::MovingAverage<double> a{};
   double val{25.0};
   a.addToAverage(val);
-  EXPECT_DOUBLE_EQ(a, val);
+  EXPECT_DOUBLE_EQ(static_cast<double>(a), val);
 }
 
 TEST(math_moving_average, smooth_is_correct) {
   s3d::MovingAverage<double> a{1.0f, 2.0f};
   double val{25.0};
   a.addToAverage(val);
-  EXPECT_DOUBLE_EQ(a, 13.0f);
+  EXPECT_DOUBLE_EQ(static_cast<double>(a), 13.0f);
 }
 
 TEST(math_moving_average, works_with_integers) {

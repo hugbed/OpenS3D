@@ -5,7 +5,7 @@
 #include <memory>
 
 DoubleSpinBoxNoCursor::DoubleSpinBoxNoCursor(QWidget* parent) : QDoubleSpinBox(parent) {
-  setRange(-3.0, 6.0);
+  setRange(-60.0, 60.0);
   setSingleStep(0.1);
 
   auto lineEdit = std::make_unique<LineEditNoCursor>();

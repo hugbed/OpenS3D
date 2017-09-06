@@ -9,6 +9,10 @@
 
 #include <cassert>
 
+struct NumberGenerator {
+  static std::mt19937 mt;
+};
+
 namespace s3d {
 
 // todo: naive implementation, could take infinite time
@@ -17,16 +21,16 @@ template <class SizeType>
 std::vector<int> rand_n_unique_values(int minVal, int maxVal, SizeType n, int seed) {
   assert(minVal < maxVal);
 
-  std::mt19937 mt(seed);
+//  std::mt19937 mt(seed);
   std::uniform_int_distribution<int> dist(minVal, maxVal);
 
   std::vector<int> randValues;
   randValues.reserve(n);
 
   for (auto i = 0ULL; i < n; ++i) {
-    auto randNb = dist(mt);
+    auto randNb = dist(NumberGenerator::mt);
     while (s3d::contains(randValues, randNb)) {
-      randNb = dist(mt);
+      randNb = dist(NumberGenerator::mt);
     }
     randValues.emplace_back(randNb);
   }

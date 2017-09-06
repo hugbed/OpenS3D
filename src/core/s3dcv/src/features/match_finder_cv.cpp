@@ -4,6 +4,7 @@
 
 #include <opencv/cxcore.hpp>
 #include <opencv2/features2d.hpp>
+#include <opencv/cv.hpp>
 
 namespace s3d {
 
@@ -28,8 +29,24 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
     return {{}, {}};
   }
 
+  displayKeypoints(image2cv(images[0]), image2cv(images[1]), featuresLeft, featuresRight);
+
   auto filteredMatches = filterMatches(featuresLeft, featuresRight, matches,
                                        computeThreshold(images[0].width(), images[0].height()));
+
+  // display matches
+  std::vector<cv::DMatch> filteredMatchesCV;
+  for (int i = 0; i < featuresLeft.descriptors.rows; i++) {
+    if (matches[i].distance <=
+        std::max(computeThreshold(images[0].width(), images[0].height()), 0.02)) {
+      filteredMatchesCV.push_back(matches[i]);
+    }
+  }
+
+  cv::Mat matchesImg;
+  cv::drawMatches(image2cv(images[0]), featuresLeft.keypoints, image2cv(images[1]),
+                  featuresRight.keypoints, filteredMatchesCV, matchesImg);
+  cv::imshow("filtered matches", matchesImg);
 
   return filteredMatches;
 }
@@ -87,6 +104,19 @@ double MatchFinderCV::computeThreshold(int imageWidth, int imageHeight) {
   double W = imageWidth;
   double H = imageHeight;
   return 0.25 * sqrt(W * W + H * H);
+}
+
+void MatchFinderCV::displayKeypoints(const cv::Mat& imgLeft,
+                                     const cv::Mat& imgRight,
+                                     const MatchFinderCV::Features& featuresLeft,
+                                     const MatchFinderCV::Features& featuresRight) {
+  // debug keypoints
+  cv::Mat imageLeftWithKeypoints = imgLeft.clone();
+  cv::Mat imageRightWithKeypoints = imgRight.clone();
+  cv::drawKeypoints(imageLeftWithKeypoints, featuresLeft.keypoints, imageLeftWithKeypoints);
+  cv::drawKeypoints(imageRightWithKeypoints, featuresRight.keypoints, imageRightWithKeypoints);
+  cv::imshow("left image", imageLeftWithKeypoints);
+  cv::imshow("right image", imageRightWithKeypoints);
 }
 
 }  // namespace s3d

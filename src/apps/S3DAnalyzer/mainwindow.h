@@ -76,7 +76,7 @@ class MainWindow : public QMainWindow {
   RenderingContext* m_currentContext;
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
-  double m_analyzerSmoothingFactor{20.0};
+  double m_analyzerSmoothingFactor{1.0};
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
 
   UserSettings m_userSettings{};

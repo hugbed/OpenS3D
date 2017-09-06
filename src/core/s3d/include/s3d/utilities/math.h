@@ -22,7 +22,7 @@ class MovingAverage {
     return value_;
   }
 
-  operator T() { return value_; }
+  explicit operator T() const { return value_; }
 
   const T& getSmoothingFactor() const { return smoothingFactor_; }
 

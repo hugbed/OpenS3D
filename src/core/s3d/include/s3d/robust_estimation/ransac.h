@@ -6,6 +6,9 @@
 #include "s3d/utilities/rand.h"
 #include "s3d/utilities/containers.h"
 
+// todo: remove
+#include <iostream>
+
 #include <cassert>
 #include <memory>
 #include <stdexcept>
@@ -50,8 +53,11 @@ class Ransac {
     size_t getCurrentNb() const noexcept;
     size_t getBestNb() const noexcept;
     const std::vector<bool>& getBest() const noexcept;
+    const std::vector<float>& getBestDistances() const noexcept;
 
    private:
+    std::vector<float> bestDistances_;
+    std::vector<float> distances_;
     size_t currentNb_{0};
     std::vector<bool> current_;
     size_t bestNb_{0};
@@ -120,8 +126,24 @@ class RansacAlgorithm : public Ransac {
     if (inliers_->getBestNb() < MIN_NB_SAMPLES) {
       throw NotEnoughInliersFound(MIN_NB_SAMPLES, inliers_->getBestNb());
     }
+
     auto bestInlierPoints = getBestInlierSamples();
-    return ModelSolver::ComputeModel(bestInlierPoints.first, bestInlierPoints.second);
+    auto&& model = ModelSolver::ComputeModel(bestInlierPoints.first, bestInlierPoints.second);
+    distances_.resize(bestInlierPoints.first.size());
+    DistanceFunction::ComputeDistance(bestInlierPoints.first, bestInlierPoints.second, model, &distances_);
+
+    for (auto && d : distances_) {
+      std::cout << d << std::endl;
+    }
+
+    std::cout << "GOOD ONES HERE ---" << std::endl;
+
+    auto && bestDistances = inliers_->getBestDistances();
+    for (auto && d : bestDistances) {
+      std::cout << d << std::endl;
+    }
+
+    return model;
   }
 
   void sampleModel() {
