@@ -8,9 +8,9 @@
 #include "s3d/geometry/size.h"
 #include "s3d/video/video_types.h"
 
+#include <chrono>
 #include <cstddef>
 #include <vector>
-#include <chrono>
 
 namespace s3d {
 

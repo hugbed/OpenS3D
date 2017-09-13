@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "widgets/settingswidget.h"
 #include "utilities/usersettings.h"
+#include "widgets/settingswidget.h"
 
 #include <memory>
 

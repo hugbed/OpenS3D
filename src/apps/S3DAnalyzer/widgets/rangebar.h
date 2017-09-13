@@ -1,8 +1,8 @@
 #ifndef WIDGETS_RANGEBAR_H
 #define WIDGETS_RANGEBAR_H
 
-#include <QWidget>
 #include <QLabel>
+#include <QWidget>
 
 #include <memory>
 

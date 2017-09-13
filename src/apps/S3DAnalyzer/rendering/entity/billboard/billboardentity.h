@@ -1,11 +1,11 @@
 #ifndef RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
 #define RENDERING_ENTITY_BILLBOARD_BILLBOARDENTITY_H
 
+#include <QOpenGLBuffer>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
 
 #include "rendering/entity/entity.h"
 #include "rendering/vertex.h"

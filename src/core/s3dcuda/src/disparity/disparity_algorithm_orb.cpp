@@ -1,10 +1,10 @@
-#include "s3d/disparity/disparities_sparse.h"
 #include "s3dcuda/disparity/disparity_algorithm_orb.h"
+#include "s3d/disparity/disparities_sparse.h"
 
+#include <opencv/cxeigen.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/cudafeatures2d.hpp>
 #include <opencv2/cudastereo.hpp>
-#include <opencv/cxeigen.hpp>
 
 namespace s3d {
 namespace cuda {

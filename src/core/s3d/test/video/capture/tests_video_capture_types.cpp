@@ -44,7 +44,7 @@ TEST(video_capture_format, image_allocation_size_stereo_is_same) {
   constexpr auto expectedSize = nbBytesPerPixel * size.getWidth() * size.getHeight();
   EXPECT_EQ(format2D.ImageAllocationSize(), expectedSize);
 
-  constexpr VideoCaptureFormat format3D{format2D.frameSize, format2D.frameRate,
-                                        format2D.pixelFormat, true};
+  constexpr VideoCaptureFormat format3D{
+      format2D.frameSize, format2D.frameRate, format2D.pixelFormat, true};
   EXPECT_EQ(format3D.ImageAllocationSize(), expectedSize);
 }

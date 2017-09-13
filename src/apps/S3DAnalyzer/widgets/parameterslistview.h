@@ -2,8 +2,8 @@
 #define WIDGETS_ALIGNMENTPARAMETERSWIDGET_H
 
 #include <QHBoxLayout>
-#include <QWidget>
 #include <QString>
+#include <QWidget>
 
 #include "parameterwidget.h"
 

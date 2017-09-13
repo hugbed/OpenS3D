@@ -2,8 +2,8 @@
 #define S3D_CV_UTILITIES_CV_H
 
 #include "s3d/image/image.h"
-#include "s3d/video/video_types.h"
 #include "s3d/video/video_frame.h"
+#include "s3d/video/video_types.h"
 
 #include "Eigen/Dense"
 
@@ -52,7 +52,9 @@ inline int nbChannelsToMatType(int nbChannels) {
 
 inline cv::Mat dataToMat(Size size, VideoPixelFormat pixelFormat, gsl::span<const uint8_t> data) {
   auto nbChannels = static_cast<int>(VideoFrame::NumBytesPerPixel(pixelFormat));
-  return cv::Mat(size.getHeight(), size.getWidth(), nbChannelsToMatType(nbChannels),
+  return cv::Mat(size.getHeight(),
+                 size.getWidth(),
+                 nbChannelsToMatType(nbChannels),
                  const_cast<uchar*>(data.data()));
 }
 // does not copy data, to copy use resizeMat(...).clone();

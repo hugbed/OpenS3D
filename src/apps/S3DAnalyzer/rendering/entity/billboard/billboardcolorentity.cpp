@@ -37,10 +37,10 @@ void BillboardColorEntity::setPoints(const std::vector<QVector2D>& points,
 }
 
 void BillboardColorEntity::setDefaultAttributeBuffers() {
-  m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize,
-                                Vertex::stride());
-  m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize,
-                                Vertex::stride());
+  m_program->setAttributeBuffer(
+      0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
+  m_program->setAttributeBuffer(
+      1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
 }
 
 void BillboardColorEntity::addShaders() {

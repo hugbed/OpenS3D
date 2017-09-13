@@ -23,8 +23,8 @@ void FileParserConsumer::consumeOnce() {
   auto& leftImage = producers[0]->getProduct();
   auto& rightImage = producers[1]->getProduct();
   if (client_ != nullptr) {
-    client_->OnIncomingCapturedData({leftImage.data_, rightImage.data_}, format_,
-                                    leftImage.timestamp_);
+    client_->OnIncomingCapturedData(
+        {leftImage.data_, rightImage.data_}, format_, leftImage.timestamp_);
   }
 }
 
@@ -38,7 +38,8 @@ void FileParserConsumer::sleepUntilNextFrame() {
   }
 
   // todo: this is not precise, do as timed loop sleep
-  // with a bit of busy waiting and using next consume time instead of sleep = now + delta
+  // with a bit of busy waiting and using next consume time instead of sleep =
+  // now + delta
   auto t2 = std::chrono::high_resolution_clock::now();
   auto sleepTime = delayBetweenFrames -
                    std::chrono::duration_cast<std::chrono::microseconds>(t2 - lastConsumeTime);

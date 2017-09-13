@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "s3d/concurrency/producer_barrier.h"
 #include "s3d/concurrency/consumer_barrier.h"
+#include "s3d/concurrency/producer_barrier.h"
 
 using s3d::ProducerConsumerMediator;
 using s3d::ProducerConsumerBarrier;

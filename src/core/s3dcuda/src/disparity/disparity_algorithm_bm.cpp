@@ -2,10 +2,10 @@
 #include "s3d/disparity/disparities_dense.h"
 #include "s3d/utilities/time.h"
 
+#include <opencv/cxeigen.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/cudafeatures2d.hpp>
 #include <opencv2/cudastereo.hpp>
-#include <opencv/cxeigen.hpp>
 
 #include <iostream>
 #include <memory>
@@ -49,7 +49,8 @@ std::unique_ptr<Disparities> DisparityAlgorithmBM::ComputeDisparities(
   cv::cv2eigen(disp, dispImg);
 
   auto disparities = std::unique_ptr<Disparities>(std::make_unique<DisparitiesDense>(
-      dispImg, DisparityPoint{PixelPos{minPos.y, minPos.x}, PixelPos{0, int(minVal)}},
+      dispImg,
+      DisparityPoint{PixelPos{minPos.y, minPos.x}, PixelPos{0, int(minVal)}},
       DisparityPoint{PixelPos{maxPos.y, maxPos.x}, PixelPos{0, int(maxVal)}}));
 
   return disparities;

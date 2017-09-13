@@ -3,8 +3,8 @@
 
 #include "s3d/robust_estimation/robust_estimation_traits.h"
 
-#include "s3d/utilities/rand.h"
 #include "s3d/utilities/containers.h"
+#include "s3d/utilities/rand.h"
 
 #include <cassert>
 #include <memory>
@@ -101,10 +101,10 @@ class RansacAlgorithm : public Ransac {
 
   std::pair<Samples, Samples> getBestInlierSamples() {
     Samples inliers1, inliers2;
-    s3d::copy_if_true(std::begin(samples1_), std::end(samples1_), back_inserter(inliers1),
-                      inliers_->getBest());
-    s3d::copy_if_true(std::begin(samples2_), std::end(samples2_), back_inserter(inliers2),
-                      inliers_->getBest());
+    s3d::copy_if_true(
+        std::begin(samples1_), std::end(samples1_), back_inserter(inliers1), inliers_->getBest());
+    s3d::copy_if_true(
+        std::begin(samples2_), std::end(samples2_), back_inserter(inliers2), inliers_->getBest());
     return {inliers1, inliers2};
   }
 

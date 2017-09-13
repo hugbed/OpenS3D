@@ -3,13 +3,13 @@
 #include "../texturemanager.h"
 
 #include "rendering/entity/billboard/billboarddepthentity.h"
-#include "stereo/rectangleentity.h"
 #include "stereo/anaglyphrectangleentity.h"
-#include "stereo/opacityrectangleentity.h"
 #include "stereo/interlacedrectangleentity.h"
-#include "stereo/stereosidebysideentity.h"
 #include "stereo/leftrectangleentity.h"
+#include "stereo/opacityrectangleentity.h"
+#include "stereo/rectangleentity.h"
 #include "stereo/rightrectangleentity.h"
+#include "stereo/stereosidebysideentity.h"
 #include "stereo/viewercentricentity.h"
 #include "utilities/usersettings.h"
 

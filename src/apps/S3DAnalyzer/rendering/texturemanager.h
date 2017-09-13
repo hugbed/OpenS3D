@@ -1,8 +1,8 @@
 #ifndef RENDERING_TEXTUREMANAGER_H
 #define RENDERING_TEXTUREMANAGER_H
 
-#include <QSize>
 #include <QImage>
+#include <QSize>
 
 #include <memory>
 #include <mutex>

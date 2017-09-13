@@ -5,9 +5,9 @@
 #include "video_texture/DynamicTextureThreadSafe.hpp"
 #include "video_texture/TextureUpdateClient.hpp"
 
-#include "s3d/video/capture/video_capture_device_decklink.h"
-#include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
 #include "s3d/video/capture/file_video_capture_device_3d.h"
+#include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
+#include "s3d/video/capture/video_capture_device_decklink.h"
 #include "s3d/video/capture/video_capture_types.h"
 
 //-------------------------------------------------------------------------------------
@@ -104,8 +104,18 @@ void Application::addLights() {
 void Application::createGroundPlane() {
   Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(
-      "ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20,
-      true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+      "ground",
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+      plane,
+      1500,
+      1500,
+      20,
+      20,
+      true,
+      1,
+      5,
+      5,
+      Ogre::Vector3::UNIT_Z);
   Ogre::Entity* groundEntity = mSceneMgr->createEntity("ground");
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
   groundEntity->setCastShadows(false);
@@ -134,7 +144,9 @@ std::unique_ptr<DynamicTextureThreadSafe> Application::createDynamicTexture(
   }
 
   // more than twice as fast as update to prevent aliasing (if this makes sense)
-  return std::make_unique<DynamicTextureThreadSafe>(name, pixelFormat, format.frameSize.getWidth(),
+  return std::make_unique<DynamicTextureThreadSafe>(name,
+                                                    pixelFormat,
+                                                    format.frameSize.getWidth(),
                                                     format.frameSize.getHeight(),
                                                     1.0f / (2.0f * format.frameRate));
 }
@@ -145,9 +157,18 @@ void Application::createVideoPlane(const std::string& materialName) {
   // instead let's create a cube
   Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
   Ogre::MeshManager::getSingleton().createPlane(
-      videoPlaneStr, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1.6f,
+      videoPlaneStr,
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+      plane,
+      1.6f,
       0.9f,  // w, h
-      1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+      1,
+      1,
+      true,
+      1,
+      1,
+      1,
+      Ogre::Vector3::UNIT_Y);
 
   Ogre::Entity* groundEntity = mSceneMgr->createEntity(videoPlaneStr);
   groundEntity->setMaterialName(materialName);

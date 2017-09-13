@@ -1,5 +1,5 @@
-#include <QtWidgets>
 #include <QtTest/QtTest>
+#include <QtWidgets>
 
 #include "widgets/lineeditnocursor.h"
 

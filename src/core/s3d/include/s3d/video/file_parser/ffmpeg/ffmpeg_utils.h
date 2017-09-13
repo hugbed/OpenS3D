@@ -3,15 +3,15 @@
 
 extern "C" {
 #include <cstdint>
-#include <libavutil/imgutils.h>
 #include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
 }
 
 #include "s3d/video/video_types.h"
 
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 namespace s3d {
 

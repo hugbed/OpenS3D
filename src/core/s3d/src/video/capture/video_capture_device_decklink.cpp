@@ -32,9 +32,8 @@ class RGB8VideoFrame : public IDeckLinkVideoFrame {
     return E_NOINTERFACE;
   }
 
-  HRESULT GetAncillaryData(IDeckLinkVideoFrameAncillary** /*ancillary*/) override {
-    return E_NOINTERFACE;
-  }
+  HRESULT
+  GetAncillaryData(IDeckLinkVideoFrameAncillary** /*ancillary*/) override { return E_NOINTERFACE; }
 
   //
   // IUnknown interface (dummy implementation)
@@ -113,8 +112,9 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
   HRESULT VideoInputFormatChanged(BMDVideoInputFormatChangedEvents notification_events,
                                   IDeckLinkDisplayMode* new_display_mode,
                                   BMDDetectedVideoInputFormatFlags detected_signal_flags) override;
-  HRESULT VideoInputFrameArrived(IDeckLinkVideoInputFrame* videoFrameLeft,
-                                 IDeckLinkAudioInputPacket* audio_packet) override;
+  HRESULT
+  VideoInputFrameArrived(IDeckLinkVideoInputFrame* videoFrameLeft,
+                         IDeckLinkAudioInputPacket* audio_packet) override;
 
   ULONG STDMETHODCALLTYPE AddRef() override { return ++refCount_; }
   ULONG STDMETHODCALLTYPE Release() override { return --refCount_; }  // accepted memory leak
@@ -187,8 +187,8 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
   BMDVideoInputFlags videoInputFlag =
       params.stereo3D ? bmdVideoInputDualStream3D : bmdVideoInputFlagDefault;
 
-  HRESULT result = deckLinkInput->DoesSupportVideoMode(displayMode, pixelFormat, videoInputFlag,
-                                                       &displayModeSupported, nullptr);
+  HRESULT result = deckLinkInput->DoesSupportVideoMode(
+      displayMode, pixelFormat, videoInputFlag, &displayModeSupported, nullptr);
   if (result != S_OK) {
     throw VideoCaptureDeviceAllocationException("Display mode not supported");
   }
@@ -282,18 +282,21 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       Size(rgbFrameLeft_->GetWidth(),
            rgbFrameLeft_->GetHeight()),  // todo: cast or something (int64_t-> int)
       -1.0f,                             // Frame rate is not needed for captured data callback.
-      pixelFormat, captureFormat_.stereo3D);
+      pixelFormat,
+      captureFormat_.stereo3D);
 
   if (frameReceiver_ != nullptr) {
     if (captureFormat_.stereo3D) {
       frameReceiver_->OnIncomingCapturedData(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()},
            {video_data_right, rgbFrameRight_->GetRowBytes() * rgbFrameRight_->GetHeight()}},
-          capture_format, std::chrono::microseconds(0));
+          capture_format,
+          std::chrono::microseconds(0));
     } else {
       frameReceiver_->OnIncomingCapturedData(
           {{video_data_left, rgbFrameLeft_->GetRowBytes() * rgbFrameLeft_->GetHeight()}},
-          capture_format, std::chrono::microseconds(0));  // todo: implement timestamp
+          capture_format,
+          std::chrono::microseconds(0));  // todo: implement timestamp
     }
   }
 

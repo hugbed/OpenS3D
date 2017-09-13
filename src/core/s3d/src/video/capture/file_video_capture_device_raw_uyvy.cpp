@@ -4,9 +4,9 @@
 
 #include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 
-#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/time.h"
+#include "s3d/video/file_parser/raw_uyvy_file_parser.h"
 
 namespace s3d {
 
@@ -40,8 +40,8 @@ void FileVideoCaptureDeviceRawUYVY::AllocateAndStart(const VideoCaptureFormat& f
   auto captureLoopClient = GetTimedLoopClient();
   auto fileParser = GetVideoFileParser(filePath_);
   InitializeFileParser(fileParser, &captureFormat_);
-  Start(captureFormat_, client, std::move(captureLoopClient), std::move(fileParser),
-        GetTimedLoop());
+  Start(
+      captureFormat_, client, std::move(captureLoopClient), std::move(fileParser), GetTimedLoop());
 }
 
 void FileVideoCaptureDeviceRawUYVY::Start(const VideoCaptureFormat& format,

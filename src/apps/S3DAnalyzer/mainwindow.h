@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "utilities/usersettings.h"
 #include "rendering/entity/entitymanager.h"
+#include "utilities/usersettings.h"
 
 #include <s3d/video/video_types.h>
 

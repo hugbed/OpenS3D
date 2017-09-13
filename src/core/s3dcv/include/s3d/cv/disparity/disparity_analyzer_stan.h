@@ -4,8 +4,8 @@
 #include "s3d/disparity/disparity_analyzer.h"
 
 #include "s3d/features/match_finder.h"
-#include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/multiview/sampson_distance_function.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/utilities/math.h"
 

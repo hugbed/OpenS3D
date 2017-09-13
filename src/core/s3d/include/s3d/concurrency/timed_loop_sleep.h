@@ -4,8 +4,8 @@
 #include "timed_loop.h"
 
 #include <atomic>
-#include <thread>
 #include <condition_variable>
+#include <thread>
 
 namespace s3d {
 

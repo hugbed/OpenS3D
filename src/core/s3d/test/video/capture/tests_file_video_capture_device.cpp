@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
 #include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 #include "s3d/video/file_parser/video_file_parser.h"
@@ -108,7 +108,8 @@ TEST(file_video_capture_device, start_starts_loop_and_stop_stops_loop) {
 
   using ::testing::_;
   EXPECT_CALL(*timedLoopPtr, start(_, _));
-  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+  device.Start(VideoCaptureFormat{},
+               fakeVideoCaptureDeviceClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
                std::unique_ptr<MockTimedLoop>(timedLoopPtr));
@@ -123,7 +124,8 @@ TEST(file_video_capture_device, pause_resume_calls_loop) {
 
   using ::testing::_;
   EXPECT_CALL(*timedLoopPtr, start(_, _));
-  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+  device.Start(VideoCaptureFormat{},
+               fakeVideoCaptureDeviceClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::make_unique<FakeVideoFileParser>(VideoCaptureFormat{}),
                std::unique_ptr<MockTimedLoop>(timedLoopPtr));
@@ -148,7 +150,9 @@ TEST(file_video_capture_device, start_starts_loop_with_correct_duration) {
 
   using ::testing::_;
   EXPECT_CALL(*captureLoopClient, callback());
-  device.Start(format, fakeVideoCaptureDeviceClient.get(), std::move(captureLoopClient),
+  device.Start(format,
+               fakeVideoCaptureDeviceClient.get(),
+               std::move(captureLoopClient),
                std::make_unique<MockVideoFileParser>(),
                std::unique_ptr<FakeTimedLoop>(timedLoopPtr));
   EXPECT_EQ(timedLoopPtr->lastLoopDuration_.count(), 33333);
@@ -161,7 +165,8 @@ TEST(file_video_capture_device, on_capture_task_requests_next_frame) {
 
   using ::testing::_;
   EXPECT_CALL(*fileParserPtr, GetNextFrame(_));
-  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+  device.Start(VideoCaptureFormat{},
+               fakeVideoCaptureDeviceClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<MockVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());
@@ -175,9 +180,11 @@ TEST(file_video_capture_device, on_capture_task_calls_on_incoming_data_with_file
   auto videoCaptureClientPtr = videoCaptureClient.get();
 
   using ::testing::_;
-  device.Start(format, videoCaptureClient.get(),
+  device.Start(format,
+               videoCaptureClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
-               std::make_unique<FakeVideoFileParser>(format), std::make_unique<FakeTimedLoop>());
+               std::make_unique<FakeVideoFileParser>(format),
+               std::make_unique<FakeTimedLoop>());
   EXPECT_EQ(videoCaptureClientPtr->lastFormat_, format);
 }
 
@@ -199,7 +206,8 @@ TEST(file_video_capture_device, default_format) {
   auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
 
   using ::testing::_;
-  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+  device.Start(VideoCaptureFormat{},
+               fakeVideoCaptureDeviceClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());
@@ -212,7 +220,8 @@ TEST(file_video_capture_device, file_parser_file_not_found) {
   auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
 
   using ::testing::_;
-  device.Start(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get(),
+  device.Start(VideoCaptureFormat{},
+               fakeVideoCaptureDeviceClient.get(),
                std::make_unique<FileVideoCaptureDeviceRawUYVY::CaptureLoopClient>(&device),
                std::unique_ptr<FakeVideoFileParser>(fileParserPtr),
                std::make_unique<FakeTimedLoop>());

@@ -164,8 +164,8 @@ void BaseApplication::run() {
 }
 //-------------------------------------------------------------------------------------
 bool BaseApplication::setup() {
-  mRoot = std::make_unique<Ogre::Root>(mPluginsCfg, mFSLayer->getWritablePath("ogre.cfg"),
-                                       mFSLayer->getWritablePath("ogre.log"));
+  mRoot = std::make_unique<Ogre::Root>(
+      mPluginsCfg, mFSLayer->getWritablePath("ogre.cfg"), mFSLayer->getWritablePath("ogre.log"));
 
   setupResources();
 

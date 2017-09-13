@@ -3,8 +3,8 @@
 
 #include <s3d/video/capture/video_capture_device.h>
 
-#include <QObject>
 #include <QImage>
+#include <QObject>
 
 #include <atomic>
 #include <chrono>

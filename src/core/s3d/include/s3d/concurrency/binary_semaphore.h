@@ -1,8 +1,8 @@
 #ifndef S3D_UTILITIES_CONCURRENCY_BINARY_SEMAPHORE_H
 #define S3D_UTILITIES_CONCURRENCY_BINARY_SEMAPHORE_H
 
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
 
 namespace s3d {
 

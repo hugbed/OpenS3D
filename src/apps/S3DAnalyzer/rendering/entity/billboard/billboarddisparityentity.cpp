@@ -6,10 +6,10 @@ BillboardDisparityEntity::BillboardDisparityEntity(const QSize& imageSize)
     : BillboardEntity(imageSize) {}
 
 void BillboardDisparityEntity::setDefaultAttributeBuffers() {
-  m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize,
-                                Vertex::stride());
-  m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::intensityOffset(), Vertex::IntensitySize,
-                                Vertex::stride());
+  m_program->setAttributeBuffer(
+      0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
+  m_program->setAttributeBuffer(
+      1, GL_FLOAT, Vertex::intensityOffset(), Vertex::IntensitySize, Vertex::stride());
 }
 
 void BillboardDisparityEntity::setPoints(const std::vector<Eigen::Vector2f>& points,

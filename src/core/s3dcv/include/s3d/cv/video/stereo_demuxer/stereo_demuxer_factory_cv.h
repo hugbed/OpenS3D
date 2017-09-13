@@ -3,12 +3,13 @@
 
 #include "s3d/video/stereo_demuxer/stereo_demuxer_factory.h"
 
-#include "stereo_demuxer_cv_side_by_side.h"
 #include "stereo_demuxer_cv_above_below.h"
+#include "stereo_demuxer_cv_side_by_side.h"
 
 namespace s3d {
 
-// todo: could have a base StereoDemuxerFactor and this one would be StereoDemuxerFactoryCV
+// todo: could have a base StereoDemuxerFactor and this one would be
+// StereoDemuxerFactoryCV
 // with virtual create()
 class StereoDemuxerFactoryCV : public StereoDemuxerFactory {
  public:

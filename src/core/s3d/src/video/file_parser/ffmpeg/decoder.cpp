@@ -14,9 +14,12 @@ Decoder::Decoder(AVFormatContext* formatContext) : formatContext_{formatContext}
   frame_ = ffmpeg::UniquePtr<AVFrame>(ffmpeg::avframe::alloc());
 
   // allocate output buffer
-  outputBufferSize_ =
-      ffmpeg::imgutils::image_alloc(outputBuffer_, outputBufferLineSize_, codecContext_->width,
-                                    codecContext_->height, codecContext_->pix_fmt, 1);
+  outputBufferSize_ = ffmpeg::imgutils::image_alloc(outputBuffer_,
+                                                    outputBufferLineSize_,
+                                                    codecContext_->width,
+                                                    codecContext_->height,
+                                                    codecContext_->pix_fmt,
+                                                    1);
 
   // transfer ownership, will call av_freep(&outputBuffer_[0])
   outputBufferPtr_ = ffmpeg::UniquePtr<uint8_t>(outputBuffer_[0]);
@@ -51,8 +54,13 @@ void Decoder::copyFrameData(AVFrame* frame, std::vector<uint8_t>* out) {
          frame->format == codecContext_->pix_fmt);
 
   // necessary, to remove alignment from raw frame
-  av_image_copy(&outputBuffer_[0], outputBufferLineSize_, const_cast<const uint8_t**>(frame->data),
-                frame->linesize, codecContext_->pix_fmt, frame->width, frame->height);
+  av_image_copy(&outputBuffer_[0],
+                outputBufferLineSize_,
+                const_cast<const uint8_t**>(frame->data),
+                frame->linesize,
+                codecContext_->pix_fmt,
+                frame->width,
+                frame->height);
   out->resize(outputBufferSize_);
   std::copy(outputBufferPtr_.get(), outputBufferPtr_.get() + outputBufferSize_, std::begin(*out));
 }

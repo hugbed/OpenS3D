@@ -1,9 +1,9 @@
-#include "s3d/robust_estimation/ransac.h"
-#include "s3d/multiview/sampson_distance_function.h"
-#include "s3d/multiview/stan_fundamental_matrix_solver.h"
-#include "s3d/disparity/utilities.h"
 #include "s3d/cv/features/match_finder_cv.h"
 #include "s3d/cv/utilities/cv.h"
+#include "s3d/disparity/utilities.h"
+#include "s3d/multiview/sampson_distance_function.h"
+#include "s3d/multiview/stan_fundamental_matrix_solver.h"
+#include "s3d/robust_estimation/ransac.h"
 #include "s3d/utilities/histogram.h"
 
 #include <opencv2/opencv.hpp>
@@ -44,7 +44,9 @@ void displayMatches(const std::string& displayName,
   for (int i = 0; i < ptsLeft.size(); ++i) {
     auto& pt1 = ptsLeft[i];
     Eigen::Vector3d pt2 = ptsRight[i] + Eigen::Vector3d(imgLeft.cols, 0.0, 0.0);
-    cv::line(combined, cv::Point(pt1.x(), pt1.y()), cv::Point(pt2.x(), pt2.y()),
+    cv::line(combined,
+             cv::Point(pt1.x(), pt1.y()),
+             cv::Point(pt2.x(), pt2.y()),
              cv::Scalar(255, 0, 0, 0));
   }
   displayInNewWindow(displayName, combined);
@@ -53,8 +55,9 @@ void displayMatches(const std::string& displayName,
 void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::Vector3d>* result) {
   result->resize(in.size());
   std::transform(
-      std::begin(in), std::end(in), std::begin(*result),
-      [](const Eigen::Vector2d& value) { return Eigen::Vector3d(value.x(), value.y(), 1.0); });
+      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector2d& value) {
+        return Eigen::Vector3d(value.x(), value.y(), 1.0);
+      });
 }
 
 // usually have to divide by z() but not necessary here
@@ -62,8 +65,9 @@ void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
                            std::vector<Eigen::Vector2d>* result) {
   result->resize(in.size());
   std::transform(
-      std::begin(in), std::end(in), std::begin(*result),
-      [](const Eigen::Vector3d& value) { return Eigen::Vector2d(value.x(), value.y()); });
+      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector3d& value) {
+        return Eigen::Vector2d(value.x(), value.y());
+      });
 }
 
 std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
@@ -99,7 +103,7 @@ int main(int argc, char* argv[]) {
   cv::resize(rightOrig, rightOrig, cv::Size(rightOrig.cols / 2, rightOrig.rows / 2));
 
   // find matches
-  std::unique_ptr<s3d::MatchFinder> matchFinder = std::make_unique<s3d::MatchFinderCV>();
+  std::unique_ptr<s3d::MatchFinder> matchFinder = std::make_unique<s3d::MatchFinderCVViz>();
   auto matches = matchFinder->findMatches({s3d::cv2image(leftOrig), s3d::cv2image(rightOrig)});
   assert(matches.size() == 2);
   std::vector<Eigen::Vector2d> pts1 = matches[0], pts2 = matches[1];

@@ -24,8 +24,9 @@ void VideoControls::init(Qt::Orientation orientation) {
   connect(m_videoButtons.get(), &VideoButtons::playClicked, this, &VideoControls::playClicked);
   connect(m_videoButtons.get(), &VideoButtons::pauseClicked, this, &VideoControls::pauseClicked);
   connect(m_videoButtons.get(), &VideoButtons::nextClicked, this, &VideoControls::nextClicked);
-  connect(m_progressSlider.get(), &SliderDirectJump::valueClicked,
-          [this](int value) { emit seekingRequested(std::chrono::microseconds{value}); });
+  connect(m_progressSlider.get(), &SliderDirectJump::valueClicked, [this](int value) {
+    emit seekingRequested(std::chrono::microseconds{value});
+  });
 
   auto layout = orientation == Qt::Horizontal ? std::unique_ptr<QBoxLayout>(new QHBoxLayout(this))
                                               : std::unique_ptr<QBoxLayout>(new QVBoxLayout(this));

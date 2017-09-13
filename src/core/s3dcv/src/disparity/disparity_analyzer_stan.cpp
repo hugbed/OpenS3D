@@ -12,8 +12,9 @@ namespace {
 void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::Vector3d>* result) {
   result->resize(in.size());
   std::transform(
-      std::begin(in), std::end(in), std::begin(*result),
-      [](const Eigen::Vector2d& value) { return Eigen::Vector3d(value.x(), value.y(), 1.0); });
+      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector2d& value) {
+        return Eigen::Vector3d(value.x(), value.y(), 1.0);
+      });
 }
 
 // usually have to divide by z() but not necessary here
@@ -21,8 +22,9 @@ void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
                            std::vector<Eigen::Vector2d>* result) {
   result->resize(in.size());
   std::transform(
-      std::begin(in), std::end(in), std::begin(*result),
-      [](const Eigen::Vector3d& value) { return Eigen::Vector2d(value.x(), value.y()); });
+      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector3d& value) {
+        return Eigen::Vector2d(value.x(), value.y());
+      });
 }
 }  // namespace
 
@@ -134,10 +136,10 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   // filter inliers
   std::vector<Eigen::Vector3d> bestPts1h, bestPts2h;
   std::tie(bestPts1h, bestPts2h) = ransac.getBestInlierSamples();
-  s3d::center_values(std::begin(bestPts1h), std::end(bestPts1h), std::begin(bestPts1h),
-                     -imageCenter);
-  s3d::center_values(std::begin(bestPts2h), std::end(bestPts2h), std::begin(bestPts2h),
-                     -imageCenter);
+  s3d::center_values(
+      std::begin(bestPts1h), std::end(bestPts1h), std::begin(bestPts1h), -imageCenter);
+  s3d::center_values(
+      std::begin(bestPts2h), std::end(bestPts2h), std::begin(bestPts2h), -imageCenter);
 
   // compute disparity range
   std::vector<Eigen::Vector2d> bestPts1, bestPts2;

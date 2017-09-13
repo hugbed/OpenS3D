@@ -3,10 +3,10 @@
 
 #include "Eigen/Dense"
 
-#include <opencv2/opencv.hpp>
+#include <opencv/cxeigen.hpp>
 #include <opencv2/cudafeatures2d.hpp>
 #include <opencv2/cudastereo.hpp>
-#include <opencv/cxeigen.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "gsl/gsl"
 
@@ -75,8 +75,8 @@ int main(int argc, char* argv[]) {
     //        auto rowColor = static_cast<uchar>((d.disparity.row -
     //        minVal)*255/(maxVal-minVal));
     auto colColor = static_cast<uchar>((d.disparity.col - minVal) * 255 / (maxVal - minVal));
-    cv::circle(coloredMap, cv::Point(d.leftPos.col, d.leftPos.row), 2, cv::Scalar(colColor, 0, 0),
-               -1);
+    cv::circle(
+        coloredMap, cv::Point(d.leftPos.col, d.leftPos.row), 2, cv::Scalar(colColor, 0, 0), -1);
   }
   displayInNewWindow("disp", coloredMap);
 

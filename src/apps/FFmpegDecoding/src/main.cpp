@@ -32,12 +32,14 @@ class FFmpegClient : public VideoCaptureDevice::Client {
 class BadNumberOfInputArgs : public std::runtime_error {
  public:
   explicit BadNumberOfInputArgs(const std::string& programName)
-      : std::runtime_error(
-            std::string("usage: ") + programName + std::string(" input_file video_output_file\n") +
-            std::string(
-                "       API example program to show how to read frames from an input file.\n"
-                "       This program reads frames from a file, decodes them, and writes decoded\n"
-                "       video frames to a rawvideo file named video_output_file, and decoded\n")) {}
+      : std::runtime_error(std::string("usage: ") + programName +
+                           std::string(" input_file video_output_file\n") +
+                           std::string("       API example program to show how to read frames "
+                                       "from an input file.\n"
+                                       "       This program reads frames from a file, decodes "
+                                       "them, and writes decoded\n"
+                                       "       video frames to a rawvideo file named "
+                                       "video_output_file, and decoded\n")) {}
 };
 
 void checkArguments(int argc, char** argv) {
@@ -80,7 +82,8 @@ int main(int argc, char** argv) {
   captureDevice->StopAndDeAllocate();
 
   std::cout << "Play the output video file with the command:" << std::endl
-            << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 -framerate 30 "
+            << "ffplay -f rawvideo -pixel_format rgb24 -video_size 1920x1080 "
+               "-framerate 30 "
             << video_dst_filename << std::endl;
 
   return 0;

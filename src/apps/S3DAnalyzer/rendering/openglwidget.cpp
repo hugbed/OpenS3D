@@ -1,7 +1,7 @@
 #include "openglwidget.h"
 
-#include "texturemanager.h"
 #include "entity/entitymanager.h"
+#include "texturemanager.h"
 
 OpenGLWidget::OpenGLWidget(QWidget* parent) : QOpenGLWidget(parent) {}
 

@@ -1,14 +1,14 @@
 #include "videosynchronizer.h"
 
-#include <QTimer>
 #include <QDebug>
+#include <QTimer>
 
+#include <s3d/cv/video/stereo_demuxer/stereo_demuxer_cv_side_by_side.h>
+#include <s3d/cv/video/stereo_demuxer/stereo_demuxer_factory_cv.h>
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 #include <s3d/video/stereo_demuxer/stereo_demuxer.h>
-#include <s3d/cv/video/stereo_demuxer/stereo_demuxer_cv_side_by_side.h>
-#include <s3d/cv/video/stereo_demuxer/stereo_demuxer_factory_cv.h>
 
 VideoSynchronizer::VideoSynchronizer()
     : m_videoCaptureDevice{},

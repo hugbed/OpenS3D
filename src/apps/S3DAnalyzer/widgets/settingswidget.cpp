@@ -7,8 +7,9 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     : QWidget(parent), ui{std::make_unique<Ui::SettingsWidget>()} {
   ui->setupUi(this);
 
-  connect(ui->dialogButtonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked,
-          [this] { emit settingsUpdated(getUserSettings()); });
+  connect(ui->dialogButtonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, [this] {
+    emit settingsUpdated(getUserSettings());
+  });
 
   connect(ui->dialogButtonBox, &QDialogButtonBox::accepted, [this] {
     emit settingsUpdated(getUserSettings());
@@ -57,7 +58,8 @@ SettingsWidget::SettingsWidget(QWidget* parent)
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           [this](double value) { conditionalAutoUpdate(); });
 
-  connect(ui->displayZoomSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+  connect(ui->displayZoomSpinBox,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           [this](int value) { conditionalAutoUpdate(); });
 }
 
@@ -83,7 +85,8 @@ UserSettings SettingsWidget::getUserSettings() {
 
   s3d::ViewerContext viewerContext(static_cast<float>(ui->viewerDistanceLabelSpinBox->value()),
                                    static_cast<float>(ui->interocularDistanceSpinBox->value()),
-                                   static_cast<float>(ui->screenWidthSpinBox->value()), 0);
+                                   static_cast<float>(ui->screenWidthSpinBox->value()),
+                                   0);
 
   UserSettings settings;
   settings.displayParameters = displayParameters;

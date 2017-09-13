@@ -41,10 +41,10 @@ void RectangleEntity::createVertexArrayObject() {
   m_program->bind();
   m_program->enableAttributeArray(0);
   m_program->enableAttributeArray(1);
-  m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize,
-                                Vertex::stride());
-  m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::texCoordOffset(), Vertex::TexCoordTupleSize,
-                                Vertex::stride());
+  m_program->setAttributeBuffer(
+      0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
+  m_program->setAttributeBuffer(
+      1, GL_FLOAT, Vertex::texCoordOffset(), Vertex::TexCoordTupleSize, Vertex::stride());
   setDefaultUniforms();
 }
 
@@ -126,7 +126,8 @@ void RectangleEntity::addShaders() {
 
 void RectangleEntity::setDefaultUniforms() {
   // set possible uniforms (mono/stereo textures)
-  // possible because of early return for non-existent uniforms in setUniformValue
+  // possible because of early return for non-existent uniforms in
+  // setUniformValue
   m_program->bind();
   {
     m_program->setUniformValue("uTexture0", 0);

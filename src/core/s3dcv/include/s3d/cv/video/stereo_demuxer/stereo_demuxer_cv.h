@@ -6,8 +6,8 @@
 #include "s3d/geometry/size.h"
 #include "s3d/video/video_types.h"
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 namespace cv {
 class Mat;

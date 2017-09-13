@@ -16,8 +16,8 @@ bool contains(Container c, T t) {
 template <class InIt, class OutIt>
 void copy_if_true(InIt srcBegin, InIt srcEnd, OutIt dstBegin, const std::vector<bool>& flags) {
   auto i = 0;
-  std::copy_if(srcBegin, srcEnd, dstBegin,
-               [&i, flags](typename InIt::value_type) { return flags[i++]; });
+  std::copy_if(
+      srcBegin, srcEnd, dstBegin, [&i, flags](typename InIt::value_type) { return flags[i++]; });
 }
 
 template <class T>
@@ -35,8 +35,9 @@ std::vector<T> values_from_indices(std::vector<T> values, std::vector<int> indic
 
 template <class InIt, class OutIt>
 void center_values(InIt first, InIt last, OutIt result, typename InIt::value_type center) {
-  std::transform(first, last, result,
-                 [&center](const typename InIt::value_type& value) { return value - center; });
+  std::transform(first, last, result, [&center](const typename InIt::value_type& value) {
+    return value - center;
+  });
 };
 
 template <class InIt, class Delimiter>

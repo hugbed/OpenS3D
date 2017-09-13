@@ -15,9 +15,14 @@ class DynamicTexture {
                  ushort imgHeight)
       : m_textureName{std::move(textureName)} {
     m_pDynamicTexture = Ogre::TextureManager::getSingleton().createManual(
-        m_textureName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
-        imgWidth, imgHeight,  // w, h
-        0, format, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+        m_textureName,
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::TEX_TYPE_2D,
+        imgWidth,
+        imgHeight,  // w, h
+        0,
+        format,
+        Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
     clear();
   }
 

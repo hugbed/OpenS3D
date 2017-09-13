@@ -1,5 +1,5 @@
-#include "s3d/video/compression/yuv.h"
 #include "s3d/utilities/file_io.h"
+#include "s3d/video/compression/yuv.h"
 
 #include <fstream>
 #include <iostream>

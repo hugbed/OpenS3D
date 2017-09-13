@@ -4,11 +4,11 @@
 #include "rendering/openglwindow.h"
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
-#include "worker/videosynchronizer.h"
+#include "utilities/cv.h"
+#include "widgets/settingsdialog.h"
 #include "worker/stereo_demuxer_factory_qimage.h"
 #include "worker/stereo_demuxer_qimage.h"
-#include "widgets/settingsdialog.h"
-#include "utilities/cv.h"
+#include "worker/videosynchronizer.h"
 
 #include <s3d/cv/disparity/disparity_analyzer_stan.h>
 
@@ -44,23 +44,23 @@ MainWindow::MainWindow(QWidget* parent)
   updateInputMode();
   updateStereo3DFormat();
 
-  connect(m_settingsDialog.get(), &SettingsDialog::settingsUpdated,
-          [this](UserSettings userSettings) {
-            // keep image width in pixels that is not controlled by the user
-            int imageWidthPixels = m_userSettings.viewerContext.imageWidthPixels;
-            m_userSettings = std::move(userSettings);
-            m_userSettings.viewerContext.imageWidthPixels = imageWidthPixels;
+  connect(
+      m_settingsDialog.get(), &SettingsDialog::settingsUpdated, [this](UserSettings userSettings) {
+        // keep image width in pixels that is not controlled by the user
+        int imageWidthPixels = m_userSettings.viewerContext.imageWidthPixels;
+        m_userSettings = std::move(userSettings);
+        m_userSettings.viewerContext.imageWidthPixels = imageWidthPixels;
 
-            m_currentContext->entityManager->setUserSettings(&m_userSettings);
-            m_currentContext->openGLRenderer->updateScene();
+        m_currentContext->entityManager->setUserSettings(&m_userSettings);
+        m_currentContext->openGLRenderer->updateScene();
 
-            ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
-                                             m_userSettings.displayParameters.displayRangeMax);
-            ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
-                                              m_userSettings.displayParameters.expectedRangeMax);
+        ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
+                                         m_userSettings.displayParameters.displayRangeMax);
+        ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
+                                          m_userSettings.displayParameters.expectedRangeMax);
 
-            ui->convergenceIndicator->update();
-          });
+        ui->convergenceIndicator->update();
+      });
 
   connect(ui->actionInputImage, &QAction::triggered, [this] { updateInputMode(); });
   connect(ui->actionInputVideo, &QAction::triggered, [this] { updateInputMode(); });
@@ -207,13 +207,15 @@ MainWindow::MainWindow(QWidget* parent)
     m_currentContext->openGLRenderer->updateScene();
   });
 
-  connect(ui->actionFeatures, &QAction::triggered,  //
+  connect(ui->actionFeatures,
+          &QAction::triggered,  //
           [this] {
             m_currentContext->entityManager->setFeaturesVisibility(ui->actionFeatures->isChecked());
             m_currentContext->openGLRenderer->updateScene();
           });
 
-  connect(ui->actionEnableComputations, &QAction::triggered,  //
+  connect(ui->actionEnableComputations,
+          &QAction::triggered,  //
           [this] { computeAndUpdate(); });
 
   connect(ui->hitWidget,
@@ -232,7 +234,8 @@ MainWindow::MainWindow(QWidget* parent)
         m_currentContext->textureManager->getTextureSize().width();
 
     connect(
-        m_videoSynchronizer.get(), &VideoSynchronizer::incomingImagePair,
+        m_videoSynchronizer.get(),
+        &VideoSynchronizer::incomingImagePair,
         [this](const QImage& imgLeft, const QImage& imgRight, std::chrono::microseconds timestamp) {
           handleNewImagePair(imgLeft, imgRight, timestamp);
         });
@@ -260,7 +263,8 @@ MainWindow::MainWindow(QWidget* parent)
     });
   });
 
-  connect(ui->videoControls, &VideoControls::seekingRequested,
+  connect(ui->videoControls,
+          &VideoControls::seekingRequested,
           [this](std::chrono::microseconds timestamp) { m_videoSynchronizer->seekTo(timestamp); });
 }
 
@@ -320,8 +324,8 @@ void MainWindow::updateConvergenceHint(float minDisparity, float maxDisparity) {
 
 template <class Functor>
 void MainWindow::requestImageFilename(Functor f) {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/jon/Videos",
-                                                  tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
+  QString filename = QFileDialog::getOpenFileName(
+      this, tr("Open Image"), "/home/jon/Videos", tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
   if (not filename.isEmpty()) {
     f(filename);
   }
@@ -349,7 +353,8 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
 
       connect(m_openGLWindow.get(), &OpenGLWindow::GLInitialized, [this] {
         // copy current context (images, features, shift) to window context
-        // since everything before the double click will not have been registered
+        // since everything before the double click will not have been
+        // registered
         m_windowRenderingContext = std::make_unique<RenderingContext>(m_openGLWindow.get());
         m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //

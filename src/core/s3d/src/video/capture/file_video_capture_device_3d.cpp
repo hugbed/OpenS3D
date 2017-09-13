@@ -4,10 +4,10 @@
 
 #include "s3d/video/capture/file_video_capture_device_3d.h"
 
-#include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 #include "s3d/utilities/file_io.h"
 #include "s3d/utilities/strings.h"
 #include "s3d/video/compression/yuv.h"
+#include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 
 #include "s3d/video/file_parser/file_parser_consumer.h"
 #include "s3d/video/file_parser/file_parser_producer.h"
@@ -48,7 +48,8 @@ void FileVideoCaptureDevice3D::AllocateAndStart(const VideoCaptureFormat& format
 void FileVideoCaptureDevice3D::Allocate() {
   sync_ = std::make_unique<ProducerConsumerSynchronizer>();
 
-  // todo: this should be taken from format parameter and validated by file parser
+  // todo: this should be taken from format parameter and validated by file
+  // parser
   producers_.first = std::make_unique<FileParserProducer>(filePaths_.first, sync_->mediator1.get());
   producers_.second =
       std::make_unique<FileParserProducer>(filePaths_.second, sync_->mediator2.get());
@@ -56,7 +57,8 @@ void FileVideoCaptureDevice3D::Allocate() {
   if (!producers_.first->allocate(&captureFormat_) ||
       !producers_.second->allocate(&captureFormat_)) {
     throw VideoCaptureDeviceAllocationException(
-        "Cannot open requested file(s)");  // todo: write the name of the files here
+        "Cannot open requested file(s)");  // todo: write the name of the files
+                                           // here
   }
 
   std::vector<FileParserProducer::Base*> producers = {producers_.first.get(),
@@ -64,7 +66,8 @@ void FileVideoCaptureDevice3D::Allocate() {
 
   captureFormat_.stereo3D = true;
   consumer_ = std::make_unique<FileParserConsumer>(
-      client_, captureFormat_,
+      client_,
+      captureFormat_,
       std::vector<s3d::ProducerConsumerMediator*>{sync_->mediator1.get(), sync_->mediator2.get()},
       producers);
 }

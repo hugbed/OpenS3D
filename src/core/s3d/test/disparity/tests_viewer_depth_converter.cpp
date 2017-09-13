@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "s3d/disparity/viewer_depth_converter.h"
 #include "s3d/disparity/viewer_context.h"
+#include "s3d/disparity/viewer_depth_converter.h"
 
 using s3d::ViewerContext;
 using s3d::ViewerDepthConverter;

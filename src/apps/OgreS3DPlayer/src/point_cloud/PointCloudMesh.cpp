@@ -26,7 +26,8 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
   decl->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
 
   vbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-      Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3), msh->sharedVertexData->vertexCount,
+      Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3),
+      msh->sharedVertexData->vertexCount,
       Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
   /// Upload the vertex data to the card
   vbuf_->writeData(0, vbuf_->getSizeInBytes(), &points[0], true);
@@ -35,7 +36,8 @@ PointCloudMesh::PointCloudMesh(const std::string& /*name*/,
     // Create 2nd buffer for colors
     decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
     cbuf_ = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR), msh->sharedVertexData->vertexCount,
+        Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
+        msh->sharedVertexData->vertexCount,
         Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 
     Ogre::RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();

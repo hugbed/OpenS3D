@@ -67,8 +67,8 @@ int avformat::find_best_stream(AVFormatContext* formatContext,
                                int related_stream,
                                AVCodec** decoder_ret,
                                int flags) {
-  int ret = av_find_best_stream(formatContext, type, wanted_stream_nb, related_stream, decoder_ret,
-                                flags);
+  int ret = av_find_best_stream(
+      formatContext, type, wanted_stream_nb, related_stream, decoder_ret, flags);
   if (ret < 0) {
     throw FFmpegException("Could not find " + std::string(av_get_media_type_string(type)) +
                           std::string(" stream in input file") +
