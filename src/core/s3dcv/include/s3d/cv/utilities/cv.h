@@ -4,6 +4,7 @@
 #include "s3d/image/image.h"
 #include "s3d/video/video_frame.h"
 #include "s3d/video/video_types.h"
+#include "s3d/utilities/random_color_generator.h"
 
 #include "Eigen/Dense"
 
@@ -68,6 +69,36 @@ inline void resizeMat(gsl::not_null<cv::Mat*> mat, float ratio) {
   resizeMat(mat, ratio, ratio);
 }
 
+inline void drawMatches(const cv::Mat& left,
+                        const cv::Mat& right,
+                        const std::vector<Eigen::Vector2f>& featuresLeft,
+                        const std::vector<Eigen::Vector2f>& featuresRight) {
+  cv::Mat leftRight(left.rows, left.cols * 2, left.type());
+  cv::hconcat(left, right, leftRight);
+
+  // convert to color
+  cv::cvtColor(leftRight, leftRight, cv::COLOR_GRAY2BGR);
+
+  // for random color
+  RandomColorGenerator<cv::Scalar> colorGenerator;
+
+  for (int i = 0; i < featuresLeft.size(); ++i) {
+    // random color
+    cv::Scalar color = colorGenerator.randomColor();
+
+    // discretize features
+    const Eigen::Vector2i featureLeft = featuresLeft[i].cast<int>();
+    const Eigen::Vector2i featureRight =
+        (featuresRight[i] + Eigen::Vector2f(left.cols, 0.0f)).cast<int>();
+
+    const cv::Point ptLeft(featureLeft.x(), featureLeft.y());
+    const cv::Point ptRight(featureRight.x(), featureRight.y());
+
+    cv::line(leftRight, ptLeft, ptRight, color, 2);
+    cv::circle(leftRight, ptLeft, 10, color);
+    cv::circle(leftRight, ptRight, 10, color);
+  }
+}
 }  // namespace s3d
 
 #endif  // S3D_CV_UTILITIES_CV_H
