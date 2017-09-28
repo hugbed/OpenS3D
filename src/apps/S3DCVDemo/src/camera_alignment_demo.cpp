@@ -1,12 +1,11 @@
 #include "s3d/cv/features/match_finder_cv.h"
 #include "s3d/cv/utilities/cv.h"
 #include "s3d/disparity/utilities.h"
+#include "s3d/math.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/utilities/histogram.h"
-
-#include <opencv2/opencv.hpp>
 
 #include "gsl/gsl"
 
@@ -52,24 +51,6 @@ void displayMatches(const std::string& displayName,
   displayInNewWindow(displayName, combined);
 }
 
-void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::Vector3d>* result) {
-  result->resize(in.size());
-  std::transform(
-      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector2d& value) {
-        return Eigen::Vector3d(value.x(), value.y(), 1.0);
-      });
-}
-
-// usually have to divide by z() but not necessary here
-void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
-                           std::vector<Eigen::Vector2d>* result) {
-  result->resize(in.size());
-  std::transform(
-      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector3d& value) {
-        return Eigen::Vector2d(value.x(), value.y());
-      });
-}
-
 std::ostream& operator<<(std::ostream& out, const s3d::StanAlignment& model) {
   out << "Vertical offset (%) = " << model.ch_y << std::endl;
   out << "Roll angle (degrees) = " << tan(model.a_z * 3.141592653589793 / 180.0) << std::endl;
@@ -110,8 +91,8 @@ int main(int argc, char* argv[]) {
 
   // to homogeneous
   std::vector<Eigen::Vector3d> pts1h, pts2h;
-  toHomogeneous2D(pts1, &pts1h);
-  toHomogeneous2D(pts2, &pts2h);
+  s3d::toHomogeneous2D(pts1, &pts1h);
+  s3d::toHomogeneous2D(pts2, &pts2h);
 
   // center points for ransac
   auto imageCenter = Eigen::Vector3d(leftOrig.rows / 2.0, leftOrig.cols / 2.0, 0.0);
@@ -144,15 +125,17 @@ int main(int argc, char* argv[]) {
   s3d::center_values(std::begin(bestPts1), std::end(bestPts1), std::begin(bestPts1), -imageCenter);
   s3d::center_values(std::begin(bestPts2), std::end(bestPts2), std::begin(bestPts2), -imageCenter);
 
+  // 3D homogeneous -> 2D
+  s3d::toEuclidian2DTruncate(bestPts1, &pts1);
+  s3d::toEuclidian2DTruncate(bestPts2, &pts2);
+
   cv::Mat leftMatchesImg = leftOrig.clone();
   cv::Mat rightMatchesImg = rightOrig.clone();
-  displayMatches("after", leftMatchesImg, rightMatchesImg, bestPts1, bestPts2);
+  s3d::drawMatches(leftMatchesImg, rightMatchesImg, pts1, pts2);
 
   // compute disparity range
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
 
-  toEuclidian2DTruncate(bestPts1, &pts1);
-  toEuclidian2DTruncate(bestPts2, &pts2);
   std::vector<double> disparities;
   s3d::compute_disparities(pts1, pts2, back_inserter(disparities));
 
