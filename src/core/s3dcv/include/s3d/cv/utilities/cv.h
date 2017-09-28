@@ -8,9 +8,8 @@
 
 #include "Eigen/Dense"
 
-#include <opencv/cxcore.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv/cxeigen.hpp>
-#include <opencv2/imgproc.hpp>
 
 #include <cstdint>
 
@@ -69,10 +68,16 @@ inline void resizeMat(gsl::not_null<cv::Mat*> mat, float ratio) {
   resizeMat(mat, ratio, ratio);
 }
 
+inline void displayInNewWindow(const std::string& name, cv::InputArray src) {
+  cv::namedWindow(name, cv::WINDOW_AUTOSIZE);
+  cv::imshow(name, src);
+  cv::waitKey(0);
+}
+
 inline void drawMatches(const cv::Mat& left,
                         const cv::Mat& right,
-                        const std::vector<Eigen::Vector2f>& featuresLeft,
-                        const std::vector<Eigen::Vector2f>& featuresRight) {
+                        const std::vector<Eigen::Vector2d>& featuresLeft,
+                        const std::vector<Eigen::Vector2d>& featuresRight) {
   cv::Mat leftRight(left.rows, left.cols * 2, left.type());
   cv::hconcat(left, right, leftRight);
 
@@ -89,15 +94,17 @@ inline void drawMatches(const cv::Mat& left,
     // discretize features
     const Eigen::Vector2i featureLeft = featuresLeft[i].cast<int>();
     const Eigen::Vector2i featureRight =
-        (featuresRight[i] + Eigen::Vector2f(left.cols, 0.0f)).cast<int>();
+        (featuresRight[i] + Eigen::Vector2d(left.cols, 0.0f)).cast<int>();
 
     const cv::Point ptLeft(featureLeft.x(), featureLeft.y());
     const cv::Point ptRight(featureRight.x(), featureRight.y());
 
-    cv::line(leftRight, ptLeft, ptRight, color, 2);
-    cv::circle(leftRight, ptLeft, 10, color);
-    cv::circle(leftRight, ptRight, 10, color);
+    cv::line(leftRight, ptLeft, ptRight, color, 1, CV_AA);
+    cv::circle(leftRight, ptLeft, 3, color, 1, CV_AA);
+    cv::circle(leftRight, ptRight, 3, color, 1, CV_AA);
   }
+
+  displayInNewWindow("matches", leftRight);
 }
 }  // namespace s3d
 
