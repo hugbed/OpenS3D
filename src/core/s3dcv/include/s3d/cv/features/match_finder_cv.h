@@ -44,6 +44,39 @@ class MatchFinderCV : public MatchFinder {
   virtual cv::Ptr<cv::Feature2D> createFeatureDetector();
 
   virtual cv::Ptr<cv::DescriptorMatcher> createDescriptorMatcher();
+
+ protected:
+  virtual void onFeaturesFound(const cv::Mat& imgLeft,
+                               const cv::Mat& imgRight,
+                               const MatchFinderCV::Features& featuresLeft,
+                               const MatchFinderCV::Features& featuresRight) {}
+
+  virtual void onFeaturesMatched(cv::Mat imgLeft,
+                                 cv::Mat imgRight,
+                                 std::vector<cv::DMatch> matches,
+                                 MatchFinder::Matches filteredMatches,
+                                 const MatchFinderCV::Features& featuresLeft,
+                                 const MatchFinderCV::Features& featuresRight,
+                                 double threshold) {}
+};
+
+/**
+ *  MatchFinder with integrated visualization tools.
+ */
+class MatchFinderCVViz : public MatchFinderCV {
+ protected:
+  void onFeaturesFound(const cv::Mat& imgLeft,
+                       const cv::Mat& imgRight,
+                       const MatchFinderCV::Features& featuresLeft,
+                       const MatchFinderCV::Features& featuresRight) override;
+
+  void onFeaturesMatched(cv::Mat imgLeft,
+                         cv::Mat imgRight,
+                         std::vector<cv::DMatch> matches,
+                         MatchFinder::Matches filteredMatches,
+                         const MatchFinderCV::Features& featuresLeft,
+                         const MatchFinderCV::Features& featuresRight,
+                         double threshold) override;
 };
 
 }  // namespace s3d
