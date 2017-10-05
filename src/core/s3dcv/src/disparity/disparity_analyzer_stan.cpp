@@ -3,30 +3,12 @@
 #include <s3d/cv/features/match_finder_cv.h>
 #include <s3d/cv/utilities/cv.h>
 #include <s3d/disparity/utilities.h>
+#include <s3d/math.h>
 #include <s3d/utilities/histogram.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace {
-// todo: maybe this could be somewhere else to be reusable
-void toHomogeneous2D(const std::vector<Eigen::Vector2d>& in, std::vector<Eigen::Vector3d>* result) {
-  result->resize(in.size());
-  std::transform(
-      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector2d& value) {
-        return Eigen::Vector3d(value.x(), value.y(), 1.0);
-      });
-}
-
-// usually have to divide by z() but not necessary here
-void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
-                           std::vector<Eigen::Vector2d>* result) {
-  result->resize(in.size());
-  std::transform(
-      std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Vector3d& value) {
-        return Eigen::Vector2d(value.x(), value.y());
-      });
-}
-}  // namespace
+#include <cassert>
 
 namespace s3d {
 
@@ -58,17 +40,24 @@ void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
   tiltKeystone.addToAverage(model.a_y_f);
 }
 
-void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPts,
+void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
+                                                  const std::vector<Eigen::Vector2d>& bestPtsRight,
                                                   std::vector<double> disparities,
                                                   float widthRatio,
                                                   float resizeRatio) {
-  featurePoints.clear();
+  assert(bestPtsLeft.size() == bestPtsRight.size());
+
+  featurePointsLeft.clear();
+  featurePointsRight.clear();
   disparitiesPercent.clear();
-  for (int i = 0; i < bestPts.size(); ++i) {
+  for (int i = 0; i < bestPtsLeft.size(); ++i) {
     // filter out extreme percentiles
     if (minDisparityPercent / widthRatio <= disparities[i] &&
         disparities[i] <= maxDisparityPercent / widthRatio) {
-      featurePoints.emplace_back(bestPts[i].x() * resizeRatio, bestPts[i].y() * resizeRatio);
+      featurePointsLeft.emplace_back(bestPtsLeft[i].x() * resizeRatio,
+                                     bestPtsLeft[i].y() * resizeRatio);
+      featurePointsRight.emplace_back(bestPtsRight[i].x() * resizeRatio,
+                                      bestPtsRight[i].y() * resizeRatio);
       disparitiesPercent.push_back(static_cast<float>(disparities[i] * widthRatio));
     }
   }
@@ -115,8 +104,8 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 
   // to homogeneous
   std::vector<Eigen::Vector3d> pts1h, pts2h;
-  toHomogeneous2D(matches[0], &pts1h);
-  toHomogeneous2D(matches[1], &pts2h);
+  s3d::toHomogeneous2D(matches[0], &pts1h);
+  s3d::toHomogeneous2D(matches[1], &pts2h);
 
   // center points for ransac
   auto imageCenter = Eigen::Vector3d(leftOrig.rows / 2.0, leftOrig.cols / 2.0, 0.0);
@@ -143,8 +132,8 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 
   // compute disparity range
   std::vector<Eigen::Vector2d> bestPts1, bestPts2;
-  toEuclidian2DTruncate(bestPts1h, &bestPts1);
-  toEuclidian2DTruncate(bestPts2h, &bestPts2);
+  s3d::toEuclidian2DTruncate(bestPts1h, &bestPts1);
+  s3d::toEuclidian2DTruncate(bestPts2h, &bestPts2);
   std::vector<double> disparities;
   s3d::compute_disparities(bestPts1, bestPts2, back_inserter(disparities));
   double minDisparity, maxDisparity;
@@ -153,7 +142,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   // Set outputs (moving average of smoothingFactor_)
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
   results.updateParameters(minDisparity, maxDisparity, widthRatio, model);
-  results.updatePoints(bestPts2, disparities, widthRatio, resizeRatio);
+  results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
 
   return true;
 }
@@ -161,8 +150,13 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
   return results.disparitiesPercent;
 }
-const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePoints() const {
-  return results.featurePoints;
+
+const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePointsLeft() const {
+  return results.featurePointsLeft;
+}
+
+const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePointsRight() const {
+  return results.featurePointsRight;
 }
 
 void DisparityAnalyzerSTAN::setSmoothingFactor(double smoothingFactor) {

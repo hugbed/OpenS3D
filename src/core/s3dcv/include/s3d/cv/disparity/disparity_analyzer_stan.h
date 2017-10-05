@@ -32,7 +32,8 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
                           float widthRatio,
                           RansacAlgorithmSTAN::ModelType model);
 
-    void updatePoints(const std::vector<Eigen::Vector2d>& bestPts,
+    void updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
+                      const std::vector<Eigen::Vector2d>& bestPtsRight,
                       std::vector<double> disparities,
                       float widthRatio,
                       float resizeRatio);
@@ -47,7 +48,8 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
     s3d::MovingAverage<double> tiltKeystone{};
     s3d::MovingAverage<double> tiltOffset{};
     s3d::MovingAverage<double> zoom{};
-    std::vector<Eigen::Vector2f> featurePoints{};
+    std::vector<Eigen::Vector2f> featurePointsLeft{};
+    std::vector<Eigen::Vector2f> featurePointsRight{};
     std::vector<float> disparitiesPercent{};
   };
 
@@ -60,7 +62,8 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
 
   bool analyze(const Image<uint8_t>& left, const Image<uint8_t>& right) override;
   const std::vector<float>& getDisparitiesPercent() const override;
-  const std::vector<Eigen::Vector2f>& getFeaturePoints() const override;
+  const std::vector<Eigen::Vector2f>& getFeaturePointsLeft() const override;
+  const std::vector<Eigen::Vector2f>& getFeaturePointsRight() const override;
   void setSmoothingFactor(double smoothingFactor);
 
   // outputs

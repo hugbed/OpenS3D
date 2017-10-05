@@ -1,6 +1,6 @@
 #include "stereo_demuxer_qimage_side_by_side.h"
 
-StereoDemuxerQImageSideBySide::StereoDemuxerQImageSideBySide(bool halfResolution = false)
+StereoDemuxerQImageSideBySide::StereoDemuxerQImageSideBySide(bool halfResolution)
     : StereoDemuxerQImage(halfResolution) {}
 
 gsl::owner<StereoDemuxerQImageSideBySide*> StereoDemuxerQImageSideBySide::clone() const {

@@ -5,7 +5,7 @@
 
 class StereoDemuxerQImageSideBySide : public StereoDemuxerQImage {
  public:
-  explicit StereoDemuxerQImageSideBySide(bool halfResolution);
+  explicit StereoDemuxerQImageSideBySide(bool halfResolution = false);
 
   gsl::owner<StereoDemuxerQImageSideBySide*> clone() const override;
 
