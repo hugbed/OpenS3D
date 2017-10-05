@@ -18,6 +18,6 @@ struct ViewerContext {
   float screenWidth;
   int imageWidthPixels;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_VIEWER_CONTEXT_H

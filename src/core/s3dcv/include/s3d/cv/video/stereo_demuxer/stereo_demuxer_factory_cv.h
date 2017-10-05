@@ -30,6 +30,6 @@ class StereoDemuxerFactoryCV : public StereoDemuxerFactory {
     }
   }
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_CV_VIDEO_STEREO_DEMUXER_FACTORY_CV_H

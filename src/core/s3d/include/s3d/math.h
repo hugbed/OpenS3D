@@ -24,6 +24,6 @@ inline void toEuclidian2DTruncate(const std::vector<Eigen::Vector3d>& in,
         return Eigen::Vector2d(value.x(), value.y());
       });
 }
-}
+}  // namespace s3d
 
 #endif  // S3D_MATH_H

@@ -73,4 +73,4 @@ float ViewerDepthConverter::computeHorizontalPosition(float imageX) {
 void ViewerDepthConverter::setViewerContext(gsl::not_null<ViewerContext*> viewerContext) {
   viewerContext_ = viewerContext;
 }
-}
+}  // namespace s3d

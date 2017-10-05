@@ -17,10 +17,8 @@ class NotEnoughInliersFound : std::runtime_error {
  public:
   NotEnoughInliersFound(size_t nbInliers, size_t expectedNb)
       : std::runtime_error(std::string("Not enough inliers found: [expected, found] = [") +
-                           std::to_string(nbInliers) +
-                           std::string(", ") +
-                           std::to_string(expectedNb) +
-                           std::string("]")) {}
+                           std::to_string(nbInliers) + std::string(", ") +
+                           std::to_string(expectedNb) + std::string("]")) {}
 };
 
 // Empty base class for common types

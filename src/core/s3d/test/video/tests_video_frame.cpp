@@ -2,9 +2,9 @@
 
 #include "s3d/video/video_frame.h"
 
+using s3d::Size;
 using s3d::VideoFrame;
 using s3d::VideoPixelFormat;
-using s3d::Size;
 
 TEST(video_frame, num_bytes_per_pixel_ARGB_BGRA_4) {
   EXPECT_EQ(VideoFrame::AllocationSize(VideoPixelFormat::ARGB, Size(1, 1)), 4);

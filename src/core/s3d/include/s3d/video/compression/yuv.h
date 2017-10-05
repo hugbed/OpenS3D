@@ -1,8 +1,8 @@
 #ifndef S3D_VIDEO_COMPRESSION_YUV_H
 #define S3D_VIDEO_COMPRESSION_YUV_H
 
-#include "s3d/utilities/math.h"
 #include <tuple>
+#include "s3d/utilities/math.h"
 
 namespace s3d {
 namespace compression {
@@ -57,8 +57,8 @@ struct color_conversion<UYVY, BGR> {
 
   template <class InputIt, class OutputIt>
   void operator()(InputIt first, InputIt last, OutputIt d_first) {
-    using std::is_same;
     using std::distance;
+    using std::is_same;
     using std::iterator_traits;
     static_assert(is_same<typename iterator_traits<InputIt>::value_type, uint8_t>::value,
                   "only byte sequences are supported");
@@ -85,8 +85,8 @@ template <>
 struct color_conversion<UYVY, RGB> {
   template <class InputIt, class OutputIt>
   void operator()(InputIt first, InputIt last, OutputIt d_first) {
-    using std::is_same;
     using std::distance;
+    using std::is_same;
     using std::iterator_traits;
     static_assert(is_same<typename iterator_traits<InputIt>::value_type, uint8_t>::value,
                   "only byte sequences are supported");

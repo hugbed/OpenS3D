@@ -2,8 +2,8 @@
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
-using s3d::StanFundamentalMatrixSolver;
 using s3d::StanAlignment;
+using s3d::StanFundamentalMatrixSolver;
 
 TEST(stan_fundamental_matrix_solver, f_from_params_correct_equation) {
   StanAlignment x{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};

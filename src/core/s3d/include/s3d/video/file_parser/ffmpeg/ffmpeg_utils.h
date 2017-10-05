@@ -2,10 +2,10 @@
 #define S3D_VIDEO_FILE_PARSER_FFMPEG_FFMPEG_UTILS_H
 
 extern "C" {
-#include <cstdint>
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
+#include <cstdint>
 }
 
 #include "s3d/video/video_types.h"

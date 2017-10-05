@@ -36,6 +36,6 @@ class ViewerDepthConverter {
  private:
   ViewerContext* viewerContext_;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_VIEWER_DEPTH_CONVERTER_H

@@ -11,8 +11,8 @@
 #include "gsl/gsl"
 
 using s3d::DisparityAlgorithm;
-using s3d::cuda::DisparityAlgorithmORB;
 using s3d::Image;
+using s3d::cuda::DisparityAlgorithmORB;
 
 void displayInNewWindow(const std::string& name, cv::InputArray src) {
   cv::namedWindow(name, cv::WINDOW_AUTOSIZE);

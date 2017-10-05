@@ -16,6 +16,6 @@ class StereoDemuxerFactory {
                                                 Size frameSize,
                                                 VideoPixelFormat pixelFormat) = 0;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_STEREO_DEMUXER_STEREO_DEMUXER_FACTORY_H

@@ -106,8 +106,8 @@ int main(int argc, char* argv[]) {
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
 
   using s3d::RansacAlgorithm;
-  using s3d::StanFundamentalMatrixSolver;
   using s3d::SampsonDistanceFunction;
+  using s3d::StanFundamentalMatrixSolver;
   RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
 
   std::cout << ransac(pts1h, pts2h);

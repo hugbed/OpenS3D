@@ -20,6 +20,6 @@ class StereoDemuxer : public rule_of_five_interface<StereoDemuxer> {
   virtual void setSize(Size size) = 0;
   virtual void setPixelFormat(VideoPixelFormat format) = 0;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_VIDEO_STEREO_DEMUXER_STEREO_DEMUXER_H

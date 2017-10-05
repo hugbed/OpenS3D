@@ -29,7 +29,7 @@ DoubleSpinBoxNoCursor::DoubleSpinBoxNoCursor(QWidget* parent) : QDoubleSpinBox(p
       //"QDoubleSpinBox::up-button {"
       //"    image: url(:/images/spinup.png);"
       //"}"
-      );  // to change up button image (for red, orange, green).
+  );  // to change up button image (for red, orange, green).
 
   setStyleSheet(spinBoxStyle);
 }

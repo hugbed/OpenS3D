@@ -4,13 +4,13 @@
 #include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
 #include "s3d/video/file_parser/video_file_parser.h"
 
-using s3d::TimedLoop;
-using s3d::VideoFileParser;
-using s3d::VideoCaptureFormat;
-using s3d::VideoPixelFormat;
 using s3d::FileVideoCaptureDeviceRawUYVY;
-using s3d::VideoCaptureDevice;
 using s3d::Size;
+using s3d::TimedLoop;
+using s3d::VideoCaptureDevice;
+using s3d::VideoCaptureFormat;
+using s3d::VideoFileParser;
+using s3d::VideoPixelFormat;
 
 class FakeTimedLoop : public TimedLoop {
  public:

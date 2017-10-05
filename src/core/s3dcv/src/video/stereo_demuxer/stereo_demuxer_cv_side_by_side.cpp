@@ -39,4 +39,4 @@ Size StereoDemuxerCVSideBySide::demuxedSize() const {
 Stereo3DFormat StereoDemuxerCVSideBySide::getStereoFormat() const {
   return halfResolution_ ? Stereo3DFormat::SideBySideHalf : Stereo3DFormat::SideBySide;
 }
-}
+}  // namespace s3d

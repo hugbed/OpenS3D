@@ -2,9 +2,9 @@
 
 #include "s3d/video/compression/yuv.h"
 
-using s3d::compression::color_conversion;
-using s3d::compression::UYVY;
 using s3d::compression::BGR;
+using s3d::compression::UYVY;
+using s3d::compression::color_conversion;
 using rgb_tuple = s3d::compression::color_conversion<UYVY, BGR>::rgb_tuple;
 using yuv_tuple = s3d::compression::color_conversion<UYVY, BGR>::yuv_tuple;
 
@@ -14,7 +14,7 @@ yuv_tuple WHITE = {255, 128, 128};
 yuv_tuple RED = {76, 84, 255};
 yuv_tuple GREEN = {149, 43, 21};
 yuv_tuple BLUE = {29, 255, 107};
-}
+}  // namespace YUV_VALUES
 
 namespace RGB_VALUES {
 rgb_tuple BLACK = {0, 0, 0};
@@ -22,7 +22,7 @@ rgb_tuple WHITE = {255, 255, 255};
 rgb_tuple RED = {255, 0, 0};
 rgb_tuple GREEN = {0, 255, 0};
 rgb_tuple BLUE = {0, 0, 255};
-}
+}  // namespace RGB_VALUES
 
 class yuv_to_rgb_test : public ::testing::Test {
  public:

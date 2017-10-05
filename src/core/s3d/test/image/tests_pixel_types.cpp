@@ -2,8 +2,8 @@
 
 #include "s3d/image/pixel_types.h"
 
-using s3d::RgbColor;
 using s3d::RgbBase;
+using s3d::RgbColor;
 
 TEST(rgb_base, default_constructor_black) {
   RgbBase<uint8_t> c;

@@ -3,11 +3,11 @@
 
 #include <iostream>
 
+using s3d::FileVideoCaptureDeviceFactory;
 using s3d::VideoCaptureDevice;
-using s3d::VideoCaptureFormat;
 using s3d::VideoCaptureDeviceDescriptor;
 using s3d::VideoCaptureDeviceFactory;
-using s3d::FileVideoCaptureDeviceFactory;
+using s3d::VideoCaptureFormat;
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:

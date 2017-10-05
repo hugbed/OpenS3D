@@ -1,9 +1,9 @@
 #ifndef RENDERING_OPENGLWIDGET_H
 #define RENDERING_OPENGLWIDGET_H
 
-#include "rendering/openglrenderer.h"
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
+#include "rendering/openglrenderer.h"
 
 #include <memory>
 

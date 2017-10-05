@@ -40,4 +40,4 @@ Size StereoDemuxerCVAboveBelow::demuxedSize() const {
 Stereo3DFormat StereoDemuxerCVAboveBelow::getStereoFormat() const {
   return halfResolution_ ? Stereo3DFormat::AboveBelowHalf : Stereo3DFormat::AboveBelow;
 }
-}
+}  // namespace s3d

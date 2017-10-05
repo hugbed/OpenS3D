@@ -18,6 +18,6 @@ class StereoDemuxerCVAboveBelow : public StereoDemuxerCV {
   Size demuxedSize() const override;
   Stereo3DFormat getStereoFormat() const override;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_CV_STEREO_DEMUXER_STEREO_DEMUXER_AB_H

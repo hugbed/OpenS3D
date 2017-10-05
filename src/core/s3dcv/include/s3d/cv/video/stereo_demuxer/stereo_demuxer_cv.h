@@ -30,6 +30,6 @@ class StereoDemuxerCV : public StereoDemuxer {
   Size frameSize_;
   VideoPixelFormat pixelFormat_;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_CV_STEREO_DEMUXER_STEREO_DEMUXER_CV_H

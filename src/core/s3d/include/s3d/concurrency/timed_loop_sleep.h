@@ -18,8 +18,8 @@ class TimedLoopSleep : public TimedLoop {
   gsl::owner<TimedLoop*> clone() const override { return new TimedLoopSleep; }
 
   void start(Client* client, std::chrono::microseconds loopDuration) override {
-    using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
     using std::chrono::microseconds;
     using std::chrono_literals::operator""ms;
     using std::chrono_literals::operator""us;
@@ -59,8 +59,8 @@ class TimedLoopSleep : public TimedLoop {
   }
 
   void outputPerformanceMetrics(std::ostream& outStream, std::chrono::microseconds baselineTime) {
-    using std::chrono::microseconds;
     using std::chrono::duration_cast;
+    using std::chrono::microseconds;
 
     auto tmpMesure = lastTimeMesure;
 

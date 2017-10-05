@@ -2,14 +2,14 @@
 #define S3D_CV_UTILITIES_CV_H
 
 #include "s3d/image/image.h"
+#include "s3d/utilities/random_color_generator.h"
 #include "s3d/video/video_frame.h"
 #include "s3d/video/video_types.h"
-#include "s3d/utilities/random_color_generator.h"
 
 #include "Eigen/Dense"
 
-#include <opencv2/opencv.hpp>
 #include <opencv/cxeigen.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <cstdint>
 

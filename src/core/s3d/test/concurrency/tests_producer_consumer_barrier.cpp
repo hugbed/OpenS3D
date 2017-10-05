@@ -4,11 +4,11 @@
 #include "s3d/concurrency/consumer_barrier.h"
 #include "s3d/concurrency/producer_barrier.h"
 
-using s3d::ProducerConsumerMediator;
-using s3d::ProducerConsumerBarrier;
-using s3d::ProducerBarrier;
 using s3d::BinarySemaphore;
 using s3d::CyclicCountDownLatch;
+using s3d::ProducerBarrier;
+using s3d::ProducerConsumerBarrier;
+using s3d::ProducerConsumerMediator;
 
 class MockProducerConsumerMediator : public s3d::ProducerConsumerMediator {
  public:

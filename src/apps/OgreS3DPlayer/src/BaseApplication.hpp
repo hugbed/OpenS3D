@@ -13,11 +13,11 @@
 #include <OgreViewport.h>
 #include <OgreWindowEventUtilities.h>
 
-#include "CameraMan.hpp"
 #include <OISEvents.h>
 #include <OISInputManager.h>
 #include <OISKeyboard.h>
 #include <OISMouse.h>
+#include "CameraMan.hpp"
 
 class BaseApplication : public Ogre::WindowEventListener,
                         public Ogre::FrameListener,

@@ -16,7 +16,7 @@ class QTimer;
 namespace s3d {
 class StereoDemuxer;
 class StereoDemuxerFactory;
-}
+}  // namespace s3d
 
 // synchronizes video acquisition in another thread
 // with the main thread using a timer to check when

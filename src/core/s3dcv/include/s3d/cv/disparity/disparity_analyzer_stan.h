@@ -73,6 +73,6 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
 
   RansacAlgorithmSTAN createRansac(Size imageSize);
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_CV_DISPARITY_DISPARITY_ANALYZER_STAN_H

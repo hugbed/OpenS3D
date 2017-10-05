@@ -23,7 +23,7 @@ class StereoDemuxerFactoryQImage;
 namespace s3d {
 class DisparityAnalyzerSTAN;
 class VideoCaptureFormat;
-}
+}  // namespace s3d
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
