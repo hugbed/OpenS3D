@@ -297,7 +297,7 @@ void MainWindow::computeAndUpdate() {
       ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
 
       m_currentContext->makeCurrent();
-      m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePoints,
+      m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
                                                    m_analyzer->results.disparitiesPercent);
       m_currentContext->doneCurrent();
       updateConvergenceHint(m_analyzer->results.minDisparityPercent,
@@ -358,7 +358,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
         m_windowRenderingContext = std::make_unique<RenderingContext>(m_openGLWindow.get());
         m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->results.featurePoints,
+                                               m_analyzer->results.featurePointsRight,
                                                m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_windowRenderingContext->entityManager->setUserSettings(&m_userSettings);
@@ -368,7 +368,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
       connect(m_openGLWindow.get(), &OpenGLWindow::onClose, [this] {
         m_widgetRenderingContext->persistState(m_windowRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->results.featurePoints,
+                                               m_analyzer->results.featurePointsRight,
                                                m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_currentContext = m_widgetRenderingContext.get();
@@ -376,7 +376,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
     } else {
       m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                              getCurrentDisplayMode(),         //
-                                             m_analyzer->results.featurePoints,
+                                             m_analyzer->results.featurePointsRight,
                                              m_analyzer->results.disparitiesPercent,
                                              ui->actionFeatures->isChecked());
       m_currentContext = m_windowRenderingContext.get();
@@ -510,7 +510,7 @@ void MainWindow::demuxImage(const QImage& image) {
   m_imageLeftReady = false;
   m_imageRightReady = false;
 
-  if (m_stereoDemuxer == nullptr && stereoDemuxerRequired() || stereoFormatChanged()) {
+  if ((m_stereoDemuxer == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
     updateStereoDemuxer();
   }
 
