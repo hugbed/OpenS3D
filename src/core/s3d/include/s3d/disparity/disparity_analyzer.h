@@ -12,8 +12,9 @@ namespace s3d {
 class DisparityAnalyzer : rule_of_five_interface<DisparityAnalyzer> {
   virtual bool analyze(const Image<uint8_t>& leftImage, const Image<uint8_t>& rightImage) = 0;
   virtual const std::vector<float>& getDisparitiesPercent() const = 0;
-  virtual const std::vector<Eigen::Vector2f>& getFeaturePoints() const = 0;
+  virtual const std::vector<Eigen::Vector2f>& getFeaturePointsLeft() const = 0;
+  virtual const std::vector<Eigen::Vector2f>& getFeaturePointsRight() const = 0;
 };
-}
+}  // namespace s3d
 
 #endif  // S3D_DISPARITY_DISPARITY_ANALYZER_H

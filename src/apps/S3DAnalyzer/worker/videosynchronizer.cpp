@@ -60,7 +60,7 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
                                                std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex>(m_mutex);
 
-  if (m_stereoDemuxer == nullptr && stereoDemuxerRequired() || stereoFormatChanged()) {
+  if ((m_stereoDemuxer == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
     updateStereoDemuxer(frameFormat);
   }
 

@@ -65,7 +65,7 @@ class FakeDescriptorMatcher : public cv::DescriptorMatcher {
 
   bool isMaskSupported() const override { return false; }
 
-  cv::Ptr<cv::DescriptorMatcher> clone(bool emptyTrainData) const {
+  cv::Ptr<cv::DescriptorMatcher> clone(bool emptyTrainData) const override {
     return cv::Ptr<cv::DescriptorMatcher>(new FakeDescriptorMatcher);
   }
 };
