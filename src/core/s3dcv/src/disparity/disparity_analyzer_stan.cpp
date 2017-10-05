@@ -17,12 +17,13 @@ DisparityAnalyzerSTAN::Results::Results() = default;
 DisparityAnalyzerSTAN::Results::Results(double smoothingFactor)
     : minDisparityPercent{0.0, smoothingFactor},
       maxDisparityPercent{0.0, smoothingFactor},
-      roll{0.0, smoothingFactor},
       vertical{0.0, smoothingFactor},
+      roll{0.0, smoothingFactor},
+      zoom{0.0, smoothingFactor},
+      tiltOffset{0.0, smoothingFactor},
       panKeystone{0.0, smoothingFactor},
       tiltKeystone{0.0, smoothingFactor},
-      tiltOffset{0.0, smoothingFactor},
-      zoom{0.0, smoothingFactor} {}
+      zParallaxDeformation{0.0, smoothingFactor} {}
 
 void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
                                                       double maxDisparity,
@@ -32,12 +33,13 @@ void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
   auto maxDisparityPercent = maxDisparity * widthRatio;
   this->minDisparityPercent.addToAverage(minDisparityPercent);
   this->maxDisparityPercent.addToAverage(maxDisparityPercent);
-  vertical.addToAverage(model.ch_y);
-  roll.addToAverage(model.a_z);
-  zoom.addToAverage(model.a_f);
-  tiltOffset.addToAverage(model.f_a_x);
-  panKeystone.addToAverage(model.a_x_f);
-  tiltKeystone.addToAverage(model.a_y_f);
+  vertical.addToAverage(model.ch_y);                // * 180 / PI (degrees)
+  roll.addToAverage(model.a_z);                     // model.a_z * 180.0 / PI (degrees)
+  zoom.addToAverage(model.a_f);                     // (model.a_f + 1.0) * 100.0 (%)
+  tiltOffset.addToAverage(model.f_a_x);             // pixels
+  panKeystone.addToAverage(model.a_x_f);            // radians / m
+  tiltKeystone.addToAverage(model.a_y_f);           // radians / m
+  zParallaxDeformation.addToAverage(model.ch_z_f);  // ratio (m/m)
 }
 
 void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
@@ -66,12 +68,25 @@ void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vecto
 void DisparityAnalyzerSTAN::Results::setSmoothingFactor(double smoothingFactor) {
   minDisparityPercent.setSmoothingFactor(smoothingFactor);
   maxDisparityPercent.setSmoothingFactor(smoothingFactor);
-  roll.setSmoothingFactor(smoothingFactor);
   vertical.setSmoothingFactor(smoothingFactor);
+  roll.setSmoothingFactor(smoothingFactor);
+  zoom.setSmoothingFactor(smoothingFactor);
+  tiltOffset.setSmoothingFactor(smoothingFactor);
   panKeystone.setSmoothingFactor(smoothingFactor);
   tiltKeystone.setSmoothingFactor(smoothingFactor);
-  tiltOffset.setSmoothingFactor(smoothingFactor);
-  zoom.setSmoothingFactor(smoothingFactor);
+  zParallaxDeformation.setSmoothingFactor(smoothingFactor);
+}
+
+StanAlignment DisparityAnalyzerSTAN::Results::getStanAlignment() const {
+  StanAlignment alignment;
+  alignment.ch_y = static_cast<double>(vertical);
+  alignment.a_z = static_cast<double>(roll);
+  alignment.a_f = static_cast<double>(zoom);
+  alignment.f_a_x = static_cast<double>(tiltOffset);
+  alignment.a_y_f = static_cast<double>(tiltKeystone);
+  alignment.a_x_f = static_cast<double>(panKeystone);
+  alignment.ch_z_f = static_cast<double>(zParallaxDeformation);
+  return alignment;
 }
 
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN() : results{} {}

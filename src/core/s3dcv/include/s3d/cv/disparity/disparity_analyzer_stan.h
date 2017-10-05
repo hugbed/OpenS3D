@@ -40,16 +40,20 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
 
     void setSmoothingFactor(double smoothingFactor);
 
+    StanAlignment getStanAlignment() const;
+
     s3d::MovingAverage<double> minDisparityPercent{};
     s3d::MovingAverage<double> maxDisparityPercent{};
-    s3d::MovingAverage<double> roll{};
     s3d::MovingAverage<double> vertical{};
+    s3d::MovingAverage<double> roll{};
+    s3d::MovingAverage<double> zoom{};
+    s3d::MovingAverage<double> tiltOffset{};
     s3d::MovingAverage<double> panKeystone{};
     s3d::MovingAverage<double> tiltKeystone{};
-    s3d::MovingAverage<double> tiltOffset{};
-    s3d::MovingAverage<double> zoom{};
+    s3d::MovingAverage<double> zParallaxDeformation{};
     std::vector<Eigen::Vector2f> featurePointsLeft{};
     std::vector<Eigen::Vector2f> featurePointsRight{};
+
     std::vector<float> disparitiesPercent{};
   };
 
