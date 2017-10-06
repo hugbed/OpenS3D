@@ -10,17 +10,19 @@
 
 namespace s3d {
 
-// todo: this is really not clear
+// todo: variable names are really not clear (we assume here that one has read the article...)
+// todo: name this with readable format (i.e: verticalOffset, etc.)
 struct StanAlignment {
-  double ch_y{};
-  double a_z{};
-  double a_f{};
-  double f_a_x{};
-  double a_y_f{};
-  double a_x_f{};
-  double ch_z_f{};
+  double ch_y{};    // vertical offset: * 180 / PI (degrees)
+  double a_z{};     // roll angle: a_z * 180.0 / PI (degrees)
+  double a_f{};     // zoom: (a_f + 1.0) * 100.0 (%)
+  double f_a_x{};   // tiltOffset: pixels
+  double a_y_f{};   // panKeystone: radians / m
+  double a_x_f{};   // tiltKeystone: radians / m
+  double ch_z_f{};  // zParallaxDeformation: ratio (m/m)
 };
 
+// todo: test this (regression, coherence tests)
 class StanFundamentalMatrixSolver {
  public:
   using SampleType = Eigen::Vector3d;
