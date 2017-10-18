@@ -17,21 +17,21 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
   std::tie(A, b) = BuildEquationSystem(pts1, pts2);
 
   // solve
-  auto x = s3d::pseudoinverse(A) * b;
+  Eigen::VectorXd x = s3d::pseudoinverse(A) * b;
 
-  return {x[0], x[1], x[2], x[3], x[4], 0, 0};
+  return {x[0], x[1], x[2], x[3], x[4], x[5], x[6]};
 }
 
 // static
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEquationSystem(
     const std::vector<SampleType>& pts1,
     const std::vector<SampleType>& pts2) {
-  constexpr int nbVariables = 5;
+  constexpr int nbVariables = 7;
   assert(pts1.size() >= nbVariables);
   assert(pts2.size() >= nbVariables);
 
-  // rows x cols = nbPts x 6
-  Eigen::MatrixXd A(pts1.size(), nbVariables + 1);
+  // rows x cols = nbPts x nbVariables
+  Eigen::MatrixXd A(pts1.size(), nbVariables);
   Eigen::VectorXd b(pts1.size());
 
   for (int i = 0; i < pts1.size(); ++i) {
@@ -39,9 +39,9 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
     auto xp = pts2[i];
 
     // fill A
-    Eigen::VectorXd row(nbVariables + 1);
-    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y();
-    A.block<1, nbVariables + 1>(i, 0) = row;
+    Eigen::VectorXd row(nbVariables);
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y(), x.x()*xp.y() - xp.x()*x.y();
+    A.block<1, nbVariables>(i, 0) = row;
 
     // fill b
     b[i] = xp.y() - x.y();

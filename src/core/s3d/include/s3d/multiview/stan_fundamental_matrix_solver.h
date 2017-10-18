@@ -42,7 +42,7 @@ template <>
 struct robust_solver_traits<StanFundamentalMatrixSolver> {
   using SampleType = StanFundamentalMatrixSolver::SampleType;
   using ModelType = StanFundamentalMatrixSolver::ModelType;
-  enum { MIN_NB_SAMPLES = 5 };
+  enum { MIN_NB_SAMPLES = 7 };
 };
 
 }  // namespace s3d

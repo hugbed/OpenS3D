@@ -10,7 +10,8 @@ using s3d::RectificationStan;
 // tilt offset ?
 // panKeystone: regression testing
 // tiltKeystone: regression testing
-// zParallax deformation: regression testing. (though it may be hardcoded to 0 in rectification_stan)
+// zParallax deformation: regression testing. (though it may be hardcoded to 0 in
+// rectification_stan)
 
 TEST(rectification_stan, what_to_do_here) {
   EXPECT_TRUE(false);

@@ -11,42 +11,47 @@ namespace s3d {
 using FeaturesCV = MatchFinderCV::Features;
 using MatchesCV = MatchFinderCV::Matches;
 
-MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>>& images) {
-  assert(images.size() == 2);
-
-  auto imgIt = std::begin(images);
-  auto featuresLeft = findFeatures(*imgIt++);
-  auto featuresRight = findFeatures(*imgIt++);
+MatchFinder::Matches MatchFinderCV::findMatches(const cv::Mat& imageLeft,
+                                                const cv::Mat& imageRight) {
+  auto featuresLeft = findFeatures(imageLeft);
+  auto featuresRight = findFeatures(imageRight);
 
   if (featuresLeft.descriptors.rows == 0 || featuresRight.descriptors.rows == 0 ||
       featuresLeft.keypoints.size() == 0 || featuresRight.keypoints.size() == 0) {
     return {{}, {}};
   }
 
-  cv::Mat cvImageLeft = image2cv(images[0]);
-  cv::Mat cvImageRight = image2cv(images[1]);
-  onFeaturesFound(cvImageLeft, cvImageRight, featuresLeft, featuresRight);
+  onFeaturesFound(imageLeft, imageRight, featuresLeft, featuresRight);
 
   auto matches = matchFeatures(featuresLeft, featuresRight);
   if (matches.empty()) {
     return {{}, {}};
   }
 
-  double threshold = computeThreshold(images[0].width(), images[0].height());
+  double threshold = computeThreshold(imageLeft.cols, imageLeft.rows);
   auto filteredMatches = filterMatches(featuresLeft, featuresRight, matches, threshold);
 
   onFeaturesMatched(
-      cvImageLeft, cvImageRight, matches, filteredMatches, featuresLeft, featuresRight, threshold);
+      imageLeft, imageRight, matches, filteredMatches, featuresLeft, featuresRight, threshold);
 
   return filteredMatches;
 }
 
-FeaturesCV MatchFinderCV::findFeatures(const Image<uint8_t>& img) {
+MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>>& images) {
+  assert(images.size() == 2);
+  return findMatches(s3d::image2cv(images[0]), s3d::image2cv(images[1]));
+}
+
+FeaturesCV MatchFinderCV::findFeatures(const cv::Mat& img) {
   cv::Mat descriptors;
   std::vector<cv::KeyPoint> keypoints;
   auto featureDetector = createFeatureDetector();
-  featureDetector->detectAndCompute(s3d::image2cv(img), cv::noArray(), keypoints, descriptors);
+  featureDetector->detectAndCompute(img, cv::noArray(), keypoints, descriptors);
   return {descriptors, keypoints};
+}
+
+FeaturesCV MatchFinderCV::findFeatures(const Image<uint8_t>& img) {
+  return findFeatures(s3d::image2cv(img));
 }
 
 MatchesCV MatchFinderCV::matchFeatures(const FeaturesCV& leftFeatures,
@@ -93,7 +98,7 @@ cv::Ptr<cv::DescriptorMatcher> MatchFinderCV::createDescriptorMatcher() {
 double MatchFinderCV::computeThreshold(int imageWidth, int imageHeight) {
   double W = imageWidth;
   double H = imageHeight;
-  return 0.25 * sqrt(W * W + H * H);
+  return 0.07 * sqrt(W * W + H * H);
 }
 
 void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,
@@ -104,8 +109,10 @@ void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,
   cv::Mat imageRightWithKeypoints = imgRight.clone();
   cv::drawKeypoints(imageLeftWithKeypoints, featuresLeft.keypoints, imageLeftWithKeypoints);
   cv::drawKeypoints(imageRightWithKeypoints, featuresRight.keypoints, imageRightWithKeypoints);
-  cv::imshow("left image", imageLeftWithKeypoints);
-  cv::imshow("right image", imageRightWithKeypoints);
+
+  cv::Mat images(imgLeft.rows, imgRight.cols * 2, CV_8UC3);
+  cv::hconcat(imageLeftWithKeypoints, imageRightWithKeypoints, images);
+  cv::imshow("Features Found", images);
 }
 
 void MatchFinderCVViz::onFeaturesMatched(cv::Mat imgLeft,
@@ -129,6 +136,6 @@ void MatchFinderCVViz::onFeaturesMatched(cv::Mat imgLeft,
                   featuresRight.keypoints,
                   filteredMatchesCV,
                   matchesImg);
-  cv::imshow("filtered matches", matchesImg);
+  cv::imshow("Filtered Matches", matchesImg);
 }
 }  // namespace s3d

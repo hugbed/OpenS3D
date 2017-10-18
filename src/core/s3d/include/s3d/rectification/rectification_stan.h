@@ -18,72 +18,41 @@ namespace s3d {
 class RectificationStan {
  public:
   /**
-   * Centered rectification matrix from stereo rig alignment for left image.
+   * Rectification matrix from stereo rig alignment for left image.
    *
    * @param alignment Stereo rig alignment found with DisparityAnalyzerSTAN
    * @param imageSize Image size to center the rectification
    * @return rectification matrix to apply to the left image
    */
-  static Eigen::Matrix3f leftImageMatrix(const StanAlignment& alignment, const Size& imageSize) {
+  static Eigen::Matrix3f leftImageMatrix(const StanAlignment& alignment) {
     auto&& a = alignment;
 
-    Eigen::Matrix3f HOff = offsetMatrix(imageSize);
-    Eigen::Matrix3f HOffT = offsetOppositeMatrix(imageSize);
     Eigen::Matrix3f H;
     H << 1.0f, a.ch_y, 0.0f,  //
         -a.ch_y, 1.0f, 0.0f,  //
         -a.ch_z_f, 0.0f, 1.0f;
 
-    return HOffT * H * HOff;
+    return H;
   }
 
   /**
-   * Centered rectification matrix from stereo rig alignment for right image.
+   * Rectification matrix from stereo rig alignment for right image.
    *
    * @param alignment Stereo rig alignment found with DisparityAnalyzerSTAN
    * @param imageSize Image size to center the rectification
    * @return rectification matrix to apply to the right image
    */
-  static Eigen::Matrix3f rightImageMatrix(const StanAlignment& alignment, const Size& imageSize) {
+  static Eigen::Matrix3f rightImageMatrix(const StanAlignment& alignment) {
     auto&& a = alignment;
 
-    Eigen::Matrix3f HOff = offsetMatrix(imageSize);
-    Eigen::Matrix3f HOffT = offsetOppositeMatrix(imageSize);
     Eigen::Matrix3f Hp;
-    Hp << 1 - a.a_f, a.a_z + a.ch_y, 0,          //
-        -(a.a_z + a.ch_y), 1 - a.a_f, -a.f_a_x,  //
+    Hp << 1 - a.a_f, a.a_z + a.ch_y, 0,         //
+        -(a.a_z + a.ch_y), 1 - a.a_f, a.f_a_x,  //
         a.a_y_f - a.ch_z_f, -a.a_x_f, 1;
 
-    return HOffT * Hp * HOff;
-  }
+    return Hp;
 
- private:
-  /**
-   * Offset matrix to rectifier around the center of the image.
-   *
-   * @param imageSize to compute the image center
-   * @return rectification offset matrix
-   */
-  static Eigen::Matrix3f offsetMatrix(const Size& imageSize) {
-    Eigen::Matrix3f HOff;
-    HOff << 1.0f, 0.0f, imageSize.getWidth() / 2.0f,  //
-        0.0f, 1.0f, imageSize.getHeight() / 2.0f,     //
-        0.0f, 0.0f, 1.0f;
-    return HOff;
-  }
-
-  /**
-   * Offset matrix to return to image coordinates after rectification.
-   *
-   * @param imageSize to compute the image center
-   * @return rectification opposite offset matrix.
-   */
-  static Eigen::Matrix3f offsetOppositeMatrix(const Size& imageSize) {
-    Eigen::Matrix3f HOffT;
-    HOffT << 1.0f, 0.0f, -imageSize.getWidth() / 2.0f,  //
-        0.0f, 1.0f, -imageSize.getHeight() / 2.0f,      //
-        0.0f, 0.0f, 1.0f;
-    return HOffT;
+    // return HOffT * Hp * HOff;
   }
 };
 

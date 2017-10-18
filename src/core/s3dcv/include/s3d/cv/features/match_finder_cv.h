@@ -27,8 +27,10 @@ class MatchFinderCV : public MatchFinder {
   };
 
   MatchFinder::Matches findMatches(const std::vector<Image<uint8_t>>& images) override;
-
   Features findFeatures(const Image<uint8_t>& img);
+
+  MatchFinder::Matches findMatches(const cv::Mat& imageLeft, const cv::Mat& imageRight);
+  Features findFeatures(const cv::Mat& img);
 
   Matches matchFeatures(const Features& leftFeatures, const Features& rightFeatures);
 

@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 
   cv::Mat leftMatchesImg = leftOrig.clone();
   cv::Mat rightMatchesImg = rightOrig.clone();
-  s3d::drawMatches(leftMatchesImg, rightMatchesImg, pts1, pts2);
+  s3d::displayMatches(leftMatchesImg, rightMatchesImg, pts1, pts2);
 
   // compute disparity range
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
   s3d::compute_disparities(pts1, pts2, back_inserter(disparities));
 
   // disparity histogram
-  auto hist = s3d::Histogram::Compute(disparities, 10);
+  auto hist = s3d::Histogram<double>::Compute(disparities, 10);
 
   double minDisp, maxDisp;
   std::tie(minDisp, maxDisp) = s3d::disparity_range(disparities);
