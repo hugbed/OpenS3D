@@ -1,9 +1,10 @@
 #ifndef S3D_CV_RECTIFIER_STAN_H
 #define S3D_CV_RECTIFIER_STAN_H
 
-#include "s3d/rectification/rectification_stan.h"
+#include "s3d/rectification/rectifier.h"
 
 #include "s3d/cv/utilities/cv.h"
+#include "s3d/rectification/rectification_stan.h"
 
 #include <Eigen/Dense>
 
