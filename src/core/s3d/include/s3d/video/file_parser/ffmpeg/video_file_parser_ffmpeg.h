@@ -13,7 +13,7 @@ namespace s3d {
 class Decoder;
 class Seeker;
 class Scaler;
-class VideoCaptureFormat;
+struct VideoCaptureFormat;
 
 class VideoFileParserFFmpeg : public VideoFileParser {
  public:
@@ -36,7 +36,6 @@ class VideoFileParserFFmpeg : public VideoFileParser {
 
   std::string filename_;
   std::chrono::microseconds currentTimestamp_;
-  size_t currentFrameID_{0};
   std::chrono::microseconds duration_;
 
   Demuxer demuxer_;

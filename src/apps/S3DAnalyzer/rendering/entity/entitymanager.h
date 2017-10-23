@@ -13,7 +13,7 @@ class StereoImageEntity;
 class BillboardDisparityEntity;
 class BillboardDepthEntity;
 class QPaintDevice;
-class UserSettings;
+struct UserSettings;
 class ViewerCentricEntity;
 
 class EntityManager {

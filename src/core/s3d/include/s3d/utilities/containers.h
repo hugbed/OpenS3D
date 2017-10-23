@@ -20,13 +20,13 @@ void copy_if_true(InIt srcBegin, InIt srcEnd, OutIt dstBegin, const std::vector<
       srcBegin, srcEnd, dstBegin, [&i, flags](typename InIt::value_type) { return flags[i++]; });
 }
 
-template <class T>
-std::vector<T> values_from_indices(std::vector<T> values, std::vector<int> indices) {
+template <class T, class IndexType>
+std::vector<T> values_from_indices(std::vector<T> values, std::vector<IndexType> indices) {
   std::vector<T> sample;
   sample.reserve(indices.size());
 
   for (auto i : indices) {
-    assert(i < values.size());
+    assert(i < static_cast<IndexType>(values.size()));
     sample.emplace_back(values[i]);
   }
 

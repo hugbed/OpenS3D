@@ -2,8 +2,8 @@
 
 std::unique_ptr<s3d::StereoDemuxer> StereoDemuxerFactoryQImage::create(
     s3d::Stereo3DFormat stereoFormat,
-    s3d::Size frameSize,
-    s3d::VideoPixelFormat pixelFormat) {
+    s3d::Size /*frameSize*/,
+    s3d::VideoPixelFormat /*pixelFormat*/) {
   return createStereoDemuxerQImage(stereoFormat);
 }
 

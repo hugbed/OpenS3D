@@ -12,16 +12,17 @@
 
 #include <s3d/cv/disparity/disparity_analyzer_stan.h>
 
+#include <s3d/cv/rectification/rectifier_cv.h>
 #include <QFileDialog>
 #include <QMouseEvent>
 #include <QtGui/QPainter>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      m_settingsDialog{std::make_unique<SettingsDialog>(this)},
+      m_stereoDemuxer{},
       m_stereoDemuxerFactory{std::make_unique<StereoDemuxerFactoryQImage>()},
-      m_stereoDemuxer{} {
+      m_settingsDialog{std::make_unique<SettingsDialog>(this)},
+      ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
   m_settingsDialog->setUserSettings(&m_userSettings);
@@ -409,7 +410,7 @@ EntityManager::DisplayMode MainWindow::getCurrentDisplayMode() {
   return EntityManager::DisplayMode::Anaglyph;
 }
 
-void MainWindow::closeEvent(QCloseEvent* event) {
+void MainWindow::closeEvent(QCloseEvent* /*event*/) {
   if (m_settingsDialog != nullptr) {
     m_settingsDialog->close();
   }

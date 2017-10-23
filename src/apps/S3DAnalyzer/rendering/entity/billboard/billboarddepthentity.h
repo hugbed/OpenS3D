@@ -4,7 +4,7 @@
 #include "billboarddisparityentity.h"
 
 namespace s3d {
-class ViewerContext;
+struct ViewerContext;
 }
 
 // todo: review names (difference: this does not have aspect ratio)

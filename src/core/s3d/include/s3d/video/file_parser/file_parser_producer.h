@@ -11,7 +11,7 @@
 
 namespace s3d {
 
-class VideoCaptureFormat;
+struct VideoCaptureFormat;
 class VideoFileParser;
 
 using s3d::ProducerBarrier;

@@ -19,7 +19,7 @@ void SampsonDistanceFunction::ComputeDistance(const std::vector<SampleType>& pts
   Eigen::MatrixXd pts1h(3, pts1.size()), pts2h(3, pts2.size());
 
   // fill matrices
-  for (int i = 0; i < pts1.size(); ++i) {
+  for (size_t i = 0; i < pts1.size(); ++i) {
     pts1h.block<3, 1>(0, i) = pts1[i];
     pts2h.block<3, 1>(0, i) = pts2[i];
   }

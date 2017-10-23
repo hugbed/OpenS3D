@@ -9,7 +9,7 @@ class QPaintEvent;
 class QPainter;
 
 namespace s3d {
-class ViewerContext;
+struct ViewerContext;
 }  // namespace s3d
 
 class ViewerCentricEntity : public StereoImageEntity {

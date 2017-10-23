@@ -20,7 +20,7 @@ class TextureManager {
   void initTextures();
   void addTexture(const QString& filename);
   void setTextureDefaultProperties(QOpenGLTexture* texture);
-  void fromImage(const QImage& image, int id);
+  void fromImage(const QImage& image, size_t id);
 
  public:
   // updates dirty textures (transfer images to OpenGL textures)
@@ -34,7 +34,7 @@ class TextureManager {
   const QImage& getImageRight();
   float computeImageAspectRatio(QSize viewportSize);
   QSize getTextureSize();
-  QOpenGLTexture* getTexture(int id);
+  QOpenGLTexture* getTexture(size_t id);
   bool empty();
 
  private:

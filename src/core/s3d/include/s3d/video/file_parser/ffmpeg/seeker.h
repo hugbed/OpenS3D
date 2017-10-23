@@ -5,7 +5,7 @@
 
 #include <gsl/gsl>
 
-class AVFormatContext;
+struct AVFormatContext;
 
 namespace s3d {
 

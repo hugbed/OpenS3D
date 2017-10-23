@@ -120,7 +120,7 @@ class DatasetLoaderVSG {
     std::vector<Eigen::Vector2d> points;
 
     std::ifstream inputFile{path};
-    float x, y, z;
+    float x, y;
     while (inputFile >> x) {
       inputFile >> y;
       points.emplace_back(x, y);

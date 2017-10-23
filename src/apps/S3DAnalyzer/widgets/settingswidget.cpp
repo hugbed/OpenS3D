@@ -20,47 +20,47 @@ SettingsWidget::SettingsWidget(QWidget* parent)
 
   connect(ui->minDisplayRangeSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) {
+          [this](double /*value*/) {
             ensureMinSmallerThanMax(ui->minDisplayRangeSpinBox, ui->maxDisplayRangeSpinBox);
             conditionalAutoUpdate();
           });
 
   connect(ui->maxDisplayRangeSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) {
+          [this](double /*value*/) {
             ensureMaxLargerThanMin(ui->minDisplayRangeSpinBox, ui->maxDisplayRangeSpinBox);
             conditionalAutoUpdate();
           });
 
   connect(ui->minExpectedRangeSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) {
+          [this](double /*value*/) {
             ensureMinSmallerThanMax(ui->minExpectedRangeSpinBox, ui->maxExpectedRangeSpinBox);
             conditionalAutoUpdate();
           });
 
   connect(ui->maxExpectedRangeSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) {
+          [this](double /*value*/) {
             ensureMaxLargerThanMin(ui->minExpectedRangeSpinBox, ui->maxExpectedRangeSpinBox);
             conditionalAutoUpdate();
           });
 
   connect(ui->viewerDistanceLabelSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) { conditionalAutoUpdate(); });
+          [this](double /*value*/) { conditionalAutoUpdate(); });
 
   connect(ui->interocularDistanceSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) { conditionalAutoUpdate(); });
+          [this](double /*value*/) { conditionalAutoUpdate(); });
 
   connect(ui->screenWidthSpinBox,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          [this](double value) { conditionalAutoUpdate(); });
+          [this](double /*value*/) { conditionalAutoUpdate(); });
 
   connect(ui->displayZoomSpinBox,
           static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          [this](int value) { conditionalAutoUpdate(); });
+          [this](int /*value*/) { conditionalAutoUpdate(); });
 }
 
 SettingsWidget::~SettingsWidget() = default;

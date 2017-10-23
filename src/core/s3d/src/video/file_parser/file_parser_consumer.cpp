@@ -10,8 +10,8 @@ FileParserConsumer::FileParserConsumer(VideoCaptureDevice::Client* client,
                                        const Producers& producers)
     : ConsumerBarrier(mediators, producers),
       delayBetweenFrames(1.0f / outputFormat.frameRate),
-      client_(client),
-      format_{outputFormat} {}
+      format_{outputFormat},
+      client_(client) {}
 
 void FileParserConsumer::consume() {
   sleepUntilNextFrame();

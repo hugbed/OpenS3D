@@ -19,7 +19,6 @@ class Demuxer {
 
   // seeking functions
  private:
-  bool endOfFileReached_{false};
   ffmpeg::UniquePtr<AVFormatContext> formatContext_{nullptr};
   AVPacket packet_;
 };
