@@ -159,7 +159,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   //    return true;
   //  }
 
-  return enoughMatches(results.featurePointsLeft.size());;
+  return enoughMatches(results.featurePointsLeft.size());
 }
 
 const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
