@@ -2,7 +2,6 @@
 
 #include "s3d/cv/disparity/disparity_analyzer_stan.h"
 
-
 using s3d::DisparityAnalyzerSTAN;
 using s3d::StanAlignment;
 
@@ -16,7 +15,7 @@ TEST(disparity_analyzer_stan_results, results_to_alignment) {
   StanAlignment alignment;
   alignment.ch_z_f = 1.0f;
   alignment.a_f = 2.0f;
-  alignment.a_x_f= 3.0f;
+  alignment.a_x_f = 3.0f;
   alignment.a_y_f = 4.0f;
   alignment.a_z = 5.0f;
   alignment.ch_y = 6.0f;

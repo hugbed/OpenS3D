@@ -10,7 +10,7 @@ namespace s3d {
 
 template <class T>
 class Histogram {
-public:
+ public:
   static Histogram Compute(const std::vector<T>& values, int nbBins);
   static int BinIdx(T value, T min, T binSize);
   static T BinSize(T min, T max, T nbBins);

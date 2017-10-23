@@ -84,6 +84,13 @@ TEST_F(math_clamp_float, larger_gives_high_bound) {
   EXPECT_FLOAT_EQ(res, highBound);
 }
 
+TEST(math_moving_average, one_no_average) {
+  s3d::MovingAverage<double> a{12.0f, 1.0f};
+  double val{25.0};
+  a.addToAverage(val);
+  EXPECT_DOUBLE_EQ(a, val);
+}
+
 TEST(math_moving_average, default_smooth_is_one) {
   s3d::MovingAverage<double> a{};
   double val{25.0};

@@ -27,15 +27,12 @@ class MatchFinderCV : public MatchFinder {
   };
 
   MatchFinder::Matches findMatches(const std::vector<Image<uint8_t>>& images) override;
-
   Features findFeatures(const Image<uint8_t>& img);
 
-  Matches matchFeatures(const Features& leftFeatures, const Features& rightFeatures);
+  MatchFinder::Matches findMatches(const cv::Mat& imageLeft, const cv::Mat& imageRight);
+  Features findFeatures(const cv::Mat& img);
 
-  MatchFinder::Matches filterMatches(const Features& leftFeatures,
-                                     const Features& rightFeatures,
-                                     const Matches& matches,
-                                     double distanceThreshold) const;
+  MatchFinder::Matches matchFeatures(const Features& leftFeatures, const Features& rightFeatures);
 
   double matchesMinDistance(Matches matches) const;
 
@@ -51,13 +48,11 @@ class MatchFinderCV : public MatchFinder {
                                const MatchFinderCV::Features& featuresLeft,
                                const MatchFinderCV::Features& featuresRight) {}
 
-  virtual void onFeaturesMatched(cv::Mat imgLeft,
-                                 cv::Mat imgRight,
-                                 std::vector<cv::DMatch> matches,
-                                 MatchFinder::Matches filteredMatches,
+  virtual void onFeaturesMatched(const cv::Mat& imgLeft,
+                                 const cv::Mat& imgRight,
                                  const MatchFinderCV::Features& featuresLeft,
                                  const MatchFinderCV::Features& featuresRight,
-                                 double threshold) {}
+                                 const MatchFinder::Matches& matches) {}
 };
 
 /**
@@ -70,13 +65,11 @@ class MatchFinderCVViz : public MatchFinderCV {
                        const MatchFinderCV::Features& featuresLeft,
                        const MatchFinderCV::Features& featuresRight) override;
 
-  void onFeaturesMatched(cv::Mat imgLeft,
-                         cv::Mat imgRight,
-                         std::vector<cv::DMatch> matches,
-                         MatchFinder::Matches filteredMatches,
+  void onFeaturesMatched(const cv::Mat& imgLeft,
+                         const cv::Mat& imgRight,
                          const MatchFinderCV::Features& featuresLeft,
                          const MatchFinderCV::Features& featuresRight,
-                         double threshold) override;
+                         const MatchFinder::Matches& matches) override;
 };
 
 }  // namespace s3d

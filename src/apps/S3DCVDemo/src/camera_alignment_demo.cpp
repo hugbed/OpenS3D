@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 
   cv::Mat leftMatchesImg = leftOrig.clone();
   cv::Mat rightMatchesImg = rightOrig.clone();
-  s3d::drawMatches(leftMatchesImg, rightMatchesImg, pts1, pts2);
+  s3d::displayMatches("matches", leftMatchesImg, rightMatchesImg, pts1, pts2);
 
   // compute disparity range
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);

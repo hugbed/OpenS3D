@@ -91,7 +91,7 @@ void expectSameKeypoint(const cv::KeyPoint& first, const cv::KeyPoint& second) {
 
 TEST(match_finder_cv, find_features_returns_fake_features) {
   FakeMatchFinderCV matchFinder;
-  auto features = matchFinder.findFeatures({});
+  auto features = matchFinder.findFeatures(cv::Mat{});
   EXPECT_EQ(features.keypoints.size(), 2);
 
   FakeFeatureDetector goldFeatureDetector;
@@ -102,7 +102,7 @@ TEST(match_finder_cv, find_features_returns_fake_features) {
 
 TEST(match_finder_cv, find_features_returns_fake_descriptors) {
   FakeMatchFinderCV matchFinder;
-  auto features = matchFinder.findFeatures({});
+  auto features = matchFinder.findFeatures(cv::Mat{});
   EXPECT_EQ(features.descriptors.cols, 2);
 
   FakeFeatureDetector goldFeatureDetector;
@@ -111,37 +111,9 @@ TEST(match_finder_cv, find_features_returns_fake_descriptors) {
   }
 }
 
-TEST(match_finder_cv, filter_matches_returns_not_higher_than_threshold) {
-  FakeMatchFinderCV matchFinder;
-  auto featuresLeft = matchFinder.findFeatures({});
-  auto featuresRight = matchFinder.findFeatures({});
-  auto matches = matchFinder.matchFeatures(featuresLeft, featuresRight);
-  auto matchesPositions = matchFinder.filterMatches(featuresLeft, featuresRight, matches, 0.0);
-  EXPECT_EQ(matchesPositions.size(), 2);
-  EXPECT_EQ(matchesPositions[0].size(), 0);
-  EXPECT_EQ(matchesPositions[1].size(), 0);
-}
-
 void expectSamePoint(Eigen::Vector2d a, cv::Point2f b) {
   EXPECT_EQ(a.x(), b.x);
   EXPECT_EQ(a.y(), b.y);
-}
-
-TEST(match_finder_cv, filter_matches_returns_smaller_than_threshold) {
-  FakeMatchFinderCV matchFinder;
-
-  auto featuresLeft = matchFinder.findFeatures({});
-  auto featuresRight = matchFinder.findFeatures({});
-  auto matches = matchFinder.matchFeatures(featuresLeft, featuresRight);
-  // alter features a bit
-  featuresLeft.keypoints[0].pt = cv::Point2f(0, 0);
-  featuresRight.keypoints[0].pt = cv::Point2f(1, 1);
-  auto matchesPositions = matchFinder.filterMatches(featuresLeft, featuresRight, matches, 1.5);
-  EXPECT_EQ(matchesPositions.size(), 2);
-  EXPECT_EQ(matchesPositions[0].size(), 1);
-  EXPECT_EQ(matchesPositions[1].size(), 1);
-  expectSamePoint(matchesPositions[0][0], featuresLeft.keypoints[0].pt);
-  expectSamePoint(matchesPositions[1][0], featuresRight.keypoints[0].pt);
 }
 
 TEST(match_finder_cv, matches_min_distance_returns_min) {
@@ -155,20 +127,6 @@ TEST(match_finder_cv, matches_min_distance_returns_min) {
   FakeMatchFinderCV matchFinder;
   auto minDist = matchFinder.matchesMinDistance(matches);
   EXPECT_EQ(minDist, goldMinDist);
-}
-
-TEST(match_finder_cv, find_matches_returns_correct) {
-  FakeMatchFinderCV matchFinder;
-  auto res = matchFinder.findMatches(
-      {s3d::Image<uint8_t>(Size(1920, 1080)), s3d::Image<uint8_t>(Size(1920, 1080))});
-
-  EXPECT_EQ(res.size(), 2);
-  ASSERT_EQ(res[0].size(), 1);
-  ASSERT_EQ(res[1].size(), 1);
-
-  auto goldPt = FakeFeatureDetector().goldKeypoints[0].pt;
-  EXPECT_EQ(res[0][0], Eigen::Vector2d(goldPt.x, goldPt.y));
-  EXPECT_EQ(res[1][0], Eigen::Vector2d(goldPt.x, goldPt.y));
 }
 
 TEST(match_finder_cv, cv_instance_creation_return_valid_objects) {
