@@ -5,7 +5,7 @@
 namespace s3d {
 
 StereoDemuxerCV::StereoDemuxerCV(Size frameSize, VideoPixelFormat pixelFormat, bool halfResolution)
-    : frameSize_{frameSize}, pixelFormat_{pixelFormat}, halfResolution_{halfResolution} {}
+    : halfResolution_{halfResolution}, frameSize_{frameSize}, pixelFormat_{pixelFormat} {}
 
 std::pair<StereoDemuxer::ImageData, StereoDemuxer::ImageData> StereoDemuxerCV::demux(
     const StereoDemuxer::ImageData& image) {

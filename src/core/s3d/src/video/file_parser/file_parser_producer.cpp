@@ -8,7 +8,7 @@ namespace s3d {
 
 FileParserProducer::FileParserProducer(std::string filename,
                                        s3d::ProducerConsumerMediator* mediator)
-    : ProducerBarrier(mediator), filePath_{std::move(filename)}, videoFrame_{{}, {}} {}
+    : ProducerBarrier(mediator), videoFrame_{{}, {}}, filePath_{std::move(filename)} {}
 
 bool FileParserProducer::shouldStopProducing() {
   return !readingFile_ || Base::shouldStopProducing();

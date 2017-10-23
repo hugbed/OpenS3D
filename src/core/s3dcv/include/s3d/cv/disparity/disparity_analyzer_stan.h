@@ -16,7 +16,7 @@
 #include <gsl/gsl>
 
 namespace s3d {
-class StanAlignment;
+struct StanAlignment;
 
 class DisparityAnalyzerSTAN : public DisparityAnalyzer {
  public:

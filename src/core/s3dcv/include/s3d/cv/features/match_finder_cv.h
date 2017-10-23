@@ -43,16 +43,14 @@ class MatchFinderCV : public MatchFinder {
   virtual cv::Ptr<cv::DescriptorMatcher> createDescriptorMatcher();
 
  protected:
-  virtual void onFeaturesFound(const cv::Mat& imgLeft,
-                               const cv::Mat& imgRight,
-                               const MatchFinderCV::Features& featuresLeft,
-                               const MatchFinderCV::Features& featuresRight) {}
+  virtual void onFeaturesFound(const cv::Mat& /*imgLeft*/,
+                               const cv::Mat& /*imgRight*/,
+                               const MatchFinderCV::Features& /*featuresLeft*/,
+                               const MatchFinderCV::Features& /*featuresRight*/) {}
 
-  virtual void onFeaturesMatched(const cv::Mat& imgLeft,
-                                 const cv::Mat& imgRight,
-                                 const MatchFinderCV::Features& featuresLeft,
-                                 const MatchFinderCV::Features& featuresRight,
-                                 const MatchFinder::Matches& matches) {}
+  virtual void onFeaturesMatched(const cv::Mat& /*imgLeft*/,
+                                 const cv::Mat& /*imgRight*/,
+                                 const MatchFinder::Matches& /*matches*/) {}
 };
 
 /**
@@ -67,8 +65,6 @@ class MatchFinderCVViz : public MatchFinderCV {
 
   void onFeaturesMatched(const cv::Mat& imgLeft,
                          const cv::Mat& imgRight,
-                         const MatchFinderCV::Features& featuresLeft,
-                         const MatchFinderCV::Features& featuresRight,
                          const MatchFinder::Matches& matches) override;
 };
 

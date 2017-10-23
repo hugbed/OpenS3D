@@ -14,7 +14,7 @@ class MainWindow;
 
 class OpenGLWindow;
 class DepthAnalyzer;
-class RenderingContext;
+struct RenderingContext;
 class VideoSynchronizer;
 class SettingsDialog;
 class StereoDemuxerQImage;
@@ -22,7 +22,7 @@ class StereoDemuxerFactoryQImage;
 
 namespace s3d {
 class DisparityAnalyzerSTAN;
-class VideoCaptureFormat;
+struct VideoCaptureFormat;
 }  // namespace s3d
 
 class MainWindow : public QMainWindow {

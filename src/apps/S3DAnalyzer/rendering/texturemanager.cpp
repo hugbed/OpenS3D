@@ -34,7 +34,7 @@ void TextureManager::setTextureDefaultProperties(QOpenGLTexture* texture) {
   texture->setBorderColor(Qt::black);
 }
 
-void TextureManager::fromImage(const QImage& image, int id) {
+void TextureManager::fromImage(const QImage& image, size_t id) {
   if (id >= m_textures.size()) {
     return;
   }
@@ -93,7 +93,7 @@ QSize TextureManager::getTextureSize() {
   return QSize(m_textures[0]->width(), m_textures[0]->height());
 }
 
-QOpenGLTexture* TextureManager::getTexture(int id) {
+QOpenGLTexture* TextureManager::getTexture(size_t id) {
   if (id >= m_textures.size()) {
     return nullptr;
   }
@@ -107,7 +107,7 @@ bool TextureManager::empty() {
 void TextureManager::update() {
   assert(m_textures.size() == m_dirty.size() && m_textures.size() == m_images.size());
 
-  for (int i = 0; i < m_textures.size(); ++i) {
+  for (auto i = 0UL; i < m_textures.size(); ++i) {
     if (m_dirty[i]) {
       fromImage(m_images[i], i);
     }

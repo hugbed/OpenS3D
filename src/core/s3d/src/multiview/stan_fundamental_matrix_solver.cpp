@@ -34,7 +34,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
   Eigen::MatrixXd A(pts1.size(), nbVariables);
   Eigen::VectorXd b(pts1.size());
 
-  for (int i = 0; i < pts1.size(); ++i) {
+  for (size_t i = 0; i < pts1.size(); ++i) {
     auto x = pts1[i];
     auto xp = pts2[i];
 

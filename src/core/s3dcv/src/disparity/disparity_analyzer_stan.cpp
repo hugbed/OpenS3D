@@ -52,7 +52,7 @@ void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vecto
   featurePointsLeft.clear();
   featurePointsRight.clear();
   disparitiesPercent.clear();
-  for (int i = 0; i < bestPtsLeft.size(); ++i) {
+  for (size_t i = 0; i < bestPtsLeft.size(); ++i) {
     // filter out extreme percentiles
     if (minDisparityPercent / widthRatio <= disparities[i] &&
         disparities[i] <= maxDisparityPercent / widthRatio) {
@@ -113,7 +113,9 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
 
   // find matches
   auto matches = findMatches(leftOrig, rightOrig);
-  if (not enoughMatches(matches[0].size())) {
+
+  // make sure that we have enough matches to run ransac
+  if (matches[0].size() < s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES) {
     return false;
   }
 

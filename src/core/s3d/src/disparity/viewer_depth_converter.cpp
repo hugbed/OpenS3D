@@ -30,7 +30,7 @@ std::vector<Pointf> ViewerDepthConverter::computeDepthPositions(
   assert(perceivedDepth.size() == horizontalPos.size());
 
   std::vector<Pointf> depthPositions;
-  for (int i = 0; i < perceivedDepth.size(); ++i) {
+  for (size_t i = 0; i < perceivedDepth.size(); ++i) {
     depthPositions.emplace_back(horizontalPos[i], perceivedDepth[i]);
   }
 

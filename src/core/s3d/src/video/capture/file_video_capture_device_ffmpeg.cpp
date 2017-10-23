@@ -5,7 +5,7 @@
 namespace s3d {
 
 FileVideoCaptureDeviceFFmpeg::FileVideoCaptureDeviceFFmpeg(const std::string& filename)
-    : filename_(filename), FileVideoCaptureDeviceRawUYVY(filename) {}
+    : FileVideoCaptureDeviceRawUYVY(filename), filename_(filename) {}
 
 gsl::owner<FileVideoCaptureDeviceFFmpeg*> FileVideoCaptureDeviceFFmpeg::clone() const {
   return new FileVideoCaptureDeviceFFmpeg(filename_);

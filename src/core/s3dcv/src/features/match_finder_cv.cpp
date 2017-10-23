@@ -2,10 +2,6 @@
 
 #include "s3d/cv/utilities/cv.h"
 
-#include <opencv/cv.hpp>
-#include <opencv/cxcore.hpp>
-#include <opencv2/features2d.hpp>
-
 namespace s3d {
 
 using FeaturesCV = MatchFinderCV::Features;
@@ -25,7 +21,7 @@ MatchFinder::Matches MatchFinderCV::findMatches(const cv::Mat& imageLeft,
 
   auto matches = matchFeatures(featuresLeft, featuresRight);
 
-  onFeaturesMatched(imageLeft, imageRight, featuresLeft, featuresRight, matches);
+  onFeaturesMatched(imageLeft, imageRight, matches);
 
   return matches;
 }
@@ -105,8 +101,6 @@ void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,
 
 void MatchFinderCVViz::onFeaturesMatched(const cv::Mat& imgLeft,
                                          const cv::Mat& imgRight,
-                                         const MatchFinderCV::Features& featuresLeft,
-                                         const MatchFinderCV::Features& featuresRight,
                                          const MatchFinder::Matches& matches) {
   // recompute DMatches
   cv::Mat matchesImg;

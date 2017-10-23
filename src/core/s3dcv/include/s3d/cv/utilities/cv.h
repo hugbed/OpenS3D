@@ -92,7 +92,7 @@ void displayMatches(const std::string& title,
   // for random color
   RandomColorGenerator<cv::Scalar> colorGenerator;
 
-  for (int i = 0; i < featuresLeft.size(); ++i) {
+  for (size_t i = 0; i < featuresLeft.size(); ++i) {
     // random color
     cv::Scalar color = colorGenerator.randomColor();
 
@@ -115,9 +115,8 @@ void displayMatches(const std::string& title,
 template <class T>
 std::vector<cv::Point_<T>> eigenPointsToCV(std::vector<Eigen::Matrix<T, 2, 1>> points) {
   std::vector<cv::Point_<T>> pointsCV;
-  for (int i = 0; i < points.size(); ++i) {
-    auto& ptLeft = points[i];
-    pointsCV.emplace_back(ptLeft.x(), ptLeft.y());
+  for (auto point : points) {
+    pointsCV.emplace_back(point.x(), point.y());
   }
   return pointsCV;
 }
@@ -225,8 +224,6 @@ static std::tuple<cv::Mat, cv::Mat> drawEpipolarLines(const cv::Matx<T1, 3, 3> F
  * \param img2      Second image
  * \param points1   Set of points in the first image
  * \param points2   Set of points in the second image matching to the first set
- * \param inlierDistance      Points with a high distance to the epipolar lines are
- *                not displayed. If it is negative, all points are displayed
  **/
 template <typename T1, typename T2>
 static void displayEpipolarLines(const std::string& title,
@@ -234,8 +231,7 @@ static void displayEpipolarLines(const std::string& title,
                                  const cv::Mat& img1,
                                  const cv::Mat& img2,
                                  const std::vector<cv::Point_<T2>> points1,
-                                 const std::vector<cv::Point_<T2>> points2,
-                                 const float inlierDistance = -1) {
+                                 const std::vector<cv::Point_<T2>> points2) {
   assert(img1.size() == img2.size() && img1.type() == img2.type());
 
   cv::Mat imgLeftEpilines, imgRightEpilines;

@@ -64,7 +64,6 @@ struct color_conversion<UYVY, BGR> {
                   "only byte sequences are supported");
     //  assert(distance(first, last) % 4 == 0);
 
-    uint8_t R, G, B;
     for (; first != last; first += 4) {
       auto yuv_pair = decompose_yuv_from_uyvy_it(first);
 
@@ -92,7 +91,6 @@ struct color_conversion<UYVY, RGB> {
                   "only byte sequences are supported");
     //  assert(distance(first, last) % 4 == 0);
 
-    uint8_t R, G, B;
     for (; first != last; first += 4) {
       auto yuv_pair = color_conversion<UYVY, BGR>::decompose_yuv_from_uyvy_it(first);
 
