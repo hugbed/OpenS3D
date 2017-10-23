@@ -21,8 +21,8 @@ DisparityAnalyzerSTAN::Results::Results(double smoothingFactor)
       roll{0.0, smoothingFactor},
       zoom{0.0, smoothingFactor},
       tiltOffset{0.0, smoothingFactor},
-      panKeystone{0.0, smoothingFactor},
       tiltKeystone{0.0, smoothingFactor},
+      panKeystone{0.0, smoothingFactor},
       zParallaxDeformation{0.0, smoothingFactor} {}
 
 void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
@@ -37,8 +37,8 @@ void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
   roll.addToAverage(model.a_z);                     // model.a_z * 180.0 / PI (degrees)
   zoom.addToAverage(model.a_f);                     // (model.a_f + 1.0) * 100.0 (%)
   tiltOffset.addToAverage(model.f_a_x);             // pixels
-  panKeystone.addToAverage(model.a_x_f);            // radians / m
   tiltKeystone.addToAverage(model.a_y_f);           // radians / m
+  panKeystone.addToAverage(model.a_x_f);            // radians / m
   zParallaxDeformation.addToAverage(model.ch_z_f);  // ratio (m/m)
 }
 
@@ -72,8 +72,8 @@ void DisparityAnalyzerSTAN::Results::setSmoothingFactor(double smoothingFactor) 
   roll.setSmoothingFactor(smoothingFactor);
   zoom.setSmoothingFactor(smoothingFactor);
   tiltOffset.setSmoothingFactor(smoothingFactor);
-  panKeystone.setSmoothingFactor(smoothingFactor);
   tiltKeystone.setSmoothingFactor(smoothingFactor);
+  panKeystone.setSmoothingFactor(smoothingFactor);
   zParallaxDeformation.setSmoothingFactor(smoothingFactor);
 }
 
@@ -145,12 +145,21 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   double minDisparity, maxDisparity;
   std::tie(minDisparity, maxDisparity) = s3d::disparity_range(disparities);
 
+  // todo: for video, do not update outputs if not enough matches
+  //       this should be done outside this class though or as a parameter
+  //       i.e: updateResultsOnFewMatches, setMinimumNumberOfMatches
+  //  if (enoughMatches(bestPts1.size()))
+  //  {
+
   // Set outputs (moving average of smoothingFactor_)
   const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
   results.updateParameters(minDisparity, maxDisparity, widthRatio, model);
   results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
 
-  return true;
+  //    return true;
+  //  }
+
+  return enoughMatches(results.featurePointsLeft.size());;
 }
 
 const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
@@ -169,11 +178,12 @@ void DisparityAnalyzerSTAN::setSmoothingFactor(double smoothingFactor) {
   results.setSmoothingFactor(smoothingFactor);
 }
 
+// todo: why to I always recreate a matchFinder...
 s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left,
                                                              const cv::Mat& right) {
   // find matches
-  std::unique_ptr<s3d::MatchFinder> matchFinder = std::make_unique<s3d::MatchFinderCV>();
-  auto matches = matchFinder->findMatches({s3d::cv2image(left), s3d::cv2image(right)});
+  std::unique_ptr<s3d::MatchFinderCV> matchFinder = std::make_unique<s3d::MatchFinderCV>();
+  auto matches = matchFinder->findMatches(left, right);
   assert(matches.size() == 2 && matches[0].size() == matches[1].size());
 
   return matches;
@@ -181,7 +191,7 @@ s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left
 
 bool DisparityAnalyzerSTAN::enoughMatches(size_t nbOfMatches) {
   return nbOfMatches >=
-         s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 3;
+         s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20;
 }
 
 DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size imageSize) {
@@ -190,7 +200,7 @@ DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(S
 
   s3d::Ransac::Params params;
   params.nbTrials = 500;
-  params.distanceThreshold = 0.01 * sqrt(h * h + w * w);
+  params.distanceThreshold = 0.01;  // * sqrt(h * h + w * w);
 
   return DisparityAnalyzerSTAN::RansacAlgorithmSTAN(params);
 }

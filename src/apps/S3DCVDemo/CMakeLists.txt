@@ -10,7 +10,7 @@ file(GLOB_RECURSE INCLUDE_FILES include/*.h)
 
 include_directories(include ${GSL_INCLUDE_DIR})
 
-add_executable(${PROJECT_NAME}_camera_alignment ${PROJECT_SOURCE_DIR}/src/camera_alignment_demo.cpp ${INCLUDE_FILES} src/test_disparity_analyzer_stan.cpp)
+add_executable(${PROJECT_NAME}_camera_alignment ${PROJECT_SOURCE_DIR}/src/camera_alignment_demo.cpp ${INCLUDE_FILES})
 target_link_libraries(${PROJECT_NAME}_camera_alignment s3dcv ${OpenCV_LIBS} gsl)
 
 add_executable(${PROJECT_NAME}_test_dataset_rectification ${PROJECT_SOURCE_DIR}/src/test_dataset_rectification.cpp ${INCLUDE_FILES})

@@ -9,7 +9,7 @@ namespace s3d {
 
 template <class T1, class T2>
 void toHomogeneous2D(const std::vector<Eigen::Matrix<T1, 2, 1>>& in,
-                            std::vector<Eigen::Matrix<T2, 3, 1>>* result) {
+                     std::vector<Eigen::Matrix<T2, 3, 1>>* result) {
   result->resize(in.size());
   std::transform(
       std::begin(in), std::end(in), std::begin(*result), [](const Eigen::Matrix<T1, 2, 1>& value) {

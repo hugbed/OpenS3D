@@ -39,7 +39,7 @@ TEST(stan_fundamental_matrix_solver, eq_system_has_correct_equation) {
   Eigen::VectorXd b;
   std::tie(A, b) = StanFundamentalMatrixSolver::BuildEquationSystem(pts1, pts2);
 
-  constexpr int nbVariables = 6;
+  constexpr int nbVariables = 5;
 
   // assert A has the right size
   EXPECT_EQ(A.rows(), pts1.size());
@@ -53,7 +53,7 @@ TEST(stan_fundamental_matrix_solver, eq_system_has_correct_equation) {
 
     // first row of A has correct equation
     Eigen::VectorXd row(nbVariables);
-    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y();
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y();
     auto firstRow = A.block<1, nbVariables>(i, 0);
     EXPECT_EQ(firstRow, row.transpose());
 
@@ -168,8 +168,8 @@ TEST(stan_fundamental_matrix_solver, real_image_data_overkill_integration) {
 
   EXPECT_NEAR(res.ch_y, -0.06, 0.01);
   EXPECT_NEAR(res.a_z, 0.03, 0.01);
-  EXPECT_NEAR(res.a_f, 0.04, 0.01);
-  EXPECT_NEAR(res.f_a_x, 8.35, 0.01);
+  EXPECT_NEAR(res.a_f, 0.02, 0.01);
+  EXPECT_NEAR(res.f_a_x, 6.31, 0.01);
   EXPECT_NEAR(res.a_x_f, 0.00, 0.01);
   EXPECT_NEAR(res.ch_z_f, 0.00, 0.01);
 }

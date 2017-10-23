@@ -157,6 +157,8 @@ static std::tuple<cv::Mat, cv::Mat> drawEpipolarLines(const cv::Matx<T1, 3, 3> F
                                                       const std::vector<cv::Point_<T2>> points2,
                                                       const float inlierDistance = -1) {
   assert(img1.size() == img2.size() && img1.type() == img2.type());
+  assert(points1.size() == points2.size());
+  assert(points1.size() > 0);
 
   cv::Mat outImgLeft(img1.rows, img1.cols, CV_8UC3);
   cv::Mat outImgRight(img1.rows, img1.cols, CV_8UC3);

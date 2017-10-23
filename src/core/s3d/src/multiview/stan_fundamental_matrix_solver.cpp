@@ -19,14 +19,14 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
   // solve
   Eigen::VectorXd x = s3d::pseudoinverse(A) * b;
 
-  return {x[0], x[1], x[2], x[3], x[4], x[5], x[6]};
+  return {x[0], x[1], x[2], x[3], x[4], 0.0f, 0.0f};
 }
 
 // static
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEquationSystem(
     const std::vector<SampleType>& pts1,
     const std::vector<SampleType>& pts2) {
-  constexpr int nbVariables = 7;
+  constexpr int nbVariables = 5;
   assert(pts1.size() >= nbVariables);
   assert(pts2.size() >= nbVariables);
 
@@ -40,7 +40,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 
     // fill A
     Eigen::VectorXd row(nbVariables);
-    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y(), x.x()*xp.y() - xp.x()*x.y();
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y();  //, -x.y() * xp.y(),
+                                                                // x.x() * xp.y() - xp.x() * x.y();
     A.block<1, nbVariables>(i, 0) = row;
 
     // fill b
