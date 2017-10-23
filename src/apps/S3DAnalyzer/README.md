@@ -1,5 +1,3 @@
-# QtOpenGLSample
-
 ## Stereoscopic 3D Analyzer
 
 Using Qt 5 and OpenGL for fast image update / video streaming.
