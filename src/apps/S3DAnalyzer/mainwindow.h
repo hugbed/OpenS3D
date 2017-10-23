@@ -6,6 +6,7 @@
 #include "rendering/entity/entitymanager.h"
 #include "utilities/usersettings.h"
 
+#include <s3d/multiview/stan_fundamental_matrix_solver.h>
 #include <s3d/video/video_types.h>
 
 namespace Ui {
@@ -77,6 +78,8 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
   double m_analyzerSmoothingFactor{20.0};
+  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20};
+
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
 
   UserSettings m_userSettings{};

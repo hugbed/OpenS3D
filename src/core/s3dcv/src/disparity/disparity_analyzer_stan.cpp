@@ -147,21 +147,18 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   double minDisparity, maxDisparity;
   std::tie(minDisparity, maxDisparity) = s3d::disparity_range(disparities);
 
-  // todo: for video, do not update outputs if not enough matches
+  // todo: for video only, do not update outputs if not enough matches
   //       this should be done outside this class though or as a parameter
   //       i.e: updateResultsOnFewMatches, setMinimumNumberOfMatches
-  //  if (enoughMatches(bestPts1.size()))
-  //  {
+  if (enoughMatches(static_cast<int>(bestPts1.size())))
+  {
+    // Set outputs (moving average of smoothingFactor_)
+    const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
+    results.updateParameters(minDisparity, maxDisparity, widthRatio, model);
+    results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
+  }
 
-  // Set outputs (moving average of smoothingFactor_)
-  const float widthRatio = 100.0f / static_cast<float>(leftOrig.cols);
-  results.updateParameters(minDisparity, maxDisparity, widthRatio, model);
-  results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
-
-  //    return true;
-  //  }
-
-  return enoughMatches(results.featurePointsLeft.size());
+  return enoughMatches(static_cast<int>(results.featurePointsLeft.size()));
 }
 
 const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
@@ -191,20 +188,23 @@ s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left
   return matches;
 }
 
-bool DisparityAnalyzerSTAN::enoughMatches(size_t nbOfMatches) {
-  return nbOfMatches >=
-         s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20;
+bool DisparityAnalyzerSTAN::enoughMatches(int nbOfMatches) {
+  return nbOfMatches >= minNbInliers_;
 }
 
-DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size imageSize) {
-  int h = imageSize.getHeight();
-  int w = imageSize.getWidth();
+DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size /*imageSize*/) {
+//  int h = imageSize.getHeight();
+//  int w = imageSize.getWidth();
 
   s3d::Ransac::Params params;
   params.nbTrials = 500;
   params.distanceThreshold = 0.01;  // * sqrt(h * h + w * w);
 
   return DisparityAnalyzerSTAN::RansacAlgorithmSTAN(params);
+}
+
+void DisparityAnalyzerSTAN::setMinimumNumberOfInliers(int minNbInliers) {
+  minNbInliers_ = minNbInliers;
 }
 
 }  // namespace s3d

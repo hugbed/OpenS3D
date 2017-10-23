@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget* parent)
 
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(1.0f);
 
+  // set minimum number of inliers for video
+  m_analyzer->setMinimumNumberOfInliers(s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20);
+
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
   ui->depthWidget->setExpectedRange(m_userSettings.displayParameters.expectedRangeMin,
@@ -132,12 +135,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenLeftVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setLeftFilename(filename.toUtf8().toStdString());
 
         // if both files set, load video
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -147,12 +149,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenRightVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setRightFilename(filename.toUtf8().toStdString());
 
         // if both files set, load video
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -162,11 +163,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionOpenVideo, &QAction::triggered, [this] {
     requestVideoFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
-        m_videoSynchronizer->stop();
-        ui->videoControls->pause();
         m_videoSynchronizer->setLeftFilename(filename.toUtf8().toStdString());
 
         if (m_videoSynchronizer->isVideoReadyToLoad()) {
+          ui->videoControls->pause();
           m_videoSynchronizer->loadStereoVideo();
         }
       }
@@ -325,8 +325,11 @@ void MainWindow::updateConvergenceHint(float minDisparity, float maxDisparity) {
 
 template <class Functor>
 void MainWindow::requestImageFilename(Functor f) {
-  QString filename = QFileDialog::getOpenFileName(
-      this, tr("Open Image"), "/home/jon/Videos", tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
+  QString filename =
+      QFileDialog::getOpenFileName(this,
+                                   tr("Open Image"),
+                                   "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data",
+                                   tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
   if (not filename.isEmpty()) {
     f(filename);
   }
@@ -334,7 +337,8 @@ void MainWindow::requestImageFilename(Functor f) {
 
 template <class Functor>
 void MainWindow::requestVideoFilename(Functor f) {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Video"), "/home/jon/Videos");
+  QString filename = QFileDialog::getOpenFileName(
+      this, tr("Open Video"), "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data");
   if (not filename.isEmpty()) {
     f(filename);
   }
@@ -445,9 +449,11 @@ void MainWindow::updateInputMode() {
   // no value smoothing for image
   if (ui->actionInputImage->isChecked()) {
     m_analyzer->setSmoothingFactor(1.0f);
+    m_analyzer->setMinimumNumberOfInliers(0);
     ui->videoControls->setVisible(false);
   } else {
     m_analyzer->setSmoothingFactor(m_analyzerSmoothingFactor);
+    m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
     ui->videoControls->setVisible(true);
   }
 }

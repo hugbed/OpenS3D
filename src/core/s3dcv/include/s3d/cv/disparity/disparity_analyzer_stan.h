@@ -69,16 +69,17 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   const std::vector<Eigen::Vector2f>& getFeaturePointsLeft() const override;
   const std::vector<Eigen::Vector2f>& getFeaturePointsRight() const override;
   void setSmoothingFactor(double smoothingFactor);
+  void setMinimumNumberOfInliers(int minNbInliers);
 
   // outputs
   Results results;
 
  private:
   MatchFinder::Matches findMatches(const cv::Mat& left, const cv::Mat& right);
-
-  bool enoughMatches(size_t nbOfMatches);
-
+  bool enoughMatches(int nbOfMatches);
   RansacAlgorithmSTAN createRansac(Size imageSize);
+
+  int minNbInliers_{0};
 };
 }  // namespace s3d
 
