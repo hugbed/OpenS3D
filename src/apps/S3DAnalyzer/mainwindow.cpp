@@ -287,6 +287,20 @@ void MainWindow::computeAndUpdate() {
     if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
         (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) >
             0.005) {
+      cv::Mat leftMat = QImage2Mat(imageLeft);
+      cv::Mat rightMat = QImage2Mat(imageRight);
+
+      // draw epipolar lines
+      Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
+          m_analyzer->results.getStanAlignment());
+
+      std::tie(leftMat, rightMat) =
+          s3d::drawEpipolarLines(s3d::eigenMatToCV(F),
+                                 leftMat,
+                                 rightMat,
+                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsLeft),
+                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsRight));
+
       ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
       ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
@@ -297,7 +311,16 @@ void MainWindow::computeAndUpdate() {
       ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
       ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
 
+      cv::Mat leftRect, rightRect;
+      s3d::RectifierCV rectifier;
+      auto alignment = m_analyzer->results.getStanAlignment();
+      auto H1 = s3d::RectificationStan::leftImageMatrix(alignment);
+      auto H2 = s3d::RectificationStan::rightImageMatrix(alignment);
+      leftRect = rectifier.rectifyCV(leftMat, s3d::eigenMatToCV(H1));
+      rightRect = rectifier.rectifyCV(rightMat, s3d::eigenMatToCV(H2));
+
       m_currentContext->makeCurrent();
+      m_currentContext->textureManager->setImages(Mat2QImage(leftRect), Mat2QImage(rightRect));
       m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
                                                    m_analyzer->results.disparitiesPercent);
       m_currentContext->doneCurrent();
@@ -443,6 +466,10 @@ void MainWindow::updateInputMode() {
     } else if (ui->actionInputVideo->isChecked()) {
       ui->actionOpenLeftVideo->setVisible(true);
       ui->actionOpenRightVideo->setVisible(true);
+    } else if (ui->actionInputLive->isChecked()) {
+      // load live camera
+      ui->videoControls->setVisible(false);
+      m_videoSynchronizer->loadLiveCamera();
     }
   }
 

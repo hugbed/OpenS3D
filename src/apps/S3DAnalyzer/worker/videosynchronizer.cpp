@@ -7,6 +7,7 @@
 #include <s3d/cv/video/stereo_demuxer/stereo_demuxer_factory_cv.h>
 #include <s3d/video/capture/file_video_capture_device_3d.h>
 #include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
+#include <s3d/video/capture/video_capture_device_decklink.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 #include <s3d/video/stereo_demuxer/stereo_demuxer.h>
 
@@ -136,6 +137,9 @@ void VideoSynchronizer::loadStereoVideo() {
 void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
                                         const std::string& rightFile,
                                         s3d::Stereo3DFormat stereoFormat) {
+  // stop the video before loading the next
+  stop();
+
   // reset file state
   m_leftFileReady = false;
   m_rightFileReady = false;
@@ -200,4 +204,20 @@ bool VideoSynchronizer::isVideoReadyToLoad() {
     return m_leftFileReady && m_rightFileReady;
   }
   return m_leftFileReady;
+}
+
+void VideoSynchronizer::loadLiveCamera() {
+  // stop the currently playing video
+  stop();
+
+  m_videoCaptureDevice =
+      std::make_unique<s3d::VideoCaptureDeviceDecklink>(s3d::VideoCaptureDeviceDescriptor({}));
+
+  // 1920x1080, 30fps, BGRA, 2D or 3D supported
+  s3d::VideoCaptureFormat format;
+  format.frameSize = {1920, 1080};
+  format.pixelFormat = s3d::VideoPixelFormat::BGRA;
+  format.frameRate = 30.0f;  // fps
+  format.stereo3D = true;
+  m_videoCaptureDevice->AllocateAndStart(format, this);
 }

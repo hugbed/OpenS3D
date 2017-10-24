@@ -122,11 +122,6 @@ class DecklinkCaptureDelegate : public IDeckLinkInputCallback {
     return E_NOINTERFACE;
   }
 
-  // Forwarder to VideoCaptureDeviceDeckLinkMac::SendErrorString().
-  void SendErrorString(const std::string& reason);
-  // Forwarder to VideoCaptureDeviceDeckLinkMac::SendLogString().
-  void SendLogString(const std::string& message);
-
   const VideoCaptureDeviceDescriptor device_descriptor_;
   VideoCaptureFormat captureFormat_;
 
@@ -230,7 +225,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
   if ((videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) != 0u) {
-    SendErrorString("Left frame, no input signal");
+//    SendErrorString("Left frame, no input signal");
     return S_FALSE;
   }
   // get left frame
@@ -274,7 +269,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       pixelFormat = VideoPixelFormat::ARGB;
       break;
     default:
-      SendErrorString("Unsupported pixel format");
+//      SendErrorString("Unsupported pixel format");
       break;
   }
 
@@ -308,7 +303,7 @@ void DecklinkCaptureDelegate::StopAndDeAllocate() {
     return;
   }
   if (deckLinkInput_->StopStreams() != S_OK) {
-    SendLogString("Problem stopping capture.");
+//    SendLogString("Problem stopping capture.");
   }
   deckLinkInput_->SetCallback(nullptr);
   deckLinkInput_->DisableVideoInput();
