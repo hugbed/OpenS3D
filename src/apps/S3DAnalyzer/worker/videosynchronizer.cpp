@@ -61,14 +61,14 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
                                                std::chrono::microseconds timestamp) {
   std::unique_lock<std::mutex>(m_mutex);
 
-  if ((m_stereoDemuxer == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
+  if ((m_stereoDemuxer.get() == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
     updateStereoDemuxer(frameFormat);
   }
 
   auto frameSize = frameFormat.frameSize;
 
   // should demux stereo
-  if (m_stereoDemuxer != nullptr && not data.empty()) {
+  if (m_stereoDemuxer.get() != nullptr && not data.empty()) {
     m_stereoDemuxer->setSize(frameFormat.frameSize);
     m_stereoDemuxer->setPixelFormat(frameFormat.pixelFormat);
     frameSize = m_stereoDemuxer->demuxedSize();
@@ -143,8 +143,8 @@ void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
   // reset file state
   m_leftFileReady = false;
   m_rightFileReady = false;
-
   m_videoLoaded = true;
+  m_liveCamera = false;
 
   s3d::VideoFileParserFFmpeg parser(leftFile);
   s3d::VideoCaptureFormat format;
@@ -196,7 +196,7 @@ void VideoSynchronizer::updateStereoDemuxer(const s3d::VideoCaptureFormat& forma
 }
 
 bool VideoSynchronizer::stereoDemuxerRequired() {
-  return m_stereoFormat != s3d::Stereo3DFormat::Separate;
+  return m_stereoFormat != s3d::Stereo3DFormat::Separate && !m_liveCamera;
 }
 
 bool VideoSynchronizer::isVideoReadyToLoad() {
@@ -210,14 +210,16 @@ void VideoSynchronizer::loadLiveCamera() {
   // stop the currently playing video
   stop();
 
+  m_liveCamera = true;
+  m_images.resize(2);
+
   m_videoCaptureDevice =
       std::make_unique<s3d::VideoCaptureDeviceDecklink>(s3d::VideoCaptureDeviceDescriptor({}));
 
-  // 1920x1080, 30fps, BGRA, 2D or 3D supported
-  s3d::VideoCaptureFormat format;
-  format.frameSize = {1920, 1080};
-  format.pixelFormat = s3d::VideoPixelFormat::BGRA;
-  format.frameRate = 30.0f;  // fps
+  // 1280x720, 60fps, BGRA, 2D or 3D supported
+  s3d::VideoCaptureFormat format = m_videoCaptureDevice->DefaultFormat();
   format.stereo3D = true;
+
+  m_timer = createAndStartTimer();
   m_videoCaptureDevice->AllocateAndStart(format, this);
 }

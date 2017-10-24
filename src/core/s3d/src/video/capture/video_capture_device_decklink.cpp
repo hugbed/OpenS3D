@@ -153,7 +153,7 @@ DecklinkCaptureDelegate::DecklinkCaptureDelegate(
       rgbFrameRight_{new RGB8VideoFrame(0, 0, RGB8VideoFrame::kPixelFormat, bmdFrameFlagDefault)} {}
 
 void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params) {
-  // Only 1920x1080, 30fps, BGRA, 2D or 3D supported
+  // Only 1280x720, 60fps, BGRA, 2D or 3D supported
   // todo: is it BGRA or ARGB?
   if (!supportedFormat(params)) {
     // todo: this seems like another type of exception, or a bug?
@@ -177,7 +177,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
   BMDDisplayModeSupport displayModeSupported;
 
   // todo: set from capture format
-  BMDDisplayMode displayMode = bmdModeHD1080p30;
+  BMDDisplayMode displayMode = bmdModeHD720p60;
   BMDPixelFormat pixelFormat = bmdFormat8BitYUV;
   BMDVideoInputFlags videoInputFlag =
       params.stereo3D ? bmdVideoInputDualStream3D : bmdVideoInputFlagDefault;
@@ -204,7 +204,7 @@ void DecklinkCaptureDelegate::AllocateAndStart(const VideoCaptureFormat& params)
     throw VideoCaptureDeviceAllocationException("Cannot enable video input");
   }
 
-  // todo: now it's hardcoded to 1080p, 30fps, BGRA
+  // todo: now it's hardcoded to 720p, 60fps, BGRA
   captureFormat_ = {params.frameSize, params.frameRate, params.pixelFormat, params.stereo3D};
   deckLink_.reset(deckLink);
   deckLinkInput_.swap(deckLinkInput);
@@ -225,7 +225,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
     IDeckLinkVideoInputFrame* videoFrameLeft,
     IDeckLinkAudioInputPacket* /*audio_packet*/) {
   if ((videoFrameLeft->GetFlags() & bmdFrameHasNoInputSource) != 0u) {
-//    SendErrorString("Left frame, no input signal");
+    std::cerr << "Left frame, no input signal" << std::endl;
     return S_FALSE;
   }
   // get left frame
@@ -269,7 +269,7 @@ HRESULT DecklinkCaptureDelegate::VideoInputFrameArrived(
       pixelFormat = VideoPixelFormat::ARGB;
       break;
     default:
-//      SendErrorString("Unsupported pixel format");
+      std::cerr << "Unsupported pixel format" << std::endl;
       break;
   }
 
@@ -303,7 +303,7 @@ void DecklinkCaptureDelegate::StopAndDeAllocate() {
     return;
   }
   if (deckLinkInput_->StopStreams() != S_OK) {
-//    SendLogString("Problem stopping capture.");
+    std::cerr << "Problem stopping capture" << std::endl;
   }
   deckLinkInput_->SetCallback(nullptr);
   deckLinkInput_->DisableVideoInput();
@@ -314,8 +314,8 @@ void DecklinkCaptureDelegate::StopAndDeAllocate() {
 
 // static
 bool DecklinkCaptureDelegate::supportedFormat(const VideoCaptureFormat& format) {
-  return format.frameSize == Size(1920, 1080) && format.frameRate == 30.0f &&
-         format.pixelFormat == VideoPixelFormat::ARGB;
+  return format.frameSize == Size(1280, 720) && format.frameRate == 60.0f &&
+         format.pixelFormat == VideoPixelFormat::BGRA;
 }
 
 VideoCaptureDeviceDecklink::VideoCaptureDeviceDecklink(
@@ -352,7 +352,7 @@ void VideoCaptureDeviceDecklink::OnIncomingCapturedData(
 }
 
 VideoCaptureFormat VideoCaptureDeviceDecklink::DefaultFormat() {
-  return VideoCaptureFormat(Size(1920, 1080), 30.0f, VideoPixelFormat::ARGB);
+  return VideoCaptureFormat(Size(1280, 720), 60.0f, VideoPixelFormat::BGRA);
 }
 
 }  // namespace s3d

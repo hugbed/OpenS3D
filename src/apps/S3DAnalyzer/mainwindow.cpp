@@ -466,11 +466,15 @@ void MainWindow::updateInputMode() {
     } else if (ui->actionInputVideo->isChecked()) {
       ui->actionOpenLeftVideo->setVisible(true);
       ui->actionOpenRightVideo->setVisible(true);
-    } else if (ui->actionInputLive->isChecked()) {
-      // load live camera
-      ui->videoControls->setVisible(false);
-      m_videoSynchronizer->loadLiveCamera();
     }
+  }
+
+  m_videoSynchronizer->stop();
+
+  if (ui->actionInputLive->isChecked()) {
+    // load live camera
+    ui->videoControls->setVisible(false);
+    m_videoSynchronizer->loadLiveCamera();
   }
 
   // no value smoothing for image
