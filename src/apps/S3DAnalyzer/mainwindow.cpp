@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(1.0f);
 
   // set minimum number of inliers for video
-  m_analyzer->setMinimumNumberOfInliers(s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20);
+  m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
@@ -466,6 +466,10 @@ void MainWindow::updateInputMode() {
     } else if (ui->actionInputVideo->isChecked()) {
       ui->actionOpenLeftVideo->setVisible(true);
       ui->actionOpenRightVideo->setVisible(true);
+    } else if (ui->actionInputLive->isChecked()) {
+      // load live camera
+      ui->videoControls->setVisible(false);
+      m_videoSynchronizer->loadLiveCamera();
     }
   }
 

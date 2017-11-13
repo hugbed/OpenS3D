@@ -6,7 +6,6 @@
 
 namespace s3d {
 
-// todo: move concurrency folder out of utilities
 class BinarySemaphore {
  public:
   virtual void await();

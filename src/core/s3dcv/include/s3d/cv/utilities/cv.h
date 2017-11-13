@@ -87,7 +87,9 @@ void displayMatches(const std::string& title,
   cv::hconcat(left, right, leftRight);
 
   // convert to color
-  cv::cvtColor(leftRight, leftRight, cv::COLOR_GRAY2BGR);
+  if (left.depth() == 1) {
+    cv::cvtColor(leftRight, leftRight, cv::COLOR_GRAY2BGR);
+  }
 
   // for random color
   RandomColorGenerator<cv::Scalar> colorGenerator;
