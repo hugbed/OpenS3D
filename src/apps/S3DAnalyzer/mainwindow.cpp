@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(1.0f);
 
   // set minimum number of inliers for video
-  m_analyzer->setMinimumNumberOfInliers(s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20);
+  m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
@@ -287,6 +287,23 @@ void MainWindow::computeAndUpdate() {
     if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
         (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) >
             0.005) {
+
+// this will be extracted from this function into separate image operations in issue 42.
+/*
+      cv::Mat leftMat = QImage2Mat(imageLeft);
+      cv::Mat rightMat = QImage2Mat(imageRight);
+
+      // draw epipolar lines
+      Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
+          m_analyzer->results.getStanAlignment());
+
+      std::tie(leftMat, rightMat) =
+          s3d::drawEpipolarLines(s3d::eigenMatToCV(F),
+                                 leftMat,
+                                 rightMat,
+                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsLeft),
+                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsRight));
+
       ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
       ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
@@ -297,7 +314,17 @@ void MainWindow::computeAndUpdate() {
       ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
       ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
 
+      cv::Mat leftRect, rightRect;
+      s3d::RectifierCV rectifier;
+      auto alignment = m_analyzer->results.getStanAlignment();
+      auto H1 = s3d::RectificationStan::leftImageMatrix(alignment);
+      auto H2 = s3d::RectificationStan::rightImageMatrix(alignment);
+      leftRect = rectifier.rectifyCV(leftMat, s3d::eigenMatToCV(H1));
+      rightRect = rectifier.rectifyCV(rightMat, s3d::eigenMatToCV(H2));
+*/
+
       m_currentContext->makeCurrent();
+      m_currentContext->textureManager->setImages(imageLeft, imageRight);
       m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
                                                    m_analyzer->results.disparitiesPercent);
       m_currentContext->doneCurrent();
@@ -443,7 +470,19 @@ void MainWindow::updateInputMode() {
     } else if (ui->actionInputVideo->isChecked()) {
       ui->actionOpenLeftVideo->setVisible(true);
       ui->actionOpenRightVideo->setVisible(true);
+    } else if (ui->actionInputLive->isChecked()) {
+      // load live camera
+      ui->videoControls->setVisible(false);
+      m_videoSynchronizer->loadLiveCamera();
     }
+  }
+
+  m_videoSynchronizer->stop();
+
+  if (ui->actionInputLive->isChecked()) {
+    // load live camera
+    ui->videoControls->setVisible(false);
+    m_videoSynchronizer->loadLiveCamera();
   }
 
   // no value smoothing for image

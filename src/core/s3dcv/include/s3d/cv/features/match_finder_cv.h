@@ -51,6 +51,8 @@ class MatchFinderCV : public MatchFinder {
   virtual void onFeaturesMatched(const cv::Mat& /*imgLeft*/,
                                  const cv::Mat& /*imgRight*/,
                                  const MatchFinder::Matches& /*matches*/) {}
+
+  size_t maxNbFeatures_{std::numeric_limits<size_t>::max()};
 };
 
 /**

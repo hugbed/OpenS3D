@@ -3,7 +3,7 @@
 
 #include "s3d/disparity/disparity_analyzer.h"
 
-#include "s3d/features/match_finder.h"
+#include "s3d/cv/features/match_finder_surf.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/robust_estimation/ransac.h"
@@ -17,6 +17,8 @@
 
 namespace s3d {
 struct StanAlignment;
+class MatchFinderCV;
+class MatchFinderSurf;
 
 class DisparityAnalyzerSTAN : public DisparityAnalyzer {
  public:
@@ -79,6 +81,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   bool enoughMatches(int nbOfMatches);
   RansacAlgorithmSTAN createRansac(Size imageSize);
 
+  std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<s3d::MatchFinderCV>()};
   int minNbInliers_{0};
 };
 }  // namespace s3d
