@@ -2,17 +2,17 @@ FROM ubuntu:16.04
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        git=1:2.7.4-0ubuntu1.1 \
-        curl=7.47.0-1ubuntu2.2 \
-        wget=1.17.1-1ubuntu1.2 \
-        unzip=6.0-20ubuntu1 \
-        build-essential=12.1ubuntu2 \
-        gcc-5=5.4.0-6ubuntu1~16.04.4 \
-        g++-5=5.4.0-6ubuntu1~16.04.4 \
-        cmake=3.5.1-1ubuntu3 \
-        lcov=1.12-2 \
-        software-properties-common=0.96.20.7 \
-        pkg-config=0.29.1-0ubuntu1 && \
+        git \
+        curl \
+        wget \
+        unzip \
+        build-essential \
+        gcc-5 \
+        g++-5 \
+        cmake \
+        lcov \
+        software-properties-common \
+        pkg-config && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -20,15 +20,15 @@ RUN apt-get update && \
 RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y && \
     apt-get update && \
     apt-get install -y --no-install-recommends \ 
-        ffmpeg=7:3.3.2-1~16.04.york1 \
-        libav-tools=7:3.3.2-1~16.04.york1 \
-        x264=2:0.148.2795+gitaaa9aa8-1~16.04.york0 \
-        x265=2.4-1~16.04.york0 \
-        libavcodec-dev=7:3.3.2-1~16.04.york1 \
-        libavformat-dev=7:3.3.2-1~16.04.york1 \
-        libavutil-dev=7:3.3.2-1~16.04.york1 \
-        libswscale-dev=7:3.3.2-1~16.04.york1 \
-        libavresample-dev=7:3.3.2-1~16.04.york1 && \
+        ffmpeg \
+        libav-tools \
+        x264 \
+        x265 \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libswscale-dev \
+        libavresample-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -38,10 +38,13 @@ ENV PATH "$PATH:/bin"
 
 # install opencv 3.2
 WORKDIR /
+RUN wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip -O opencv_contrib-3.2.0.zip \
+    && unzip opencv_contrib-3.2.0.zip
 RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip \
     && unzip 3.2.0.zip \
     && mkdir /opencv-3.2.0/cmake_binary && cd /opencv-3.2.0/cmake_binary \
-    && cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. \
+    && cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local \
+             -D OPENCV_EXTRA_MODULES_PATH=/opencv_contrib-3.2.0/modules .. \
     && make install \
     && rm /3.2.0.zip \
     && rm -r /opencv-3.2.0
