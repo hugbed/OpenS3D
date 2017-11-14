@@ -52,7 +52,7 @@ class MatchFinderCV : public MatchFinder {
                                  const cv::Mat& /*imgRight*/,
                                  const MatchFinder::Matches& /*matches*/) {}
 
-  size_t maxNbFeatures_{1000};
+  size_t maxNbFeatures_{std::numeric_limits<size_t>::max()};
 };
 
 /**
