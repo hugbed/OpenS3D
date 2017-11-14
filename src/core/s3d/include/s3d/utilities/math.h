@@ -17,9 +17,8 @@ class MovingAverage {
   MovingAverage(T value, T smoothingFactor) : value_{value}, smoothingFactor_{smoothingFactor} {}
 
   const T& addToAverage(const T& newValue) {
-//    value_ -= value_ / smoothingFactor_;
-//    value_ += newValue / smoothingFactor_;
-    value_ = newValue;
+    value_ -= value_ / smoothingFactor_;
+    value_ += newValue / smoothingFactor_;
     return value_;
   }
 
