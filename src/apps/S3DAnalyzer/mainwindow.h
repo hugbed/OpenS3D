@@ -9,6 +9,8 @@
 #include <s3d/multiview/stan_fundamental_matrix_solver.h>
 #include <s3d/video/video_types.h>
 
+#include <chrono>
+
 namespace Ui {
 class MainWindow;
 }  // namespace Ui

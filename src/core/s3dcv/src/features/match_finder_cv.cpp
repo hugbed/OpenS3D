@@ -50,7 +50,7 @@ MatchFinder::Matches MatchFinderCV::matchFeatures(const FeaturesCV& leftFeatures
   matcher->knnMatch(leftFeatures.descriptors, rightFeatures.descriptors, matches, 2);
 
   std::vector<Eigen::Vector2d> pts1, pts2;
-  for (unsigned i = 0; i < matches.size(); i++) {
+  for (unsigned i = 0; i < matches.size() && i < maxNbFeatures_; i++) {
     if (matches[i][0].distance < 0.8f * matches[i][1].distance) {
       auto& pt1 = leftFeatures.keypoints[matches[i][0].queryIdx].pt;
       auto& pt2 = rightFeatures.keypoints[matches[i][0].trainIdx].pt;

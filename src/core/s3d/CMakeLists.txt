@@ -20,4 +20,3 @@ target_link_libraries(${PROJECT_NAME} gsl decklink_sdk ${FFMPEG_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 add_subdirectory(test)
-

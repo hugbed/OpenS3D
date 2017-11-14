@@ -1,6 +1,6 @@
 #include "s3d/cv/disparity/disparity_analyzer_stan.h"
 
-#include <s3d/cv/features/match_finder_cv.h>
+#include <s3d/cv/features/match_finder_surf.h>
 #include <s3d/cv/utilities/cv.h>
 #include <s3d/disparity/utilities.h>
 #include <s3d/math.h>
@@ -181,8 +181,7 @@ void DisparityAnalyzerSTAN::setSmoothingFactor(double smoothingFactor) {
 s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left,
                                                              const cv::Mat& right) {
   // find matches
-  std::unique_ptr<s3d::MatchFinderCV> matchFinder = std::make_unique<s3d::MatchFinderCV>();
-  auto matches = matchFinder->findMatches(left, right);
+  auto matches = matchFinder_->findMatches(left, right);
   assert(matches.size() == 2 && matches[0].size() == matches[1].size());
 
   return matches;

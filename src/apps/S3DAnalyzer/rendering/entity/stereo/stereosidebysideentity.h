@@ -22,7 +22,7 @@ class StereoSideBySideEntity : public StereoImageEntity {
 
  private:
   RectangleEntity m_rectangles[2];
-  bool m_halfWidthResolution{false};
+  bool m_halfWidthResolution{true};
 };
 
 #endif  // RENDERING_ENTITY_STEREO_STEREOSIDEBYSIDEENTITY_H

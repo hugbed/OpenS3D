@@ -40,6 +40,7 @@ class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client
                        s3d::Stereo3DFormat stereoFormat);
 
   void loadStereoVideo();
+  void loadLiveCamera();
 
   void resume();
   void pause();
@@ -84,6 +85,7 @@ class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client
   bool m_leftFileReady{false};
   bool m_rightFileReady{false};
   bool m_videoLoaded{false};
+  bool m_liveCamera{false};
 
   // synchronization
   std::mutex m_mutex;
