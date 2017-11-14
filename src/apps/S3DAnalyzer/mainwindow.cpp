@@ -287,6 +287,9 @@ void MainWindow::computeAndUpdate() {
     if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
         (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) >
             0.005) {
+
+// this will be extracted from this function into separate image operations in issue 42.
+/*
       cv::Mat leftMat = QImage2Mat(imageLeft);
       cv::Mat rightMat = QImage2Mat(imageRight);
 
@@ -318,9 +321,10 @@ void MainWindow::computeAndUpdate() {
       auto H2 = s3d::RectificationStan::rightImageMatrix(alignment);
       leftRect = rectifier.rectifyCV(leftMat, s3d::eigenMatToCV(H1));
       rightRect = rectifier.rectifyCV(rightMat, s3d::eigenMatToCV(H2));
+*/
 
       m_currentContext->makeCurrent();
-      m_currentContext->textureManager->setImages(Mat2QImage(leftRect), Mat2QImage(rightRect));
+      m_currentContext->textureManager->setImages(imageLeft, imageRight);
       m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
                                                    m_analyzer->results.disparitiesPercent);
       m_currentContext->doneCurrent();
