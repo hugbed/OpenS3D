@@ -1,5 +1,6 @@
 #include "videosynchronizer.h"
 
+#include <QImage>
 #include <QDebug>
 #include <QTimer>
 

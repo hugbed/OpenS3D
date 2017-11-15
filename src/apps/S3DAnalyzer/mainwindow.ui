@@ -147,6 +147,7 @@
      <string>Overlay</string>
     </property>
     <addaction name="actionFeatures"/>
+    <addaction name="actionEpilines"/>
    </widget>
    <widget class="QMenu" name="menuInput_Mode">
     <property name="title">
@@ -215,6 +216,14 @@
    </property>
    <property name="text">
     <string>Features</string>
+   </property>
+  </action>
+  <action name="actionEpilines">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Epipolar Lines</string>
    </property>
   </action>
   <action name="actionCompute">

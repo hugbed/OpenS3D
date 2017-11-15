@@ -14,32 +14,21 @@ namespace s3d {
 
 DisparityAnalyzerSTAN::Results::Results() = default;
 
-DisparityAnalyzerSTAN::Results::Results(double smoothingFactor)
-    : minDisparityPercent{0.0, smoothingFactor},
-      maxDisparityPercent{0.0, smoothingFactor},
-      vertical{0.0, smoothingFactor},
-      roll{0.0, smoothingFactor},
-      zoom{0.0, smoothingFactor},
-      tiltOffset{0.0, smoothingFactor},
-      tiltKeystone{0.0, smoothingFactor},
-      panKeystone{0.0, smoothingFactor},
-      zParallaxDeformation{0.0, smoothingFactor} {}
-
 void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
                                                       double maxDisparity,
                                                       float widthRatio,
                                                       RansacAlgorithmSTAN::ModelType model) {
   auto minDisparityPercent = minDisparity * widthRatio;
   auto maxDisparityPercent = maxDisparity * widthRatio;
-  this->minDisparityPercent.addToAverage(minDisparityPercent);
-  this->maxDisparityPercent.addToAverage(maxDisparityPercent);
-  vertical.addToAverage(model.ch_y);                // * 180 / PI (degrees)
-  roll.addToAverage(model.a_z);                     // model.a_z * 180.0 / PI (degrees)
-  zoom.addToAverage(model.a_f);                     // (model.a_f + 1.0) * 100.0 (%)
-  tiltOffset.addToAverage(model.f_a_x);             // pixels
-  tiltKeystone.addToAverage(model.a_y_f);           // radians / m
-  panKeystone.addToAverage(model.a_x_f);            // radians / m
-  zParallaxDeformation.addToAverage(model.ch_z_f);  // ratio (m/m)
+  this->minDisparityPercent = minDisparityPercent;
+  this->maxDisparityPercent = maxDisparityPercent;
+  vertical = model.ch_y;                // * 180 / PI (degrees)
+  roll = model.a_z;                     // model.a_z * 180.0 / PI (degrees)
+  zoom = model.a_f;                     // (model.a_f + 1.0) * 100.0 (%)
+  tiltOffset = model.f_a_x;             // pixels
+  tiltKeystone = model.a_y_f;           // radians / m
+  panKeystone = model.a_x_f;            // radians / m
+  zParallaxDeformation = model.ch_z_f;  // ratio (m/m)
 }
 
 void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
@@ -65,18 +54,6 @@ void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vecto
   }
 }
 
-void DisparityAnalyzerSTAN::Results::setSmoothingFactor(double smoothingFactor) {
-  minDisparityPercent.setSmoothingFactor(smoothingFactor);
-  maxDisparityPercent.setSmoothingFactor(smoothingFactor);
-  vertical.setSmoothingFactor(smoothingFactor);
-  roll.setSmoothingFactor(smoothingFactor);
-  zoom.setSmoothingFactor(smoothingFactor);
-  tiltOffset.setSmoothingFactor(smoothingFactor);
-  tiltKeystone.setSmoothingFactor(smoothingFactor);
-  panKeystone.setSmoothingFactor(smoothingFactor);
-  zParallaxDeformation.setSmoothingFactor(smoothingFactor);
-}
-
 StanAlignment DisparityAnalyzerSTAN::Results::getStanAlignment() const {
   StanAlignment alignment;
   alignment.ch_y = static_cast<double>(vertical);
@@ -91,10 +68,8 @@ StanAlignment DisparityAnalyzerSTAN::Results::getStanAlignment() const {
 
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN() : results{} {}
 
-DisparityAnalyzerSTAN::DisparityAnalyzerSTAN(double smoothingFactor) : results{smoothingFactor} {}
-
 gsl::owner<DisparityAnalyzerSTAN*> DisparityAnalyzerSTAN::clone() const {
-  return new DisparityAnalyzerSTAN(results.minDisparityPercent.getSmoothingFactor());
+  return new DisparityAnalyzerSTAN();
 }
 
 bool DisparityAnalyzerSTAN::analyze(const Image<uint8_t>& left, const Image<uint8_t>& right) {
@@ -147,9 +122,6 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   double minDisparity, maxDisparity;
   std::tie(minDisparity, maxDisparity) = s3d::disparity_range(disparities);
 
-  // todo: for video only, do not update outputs if not enough matches
-  //       this should be done outside this class though or as a parameter
-  //       i.e: updateResultsOnFewMatches, setMinimumNumberOfMatches
   if (enoughMatches(static_cast<int>(bestPts1.size())))
   {
     // Set outputs (moving average of smoothingFactor_)
@@ -173,11 +145,6 @@ const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePointsRight
   return results.featurePointsRight;
 }
 
-void DisparityAnalyzerSTAN::setSmoothingFactor(double smoothingFactor) {
-  results.setSmoothingFactor(smoothingFactor);
-}
-
-// todo: why to I always recreate a matchFinder...
 s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left,
                                                              const cv::Mat& right) {
   // find matches

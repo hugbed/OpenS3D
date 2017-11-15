@@ -3,9 +3,11 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <QImage>
+
 inline cv::Mat QImage2Mat(QImage const& src) {
   cv::Mat tmp(
-      src.height(), src.width(), CV_8UC4, const_cast<uchar*>(src.bits()), src.bytesPerLine());
+          src.height(), src.width(), CV_8UC4, const_cast<uchar*>(src.bits()), static_cast<size_t>(src.bytesPerLine()));
   return tmp.clone();
 }
 

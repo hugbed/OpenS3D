@@ -33,7 +33,8 @@ MainWindow::MainWindow(QWidget* parent)
   // todo: group connects in separate functions
   // this function is getting laaarge
 
-  m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>(1.0f);
+  m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>();
+  m_imageOperationsChain = std::make_unique<CameraAlignmentOperationChain>(m_analyzer.get());
 
   // set minimum number of inliers for video
   m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
@@ -217,7 +218,25 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionEnableComputations,
           &QAction::triggered,  //
-          [this] { computeAndUpdate(); });
+          [this] {
+            if (ui->actionEnableComputations->isChecked()) {
+              m_imageOperationsChain->enableAlignmentComputation();
+            } else {
+              m_imageOperationsChain->disableAlignmentComputation();
+            }
+            computeAndUpdate();
+          });
+
+  connect(ui->actionEpilines,
+          &QAction::triggered,  //
+          [this] {
+            if (ui->actionEpilines->isChecked()) {
+              m_imageOperationsChain->enableDrawEpilines();
+            } else {
+              m_imageOperationsChain->disableDrawEpilines();
+            }
+            computeAndUpdate();
+          });
 
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -233,6 +252,8 @@ MainWindow::MainWindow(QWidget* parent)
     m_currentContext->entityManager->setUserSettings(&m_userSettings);
     m_userSettings.viewerContext.imageWidthPixels =
         m_currentContext->textureManager->getTextureSize().width();
+
+    handleNewImagePair(m_currentContext->textureManager->getImageLeft(), m_currentContext->textureManager->getImageRight(), {});
 
     connect(
         m_videoSynchronizer.get(),
@@ -280,62 +301,37 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::computeAndUpdate() {
-  if (ui->actionEnableComputations->isChecked()) {
-    QImage imageLeft = m_currentContext->textureManager->getImageLeft();
-    QImage imageRight = m_currentContext->textureManager->getImageRight();
+  if (m_imageOperationsChain->applyAllOperations()) {
+    m_currentContext->makeCurrent();
+    m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
+                                                 m_analyzer->results.disparitiesPercent);
+    m_currentContext->doneCurrent();
 
-    if (m_analyzer->analyze(QImage2Mat(imageLeft), QImage2Mat(imageRight)) &&
-        (m_analyzer->results.maxDisparityPercent - m_analyzer->results.minDisparityPercent) >
-            0.005) {
+    ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
+    ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
-// this will be extracted from this function into separate image operations in issue 42.
-/*
-      cv::Mat leftMat = QImage2Mat(imageLeft);
-      cv::Mat rightMat = QImage2Mat(imageRight);
+    ui->parametersListView->setParameter("Roll", m_analyzer->results.roll);
+    ui->parametersListView->setParameter("Vertical", m_analyzer->results.vertical);
+    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.panKeystone);
+    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.tiltKeystone);
+    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
+    ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
 
-      // draw epipolar lines
-      Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
-          m_analyzer->results.getStanAlignment());
-
-      std::tie(leftMat, rightMat) =
-          s3d::drawEpipolarLines(s3d::eigenMatToCV(F),
-                                 leftMat,
-                                 rightMat,
-                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsLeft),
-                                 s3d::eigenPointsToCV(m_analyzer->results.featurePointsRight));
-
-      ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
-      ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
-
-      ui->parametersListView->setParameter("Roll", m_analyzer->results.roll);
-      ui->parametersListView->setParameter("Vertical", m_analyzer->results.vertical);
-      ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.panKeystone);
-      ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.tiltKeystone);
-      ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
-      ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
-
-      cv::Mat leftRect, rightRect;
-      s3d::RectifierCV rectifier;
-      auto alignment = m_analyzer->results.getStanAlignment();
-      auto H1 = s3d::RectificationStan::leftImageMatrix(alignment);
-      auto H2 = s3d::RectificationStan::rightImageMatrix(alignment);
-      leftRect = rectifier.rectifyCV(leftMat, s3d::eigenMatToCV(H1));
-      rightRect = rectifier.rectifyCV(rightMat, s3d::eigenMatToCV(H2));
-*/
-
-      m_currentContext->makeCurrent();
-      m_currentContext->textureManager->setImages(imageLeft, imageRight);
-      m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
-                                                   m_analyzer->results.disparitiesPercent);
-      m_currentContext->doneCurrent();
-      updateConvergenceHint(m_analyzer->results.minDisparityPercent,
-                            m_analyzer->results.maxDisparityPercent);
-    } else {
-      m_currentContext->openGLRenderer->makeCurrent();
-      m_currentContext->entityManager->setFeatures({}, {});
-      m_currentContext->openGLRenderer->doneCurrent();
-    }
+    updateConvergenceHint(m_analyzer->results.minDisparityPercent,
+                          m_analyzer->results.maxDisparityPercent);
+  } else {
+    m_currentContext->openGLRenderer->makeCurrent();
+    m_currentContext->entityManager->setFeatures({}, {});
+    m_currentContext->openGLRenderer->doneCurrent();
   }
+
+  cv::Mat outputImageLeft;
+  cv::Mat outputImageRight;
+  std::tie(outputImageLeft, outputImageRight) = m_imageOperationsChain->getOutputImages();
+
+  m_currentContext->makeCurrent();
+  m_currentContext->textureManager->setImages(Mat2QImage(outputImageLeft), Mat2QImage(outputImageRight));
+  m_currentContext->doneCurrent();
   m_currentContext->openGLRenderer->updateScene();
 }
 
@@ -487,11 +483,9 @@ void MainWindow::updateInputMode() {
 
   // no value smoothing for image
   if (ui->actionInputImage->isChecked()) {
-    m_analyzer->setSmoothingFactor(1.0f);
     m_analyzer->setMinimumNumberOfInliers(0);
     ui->videoControls->setVisible(false);
   } else {
-    m_analyzer->setSmoothingFactor(m_analyzerSmoothingFactor);
     m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
     ui->videoControls->setVisible(true);
   }
@@ -530,6 +524,8 @@ void MainWindow::handleNewImagePair(const QImage& imgLeft,
   if (ui->actionInputImage->isChecked() && timestamp != std::chrono::microseconds{}) {
     return;
   }
+
+  m_imageOperationsChain->setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
 
   m_currentContext->makeCurrent();
   m_currentContext->textureManager->setImages(imgLeft, imgRight);

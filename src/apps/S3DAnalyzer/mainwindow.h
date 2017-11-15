@@ -5,6 +5,7 @@
 
 #include "rendering/entity/entitymanager.h"
 #include "utilities/usersettings.h"
+#include "worker/imageoperation.h"
 
 #include <s3d/multiview/stan_fundamental_matrix_solver.h>
 #include <s3d/video/video_types.h>
@@ -63,7 +64,7 @@ class MainWindow : public QMainWindow {
   void updateStereoDemuxer();
   bool stereoDemuxerRequired();
 
-  // does this belong here
+  // todo: does this belong here
   std::unique_ptr<VideoSynchronizer> m_videoSynchronizer;
   std::unique_ptr<StereoDemuxerQImage> m_stereoDemuxer;
   std::unique_ptr<StereoDemuxerFactoryQImage> m_stereoDemuxerFactory;
@@ -80,9 +81,10 @@ class MainWindow : public QMainWindow {
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
   double m_analyzerSmoothingFactor{20.0};
-  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES * 20};
+  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES};
 
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
+  std::unique_ptr<CameraAlignmentOperationChain> m_imageOperationsChain;
 
   UserSettings m_userSettings{};
   std::unique_ptr<SettingsDialog> m_settingsDialog;

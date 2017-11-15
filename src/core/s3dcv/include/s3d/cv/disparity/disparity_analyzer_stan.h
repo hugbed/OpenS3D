@@ -27,7 +27,6 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
 
   struct Results {
     explicit Results();
-    explicit Results(double smoothingFactor);
 
     void updateParameters(double minDisparity,
                           double maxDisparity,
@@ -40,19 +39,17 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
                       float widthRatio,
                       float resizeRatio);
 
-    void setSmoothingFactor(double smoothingFactor);
-
     StanAlignment getStanAlignment() const;
 
-    s3d::MovingAverage<double> minDisparityPercent{};
-    s3d::MovingAverage<double> maxDisparityPercent{};
-    s3d::MovingAverage<double> vertical{};
-    s3d::MovingAverage<double> roll{};
-    s3d::MovingAverage<double> zoom{};
-    s3d::MovingAverage<double> tiltOffset{};
-    s3d::MovingAverage<double> tiltKeystone{};
-    s3d::MovingAverage<double> panKeystone{};
-    s3d::MovingAverage<double> zParallaxDeformation{};
+    double minDisparityPercent{};
+    double maxDisparityPercent{};
+    double vertical{};
+    double roll{};
+    double zoom{};
+    double tiltOffset{};
+    double tiltKeystone{};
+    double panKeystone{};
+    double zParallaxDeformation{};
     std::vector<Eigen::Vector2f> featurePointsLeft{};
     std::vector<Eigen::Vector2f> featurePointsRight{};
 
@@ -60,7 +57,6 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   };
 
   DisparityAnalyzerSTAN();
-  explicit DisparityAnalyzerSTAN(double smoothingFactor);
 
   gsl::owner<DisparityAnalyzerSTAN*> clone() const override;
 
@@ -70,7 +66,6 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   const std::vector<float>& getDisparitiesPercent() const override;
   const std::vector<Eigen::Vector2f>& getFeaturePointsLeft() const override;
   const std::vector<Eigen::Vector2f>& getFeaturePointsRight() const override;
-  void setSmoothingFactor(double smoothingFactor);
   void setMinimumNumberOfInliers(int minNbInliers);
 
   // outputs

@@ -1,6 +1,7 @@
 #include "texturemanager.h"
 
 #include <QColor>
+#include <QImage>
 #include <QOpenGLTexture>
 
 #include <cassert>
