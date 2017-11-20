@@ -68,6 +68,9 @@ class MatchFinderCVViz : public MatchFinderCV {
   void onFeaturesMatched(const cv::Mat& imgLeft,
                          const cv::Mat& imgRight,
                          const MatchFinder::Matches& matches) override;
+
+private:
+  cv::Mat copyWithoutAlpha(const cv::Mat& img);
 };
 
 }  // namespace s3d

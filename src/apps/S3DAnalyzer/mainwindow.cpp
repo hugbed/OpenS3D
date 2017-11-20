@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "controllers/imageoperationactioncontroller.h"
+
 #include "rendering/openglwindow.h"
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
@@ -12,7 +14,6 @@
 
 #include <s3d/cv/disparity/disparity_analyzer_stan.h>
 
-#include <s3d/cv/rectification/rectifier_cv.h>
 #include <QFileDialog>
 #include <QMouseEvent>
 #include <QtGui/QPainter>
@@ -34,10 +35,23 @@ MainWindow::MainWindow(QWidget* parent)
   // this function is getting laaarge
 
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>();
-  m_imageOperationsChain = std::make_unique<CameraAlignmentOperationChain>(m_analyzer.get());
-
-  // set minimum number of inliers for video
   m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
+
+  m_imageOperations = std::make_unique<CameraAlignmentOperations>(m_analyzer.get());
+  m_imageOperations->drawEpilines.disable();
+  m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationActionController>(ui->actionEnableComputations, &m_imageOperations->computeAlignment)
+  );
+  m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationActionController>(ui->actionEpilines, &m_imageOperations->drawEpilines)
+  );
+  m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationActionController>(ui->actionRectify, &m_imageOperations->rectify)
+  );
+  for (auto && actionController : m_imageOperationsActionControllers) {
+    actionController->updateImageOperationFromActionState();
+    connect(actionController.get(), &ImageOperationActionController::imageOperationToggled, [this] { computeAndUpdate(); });
+  }
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);
@@ -216,28 +230,6 @@ MainWindow::MainWindow(QWidget* parent)
             m_currentContext->openGLRenderer->updateScene();
           });
 
-  connect(ui->actionEnableComputations,
-          &QAction::triggered,  //
-          [this] {
-            if (ui->actionEnableComputations->isChecked()) {
-              m_imageOperationsChain->enableAlignmentComputation();
-            } else {
-              m_imageOperationsChain->disableAlignmentComputation();
-            }
-            computeAndUpdate();
-          });
-
-  connect(ui->actionEpilines,
-          &QAction::triggered,  //
-          [this] {
-            if (ui->actionEpilines->isChecked()) {
-              m_imageOperationsChain->enableDrawEpilines();
-            } else {
-              m_imageOperationsChain->disableDrawEpilines();
-            }
-            computeAndUpdate();
-          });
-
   connect(ui->hitWidget,
           static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
           [this](double value) {
@@ -301,7 +293,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::computeAndUpdate() {
-  if (m_imageOperationsChain->applyAllOperations()) {
+  if (m_imageOperations->inputOutputAdapter.applyAllOperations()) {
     m_currentContext->makeCurrent();
     m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
                                                  m_analyzer->results.disparitiesPercent);
@@ -327,7 +319,7 @@ void MainWindow::computeAndUpdate() {
 
   cv::Mat outputImageLeft;
   cv::Mat outputImageRight;
-  std::tie(outputImageLeft, outputImageRight) = m_imageOperationsChain->getOutputImages();
+  std::tie(outputImageLeft, outputImageRight) = m_imageOperations->inputOutputAdapter.getOutputImages();
 
   m_currentContext->makeCurrent();
   m_currentContext->textureManager->setImages(Mat2QImage(outputImageLeft), Mat2QImage(outputImageRight));
@@ -520,16 +512,18 @@ void MainWindow::updateStereo3DFormat() {
 void MainWindow::handleNewImagePair(const QImage& imgLeft,
                                     const QImage& imgRight,
                                     std::chrono::microseconds timestamp) {
+  m_imageLeftReady = false;
+  m_imageRightReady = false;
+
   // don't display video frames when in image mode
   if (ui->actionInputImage->isChecked() && timestamp != std::chrono::microseconds{}) {
     return;
   }
 
-  m_imageOperationsChain->setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
+  imgLeft.save("/home/jon/Videos/frame_a.jpg");
+  imgRight.save("/home/jon/Videos/frame_b.jpg");
 
-  m_currentContext->makeCurrent();
-  m_currentContext->textureManager->setImages(imgLeft, imgRight);
-  m_currentContext->doneCurrent();
+  m_imageOperations->inputOutputAdapter.setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
   ui->videoControls->updateSlider(timestamp);
   m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
   m_currentContext->entityManager->setUserSettings(&m_userSettings);

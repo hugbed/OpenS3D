@@ -5,7 +5,7 @@
 
 #include "rendering/entity/entitymanager.h"
 #include "utilities/usersettings.h"
-#include "worker/imageoperation.h"
+#include "worker/camera_alignment_operations.h"
 
 #include <s3d/multiview/stan_fundamental_matrix_solver.h>
 #include <s3d/video/video_types.h>
@@ -28,6 +28,10 @@ namespace s3d {
 class DisparityAnalyzerSTAN;
 struct VideoCaptureFormat;
 }  // namespace s3d
+
+#include <QAction>
+
+class ImageOperationActionController;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -80,11 +84,10 @@ class MainWindow : public QMainWindow {
   RenderingContext* m_currentContext;
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
-  double m_analyzerSmoothingFactor{20.0};
-  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES};
-
+  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES*2};
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
-  std::unique_ptr<CameraAlignmentOperationChain> m_imageOperationsChain;
+  std::unique_ptr<CameraAlignmentOperations> m_imageOperations;
+  std::vector<std::unique_ptr<ImageOperationActionController>> m_imageOperationsActionControllers;
 
   UserSettings m_userSettings{};
   std::unique_ptr<SettingsDialog> m_settingsDialog;

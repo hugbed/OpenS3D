@@ -88,6 +88,7 @@ bool VideoFileParserFFmpeg::GetNextFrame(std::vector<uint8_t>* imageData) {
     // fetch new frame from sent packet
     frameReceived = decoder_->receiveDecodedFrame(&frame);
   }
+  av_packet_unref(packet);
 
   // copy received frame (converted to RGB24) to imageData vector
   if (frameReceived) {
@@ -96,6 +97,7 @@ bool VideoFileParserFFmpeg::GetNextFrame(std::vector<uint8_t>* imageData) {
       scaler_->scaleFrame(frame, imageData);
     }
   }
+  av_frame_unref(frame);
 
   return !decoder_->endOfFileReached();
 }

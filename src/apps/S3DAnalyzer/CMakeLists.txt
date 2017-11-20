@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set ( SOURCES
   main.cpp
   mainwindow.cpp
+  controllers/imageoperationactioncontroller.h
   rendering/openglwindow.cpp
   rendering/openglwidget.cpp
   rendering/texturemanager.cpp
@@ -44,7 +45,8 @@ set ( SOURCES
   worker/stereo_demuxer_qimage_side_by_side.cpp
   worker/stereo_demuxer_qimage_above_below.cpp
   worker/stereo_demuxer_factory_qimage.cpp
-  worker/imageoperation.h
+  worker/image_operation.h
+  worker/camera_alignment_operations.cpp
   utilities/cv.h
   utilities/depthintensitygradient.cpp)
 

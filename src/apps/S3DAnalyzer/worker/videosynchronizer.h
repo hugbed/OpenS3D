@@ -5,6 +5,7 @@
 
 #include <QImage>
 #include <QObject>
+#include <QMutex>
 
 #include <atomic>
 #include <chrono>
@@ -21,6 +22,10 @@ class StereoDemuxerFactory;
 // synchronizes video acquisition in another thread
 // with the main thread using a timer to check when
 // a new frame is ready
+
+// to have debug info
+template class std::vector<gsl::span<const uint8_t>>;
+template class std::vector<QImage>;
 
 class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client {
   Q_OBJECT
@@ -88,9 +93,10 @@ class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client
   bool m_liveCamera{false};
 
   // synchronization
-  std::mutex m_mutex;
+  QMutex m_mutex;
   bool m_imagesDirty{false};
-  std::vector<QImage> m_images;
+  QImage m_imageLeft;
+  QImage m_imageRight;
   std::chrono::microseconds m_timestamp;
 };
 

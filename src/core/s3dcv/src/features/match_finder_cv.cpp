@@ -89,8 +89,9 @@ void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,
                                        const cv::Mat& imgRight,
                                        const MatchFinderCV::Features& featuresLeft,
                                        const MatchFinderCV::Features& featuresRight) {
-  cv::Mat imageLeftWithKeypoints = imgLeft.clone();
-  cv::Mat imageRightWithKeypoints = imgRight.clone();
+  cv::Mat imageLeftWithKeypoints = copyWithoutAlpha(imgLeft);
+  cv::Mat imageRightWithKeypoints = copyWithoutAlpha(imgRight);
+
   cv::drawKeypoints(imageLeftWithKeypoints, featuresLeft.keypoints, imageLeftWithKeypoints);
   cv::drawKeypoints(imageRightWithKeypoints, featuresRight.keypoints, imageRightWithKeypoints);
 
@@ -105,5 +106,16 @@ void MatchFinderCVViz::onFeaturesMatched(const cv::Mat& imgLeft,
   // recompute DMatches
   cv::Mat matchesImg;
   s3d::displayMatches("Filtered Matches", imgLeft, imgRight, matches[0], matches[1]);
+}
+
+cv::Mat MatchFinderCVViz::copyWithoutAlpha(const cv::Mat& img) {
+
+  cv::Mat imgWithoutAlpha;
+  if (img.channels() == 4) {
+    cv::cvtColor(img, imgWithoutAlpha, CV_BGRA2BGR);
+  } else {
+    imgWithoutAlpha = img.clone();
+  }
+  return imgWithoutAlpha;
 }
 }  // namespace s3d

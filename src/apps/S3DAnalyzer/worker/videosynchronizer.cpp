@@ -60,7 +60,7 @@ std::chrono::microseconds VideoSynchronizer::videoDuration() {
 void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
                                                const s3d::VideoCaptureFormat& frameFormat,
                                                std::chrono::microseconds timestamp) {
-  std::unique_lock<std::mutex>(m_mutex);
+  m_mutex.lock();
 
   if ((m_stereoDemuxer.get() == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
     updateStereoDemuxer(frameFormat);
@@ -78,42 +78,54 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
     std::tie(dataLeft, dataRight) = m_stereoDemuxer->demux(
         std::vector<uint8_t>(data[0].data(), data[0].data() + data[0].size()));
 
-    m_images[0] =
+    m_imageLeft =
         QImage(dataLeft.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
             .copy();
-    m_images[1] =
+    m_imageRight =
         QImage(dataRight.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
             .copy();
   }
   // input in separate images
   else if (data.size() > 1) {
-    m_images[0] =
+    m_imageLeft =
         QImage(data[0].data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
             .copy();
-    m_images[1] =
+    m_imageRight =
         QImage(data[1].data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
             .copy();
   }
   // no input.. outputing black image
   else {
-    m_images[0] =
+    m_imageLeft =
         QImage(frameSize.getWidth(), frameSize.getHeight(), QImage::Format::Format_ARGB32);
-    m_images[1] =
+    m_imageRight =
         QImage(frameSize.getWidth(), frameSize.getHeight(), QImage::Format::Format_ARGB32);
-    m_images[0].fill(Qt::black);
-    m_images[1].fill(Qt::black);
+    m_imageLeft.fill(Qt::black);
+    m_imageRight.fill(Qt::black);
   }
 
   m_timestamp = timestamp;
   m_imagesDirty = true;
+  m_mutex.unlock();
 }
 
 void VideoSynchronizer::checkForIncomingImage() {
-  std::unique_lock<std::mutex> lock(m_mutex);
-  if (m_imagesDirty) {
+  bool imagesDirty = false;
+  QImage leftImageCopy, rightImageCopy;
+  {
+    m_mutex.lock();
+    if (m_imagesDirty) {
+      leftImageCopy = m_imageLeft.copy();
+      rightImageCopy = m_imageRight.copy();
+      imagesDirty = true;
+      m_imagesDirty = false;
+    }
+    m_mutex.unlock();
+  }
+
+  if (imagesDirty) {
     // should use Qt::QueuedConnection for minimal time spent in timer callback
-    emit incomingImagePair(m_images[0], m_images[1], m_timestamp);
-    m_imagesDirty = false;
+    emit incomingImagePair(leftImageCopy, rightImageCopy, m_timestamp);
   }
 }
 
@@ -157,7 +169,6 @@ void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
   m_videoDuration = parser.VideoDuration();
   m_stereoDemuxer =
       s3d::StereoDemuxerFactoryCV{}.create(stereoFormat, format.frameSize, format.pixelFormat);
-  m_images.resize(2);
 
   if (stereoFormat == s3d::Stereo3DFormat::Separate) {
     m_videoCaptureDevice =
@@ -212,7 +223,6 @@ void VideoSynchronizer::loadLiveCamera() {
   stop();
 
   m_liveCamera = true;
-  m_images.resize(2);
 
   m_videoCaptureDevice =
       std::make_unique<s3d::VideoCaptureDeviceDecklink>(s3d::VideoCaptureDeviceDescriptor({}));

@@ -20,7 +20,7 @@ std::pair<StereoDemuxer::ImageData, StereoDemuxer::ImageData> StereoDemuxerCV::d
   std::vector<uint8_t> leftData(leftImg.data, leftImg.data + nbBytes);
   std::vector<uint8_t> rightData(rightImg.data, rightImg.data + nbBytes);
 
-  return {std::move(leftData), std::move(rightData)};
+  return {leftData, rightData};
 }
 
 void StereoDemuxerCV::setSize(Size size) {

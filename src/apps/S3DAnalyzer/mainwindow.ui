@@ -148,6 +148,7 @@
     </property>
     <addaction name="actionFeatures"/>
     <addaction name="actionEpilines"/>
+    <addaction name="actionRectify"/>
    </widget>
    <widget class="QMenu" name="menuInput_Mode">
     <property name="title">
@@ -224,6 +225,14 @@
    </property>
    <property name="text">
     <string>Epipolar Lines</string>
+   </property>
+  </action>
+  <action name="actionRectify">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rectify</string>
    </property>
   </action>
   <action name="actionCompute">
