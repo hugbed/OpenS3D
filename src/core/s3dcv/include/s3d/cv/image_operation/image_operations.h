@@ -1,5 +1,5 @@
-#ifndef WORKER_IMAGE_OPERATION_CHAIN_H
-#define WORKER_IMAGE_OPERATION_CHAIN_H
+#ifndef S3D_CV_IMAGE_OPERATION_IMAGE_OPERATIONS_H
+#define S3D_CV_IMAGE_OPERATION_IMAGE_OPERATIONS_H
 
 #include "image_operation.h"
 
@@ -40,4 +40,4 @@ public:
 } // namespace s3d
 } // namespace image_operation
 
-#endif // WORKER_IMAGE_OPERATION_CHAIN_H
+#endif // S3D_CV_IMAGE_OPERATION_IMAGE_OPERATIONS_H

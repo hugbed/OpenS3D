@@ -1,5 +1,5 @@
-#ifndef WORKER_IMAGEOPERATION_H
-#define WORKER_IMAGEOPERATION_H
+#ifndef S3D_CV_IMAGE_OPERATION_IMAGE_OPERATION_H
+#define S3D_CV_IMAGE_OPERATION_IMAGE_OPERATION_H
 
 #include <gsl/gsl>
 
@@ -27,4 +27,4 @@ private:
 } // namespace s3d
 } // namespace image_operation
 
-#endif //WORKER_IMAGEOPERATION_H
+#endif // S3D_CV_IMAGE_OPERATION_IMAGE_OPERATION_H

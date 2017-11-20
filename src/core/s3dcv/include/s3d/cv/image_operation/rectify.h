@@ -1,5 +1,5 @@
-#ifndef WORKER_IMAGEOPERATIONRECTIFY_H
-#define WORKER_IMAGEOPERATIONRECTIFY_H
+#ifndef S3D_CV_IMAGE_OPERATION_RECTIFY_H
+#define S3D_CV_IMAGE_OPERATION_RECTIFY_H
 
 #include "image_operation.h"
 
@@ -29,4 +29,4 @@ private:
 } // namespace s3d
 } // namespace image_operation
 
-#endif // WORKER_IMAGEOPERATIONRECTIFY_H
+#endif // S3D_CV_IMAGE_OPERATION_RECTIFY_H

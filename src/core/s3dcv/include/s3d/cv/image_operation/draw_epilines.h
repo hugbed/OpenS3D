@@ -1,5 +1,5 @@
-#ifndef WORKER_IMAGEOPERATIONDRAWEPILINES_H_H
-#define WORKER_IMAGEOPERATIONDRAWEPILINES_H_H
+#ifndef S3D_CV_IMAGE_OPERATION_DRAW_EPILINES_H
+#define S3D_CV_IMAGE_OPERATION_DRAW_EPILINES_H
 
 #include "image_operation.h"
 
@@ -31,4 +31,4 @@ private:
 } // namespace s3d
 } // namespace image_operation
 
-#endif // WORKER_IMAGEOPERATIONDRAWEPILINES_H_H
+#endif // S3D_CV_IMAGE_OPERATION_DRAW_EPILINES_H

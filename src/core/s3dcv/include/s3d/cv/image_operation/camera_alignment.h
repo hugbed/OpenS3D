@@ -1,5 +1,5 @@
-#ifndef S3D_CV_CAMERA_ALIGNMENT_H
-#define S3D_CV_CAMERA_ALIGNMENT_H
+#ifndef S3D_CV_IMAGE_OPERATION_CAMERA_ALIGNMENT_H
+#define S3D_CV_IMAGE_OPERATION_CAMERA_ALIGNMENT_H
 
 #include "s3d/cv/image_operation/compute_alignment.h"
 #include "s3d/cv/image_operation/draw_epilines.h"
@@ -30,4 +30,4 @@ private:
 } // namespace s3d
 } // namespace image_operation
 
-#endif // S3D_CV_CAMERA_ALIGNMENT_H
+#endif // S3D_CV_IMAGE_OPERATION_CAMERA_ALIGNMENT_H
