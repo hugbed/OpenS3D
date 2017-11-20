@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_analyzer = std::make_unique<s3d::DisparityAnalyzerSTAN>();
   m_analyzer->setMinimumNumberOfInliers(m_analyzerMinNbInliers);
 
-  m_imageOperations = std::make_unique<CameraAlignmentOperations>(m_analyzer.get());
+  m_imageOperations = std::make_unique<s3d::image_operation::CameraAlignment>(m_analyzer.get());
   m_imageOperations->drawEpilines.disable();
   m_imageOperationsActionControllers.emplace_back(
     std::make_unique<ImageOperationActionController>(ui->actionEnableComputations, &m_imageOperations->computeAlignment)

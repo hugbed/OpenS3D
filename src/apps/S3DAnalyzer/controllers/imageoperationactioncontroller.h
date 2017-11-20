@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "worker/image_operation.h"
+#include "s3d/cv/image_operation/image_operation.h"
 
 #include <QAction>
 
@@ -14,7 +14,7 @@ class ImageOperationActionController : public QObject {
 
 public:
   ImageOperationActionController(gsl::not_null<QAction*> action,
-                                 gsl::not_null<ImageOperation*> imageOperation);
+                                 gsl::not_null<s3d::image_operation::ImageOperation*> imageOperation);
 
   void updateImageOperationFromActionState();
 
@@ -23,7 +23,7 @@ signals:
 
 private:
   QAction* m_action;
-  ImageOperation* m_imageOperation;
+  s3d::image_operation::ImageOperation* m_imageOperation;
 };
 
 #endif //CONTROLLERS_IMAGEOPERATIONACTIONCONTROLLER_H

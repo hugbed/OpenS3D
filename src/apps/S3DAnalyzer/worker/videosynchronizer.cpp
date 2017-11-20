@@ -1,7 +1,7 @@
 #include "videosynchronizer.h"
 
-#include <QImage>
 #include <QDebug>
+#include <QImage>
 #include <QTimer>
 
 #include <s3d/cv/video/stereo_demuxer/stereo_demuxer_cv_side_by_side.h>
