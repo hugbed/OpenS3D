@@ -520,9 +520,6 @@ void MainWindow::handleNewImagePair(const QImage& imgLeft,
     return;
   }
 
-  imgLeft.save("/home/jon/Videos/frame_a.jpg");
-  imgRight.save("/home/jon/Videos/frame_b.jpg");
-
   m_imageOperations->inputOutputAdapter.setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
   ui->videoControls->updateSlider(timestamp);
   m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
