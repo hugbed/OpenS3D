@@ -7,48 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # declaring files in your project
 
+file(GLOB_RECURSE SRC_FILES
+        controllers/*.cpp
+        rendering/*.cpp
+        widgets/*.cpp
+        worker/*.cpp
+        utilities/*.cpp)
+
 set ( SOURCES
+  ${SRC_FILES}
   main.cpp
   mainwindow.cpp
-  controllers/imageoperationactioncontroller.h
-  rendering/openglwindow.cpp
-  rendering/openglwidget.cpp
-  rendering/texturemanager.cpp
-  rendering/renderingcontext.cpp
-  rendering/entity/entitymanager.cpp
-  rendering/entity/stereo/rectangleentity.cpp
-  rendering/entity/stereo/anaglyphrectangleentity.cpp
-  rendering/entity/stereo/stereosidebysideentity.cpp
-  rendering/entity/stereo/opacityrectangleentity.cpp
-  rendering/entity/stereo/interlacedrectangleentity.cpp
-  rendering/entity/stereo/leftrectangleentity.cpp
-  rendering/entity/stereo/rightrectangleentity.cpp
-  rendering/entity/stereo/viewercentricentity.cpp
-  rendering/entity/billboard/billboardentity.cpp
-  rendering/entity/billboard/billboardcolorentity.cpp
-  rendering/entity/billboard/billboarddisparityentity.cpp
-  rendering/entity/billboard/billboarddepthentity.cpp
-  widgets/parameterslistview.cpp
-  widgets/parameterwidget.cpp
-  widgets/doublespinboxnocursor.cpp
-  widgets/lineeditnocursor.cpp
-  widgets/widthhintlabel.cpp
-  widgets/rangewidget.cpp
-  widgets/rangebar.cpp
-  widgets/videocontrols.cpp
-  widgets/videobuttons.cpp
-  widgets/sliderdirectjump.cpp
-  widgets/settingswidget.cpp
-  widgets/settingsdialog.cpp
-  worker/videosynchronizer.cpp
-  worker/stereo_demuxer_qimage.cpp
-  worker/stereo_demuxer_qimage_side_by_side.cpp
-  worker/stereo_demuxer_qimage_above_below.cpp
-  worker/stereo_demuxer_factory_qimage.cpp
-  worker/image_operation.h
-  worker/camera_alignment_operations.cpp
-  utilities/cv.h
-  utilities/depthintensitygradient.cpp)
+)
 
 set ( MOC_HEADERS
  mainwindow.h
