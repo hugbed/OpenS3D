@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
+    <width>800</width>
     <height>800</height>
    </rect>
   </property>
@@ -262,8 +262,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAnaglyph"/>
-   <addaction name="actionOpacity"/>
-   <addaction name="actionInterlaced"/>
    <addaction name="actionSide_by_side"/>
    <addaction name="actionLeft"/>
    <addaction name="actionRight"/>

@@ -24,6 +24,8 @@ public:
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;
 
+  void rectifyFeatures(StanResults* results);
+
   s3d::DisparityAnalyzerSTAN* disparityAnalyzer_;
 };
 
