@@ -2,23 +2,44 @@
 
 ## Open Source Library and Software for Stereoscopic 3D Content Production
 
-The goal of this library is to provide users with tools (C++ library or sample applications) to create stereoscopic 3D content.
-These tools should be sufficient to create 3D content either for stereoscopic cinema content production or depth analysis of 3D content such as virtual reality content.
-
-This codebase is a work in process and work has just been started. It should get bigger as days go by.
+The goal of this library is to provide users with tools (C++ library and software) to create stereoscopic 3D content.
+These tools should be sufficient to create 3D content either for stereoscopic cinema content production.
 
 ## Features
 
-Up to now: 
-* 3D video player (side-by-side/anaglyph) with Ogre: To produce 3D content, you need to be able to visualize it.
+Stereoscopic 3D content analysis is available through a modern C++ library.
 
-In progress:
-* Improving 3D video player user-friendliness
-* Stereo 3D rig alignment (by removing vertial disparities)
+Most algorithms are implemented using OpenCV but the library uses interfaces so that it could be implemented with any other computer vision frameworks.
+
+The usage of the library is demonstrated with a stereoscopic 3D analysis software (S3DAnalyzer):
+
+* 3D Video player (anaglyph, side-by-side)
+  * Side-by-side
+  * Above-below
+  * Separate files (left, right)
+  * Supports many video formats and codecs (with FFmpeg)
+  * Variable horizontal image translation to adjust the image plane (useful for raw videos for which all points are projected in front of the screen).
+* Camera alignment
+  * Detect misalignments (roll angle, vertical offset, zoom ratio, tilt, pan, etc.)
+* Camera rectification
+  * Correct misalignments detected to minimize vertical disparities
+* Disparity analysis
+  * Disparity range
+  * Colored feature points from disparity (red = too close in front of the screen, purple = too far behind screen plane)
 
 ## Build Instructions
 
-This project uses C++14 and CMake:
+This project uses C++14 and CMake.
+
+The only supported platform for now is linux (Ubuntu, Arch Linux) with the goal of porting it to Windows and Mac OS.
+
+Dependencies are:
+
+* FFmpeg >= 3.0
+* OpenCV >= 3.0
+* Qt >= 5.7
+
+If all dependencies are correctly configured, the project can be built with cmake:
 
 ```
 mkdir build
