@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "controllers/imageoperationactioncontroller.h"
+#include "controllers/imageoperationtogglecontroller.h"
+#include "controllers/imageoperationtriggercontroller.h"
 
 #include "rendering/openglwindow.h"
 #include "rendering/renderingcontext.h"
@@ -40,17 +41,20 @@ MainWindow::MainWindow(QWidget* parent)
   m_imageOperations = std::make_unique<s3d::image_operation::CameraAlignment>(m_analyzer.get());
   m_imageOperations->drawEpilines.disable();
   m_imageOperationsActionControllers.emplace_back(
-    std::make_unique<ImageOperationActionController>(ui->actionEnableComputations, &m_imageOperations->computeAlignment)
+    std::make_unique<ImageOperationToggleController>(ui->actionEnableComputations, &m_imageOperations->computeAlignment)
   );
   m_imageOperationsActionControllers.emplace_back(
-    std::make_unique<ImageOperationActionController>(ui->actionEpilines, &m_imageOperations->drawEpilines)
+    std::make_unique<ImageOperationToggleController>(ui->actionEpilines, &m_imageOperations->drawEpilines)
   );
   m_imageOperationsActionControllers.emplace_back(
-    std::make_unique<ImageOperationActionController>(ui->actionRectify, &m_imageOperations->rectify)
+    std::make_unique<ImageOperationTriggerController>(ui->actionUpdateRectification, &m_imageOperations->updateRectification)
+  );
+  m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationToggleController>(ui->actionRectify, &m_imageOperations->rectify)
   );
   for (auto && actionController : m_imageOperationsActionControllers) {
-    actionController->updateImageOperationFromActionState();
-    connect(actionController.get(), &ImageOperationActionController::imageOperationToggled, [this] { computeAndUpdate(); });
+    actionController->onActionTriggered();
+    connect(actionController.get(), &ImageOperationToggleController::imageOperationTriggered, [this] { computeAndUpdate(); });
   }
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
@@ -295,7 +299,7 @@ MainWindow::~MainWindow() {
 void MainWindow::computeAndUpdate() {
   if (m_imageOperations->inputOutputAdapter.applyAllOperations()) {
     m_currentContext->makeCurrent();
-    m_currentContext->entityManager->setFeatures(m_analyzer->results.stan.featuresRight,
+    m_currentContext->entityManager->setFeatures(m_imageOperations->inputOutputAdapter.results.featuresRight,
                                                  m_analyzer->results.disparitiesPercent);
     m_currentContext->doneCurrent();
 

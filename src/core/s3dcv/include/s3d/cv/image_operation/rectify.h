@@ -7,6 +7,7 @@
 
 namespace s3d {
   class DisparityAnalyzerSTAN;
+  struct StanResults;
 }
 
 namespace cv {
@@ -21,7 +22,9 @@ public:
   explicit Rectify(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer);
 
 private:
-  bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) override;
+  bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;
+
+  void rectifyFeatures(StanResults* results);
 
   s3d::DisparityAnalyzerSTAN* disparityAnalyzer_;
 };

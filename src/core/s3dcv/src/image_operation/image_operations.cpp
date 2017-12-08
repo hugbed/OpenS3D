@@ -1,13 +1,15 @@
 #include "s3d/cv/image_operation/image_operations.h"
 
+#include <s3d/multiview/stan_results.h>
+
 #include <opencv2/core/mat.hpp>
 
 namespace s3d {
 namespace image_operation {
 
-bool ImageOperations::applyAll(cv::Mat *leftImage, cv::Mat *rightImage) {
+bool ImageOperations::applyAll(cv::Mat *leftImage, cv::Mat *rightImage, StanResults* results) {
   for (auto* operation : operations) {
-    bool result = operation->applyOnImagesIfEnabled(leftImage, rightImage);
+    bool result = operation->applyOnImagesIfEnabled(leftImage, rightImage, results);
     if (shouldReturnAccordingTo(result)) {
       return result;
     }

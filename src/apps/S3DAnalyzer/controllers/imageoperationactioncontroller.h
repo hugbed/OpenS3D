@@ -10,18 +10,18 @@
 #include <gsl/gsl>
 
 class ImageOperationActionController : public QObject {
-  Q_OBJECT
+Q_OBJECT
 
 public:
   ImageOperationActionController(gsl::not_null<QAction*> action,
                                  gsl::not_null<s3d::image_operation::ImageOperation*> imageOperation);
 
-  void updateImageOperationFromActionState();
+  virtual void onActionTriggered() = 0;
 
 signals:
-  void imageOperationToggled();
+  void imageOperationTriggered();
 
-private:
+protected:
   QAction* m_action;
   s3d::image_operation::ImageOperation* m_imageOperation;
 };

@@ -6,11 +6,16 @@ namespace image_operation {
 CameraAlignment::CameraAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
         : computeAlignment{disparityAnalyzer}
         , drawEpilines(disparityAnalyzer)
+        , updateRectification(disparityAnalyzer)
         , rectify(disparityAnalyzer)
         , inputOutputAdapter{&operations_} {
   operations_.setNext(&computeAlignment);
   operations_.setNext(&drawEpilines);
+  operations_.setNext(&updateRectification);
   operations_.setNext(&rectify);
+
+  // disabled by default
+  updateRectification.disable();
 }
 
 } // namespace s3d
