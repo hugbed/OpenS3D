@@ -17,7 +17,7 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
   std::tie(A, b) = BuildEquationSystem(pts1, pts2);
 
   // solve
-  Eigen::VectorXd x = s3d::pseudoinverse(A) * b;
+  Eigen::VectorXd x = A.colPivHouseholderQr().solve(b); // QR
 
   return {x[0], x[1], x[2], x[3], x[4], 0.0f, 0.0f};
 }
@@ -26,7 +26,7 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEquationSystem(
     const std::vector<SampleType>& pts1,
     const std::vector<SampleType>& pts2) {
-  constexpr int nbVariables = 5;
+  constexpr int nbVariables = robust_solver_traits<StanFundamentalMatrixSolver>::MIN_NB_SAMPLES;
   assert(pts1.size() >= nbVariables);
   assert(pts2.size() >= nbVariables);
 
@@ -40,8 +40,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 
     // fill A
     Eigen::VectorXd row(nbVariables);
-    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y();  //, -x.y() * xp.y(),
-                                                                // x.x() * xp.y() - xp.x() * x.y();
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y();//, -x.y() * xp.y(),
+                                                              //   x.x() * xp.y() - xp.x() * x.y();
     A.block<1, nbVariables>(i, 0) = row;
 
     // fill b
@@ -53,11 +53,26 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 
 // static
 Eigen::Matrix3d StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
-    const StanAlignment& x) {
+    const StanAlignment& a) {
   Eigen::Matrix3d F;
-  F << 0, (-x.ch_z_f + x.a_y_f), (x.ch_y + x.a_z),  //
-      (x.ch_z_f), (-x.a_x_f), (-1 + x.a_f),         //
-      (-x.ch_y), 1, (-x.f_a_x);
+  F << 0, (-a.ch_z_f + a.a_y_f), (a.ch_y + a.a_z),  //
+      (a.ch_z_f), (-a.a_x_f), (-1 + a.a_f),         //
+      (-a.ch_y), 1, (-a.f_a_x);
   return F;
 }
+
+
+// static
+Eigen::Matrix3d StanFundamentalMatrixSolver::CenteredFundamentalMatrixFromAlignment(
+        const StanAlignment& alignment, const Size& imageSize) {
+  Eigen::Matrix3d T, TInv;
+  T << 1.0f, 0.0f, -static_cast<float>(imageSize.getWidth() / 2), //
+       0.0f, 1.0f, -static_cast<float>(imageSize.getHeight() / 2), //
+       0.0f, 0.0f, 1.0f;
+
+  Eigen::Matrix3d F = FundamentalMatrixFromAlignment(alignment);
+
+  return T.transpose() * F * T;
+}
+
 }  // namespace s3d

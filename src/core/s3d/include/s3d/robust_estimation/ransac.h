@@ -58,13 +58,15 @@ class Ransac {
 
   class Trials {
    public:
-    explicit Trials(size_t nbPts, size_t maxNbTrials, Params params);
+    explicit Trials(size_t nbPts, size_t minNbSamples, size_t maxNbTrials, Params params);
     void updateNb(double currentNbInliers);
     bool reachedMaxNb();
+    size_t currentNb();
 
    private:
     Params params_;
     size_t maxNb_{};
+    size_t minNbSamples_{};
     size_t curNb_{0};
 
     const double logOneMinusConf_;
@@ -84,13 +86,16 @@ class RansacAlgorithm : public Ransac {
 
   explicit RansacAlgorithm(Params params) : params_(params) {}
 
-  ModelType operator()(const Samples& samples1, const Samples& samples2) {
+  ModelType operator()(Samples samples1, Samples samples2) {
     assert(samples1.size() == samples2.size());
     assert(samples1.size() >= MIN_NB_SAMPLES);
 
     samples1_ = std::move(samples1);
     samples2_ = std::move(samples2);
-    trials_ = std::make_unique<Trials>(samples1_.size(), params_.nbTrials, params_);
+    trials_ = std::make_unique<Trials>(samples1_.size(),
+                                       robust_solver_traits<ModelSolver>::MIN_NB_SAMPLES,
+                                       params_.nbTrials,
+                                       params_);
     inliers_ = std::make_unique<Inliers>(samples1_.size());
     distances_.resize(samples1_.size());
 
@@ -104,6 +109,10 @@ class RansacAlgorithm : public Ransac {
     s3d::copy_if_true(
         std::begin(samples2_), std::end(samples2_), back_inserter(inliers2), inliers_->getBest());
     return {inliers1, inliers2};
+  }
+
+  int getTotalNumberOfIterations() {
+    return trials_ != nullptr ? trials_->currentNb() : 0;
   }
 
  private:

@@ -34,6 +34,8 @@ class MatchFinderCV : public MatchFinder {
 
   MatchFinder::Matches matchFeatures(const Features& leftFeatures, const Features& rightFeatures);
 
+  std::vector<cv::KeyPoint> keepBestKeypointsFromResponse(const std::vector<cv::KeyPoint>& keypoints, size_t numberToKeep);
+
   double matchesMinDistance(Matches matches) const;
 
   static double computeThreshold(int imageWidth, int imageHeight);
@@ -52,7 +54,7 @@ class MatchFinderCV : public MatchFinder {
                                  const cv::Mat& /*imgRight*/,
                                  const MatchFinder::Matches& /*matches*/) {}
 
-  size_t maxNbFeatures_{std::numeric_limits<size_t>::max()};
+  size_t maxNbFeatures_{1000};
 };
 
 /**

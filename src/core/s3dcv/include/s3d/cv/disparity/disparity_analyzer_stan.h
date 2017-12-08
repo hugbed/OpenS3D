@@ -76,7 +76,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   bool enoughMatches(int nbOfMatches);
   RansacAlgorithmSTAN createRansac(Size imageSize);
 
-  std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<s3d::MatchFinderCV>()};
+  std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<s3d::MatchFinderSurf>()};
   int minNbInliers_{0};
 };
 }  // namespace s3d

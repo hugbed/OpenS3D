@@ -12,12 +12,12 @@ namespace s3d {
 class MatchFinderSurf : public MatchFinderCV {
 public:
   cv::Ptr<cv::Feature2D> createFeatureDetector() override {
-    int minHessian = 500;
+    int minHessian = 400;
     return cv::xfeatures2d::SURF::create(minHessian, 4, 3, false, true);
   }
 
   cv::Ptr<cv::DescriptorMatcher> createDescriptorMatcher() override {
-    return cv::DescriptorMatcher::create("BruteForce-L1");
+    return cv::FlannBasedMatcher::create();
   }
 };
 

@@ -12,7 +12,7 @@ ComputeAlignment::ComputeAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> di
 
 bool ComputeAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
   bool enoughFeaturePointsFound = disparityAnalyzer_->analyze(*leftImage, *rightImage);
-  return enoughFeaturePointsFound; // && disparityRangeWideEnough();
+  return enoughFeaturePointsFound && disparityRangeWideEnough();
 }
 
 bool ComputeAlignment::disparityRangeWideEnough() {

@@ -113,12 +113,12 @@ TEST(ransac, not_enough_inliers_throws) {
 TEST(ransac_trials, update_nb_correct) {
   struct RansacForTrials : Ransac {
     bool testUpdateNbTrialsNotReachedMax() {
-      Ransac::Trials t(200, 1000, {});
+      Ransac::Trials t(200, 7, 1000, {});
       t.updateNb(199.0);
       return t.reachedMaxNb();
     }
     bool testUpdateNbTrialsReachedMax() {
-      Ransac::Trials t(200, 1000, {});
+      Ransac::Trials t(200, 7, 1000, {});
       t.updateNb(200.0);
       return t.reachedMaxNb();
     }

@@ -3,6 +3,8 @@
 
 #include "image_operation.h"
 
+#include <s3d/geometry/size.h>
+
 #include <Eigen/Dense>
 
 namespace s3d {
@@ -23,7 +25,7 @@ public:
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) override;
 
-  Eigen::Matrix3d getFundamentalMatrix();
+  Eigen::Matrix3d getFundamentalMatrix(const Size& imageSize);
 
   s3d::DisparityAnalyzerSTAN* disparityAnalyzer_;
 };

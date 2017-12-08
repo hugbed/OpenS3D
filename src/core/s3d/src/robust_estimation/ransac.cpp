@@ -48,9 +48,10 @@ const std::vector<bool>& Ransac::Inliers::getBest() const noexcept {
 }
 
 // Trials
-Ransac::Trials::Trials(size_t nbPts, size_t maxNbTrials, Params params)
+Ransac::Trials::Trials(size_t nbPts, size_t minNbSamples, size_t maxNbTrials, Params params)
     : params_(params),
       maxNb_{maxNbTrials},
+      minNbSamples_{minNbSamples},
       logOneMinusConf_{log(1.0 - params.confidence)},
       oneOverNbPts_{1.0 / nbPts} {}
 
@@ -60,10 +61,10 @@ void Ransac::Trials::updateNb(double currentNbInliers) {
   size_t newNb = 0;
   double ratioOfInliers = currentNbInliers * oneOverNbPts_;
   if (ratioOfInliers <= (1 - eps)) {
-    auto ratio7 = std::pow(ratioOfInliers, 7);
-    if (ratio7 > eps) {
-      auto logOneMinusRatio7 = std::log(1 - ratio7);
-      newNb = size_t(std::ceil(logOneMinusConf_ / logOneMinusRatio7));
+    auto ratioPow = std::pow(ratioOfInliers, minNbSamples_);
+    if (ratioPow > eps) {
+      auto logOneMinusRatioPow = std::log(1 - ratioPow);
+      newNb = size_t(std::ceil(logOneMinusConf_ / logOneMinusRatioPow));
     } else {
       newNb = std::numeric_limits<size_t>::max();
     }
@@ -78,5 +79,9 @@ bool Ransac::Trials::reachedMaxNb() {
   bool hasReached = curNb_ >= maxNb_;
   curNb_++;
   return hasReached;
+}
+
+size_t Ransac::Trials::currentNb() {
+  return curNb_;
 }
 }  // namespace s3d

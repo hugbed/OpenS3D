@@ -34,9 +34,13 @@ MatchFinder::Matches MatchFinderCV::findMatches(const std::vector<Image<uint8_t>
 FeaturesCV MatchFinderCV::findFeatures(const cv::Mat& img) {
   cv::Mat descriptors;
   std::vector<cv::KeyPoint> keypoints;
+
   auto featureDetector = createFeatureDetector();
-  featureDetector->detectAndCompute(img, cv::noArray(), keypoints, descriptors);
-  return {descriptors, keypoints};
+  featureDetector->detect(img, keypoints);
+  std::vector<cv::KeyPoint> filteredKeypoints = keepBestKeypointsFromResponse(keypoints, maxNbFeatures_);
+  featureDetector->compute(img, filteredKeypoints, descriptors);
+
+  return {descriptors, filteredKeypoints};
 }
 
 FeaturesCV MatchFinderCV::findFeatures(const Image<uint8_t>& img) {
@@ -51,7 +55,7 @@ MatchFinder::Matches MatchFinderCV::matchFeatures(const FeaturesCV& leftFeatures
 
   std::vector<Eigen::Vector2d> pts1, pts2;
   for (unsigned i = 0; i < matches.size() && i < maxNbFeatures_; i++) {
-    if (matches[i][0].distance < 0.8f * matches[i][1].distance) {
+    if (matches[i][0].distance < 0.6f * matches[i][1].distance) {
       auto& pt1 = leftFeatures.keypoints[matches[i][0].queryIdx].pt;
       auto& pt2 = rightFeatures.keypoints[matches[i][0].trainIdx].pt;
       pts1.emplace_back(pt1.x, pt1.y);
@@ -83,6 +87,14 @@ double MatchFinderCV::computeThreshold(int imageWidth, int imageHeight) {
   double W = imageWidth;
   double H = imageHeight;
   return 0.25 * sqrt(W * W + H * H);
+}
+
+std::vector<cv::KeyPoint> MatchFinderCV::keepBestKeypointsFromResponse(const std::vector<cv::KeyPoint> &keypoints, size_t numberToKeep) {
+  // get max nb features sorted by response
+  std::vector<cv::KeyPoint> filteredKeypoints = keypoints;
+  std::sort(std::begin(filteredKeypoints), std::end(filteredKeypoints), [](cv::KeyPoint a, cv::KeyPoint b) { return a.response > b.response; });
+  filteredKeypoints.resize(std::min(numberToKeep, filteredKeypoints.size()));
+  return filteredKeypoints;
 }
 
 void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,

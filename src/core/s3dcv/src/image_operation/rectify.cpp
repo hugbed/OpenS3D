@@ -14,8 +14,9 @@ bool Rectify::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
   cv::Mat leftRect, rightRect;
   s3d::RectifierCV rectifier;
   auto alignment = disparityAnalyzer_->results.getStanAlignment();
-  auto H1 = s3d::RectificationStan::leftImageMatrix(alignment);
-  auto H2 = s3d::RectificationStan::rightImageMatrix(alignment);
+  auto H1 = s3d::RectificationStan::centeredLeftImageMatrix(alignment, {leftImage->cols, leftImage->rows});
+  auto H2 = s3d::RectificationStan::centeredRightImageMatrix(alignment, {leftImage->cols, leftImage->rows});
+
   *leftImage = rectifier.rectifyCV(*leftImage, s3d::eigenMatToCV(H1));
   *rightImage = rectifier.rectifyCV(*rightImage, s3d::eigenMatToCV(H2));
   return true;

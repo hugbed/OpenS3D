@@ -14,8 +14,17 @@ bool DrawEpilines::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
     return false;
   }
 
+// optionaly display matches
+//  s3d::displayMatches("Inliers",
+//                      *leftImage,
+//                      *rightImage,
+//                      disparityAnalyzer_->results.featurePointsLeft,
+//                      disparityAnalyzer_->results.featurePointsRight);
+
+  auto F = getFundamentalMatrix({leftImage->cols, leftImage->rows});
+
   std::tie(*leftImage, *rightImage) =
-          s3d::drawEpipolarLines(s3d::eigenMatToCV(getFundamentalMatrix()),
+          s3d::drawEpipolarLines(s3d::eigenMatToCV(F),
                                  *leftImage,
                                  *rightImage,
                                  s3d::eigenPointsToCV(disparityAnalyzer_->results.featurePointsLeft),
@@ -23,9 +32,9 @@ bool DrawEpilines::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
   return true;
 }
 
-Eigen::Matrix3d DrawEpilines::getFundamentalMatrix() {
-  return s3d::StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(
-          disparityAnalyzer_->results.getStanAlignment()
+Eigen::Matrix3d DrawEpilines::getFundamentalMatrix(const Size& imageSize) {
+  return s3d::StanFundamentalMatrixSolver::CenteredFundamentalMatrixFromAlignment(
+    disparityAnalyzer_->results.getStanAlignment(), imageSize
   );
 }
 

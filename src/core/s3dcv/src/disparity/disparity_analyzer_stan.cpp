@@ -99,6 +99,11 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   s3d::toHomogeneous2D(matches[0], &pts1h);
   s3d::toHomogeneous2D(matches[1], &pts2h);
 
+  // center values
+  Eigen::Vector3d center(leftImage.cols/2, leftImage.rows/2, 0.0);
+  s3d::center_values(std::begin(pts1h), std::end(pts1h), std::begin(pts1h), center);
+  s3d::center_values(std::begin(pts2h), std::end(pts2h), std::begin(pts2h), center);
+
   // solve F with RANSAC
   auto ransac = createRansac(Size(leftOrig.rows, leftOrig.cols));
 
@@ -109,9 +114,15 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
     return false;
   }
 
+  std::cout << "Nb iterations: " << ransac.getTotalNumberOfIterations() << '\n';
+
   // filter inliers
   std::vector<Eigen::Vector3d> bestPts1h, bestPts2h;
   std::tie(bestPts1h, bestPts2h) = ransac.getBestInlierSamples();
+
+  // decenter inliers
+  s3d::center_values(std::begin(bestPts1h), std::end(bestPts1h), std::begin(bestPts1h), -center);
+  s3d::center_values(std::begin(bestPts2h), std::end(bestPts2h), std::begin(bestPts2h), -center);
 
   // compute disparity range
   std::vector<Eigen::Vector2d> bestPts1, bestPts2;
@@ -158,13 +169,12 @@ bool DisparityAnalyzerSTAN::enoughMatches(int nbOfMatches) {
   return nbOfMatches >= minNbInliers_;
 }
 
-DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size /*imageSize*/) {
-//  int h = imageSize.getHeight();
-//  int w = imageSize.getWidth();
+DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size imageSize) {
+  float expectedStd = 0.5f;
 
   s3d::Ransac::Params params;
   params.nbTrials = 500;
-  params.distanceThreshold = 0.01;  // * sqrt(h * h + w * w);
+  params.distanceThreshold = sqrt(3.84*expectedStd*expectedStd);
 
   return DisparityAnalyzerSTAN::RansacAlgorithmSTAN(params);
 }

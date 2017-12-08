@@ -14,8 +14,23 @@ class FakeFeatureDetector : public cv::Feature2D {
   FakeFeatureDetector() {
     goldKeypoints.emplace_back(cv::Point2f(1, 1), 1);
     goldKeypoints.emplace_back(cv::Point2f(1, 2), 2);
+    goldKeypoints[0].response = 1;
+    goldKeypoints[0].response = 1;
     goldDescriptors.emplace_back(0);
     goldDescriptors.emplace_back(1);
+  }
+
+  void detect(cv::InputArray img, std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask = cv::noArray()) override {
+    keypoints.clear();
+    keypoints.push_back(goldKeypoints[0]);
+    keypoints.push_back(goldKeypoints[1]);
+  }
+
+  void compute(cv::InputArray img, std::vector<cv::KeyPoint>& keypoints, cv::OutputArray descriptors) {
+    descriptors.create(1, 2, CV_8U);
+    cv::Mat outMat = descriptors.getMat();
+    outMat.at<uchar>(0) = goldDescriptors[0];
+    outMat.at<uchar>(1) = goldDescriptors[1];
   }
 
   void detectAndCompute(cv::InputArray image,
@@ -23,16 +38,8 @@ class FakeFeatureDetector : public cv::Feature2D {
                         std::vector<cv::KeyPoint>& keypoints,
                         cv::OutputArray descriptors,
                         bool useProvidedKeypoints) override {
-    // create fake keypoints
-    keypoints.clear();
-    keypoints.push_back(goldKeypoints[0]);
-    keypoints.push_back(goldKeypoints[1]);
-
-    // create fake descriptors
-    descriptors.create(1, 2, CV_8U);
-    cv::Mat outMat = descriptors.getMat();
-    outMat.at<uchar>(0) = goldDescriptors[0];
-    outMat.at<uchar>(1) = goldDescriptors[1];
+    detect(image, keypoints, mask);
+    compute(image, keypoints, descriptors);
   }
 
   std::vector<cv::KeyPoint> goldKeypoints;

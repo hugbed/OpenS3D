@@ -25,12 +25,13 @@ int main(int argc, char* argv[]) {
 
   cv::Mat imgLeft = dataset.loadImageLeft();
   cv::Mat imgRight = dataset.loadImageRight();
+  s3d::Size imageSize{imgLeft.cols, imgLeft.rows};
 
   // solve F with DisparityAnalyzerStan (feature, matching, ransac)
   s3d::DisparityAnalyzerSTAN analyzer;
   analyzer.analyze(imgLeft, imgRight);
   s3d::StanAlignment alignment = analyzer.results.getStanAlignment();
-  Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::FundamentalMatrixFromAlignment(alignment);
+  Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::CenteredFundamentalMatrixFromAlignment(alignment, imageSize);
 
   // display matches
   std::vector<Eigen::Vector2f> ptsLeft = analyzer.results.featurePointsLeft,
@@ -51,8 +52,8 @@ int main(int argc, char* argv[]) {
   cv::imshow("Model Epilines", imgEpilines);
 
   // display model rectification
-  Eigen::Matrix3f H1 = s3d::RectificationStan::leftImageMatrix(alignment);
-  Eigen::Matrix3f H2 = s3d::RectificationStan::rightImageMatrix(alignment);
+  Eigen::Matrix3f H1 = s3d::RectificationStan::centeredLeftImageMatrix(alignment, imageSize);
+  Eigen::Matrix3f H2 = s3d::RectificationStan::centeredRightImageMatrix(alignment, imageSize);
 
   s3d::RectifierCV rectifier;
   cv::Mat imgLeftRect = rectifier.rectifyCV(imgLeftEpilines, s3d::eigenMatToCV(H1));

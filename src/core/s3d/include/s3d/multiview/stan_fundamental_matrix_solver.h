@@ -3,6 +3,8 @@
 
 #include "s3d/robust_estimation/robust_estimation_traits.h"
 
+#include <s3d/geometry/size.h>
+
 // std::vector requires complete type
 #include <Eigen/Dense>
 
@@ -35,7 +37,9 @@ class StanFundamentalMatrixSolver {
       const std::vector<SampleType>& pts1,
       const std::vector<SampleType>& pts2);
 
-  static Eigen::Matrix3d FundamentalMatrixFromAlignment(const StanAlignment& x);
+  static Eigen::Matrix3d FundamentalMatrixFromAlignment(const StanAlignment& a);
+
+  static Eigen::Matrix3d CenteredFundamentalMatrixFromAlignment(const StanAlignment& a, const Size& imageSize);
 };
 
 template <>
