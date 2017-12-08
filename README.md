@@ -5,6 +5,8 @@
 The goal of this library is to provide users with tools (C++ library and software) to create stereoscopic 3D content.
 These tools should be sufficient to create 3D content either for stereoscopic cinema content production.
 
+![S3DAnalyzer](https://i.imgur.com/BnjfVFd.png)
+
 ## Features
 
 Stereoscopic 3D content analysis is available through a modern C++ library.
@@ -26,8 +28,6 @@ The usage of the library is demonstrated with a stereoscopic 3D analysis softwar
 * Disparity analysis
   * Disparity range
   * Colored feature points from disparity (red = too close in front of the screen, purple = too far behind screen plane)
-
-![S3DAnalyzer](https://i.imgur.com/BnjfVFd.png)
 
 ## Build Instructions
 
