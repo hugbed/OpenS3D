@@ -3,6 +3,7 @@
 
 #include "s3d/cv/image_operation/compute_alignment.h"
 #include "s3d/cv/image_operation/draw_epilines.h"
+#include "s3d/cv/image_operation/update_rectification.h"
 #include "s3d/cv/image_operation/rectify.h"
 #include "s3d/cv/image_operation/input_output_adapter.h"
 #include "s3d/cv/image_operation/image_operations.h"
@@ -20,6 +21,7 @@ public:
 
   ComputeAlignment computeAlignment;
   DrawEpilines drawEpilines;
+  UpdateRectification updateRectification;
   Rectify rectify;
   InputOutputAdapter inputOutputAdapter;
 

@@ -22,7 +22,7 @@ bool InputOutputAdapter::applyAllOperations() {
   if (!canApplyOperations()) {
     return false;
   }
-  return operations_->applyAll(&outputLeftImage, &outputRightImage);
+  return operations_->applyAll(&outputLeftImage, &outputRightImage, &results);
 }
 
 void InputOutputAdapter::copyInputToOutputs() {

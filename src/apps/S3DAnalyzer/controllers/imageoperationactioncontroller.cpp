@@ -7,14 +7,7 @@ ImageOperationActionController::ImageOperationActionController(gsl::not_null<QAc
         : m_action{action}
         , m_imageOperation{imageOperation}
 {
-  connect(m_action, &QAction::triggered, [this] { updateImageOperationFromActionState(); });
-}
-
-void ImageOperationActionController::updateImageOperationFromActionState() {
-  if (m_action->isChecked()) {
-    m_imageOperation->enable();
-  } else {
-    m_imageOperation->disable();
-  }
-  emit imageOperationToggled();
+  connect(m_action, &QAction::triggered, [this] {
+    onActionTriggered();
+  });
 }

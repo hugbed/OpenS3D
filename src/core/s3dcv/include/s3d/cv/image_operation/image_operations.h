@@ -10,11 +10,15 @@ namespace cv {
 }
 
 namespace s3d {
+  struct StanResults;
+}
+
+namespace s3d {
 namespace image_operation {
 
 class ImageOperations {
 public:
-  bool applyAll(cv::Mat *leftImage, cv::Mat *rightImage);
+  bool applyAll(cv::Mat *leftImage, cv::Mat *rightImage, StanResults* results);
 
   virtual bool shouldReturnAccordingTo(bool result) = 0;
 
