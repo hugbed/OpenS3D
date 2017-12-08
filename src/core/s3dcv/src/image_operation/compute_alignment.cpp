@@ -10,7 +10,7 @@ namespace image_operation {
 ComputeAlignment::ComputeAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
   : disparityAnalyzer_{disparityAnalyzer} {}
 
-bool ComputeAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
+bool ComputeAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
   bool enoughFeaturePointsFound = disparityAnalyzer_->analyze(*leftImage, *rightImage);
   return enoughFeaturePointsFound && disparityRangeWideEnough();
 }

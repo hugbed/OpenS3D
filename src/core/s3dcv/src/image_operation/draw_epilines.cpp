@@ -9,7 +9,7 @@ namespace image_operation {
 DrawEpilines::DrawEpilines(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
   : disparityAnalyzer_{disparityAnalyzer} {}
 
-bool DrawEpilines::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
+bool DrawEpilines::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
   if (leftImage->empty() || rightImage->empty()) {
     return false;
   }

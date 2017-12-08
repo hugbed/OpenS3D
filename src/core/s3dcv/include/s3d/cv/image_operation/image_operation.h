@@ -8,18 +8,22 @@ namespace cv {
 }
 
 namespace s3d {
+  struct StanResults;
+}
+
+namespace s3d {
 namespace image_operation {
 
 class ImageOperation {
 public:
-  bool applyOnImagesIfEnabled(cv::Mat *leftImage, cv::Mat *rightImage);
+  bool applyOnImagesIfEnabled(cv::Mat *leftImage, cv::Mat *rightImage, StanResults* results);
 
   void enable();
 
   void disable();
 
 private:
-  virtual bool applyOnImage(cv::Mat *leftImage, cv::Mat *rightImage) = 0;
+  virtual bool applyOnImage(cv::Mat *leftImage, cv::Mat *rightImage, StanResults* results) = 0;
 
   bool isEnabled{true};
 };

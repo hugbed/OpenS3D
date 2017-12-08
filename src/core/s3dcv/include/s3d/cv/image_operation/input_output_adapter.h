@@ -1,6 +1,8 @@
 #ifndef S3D_CV_IMAGE_OPERATION_INPUT_OUTPUT_ADAPTER_H
 #define S3D_CV_IMAGE_OPERATION_INPUT_OUTPUT_ADAPTER_H
 
+#include <s3d/multiview/stan_results.h>
+
 #include <opencv2/core/mat.hpp>
 
 #include <gsl/gsl>
@@ -25,6 +27,7 @@ private:
   cv::Mat inputRightImage{};
   cv::Mat outputLeftImage{};
   cv::Mat outputRightImage{};
+  StanResults results;
 
   ImageOperations* operations_{};
 };

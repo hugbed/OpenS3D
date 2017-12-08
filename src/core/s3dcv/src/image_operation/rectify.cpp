@@ -10,7 +10,7 @@ namespace image_operation {
 Rectify::Rectify(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
   : disparityAnalyzer_{disparityAnalyzer} {}
 
-bool Rectify::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
+bool Rectify::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
   cv::Mat leftRect, rightRect;
   s3d::RectifierCV rectifier;
   auto alignment = disparityAnalyzer_->results.stan.alignment;

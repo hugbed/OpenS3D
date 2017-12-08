@@ -23,7 +23,7 @@ public:
   explicit DrawEpilines(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer);
 
 private:
-  bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) override;
+  bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;
 
   Eigen::Matrix3d getFundamentalMatrix(const Size& imageSize);
 
