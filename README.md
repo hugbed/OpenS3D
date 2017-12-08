@@ -27,6 +27,8 @@ The usage of the library is demonstrated with a stereoscopic 3D analysis softwar
   * Disparity range
   * Colored feature points from disparity (red = too close in front of the screen, purple = too far behind screen plane)
 
+![S3DAnalyzer](https://i.imgur.com/BnjfVFd.png)
+
 ## Build Instructions
 
 This project uses C++14 and CMake.
