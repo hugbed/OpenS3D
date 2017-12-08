@@ -27,14 +27,14 @@ bool DrawEpilines::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
           s3d::drawEpipolarLines(s3d::eigenMatToCV(F),
                                  *leftImage,
                                  *rightImage,
-                                 s3d::eigenPointsToCV(disparityAnalyzer_->results.featurePointsLeft),
-                                 s3d::eigenPointsToCV(disparityAnalyzer_->results.featurePointsRight));
+                                 s3d::eigenPointsToCV(disparityAnalyzer_->results.stan.featuresLeft),
+                                 s3d::eigenPointsToCV(disparityAnalyzer_->results.stan.featuresRight));
   return true;
 }
 
 Eigen::Matrix3d DrawEpilines::getFundamentalMatrix(const Size& imageSize) {
   return s3d::StanFundamentalMatrixSolver::CenteredFundamentalMatrixFromAlignment(
-    disparityAnalyzer_->results.getStanAlignment(), imageSize
+    disparityAnalyzer_->results.stan.alignment, imageSize
   );
 }
 

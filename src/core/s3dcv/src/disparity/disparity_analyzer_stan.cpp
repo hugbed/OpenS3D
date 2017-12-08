@@ -22,13 +22,7 @@ void DisparityAnalyzerSTAN::Results::updateParameters(double minDisparity,
   auto maxDisparityPercent = maxDisparity * widthRatio;
   this->minDisparityPercent = minDisparityPercent;
   this->maxDisparityPercent = maxDisparityPercent;
-  vertical = model.ch_y;                // * 180 / PI (degrees)
-  roll = model.a_z;                     // model.a_z * 180.0 / PI (degrees)
-  zoom = model.a_f;                     // (model.a_f + 1.0) * 100.0 (%)
-  tiltOffset = model.f_a_x;             // pixels
-  tiltKeystone = model.a_y_f;           // radians / m
-  panKeystone = model.a_x_f;            // radians / m
-  zParallaxDeformation = model.ch_z_f;  // ratio (m/m)
+  stan.alignment = model;
 }
 
 void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vector2d>& bestPtsLeft,
@@ -38,32 +32,24 @@ void DisparityAnalyzerSTAN::Results::updatePoints(const std::vector<Eigen::Vecto
                                                   float resizeRatio) {
   assert(bestPtsLeft.size() == bestPtsRight.size());
 
-  featurePointsLeft.clear();
-  featurePointsRight.clear();
+  stan.featuresLeft.clear();
+  stan.featuresRight.clear();
+
   disparitiesPercent.clear();
   for (size_t i = 0; i < bestPtsLeft.size(); ++i) {
     // filter out extreme percentiles
     if (minDisparityPercent / widthRatio <= disparities[i] &&
         disparities[i] <= maxDisparityPercent / widthRatio) {
-      featurePointsLeft.emplace_back(bestPtsLeft[i].x() * resizeRatio,
-                                     bestPtsLeft[i].y() * resizeRatio);
-      featurePointsRight.emplace_back(bestPtsRight[i].x() * resizeRatio,
-                                      bestPtsRight[i].y() * resizeRatio);
+
+      stan.featuresLeft.emplace_back(bestPtsLeft[i].x() * resizeRatio,
+                                            bestPtsLeft[i].y() * resizeRatio);
+
+      stan.featuresRight.emplace_back(bestPtsRight[i].x() * resizeRatio,
+                                             bestPtsRight[i].y() * resizeRatio);
+
       disparitiesPercent.push_back(static_cast<float>(disparities[i] * widthRatio));
     }
   }
-}
-
-StanAlignment DisparityAnalyzerSTAN::Results::getStanAlignment() const {
-  StanAlignment alignment;
-  alignment.ch_y = static_cast<double>(vertical);
-  alignment.a_z = static_cast<double>(roll);
-  alignment.a_f = static_cast<double>(zoom);
-  alignment.f_a_x = static_cast<double>(tiltOffset);
-  alignment.a_y_f = static_cast<double>(tiltKeystone);
-  alignment.a_x_f = static_cast<double>(panKeystone);
-  alignment.ch_z_f = static_cast<double>(zParallaxDeformation);
-  return alignment;
 }
 
 DisparityAnalyzerSTAN::DisparityAnalyzerSTAN() : results{} {}
@@ -141,7 +127,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
     results.updatePoints(bestPts1, bestPts2, disparities, widthRatio, resizeRatio);
   }
 
-  return enoughMatches(static_cast<int>(results.featurePointsLeft.size()));
+  return enoughMatches(static_cast<int>(results.stan.featuresLeft.size()));
 }
 
 const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
@@ -149,11 +135,11 @@ const std::vector<float>& DisparityAnalyzerSTAN::getDisparitiesPercent() const {
 }
 
 const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePointsLeft() const {
-  return results.featurePointsLeft;
+  return results.stan.featuresLeft;
 }
 
 const std::vector<Eigen::Vector2f>& DisparityAnalyzerSTAN::getFeaturePointsRight() const {
-  return results.featurePointsRight;
+  return results.stan.featuresRight;
 }
 
 s3d::MatchFinder::Matches DisparityAnalyzerSTAN::findMatches(const cv::Mat& left,

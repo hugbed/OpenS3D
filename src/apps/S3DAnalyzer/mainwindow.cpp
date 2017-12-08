@@ -295,19 +295,19 @@ MainWindow::~MainWindow() {
 void MainWindow::computeAndUpdate() {
   if (m_imageOperations->inputOutputAdapter.applyAllOperations()) {
     m_currentContext->makeCurrent();
-    m_currentContext->entityManager->setFeatures(m_analyzer->results.featurePointsRight,
+    m_currentContext->entityManager->setFeatures(m_analyzer->results.stan.featuresRight,
                                                  m_analyzer->results.disparitiesPercent);
     m_currentContext->doneCurrent();
 
     ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
     ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
-    ui->parametersListView->setParameter("Roll", m_analyzer->results.roll);
-    ui->parametersListView->setParameter("Vertical", m_analyzer->results.vertical);
-    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.panKeystone);
-    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.tiltKeystone);
-    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.tiltOffset);
-    ui->parametersListView->setParameter("Zoom", m_analyzer->results.zoom);
+    ui->parametersListView->setParameter("Roll", m_analyzer->results.stan.alignment.rollAngleDegrees());
+    ui->parametersListView->setParameter("Vertical", m_analyzer->results.stan.alignment.verticalOffsetDegrees());
+    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.stan.alignment.panKeystoneDegreesPerMeter());
+    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.stan.alignment.tiltKeystoneDegreesPerMeter());
+    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.stan.alignment.tiltOffsetPixels());
+    ui->parametersListView->setParameter("Zoom", m_analyzer->results.stan.alignment.zoomRatioPercent());
 
     updateConvergenceHint(m_analyzer->results.minDisparityPercent,
                           m_analyzer->results.maxDisparityPercent);
@@ -378,7 +378,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
         m_windowRenderingContext = std::make_unique<RenderingContext>(m_openGLWindow.get());
         m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->results.featurePointsRight,
+                                               m_analyzer->results.stan.featuresRight,
                                                m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_windowRenderingContext->entityManager->setUserSettings(&m_userSettings);
@@ -388,7 +388,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
       connect(m_openGLWindow.get(), &OpenGLWindow::onClose, [this] {
         m_widgetRenderingContext->persistState(m_windowRenderingContext.get(),  //
                                                getCurrentDisplayMode(),         //
-                                               m_analyzer->results.featurePointsRight,
+                                               m_analyzer->results.stan.featuresRight,
                                                m_analyzer->results.disparitiesPercent,
                                                ui->actionFeatures->isChecked());
         m_currentContext = m_widgetRenderingContext.get();
@@ -396,7 +396,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* e) {
     } else {
       m_windowRenderingContext->persistState(m_widgetRenderingContext.get(),  //
                                              getCurrentDisplayMode(),         //
-                                             m_analyzer->results.featurePointsRight,
+                                             m_analyzer->results.stan.featuresRight,
                                              m_analyzer->results.disparitiesPercent,
                                              ui->actionFeatures->isChecked());
       m_currentContext = m_windowRenderingContext.get();

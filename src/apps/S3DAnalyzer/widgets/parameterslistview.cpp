@@ -4,9 +4,9 @@
 
 ParametersListView::ParametersListView(QWidget* parent) : QWidget(parent) {
   generateParameterWidgets({{"Roll", "°"},
-                            {"Vertical", "%"},
-                            {"Pan Keystone", "%"},
-                            {"Tilt Keystone", "%"},
+                            {"Vertical", "°"},
+                            {"Pan Keystone", "°/m"},
+                            {"Tilt Keystone", "°/m"},
                             {"Tilt Offset", "%"},
                             {"Zoom", "%"}});
   setParameter("Roll", 0.1);

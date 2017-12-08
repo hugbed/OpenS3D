@@ -22,7 +22,7 @@ TEST(disparity_analyzer_stan_results, results_to_alignment) {
   alignment.f_a_x = 7.0f;
 
   results.updateParameters(0.0, 0.1, 1.0f, alignment);
-  StanAlignment resultsAlignment = results.getStanAlignment();
+  StanAlignment resultsAlignment = results.stan.alignment;
 
   EXPECT_TRUE(alignmentEqual(alignment, resultsAlignment));
 }

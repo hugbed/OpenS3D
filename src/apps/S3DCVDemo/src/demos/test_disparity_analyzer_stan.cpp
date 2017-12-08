@@ -30,12 +30,12 @@ int main(int argc, char* argv[]) {
   // solve F with DisparityAnalyzerStan (feature, matching, ransac)
   s3d::DisparityAnalyzerSTAN analyzer;
   analyzer.analyze(imgLeft, imgRight);
-  s3d::StanAlignment alignment = analyzer.results.getStanAlignment();
+  s3d::StanAlignment alignment = analyzer.results.stan.alignment;
   Eigen::Matrix3d F = s3d::StanFundamentalMatrixSolver::CenteredFundamentalMatrixFromAlignment(alignment, imageSize);
 
   // display matches
-  std::vector<Eigen::Vector2f> ptsLeft = analyzer.results.featurePointsLeft,
-                               ptsRight = analyzer.results.featurePointsRight;
+  std::vector<Eigen::Vector2f> ptsLeft = analyzer.results.stan.featuresLeft,
+                               ptsRight = analyzer.results.stan.featuresRight;
   s3d::displayMatches("Feature Matches (After Ransac)", imgLeft, imgRight, ptsLeft, ptsRight);
 
   // display epilines

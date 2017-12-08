@@ -13,7 +13,7 @@ Rectify::Rectify(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
 bool Rectify::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage) {
   cv::Mat leftRect, rightRect;
   s3d::RectifierCV rectifier;
-  auto alignment = disparityAnalyzer_->results.getStanAlignment();
+  auto alignment = disparityAnalyzer_->results.stan.alignment;
   auto H1 = s3d::RectificationStan::centeredLeftImageMatrix(alignment, {leftImage->cols, leftImage->rows});
   auto H2 = s3d::RectificationStan::centeredRightImageMatrix(alignment, {leftImage->cols, leftImage->rows});
 

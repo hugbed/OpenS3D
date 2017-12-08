@@ -6,6 +6,7 @@
 #include "s3d/cv/features/match_finder_surf.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
+#include "s3d/multiview/stan_results.h"
 #include "s3d/robust_estimation/ransac.h"
 #include "s3d/utilities/math.h"
 
@@ -39,19 +40,9 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
                       float widthRatio,
                       float resizeRatio);
 
-    StanAlignment getStanAlignment() const;
-
+    StanResults stan;
     double minDisparityPercent{};
     double maxDisparityPercent{};
-    double vertical{};
-    double roll{};
-    double zoom{};
-    double tiltOffset{};
-    double tiltKeystone{};
-    double panKeystone{};
-    double zParallaxDeformation{};
-    std::vector<Eigen::Vector2f> featurePointsLeft{};
-    std::vector<Eigen::Vector2f> featurePointsRight{};
 
     std::vector<float> disparitiesPercent{};
   };
