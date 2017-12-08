@@ -14,7 +14,7 @@ void InputOutputAdapter::setInputImages(const cv::Mat& leftImage, const cv::Mat&
 }
 
 std::tuple<cv::Mat&, cv::Mat&> InputOutputAdapter::getOutputImages() {
-  return { outputLeftImage, outputRightImage };
+  return std::tuple<cv::Mat&, cv::Mat&>(outputLeftImage, outputRightImage);
 };
 
 bool InputOutputAdapter::applyAllOperations() {
