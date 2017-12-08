@@ -22,12 +22,13 @@ public:
   void copyInputToOutputs();
   bool canApplyOperations();
 
+  StanResults results;
+
 private:
   cv::Mat inputLeftImage{};
   cv::Mat inputRightImage{};
   cv::Mat outputLeftImage{};
   cv::Mat outputRightImage{};
-  StanResults results;
 
   ImageOperations* operations_{};
 };

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>669</height>
+    <width>875</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,6 +36,99 @@
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="RangeWidget" name="depthWidget" native="true">
+          <property name="baseSize">
+           <size>
+            <width>2000</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Convergence</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WidthHintLabel" name="convergenceIndicator"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -49,67 +142,6 @@
          </spacer>
         </item>
         <item>
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="rectifyButton">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Rectify</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>Update</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="RangeWidget" name="depthWidget" native="true"/>
-        </item>
-        <item>
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Convergence</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="WidthHintLabel" name="convergenceIndicator"/>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="hitLabel">
           <property name="text">
            <string>HIT </string>
@@ -118,6 +150,19 @@
         </item>
         <item alignment="Qt::AlignHCenter">
          <widget class="DoubleSpinBoxNoCursor" name="hitWidget"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -140,7 +185,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>771</width>
+     <width>875</width>
      <height>20</height>
     </rect>
    </property>
@@ -175,7 +220,6 @@
     </property>
     <addaction name="actionFeatures"/>
     <addaction name="actionEpilines"/>
-    <addaction name="actionRectify"/>
    </widget>
    <widget class="QMenu" name="menuInput_Mode">
     <property name="title">
@@ -202,6 +246,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionEnableComputations"/>
+    <addaction name="actionRectify"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuInput_Mode"/>
@@ -225,7 +270,10 @@
    <addaction name="actionViewer"/>
    <addaction name="separator"/>
    <addaction name="actionFeatures"/>
+   <addaction name="separator"/>
    <addaction name="actionEnableComputations"/>
+   <addaction name="actionRectify"/>
+   <addaction name="actionUpdateRectification"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenLeftImage">
@@ -262,14 +310,9 @@
     <string>Rectify</string>
    </property>
   </action>
-  <action name="actionCompute">
+  <action name="actionUpdateRectification">
    <property name="text">
-    <string>Analyze</string>
-   </property>
-  </action>
-  <action name="actionFormat">
-   <property name="text">
-    <string>Format</string>
+    <string>Update</string>
    </property>
   </action>
   <action name="actionSettings">
@@ -285,7 +328,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Compute</string>
+    <string>Analyze</string>
    </property>
   </action>
   <action name="actionFormatHalfResolution">

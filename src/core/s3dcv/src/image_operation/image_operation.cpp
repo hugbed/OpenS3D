@@ -8,18 +8,22 @@ namespace s3d {
 namespace image_operation {
 
 bool ImageOperation::applyOnImagesIfEnabled(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
-  if (isEnabled) {
+  if (isEnabled_) {
     return applyOnImage(leftImage, rightImage, results);
   }
   return false;
 }
 
 void ImageOperation::enable() {
-  isEnabled = true;
+  isEnabled_ = true;
 }
 
 void ImageOperation::disable() {
-  isEnabled = false;
+  isEnabled_ = false;
+}
+
+bool ImageOperation::isEnabled() {
+  return isEnabled_;
 }
 
 } // namespace s3d
