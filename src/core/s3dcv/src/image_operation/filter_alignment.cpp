@@ -9,36 +9,38 @@ namespace image_operation {
 
 FilterAlignment::FilterAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
   : disparityAnalyzer_{disparityAnalyzer}
-  , kalmanFilter_{4}
+  , kalmanFilter_{5}
 {
-  Eigen::VectorXd variances(4);
-  variances << 3.6816E-4, 5.9837E-7, 7.2080E-6, 0.7405;
+  Eigen::VectorXd variances(5);
+  variances << 3.6816E-4, 5.9837E-7, 7.2080E-6, 0.7405, 3.6816E-4;
   kalmanFilter_.setVariances(variances);
 }
 
 bool FilterAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
   results->alignment;
 
-  Eigen::VectorXd alignment(4);
+  Eigen::VectorXd alignment(5);
   alignment << results->alignment.ch_y,
           results->alignment.a_z,
           results->alignment.a_f,
-          results->alignment.f_a_x;
+          results->alignment.f_a_x,
+          results->alignment.a_y_f;
 
   kalmanFilter_.filter(alignment);
 
-  Eigen::VectorXd filteredAligment = kalmanFilter_.getEstimation();
+  Eigen::VectorXd filteredAlignment = kalmanFilter_.getEstimation();
 
-  results->alignment.ch_y = filteredAligment(0);
-  results->alignment.a_z = filteredAligment(1);
-  results->alignment.a_f = filteredAligment(2);
-  results->alignment.f_a_x = filteredAligment(3);
+  results->alignment.ch_y = filteredAlignment(0);
+  results->alignment.a_z = filteredAlignment(1);
+  results->alignment.a_f = filteredAlignment(2);
+  results->alignment.f_a_x = filteredAlignment(3);
+  results->alignment.a_y_f = filteredAlignment(4);
 
   return true;
 }
 
 void FilterAlignment::resetFilter() {
-  kalmanFilter_.setInitialValues(Eigen::VectorXd::Zero(4));
+  kalmanFilter_.setInitialValues(Eigen::VectorXd::Zero(5));
 }
 
 
