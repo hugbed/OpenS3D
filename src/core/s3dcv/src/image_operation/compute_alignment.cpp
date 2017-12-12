@@ -14,6 +14,7 @@ bool ComputeAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, Sta
   bool enoughFeaturePointsFound = disparityAnalyzer_->analyze(*leftImage, *rightImage);
 
   // output results
+  results->alignment = disparityAnalyzer_->results.stan.alignment;
   results->featuresLeft = disparityAnalyzer_->results.stan.featuresLeft;
   results->featuresRight = disparityAnalyzer_->results.stan.featuresRight;
 

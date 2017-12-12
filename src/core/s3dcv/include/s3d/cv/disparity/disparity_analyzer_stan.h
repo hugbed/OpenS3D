@@ -8,7 +8,7 @@
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/multiview/stan_results.h"
 #include "s3d/robust/ransac.h"
-//#include "s3d/robust/lmeds.h"
+#include "s3d/robust/lmeds.h"
 #include "s3d/utilities/math.h"
 
 #include <Eigen/Dense>
