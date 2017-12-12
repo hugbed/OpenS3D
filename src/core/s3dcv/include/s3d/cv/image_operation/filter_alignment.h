@@ -21,6 +21,8 @@ class FilterAlignment : public ImageOperation {
 public:
   explicit FilterAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer);
 
+  void resetFilter();
+
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;
 

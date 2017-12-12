@@ -62,6 +62,10 @@ MainWindow::MainWindow(QWidget* parent)
     actionController->onActionTriggered();
     connect(actionController.get(), &ImageOperationToggleController::imageOperationTriggered, [this] { computeAndUpdate(); });
   }
+  connect(ui->actionResetFilter, &QAction::triggered, [this] {
+    m_imageOperations->filterAlignment.resetFilter();
+    computeAndUpdate();
+  });
 
   ui->depthWidget->setDisplayRange(m_userSettings.displayParameters.displayRangeMin,
                                    m_userSettings.displayParameters.displayRangeMax);

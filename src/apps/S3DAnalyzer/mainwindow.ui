@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>830</width>
     <height>800</height>
    </rect>
   </property>
@@ -274,6 +274,7 @@
    <addaction name="actionRectify"/>
    <addaction name="actionUpdateRectification"/>
    <addaction name="actionAutoUpdateRectification"/>
+   <addaction name="actionResetFilter"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenLeftImage">
@@ -333,6 +334,14 @@
       <property name="text">
           <string>Filter</string>
       </property>
+  </action>
+  <action name="actionResetFilter">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Reset</string>
+   </property>
   </action>
   <action name="actionSettings">
    <property name="text">
