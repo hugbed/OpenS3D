@@ -88,5 +88,5 @@ std::pair<std::vector<bool>, size_t> InliersLMedS::computeInliers(const std::vec
   return Inliers::computeInliers(distances, bestDist_);
 }
 
-
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d

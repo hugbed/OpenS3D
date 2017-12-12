@@ -6,7 +6,8 @@
 #include "s3d/utilities/containers.h"
 #include "s3d/utilities/rand.h"
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 template<class ModelSolver, class DistanceFunction>
 struct ModelSampler {
@@ -30,7 +31,7 @@ struct ModelSampler {
     return model;
   }
 
-  std::pair<Samples, Samples> getSamplesWhereTrue(const std::vector<bool>& flags) {
+  std::pair<Samples, Samples> getSamplesWhereTrue(const std::vector<bool> &flags) {
     Samples inliers1, inliers2;
     s3d::copy_if_true(
             std::begin(samples1_), std::end(samples1_), back_inserter(inliers1), flags);
@@ -55,6 +56,7 @@ struct ModelSampler {
   std::vector<double> distances_;
 };
 
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d
 
 #endif //S3D_ROBUST_MODEL_SAMPLER_H

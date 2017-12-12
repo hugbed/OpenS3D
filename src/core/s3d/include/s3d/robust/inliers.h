@@ -5,7 +5,8 @@
 #include <vector>
 #include <cstddef> // size_t
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 /**
  * Uses RANSAC strategy by default (distance < threshold)
@@ -25,7 +26,9 @@ public:
   virtual std::pair<std::vector<bool>, size_t> computeInliers(const std::vector<double> &distances);
 
   size_t getCurrentNb() const noexcept;
+
   size_t getBestNb() const noexcept;
+
   double getDistanceThreshold() const;
 
   const std::vector<bool> &getBest() const noexcept;
@@ -53,7 +56,9 @@ public :
   explicit InliersLMedS(size_t nbPts, double distanceThreshold);
 
   void updateCurrent(const std::vector<double> &distances) override;
+
   void chooseCurrentInliersAsBest() override;
+
   bool currentInliersAreBetter() const override;
 
   std::pair<std::vector<bool>, size_t> computeInliers(const std::vector<double> &distances) override;
@@ -62,6 +67,7 @@ private:
   double bestDist_{std::numeric_limits<double>::max()};
 };
 
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d
 
 #endif //S3D_ROBUST_INLIERS_H
