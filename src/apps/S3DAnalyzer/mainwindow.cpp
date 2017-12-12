@@ -55,6 +55,9 @@ MainWindow::MainWindow(QWidget* parent)
   m_imageOperationsActionControllers.emplace_back(
     std::make_unique<ImageOperationToggleController>(ui->actionRectify, &m_imageOperations->rectify)
   );
+  m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationToggleController>(ui->actionFilter, &m_imageOperations->filterAlignment)
+  );
   for (auto && actionController : m_imageOperationsActionControllers) {
     actionController->onActionTriggered();
     connect(actionController.get(), &ImageOperationToggleController::imageOperationTriggered, [this] { computeAndUpdate(); });

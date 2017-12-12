@@ -247,6 +247,7 @@
     </property>
     <addaction name="actionEnableComputations"/>
     <addaction name="actionRectify"/>
+    <addaction name="actionFilter"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuInput_Mode"/>
@@ -321,6 +322,17 @@
    <property name="text">
     <string>Auto</string>
    </property>
+  </action>
+  <action name="actionFilter">
+      <property name="checkable">
+          <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+          <string>Filter</string>
+      </property>
   </action>
   <action name="actionSettings">
    <property name="text">
