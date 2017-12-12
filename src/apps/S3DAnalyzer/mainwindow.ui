@@ -272,6 +272,7 @@
    <addaction name="actionEnableComputations"/>
    <addaction name="actionRectify"/>
    <addaction name="actionUpdateRectification"/>
+   <addaction name="actionAutoUpdateRectification"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenLeftImage">
@@ -311,6 +312,14 @@
   <action name="actionUpdateRectification">
    <property name="text">
     <string>Update</string>
+   </property>
+  </action>
+  <action name="actionAutoUpdateRectification">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
    </property>
   </action>
   <action name="actionSettings">
