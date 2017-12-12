@@ -4,7 +4,8 @@
 
 #include <tuple>
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 Inliers::Inliers(size_t nbPts, double distanceThreshold)
   : distanceThreshold_{distanceThreshold}

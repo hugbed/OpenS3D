@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget* parent)
     std::make_unique<ImageOperationTriggerController>(ui->actionUpdateRectification, &m_imageOperations->updateRectification)
   );
   m_imageOperationsActionControllers.emplace_back(
+    std::make_unique<ImageOperationToggleController>(ui->actionAutoUpdateRectification, &m_imageOperations->updateRectification)
+  );
+  m_imageOperationsActionControllers.emplace_back(
     std::make_unique<ImageOperationToggleController>(ui->actionRectify, &m_imageOperations->rectify)
   );
   for (auto && actionController : m_imageOperationsActionControllers) {
