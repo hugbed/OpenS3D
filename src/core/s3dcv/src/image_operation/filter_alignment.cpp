@@ -37,6 +37,10 @@ bool FilterAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, Stan
   return true;
 }
 
+void FilterAlignment::resetFilter() {
+  kalmanFilter_.setInitialValues(Eigen::VectorXd::Zero(4));
+}
+
 
 } // namespace s3d
 } // namespace image_operation

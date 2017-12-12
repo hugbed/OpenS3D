@@ -16,16 +16,16 @@ public:
 
   void setInitialValues(Eigen::VectorXd values);
 
-  void setVariances(const Eigen::VectorXd& variances);
+  void setVariances(const Eigen::VectorXd &variances);
 
-  void filter(const Eigen::VectorXd& z);
+  void filter(const Eigen::VectorXd &z);
 
-  Eigen::VectorXd& getEstimation();
+  Eigen::VectorXd &getEstimation();
 
 private:
   void updateEstimation();
 
-  void innovationFromObservation(const Eigen::VectorXd& z);
+  void innovationFromObservation(const Eigen::VectorXd &z);
 
   struct Innovation {
     Eigen::VectorXd y;
