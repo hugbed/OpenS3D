@@ -40,14 +40,18 @@ class LineSolver {
 };
 
 // traits must be in the same namespace
-namespace s3d::robust {
-template <>
+namespace s3d {
+namespace robust {
+template<>
 struct estimation_algorithm_traits<LineSolver> {
   using SampleType = LineSolver::SampleType;
   using ModelType = LineSolver::ModelType;
-  enum { MIN_NB_SAMPLES = 2 };
+  enum {
+    MIN_NB_SAMPLES = 2
+  };
 };
-}  // namespace s3d::robust
+}  // namespace robust
+}  // namespace s3d
 
 // Distance that can be applied to the model
 class LeastSquareDistanceFunction {
