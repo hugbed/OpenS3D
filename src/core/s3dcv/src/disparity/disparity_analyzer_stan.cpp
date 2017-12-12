@@ -76,7 +76,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   auto matches = findMatches(leftOrig, rightOrig);
 
   // make sure that we have enough matches to run ransac
-  if (matches[0].size() < s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES) {
+  if (matches[0].size() < s3d::robust::estimation_algorithm_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES) {
     return false;
   }
 
@@ -96,7 +96,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
   RansacAlgorithmSTAN::ModelType model;
   try {
     model = ransac(pts1h, pts2h);
-  } catch (const s3d::NotEnoughInliersFound& /*exception*/) {
+  } catch (const s3d::robust::NotEnoughInliersFound& /*exception*/) {
     return false;
   }
 
@@ -158,7 +158,7 @@ bool DisparityAnalyzerSTAN::enoughMatches(int nbOfMatches) {
 DisparityAnalyzerSTAN::RansacAlgorithmSTAN DisparityAnalyzerSTAN::createRansac(Size imageSize) {
   float expectedStd = 0.5f;
 
-  s3d::Ransac::Params params;
+  s3d::robust::Parameters params;
   params.nbTrials = 500;
   params.distanceThreshold = sqrt(3.84*expectedStd*expectedStd);
 

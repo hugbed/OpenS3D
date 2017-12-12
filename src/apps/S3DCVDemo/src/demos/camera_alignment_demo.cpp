@@ -4,7 +4,7 @@
 #include "s3d/math.h"
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
-#include "s3d/robust_estimation/ransac.h"
+#include "s3d/robust/ransac.h"
 #include "s3d/utilities/histogram.h"
 
 #include "gsl/gsl"
@@ -100,15 +100,15 @@ int main(int argc, char* argv[]) {
   s3d::center_values(std::begin(pts2h), std::end(pts2h), std::begin(pts2h), imageCenter);
 
   // solve F with RANSAC
-  s3d::Ransac::Params params;
+  s3d::robust::Parameters params;
   params.nbTrials = 2000;
   params.distanceThreshold =
       0.01 * sqrt(leftOrig.rows * leftOrig.rows + leftOrig.cols * leftOrig.cols);
 
-  using s3d::RansacAlgorithm;
+  using s3d::robust::Ransac;
   using s3d::SampsonDistanceFunction;
   using s3d::StanFundamentalMatrixSolver;
-  RansacAlgorithm<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
+  Ransac<StanFundamentalMatrixSolver, SampsonDistanceFunction> ransac(params);
 
   std::cout << ransac(pts1h, pts2h);
 

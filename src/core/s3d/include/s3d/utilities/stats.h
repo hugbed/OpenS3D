@@ -1,6 +1,8 @@
 #ifndef S3D_UTILITIES_STATS_H
 #define S3D_UTILITIES_STATS_H
 
+#include <algorithm>
+#include <cassert>
 #include <cmath>
 
 namespace s3d {
@@ -28,6 +30,21 @@ T percentile(const std::vector<T>& values, float percentile) {
   }
 
   return valuesCopy[index - 1] + remainder * (valuesCopy[index] - valuesCopy[index - 1]);
+}
+
+
+template <class T>
+T median(const std::vector<T>& values) {
+  assert(values.size() > 0);
+
+  std::vector<T> copy = values;
+  std::sort(std::begin(copy), std::end(copy));
+  const size_t size = copy.size();
+
+  if (size % 2 != 0) {
+    return copy[size/2];
+  }
+  return (copy[size/2] + copy[size/2 - 1]) / static_cast<T>(2);
 }
 
 }  // namespace s3d

@@ -84,7 +84,7 @@ class MainWindow : public QMainWindow {
   RenderingContext* m_currentContext;
   std::unique_ptr<OpenGLWindow> m_openGLWindow;
 
-  int m_analyzerMinNbInliers{s3d::robust_solver_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES*2};
+  int m_analyzerMinNbInliers{s3d::robust::estimation_algorithm_traits<s3d::StanFundamentalMatrixSolver>::MIN_NB_SAMPLES*2};
   std::unique_ptr<s3d::DisparityAnalyzerSTAN> m_analyzer;
   std::unique_ptr<s3d::image_operation::CameraAlignment> m_imageOperations;
   std::vector<std::unique_ptr<ImageOperationActionController>> m_imageOperationsActionControllers;

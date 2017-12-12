@@ -7,7 +7,8 @@
 #include "s3d/multiview/sampson_distance_function.h"
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 #include "s3d/multiview/stan_results.h"
-#include "s3d/robust_estimation/ransac.h"
+#include "s3d/robust/ransac.h"
+//#include "s3d/robust/lmeds.h"
 #include "s3d/utilities/math.h"
 
 #include <Eigen/Dense>
@@ -23,8 +24,9 @@ class MatchFinderSurf;
 
 class DisparityAnalyzerSTAN : public DisparityAnalyzer {
  public:
+  // can alternatively use Lmeds
   using RansacAlgorithmSTAN =
-      s3d::RansacAlgorithm<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction>;
+      s3d::robust::Ransac<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction>;
 
   struct Results {
     explicit Results();
@@ -68,7 +70,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   RansacAlgorithmSTAN createRansac(Size imageSize);
 
   std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<s3d::MatchFinderSurf>()};
-  int minNbInliers_{0};
+  int minNbInliers_{4};
 };
 }  // namespace s3d
 

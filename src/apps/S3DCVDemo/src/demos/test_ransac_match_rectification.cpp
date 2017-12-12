@@ -7,7 +7,7 @@
 
 #include <s3d/cv/features/match_finder_cv.h>
 #include <s3d/cv/rectification/rectifier_cv.h>
-#include <s3d/robust_estimation/ransac.h>
+#include <s3d/robust/ransac.h>
 #include <s3d/math.h>
 
 #include <s3d/cv/disparity/disparity_analyzer_stan.h>
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   s3d::StanAlignment alignment;
   try {
     alignment = ransac(ptsLeftH, ptsRightH);
-  } catch (const s3d::NotEnoughInliersFound& /*exception*/) {
+  } catch (const s3d::robust::NotEnoughInliersFound& /*exception*/) {
     return -1;
   }
 

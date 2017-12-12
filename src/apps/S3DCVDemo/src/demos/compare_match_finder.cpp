@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
   cv::Mat imgRight = dataset.loadImageRight();
 
   // find matches with match finder
-  s3d::MatchFinderCV matchFinder;
+  s3d::MatchFinderSurf matchFinder;
   std::vector<std::vector<Eigen::Vector2d>> matches = matchFinder.findMatches(imgLeft, imgRight);
 
   // display dataset matches

@@ -26,12 +26,12 @@ inline DatasetLoaderVSG createDatasetLoader(int argc, char* argv[]) {
   return DatasetLoaderVSG{datasetName, datasetPath};
 }
 
-inline s3d::RansacAlgorithm<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> createRansac(
+inline s3d::robust::Ransac<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> createRansac(
         s3d::Size imageSize) {
   int h = imageSize.getHeight();
   int w = imageSize.getWidth();
 
-  s3d::Ransac::Params params;
+  s3d::robust::Parameters params;
   params.nbTrials = 500;
   params.distanceThreshold = 0.01 * sqrt(h * h + w * w);
 
