@@ -1,6 +1,7 @@
 #include "s3d/filter/kalman.h"
 
-namespace s3d::filter {
+namespace s3d {
+namespace filter {
 
 Kalman::Kalman(int nbParameters)
         : x(Eigen::VectorXd::Zero(nbParameters)),
@@ -38,4 +39,5 @@ void Kalman::innovationFromObservation(const Eigen::VectorXd &z) {
   innovation.K = P * innovation.S.inverse();
 }
 
-} // namespace s3d::filter
+} // namespace filter
+} // namespace s3d

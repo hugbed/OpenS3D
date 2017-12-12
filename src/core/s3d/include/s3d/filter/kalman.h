@@ -7,7 +7,8 @@
 
 #include "Eigen/Dense"
 
-namespace s3d::filter {
+namespace s3d {
+namespace filter {
 
 class Kalman {
 public:
@@ -38,6 +39,7 @@ private:
   Eigen::MatrixXd R;
 };
 
-}
+} // namespace filter
+} // namespace s3d
 
 #endif // S3D_FILTER_KALMAN_FILTER_H
