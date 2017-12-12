@@ -9,7 +9,8 @@
 
 #include <cstddef>
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 class Trials {
 public:
@@ -31,6 +32,7 @@ private:
   const double oneOverNbPts_;
 };
 
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d
 
 #endif //S3D_ROBUST_TRIALS_H

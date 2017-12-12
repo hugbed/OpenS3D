@@ -14,7 +14,6 @@
 #include <stdexcept>
 
 namespace s3d {
-
 namespace robust {
 
 /**
@@ -95,7 +94,7 @@ private:
   std::unique_ptr<Inliers> inliers_{};
 };
 
-} // namespace robust
+}  // namespace robust
 }  // namespace s3d
 
 #endif // S3D_ROBUST_LMEDS_H

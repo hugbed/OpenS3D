@@ -3,7 +3,8 @@
 
 #include <cstddef>
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 struct Parameters {
   size_t nbTrials{500};
@@ -11,6 +12,7 @@ struct Parameters {
   double confidence{0.999};
 };
 
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d
 
 #endif //S3D_ROBUST_PARAMETERS_H

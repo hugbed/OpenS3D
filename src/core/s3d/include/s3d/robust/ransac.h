@@ -15,7 +15,6 @@
 #include <stdexcept>
 
 namespace s3d {
-
 namespace robust {
 
 class NotEnoughInliersFound : std::runtime_error {
@@ -88,7 +87,7 @@ private:
   std::unique_ptr<Inliers> inliers_{};
 };
 
-} // namespace robust
+}  // namespace robust
 }  // namespace s3d
 
 #endif  // S3D_ROBUST_ESTIMATION_RANSAC_H

@@ -4,7 +4,8 @@
 
 #include <cmath>
 
-namespace s3d::robust {
+namespace s3d {
+namespace robust {
 
 Trials::Trials(size_t nbPts, size_t minNbSamples, size_t maxNbTrials, Parameters params)
         : params_(params),
@@ -43,4 +44,5 @@ size_t Trials::currentNb() {
   return curNb_;
 }
 
-} // namespace s3d::robust
+} // namespace robust
+} // namespace s3d
