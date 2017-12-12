@@ -29,3 +29,18 @@ TEST(percentile, other_tests) {
   f = {1, 2, 3, 4};
   EXPECT_FLOAT_EQ(s3d::percentile(f, 0.75), 3.25f);
 }
+
+TEST(median, one_value) {
+  std::vector<double> values = { 1.0 };
+  EXPECT_DOUBLE_EQ(values[0], s3d::median(values));
+}
+
+TEST(median, pair_value) {
+  std::vector<double> values = { 1.0, 2.0 };
+  EXPECT_DOUBLE_EQ((values[0] + values[1]) / 2.0, s3d::median(values));
+}
+
+TEST(median, odd_value) {
+  std::vector<double> values = { 1.0, 2.0, 3.0 };
+  EXPECT_DOUBLE_EQ(values[1], s3d::median(values));
+}

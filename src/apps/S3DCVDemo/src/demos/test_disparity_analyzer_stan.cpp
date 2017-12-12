@@ -5,20 +5,8 @@
 #include "dataset_loader_vsg.h"
 #include "demo_utils.h"
 
-#include <s3d/cv/features/match_finder_cv.h>
 #include <s3d/cv/rectification/rectifier_cv.h>
-#include <s3d/cv/utilities/cv.h>
 #include <s3d/math.h>
-#include <s3d/robust_estimation/ransac.h>
-
-#include <opencv/cxeigen.hpp>
-#include <opencv2/opencv.hpp>
-
-#include <Eigen/Dense>
-
-#include <s3d/cv/disparity/disparity_analyzer_stan.h>
-#include <s3d/cv/features/match_finder_cv.h>
-#include <string>
 
 int main(int argc, char* argv[]) {
   DatasetLoaderVSG dataset = createDatasetLoader(argc, argv);

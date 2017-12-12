@@ -26,7 +26,7 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEquationSystem(
     const std::vector<SampleType>& pts1,
     const std::vector<SampleType>& pts2) {
-  constexpr int nbVariables = robust_solver_traits<StanFundamentalMatrixSolver>::MIN_NB_SAMPLES;
+  constexpr int nbVariables = robust::estimation_algorithm_traits<StanFundamentalMatrixSolver>::MIN_NB_SAMPLES;
   assert(pts1.size() >= nbVariables);
   assert(pts2.size() >= nbVariables);
 

@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
   s3d::toHomogeneous2D(matches[1], &ptsRightH);
 
   // solve F with RANSAC
-  s3d::Ransac::Params params;
+  s3d::robust::Parameters params;
   params.nbTrials = 500;
   params.distanceThreshold = 0.01;
   auto ransac = s3d::DisparityAnalyzerSTAN::RansacAlgorithmSTAN(params);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
   s3d::StanAlignment alignment;
   try {
     alignment = ransac(ptsLeftH, ptsRightH);
-  } catch (const s3d::NotEnoughInliersFound& /*exception*/) {
+  } catch (const s3d::robust::NotEnoughInliersFound& /*exception*/) {
     return -1;
   }
 

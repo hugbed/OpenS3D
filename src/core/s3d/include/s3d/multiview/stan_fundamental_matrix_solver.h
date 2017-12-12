@@ -1,7 +1,7 @@
 #ifndef S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 #define S3D_MULTIVIEW_STAN_FUNDAMENTAL_MATRIX_SOLVER_H
 
-#include "s3d/robust_estimation/robust_estimation_traits.h"
+#include "s3d/robust/estimation_algorithm_traits.h"
 #include "s3d/multiview/stan_alignment.h"
 #include "s3d/geometry/size.h"
 
@@ -29,12 +29,16 @@ class StanFundamentalMatrixSolver {
   static Eigen::Matrix3d CenteredFundamentalMatrixFromAlignment(const StanAlignment& a, const Size& imageSize);
 };
 
-template <>
-struct robust_solver_traits<StanFundamentalMatrixSolver> {
+namespace robust {
+
+template<>
+struct estimation_algorithm_traits<StanFundamentalMatrixSolver> {
   using SampleType = StanFundamentalMatrixSolver::SampleType;
   using ModelType = StanFundamentalMatrixSolver::ModelType;
   enum { MIN_NB_SAMPLES = 5 };
 };
+
+} // namespace robust
 
 }  // namespace s3d
 

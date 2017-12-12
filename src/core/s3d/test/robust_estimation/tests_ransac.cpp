@@ -1,12 +1,13 @@
 #include "gtest/gtest.h"
 
-#include "s3d/robust_estimation/ransac.h"
-#include "s3d/robust_estimation/robust_estimation_traits.h"
+#include "s3d/robust/ransac.h"
+#include "s3d/robust/estimation_algorithm_traits.h"
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
 
-using s3d::Ransac;
-using s3d::RansacAlgorithm;
+using s3d::robust::Ransac;
+using s3d::robust::Trials;
+using s3d::robust::Parameters;
 
 // Ax + By + C = 0
 struct Line {
@@ -39,14 +40,14 @@ class LineSolver {
 };
 
 // traits must be in the same namespace
-namespace s3d {
+namespace s3d::robust {
 template <>
-struct robust_solver_traits<LineSolver> {
+struct estimation_algorithm_traits<LineSolver> {
   using SampleType = LineSolver::SampleType;
   using ModelType = LineSolver::ModelType;
   enum { MIN_NB_SAMPLES = 2 };
 };
-}  // namespace s3d
+}  // namespace s3d::robust
 
 // Distance that can be applied to the model
 class LeastSquareDistanceFunction {
@@ -66,9 +67,9 @@ class LeastSquareDistanceFunction {
 };
 
 TEST(ransac, line_solver) {
-  Ransac::Params params{};
+  Parameters params{};
   params.nbTrials = 100;
-  RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
+  Ransac<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
   // inliers: y = x
   using SampleType = LineSolver::SampleType;
@@ -102,23 +103,23 @@ class FakeDistanceAllOverThreshold {
 };
 
 TEST(ransac, not_enough_inliers_throws) {
-  Ransac::Params params{};
+  Parameters params{};
   params.nbTrials = 1;
   params.distanceThreshold = FakeDistanceAllOverThreshold::THRESHOLD;
-  RansacAlgorithm<LineSolver, LeastSquareDistanceFunction> ransac(params);
+  Ransac<LineSolver, LeastSquareDistanceFunction> ransac(params);
 
-  EXPECT_THROW(ransac({0, 0}, {0, 0}), s3d::NotEnoughInliersFound);
+  EXPECT_THROW(ransac({0, 0}, {0, 0}), s3d::robust::NotEnoughInliersFound);
 }
 
 TEST(ransac_trials, update_nb_correct) {
-  struct RansacForTrials : Ransac {
+  struct RansacForTrials {
     bool testUpdateNbTrialsNotReachedMax() {
-      Ransac::Trials t(200, 7, 1000, {});
+      Trials t(200, 7, 1000, {});
       t.updateNb(199.0);
       return t.reachedMaxNb();
     }
     bool testUpdateNbTrialsReachedMax() {
-      Ransac::Trials t(200, 7, 1000, {});
+      Trials t(200, 7, 1000, {});
       t.updateNb(200.0);
       return t.reachedMaxNb();
     }

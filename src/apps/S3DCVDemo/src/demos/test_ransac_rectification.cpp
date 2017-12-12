@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   s3d::StanAlignment alignment;
   try {
     alignment = ransac(ptsLeftH, ptsRightH);
-  } catch (const s3d::NotEnoughInliersFound& /*exception*/) {
+  } catch (const s3d::robust::NotEnoughInliersFound& /*exception*/) {
     return -1;
   }
 
