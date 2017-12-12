@@ -100,7 +100,7 @@ bool DisparityAnalyzerSTAN::analyze(const cv::Mat& leftImage, const cv::Mat& rig
     return false;
   }
 
-  std::cout << "Nb iterations: " << ransac.getTotalNumberOfIterations() << '\n';
+//  std::cout << "Nb iterations: " << ransac.getTotalNumberOfIterations() << '\n';
 
   // filter inliers
   std::vector<Eigen::Vector3d> bestPts1h, bestPts2h;
