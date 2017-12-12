@@ -1,5 +1,5 @@
 #include "s3d/video/capture/file_video_capture_device_factory.h"
-#include "s3d/video/capture/file_video_capture_device_raw_uyvy.h"
+#include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
 
 #include <iostream>
 
@@ -8,6 +8,7 @@ using s3d::VideoCaptureDevice;
 using s3d::VideoCaptureDeviceDescriptor;
 using s3d::VideoCaptureDeviceFactory;
 using s3d::VideoCaptureFormat;
+using s3d::FileVideoCaptureDeviceFFmpeg;
 
 class VideoTestClient : public VideoCaptureDevice::Client {
  public:
@@ -28,8 +29,7 @@ int main() {
   VideoCaptureFormat format;
 
   auto deviceFactory = createVideoCaptureDeviceFactory();
-  auto device = deviceFactory->CreateDevice(
-      VideoCaptureDeviceDescriptor("/home/jon/Videos/current-left.yuv"));
+  auto device = std::make_unique<FileVideoCaptureDeviceFFmpeg>("/home/jon/Documents/bbb_sunflower_1080p_30fps_stereo_abl.mp4");
   auto client = std::unique_ptr<VideoCaptureDevice::Client>(new VideoTestClient);
 
   device->AllocateAndStart({}, client.get());

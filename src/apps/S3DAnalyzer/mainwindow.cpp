@@ -306,12 +306,12 @@ void MainWindow::computeAndUpdate() {
     ui->depthWidget->setLowValue(m_analyzer->results.minDisparityPercent);
     ui->depthWidget->setHighValue(m_analyzer->results.maxDisparityPercent);
 
-    ui->parametersListView->setParameter("Roll", m_analyzer->results.stan.alignment.rollAngleDegrees());
-    ui->parametersListView->setParameter("Vertical", m_analyzer->results.stan.alignment.verticalOffsetDegrees());
-    ui->parametersListView->setParameter("Pan Keystone", m_analyzer->results.stan.alignment.panKeystoneDegreesPerMeter());
-    ui->parametersListView->setParameter("Tilt Keystone", m_analyzer->results.stan.alignment.tiltKeystoneDegreesPerMeter());
-    ui->parametersListView->setParameter("Tilt Offset", m_analyzer->results.stan.alignment.tiltOffsetPixels());
-    ui->parametersListView->setParameter("Zoom", m_analyzer->results.stan.alignment.zoomRatioPercent());
+    ui->parametersListView->setParameter("Roll", m_imageOperations->inputOutputAdapter.results.alignment.rollAngleDegrees());
+    ui->parametersListView->setParameter("Vertical", m_imageOperations->inputOutputAdapter.results.alignment.verticalOffsetDegrees());
+    ui->parametersListView->setParameter("Pan Keystone", m_imageOperations->inputOutputAdapter.results.alignment.panKeystoneDegreesPerMeter());
+    ui->parametersListView->setParameter("Tilt Keystone", m_imageOperations->inputOutputAdapter.results.alignment.tiltKeystoneDegreesPerMeter());
+    ui->parametersListView->setParameter("Tilt Offset", m_imageOperations->inputOutputAdapter.results.alignment.tiltOffsetPixels());
+    ui->parametersListView->setParameter("Zoom", m_imageOperations->inputOutputAdapter.results.alignment.zoomRatioPercent());
 
     updateConvergenceHint(m_analyzer->results.minDisparityPercent,
                           m_analyzer->results.maxDisparityPercent);
