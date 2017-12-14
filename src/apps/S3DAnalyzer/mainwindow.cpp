@@ -359,7 +359,7 @@ void MainWindow::requestImageFilename(Functor f) {
                                    tr("Open Image"),
                                    "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data",
                                    tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
-  if (not filename.isEmpty()) {
+  if (!filename.isEmpty()) {
     f(filename);
   }
 }
@@ -368,7 +368,7 @@ template <class Functor>
 void MainWindow::requestVideoFilename(Functor f) {
   QString filename = QFileDialog::getOpenFileName(
       this, tr("Open Video"), "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data");
-  if (not filename.isEmpty()) {
+  if (!filename.isEmpty()) {
     f(filename);
   }
 }
@@ -459,7 +459,7 @@ void MainWindow::updateInputMode() {
   ui->actionOpenVideo->setVisible(false);
 
   // show only relevant menus
-  if (not ui->actionFormatSeparateFiles->isChecked()) {
+  if (!ui->actionFormatSeparateFiles->isChecked()) {
     if (ui->actionInputImage->isChecked()) {
       ui->actionOpenImage->setVisible(true);
     } else if (ui->actionInputVideo->isChecked()) {
@@ -517,7 +517,7 @@ void MainWindow::updateStereo3DFormat() {
   if (ui->actionInputImage->isChecked()) {
     if (ui->actionFormatSeparateFiles->isChecked() && m_imageLeftReady && m_imageRightReady) {
       handleNewImagePair(m_imageLeft, m_imageRight, {});
-    } else if (not ui->actionFormatSeparateFiles->isChecked()) {
+    } else if (!ui->actionFormatSeparateFiles->isChecked()) {
       demuxImage(m_imageLeft);
     }
   }

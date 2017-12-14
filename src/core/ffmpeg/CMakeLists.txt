@@ -9,7 +9,7 @@ find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL SWSCALE REQUIRED)
 
 set(FFMPEG_LIBRARIES "-lavcodec -lavformat -lavutil -lswscale -lm")
 
-include_directories(include ${FFMPEG_INCLUDE_DIR})
+include_directories(include ${FFMPEG_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SRC_FILES
     include/*.h

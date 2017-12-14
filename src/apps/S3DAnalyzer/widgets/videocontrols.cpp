@@ -57,7 +57,7 @@ void VideoControls::setDuration(std::chrono::microseconds duration) {
 }
 
 void VideoControls::updateSlider(std::chrono::microseconds timestamp) {
-  if (not m_progressSlider->isPressed()) {
+  if (!m_progressSlider->isPressed()) {
     m_progressSlider->setValue(timestamp.count());
   }
 }

@@ -161,7 +161,7 @@ void VideoSynchronizer::loadStereoVideo(const std::string& leftFile,
 
   s3d::VideoFileParserFFmpeg parser(leftFile);
   s3d::VideoCaptureFormat format;
-  if (not parser.Initialize(&format)) {
+  if (!parser.Initialize(&format)) {
     m_videoLoaded = false;
     return;
   }

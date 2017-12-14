@@ -69,7 +69,7 @@ TEST(timed_loop_sleep, pause_resume) {
   client.loop = &loop;
 
   auto t = std::thread([&loop, &client] { loop.start(&client, std::chrono::microseconds(0)); });
-  while (not client.paused) {
+  while (!client.paused) {
   }
   loop.stop();
   loop.resume();

@@ -75,7 +75,7 @@ void BillboardEntity::clear() {
 }
 
 void BillboardEntity::draw(QPaintDevice* /*paintDevice*/) {
-  if (not m_vertices.empty()) {
+  if (!m_vertices.empty()) {
     // Render using our shader
     m_program->bind();
     {

@@ -7,6 +7,8 @@
 
 #include "s3d/video/capture/video_capture_device.h"
 
+#include <s3d/video/file_parser/video_file_parser.h>
+
 #include <atomic>
 #include <thread>
 #include <utility>
@@ -37,6 +39,9 @@ class FileVideoCaptureDevice3D : public VideoCaptureDevice {
   void Start();
 
  private:
+   std::pair<std::unique_ptr<VideoFileParser>,
+             std::unique_ptr<VideoFileParser>> AllocateFileParsers();
+
   std::pair<std::string, std::string> filePaths_;
   VideoCaptureFormat captureFormat_;
 

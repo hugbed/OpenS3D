@@ -1,7 +1,9 @@
 #ifndef S3D_MULTIVIEW_STAN_ALIGNMENT_H
 #define S3D_MULTIVIEW_STAN_ALIGNMENT_H
 
-#include <cmath>
+// todo: use math defines in .cpp file
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace s3d {
 

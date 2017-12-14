@@ -1,14 +1,13 @@
 #include "s3d/video/file_parser/file_parser_producer.h"
 
-#include "../../../../ffmpeg/include/s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
-
 #include "s3d/video/capture/video_capture_types.h"
+#include "s3d/video/file_parser/video_file_parser.h"
 
 namespace s3d {
 
 FileParserProducer::FileParserProducer(std::string filename,
                                        s3d::ProducerConsumerMediator* mediator)
-    : ProducerBarrier(mediator), videoFrame_{{}, {}}, filePath_{std::move(filename)} {}
+    : ProducerBarrier(mediator), videoFrame_{{}, {}} {}
 
 bool FileParserProducer::shouldStopProducing() {
   return !readingFile_ || Base::shouldStopProducing();
@@ -20,9 +19,8 @@ bool FileParserProducer::shouldStopProducing() {
   //    return fileStream.eof();
 }
 
-bool FileParserProducer::allocate(VideoCaptureFormat* format) {
-  fileParser_ =
-      std::unique_ptr<VideoFileParser>(std::make_unique<VideoFileParserFFmpeg>(filePath_));
+bool FileParserProducer::allocate(VideoCaptureFormat* format, std::unique_ptr<VideoFileParser> fileParser) {
+  fileParser_ = std::move(fileParser);
 
   if (!fileParser_->Initialize(format)) {
     fileParser_.reset();

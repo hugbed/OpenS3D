@@ -54,8 +54,11 @@ void FileVideoCaptureDevice3D::Allocate() {
   producers_.second =
       std::make_unique<FileParserProducer>(filePaths_.second, sync_->mediator2.get());
 
-  if (!producers_.first->allocate(&captureFormat_) ||
-      !producers_.second->allocate(&captureFormat_)) {
+  // allocate file parsers
+  auto fileParsers = AllocateFileParsers();
+
+  if (!producers_.first->allocate(&captureFormat_, std::move(fileParsers.first)) ||
+      !producers_.second->allocate(&captureFormat_, std::move(fileParsers.second))) {
     throw VideoCaptureDeviceAllocationException(
         "Cannot open requested file(s)");  // todo: write the name of the files
                                            // here
@@ -63,13 +66,22 @@ void FileVideoCaptureDevice3D::Allocate() {
 
   std::vector<FileParserProducer::Base*> producers = {producers_.first.get(),
                                                       producers_.second.get()};
-
   captureFormat_.stereo3D = true;
   consumer_ = std::make_unique<FileParserConsumer>(
       client_,
       captureFormat_,
       std::vector<s3d::ProducerConsumerMediator*>{sync_->mediator1.get(), sync_->mediator2.get()},
       producers);
+}
+
+std::pair<std::unique_ptr<VideoFileParser>,
+          std::unique_ptr<VideoFileParser>> FileVideoCaptureDevice3D::AllocateFileParsers() {
+
+  return std::make_pair<
+    std::unique_ptr<VideoFileParser>,
+    std::unique_ptr<VideoFileParser>
+  >(std::make_unique<VideoFileParserFFmpeg>(filePaths_.first),
+    std::make_unique<VideoFileParserFFmpeg>(filePaths_.second));
 }
 
 void FileVideoCaptureDevice3D::Start() {

@@ -40,7 +40,7 @@ class FileParserProducer : public s3d::ProducerBarrier<VideoFrame> {
   bool shouldStopProducing() override;
 
   // todo: maybe exception is more appropriate than bool? dunno
-  bool allocate(VideoCaptureFormat* format);
+  bool allocate(VideoCaptureFormat* format, std::unique_ptr<VideoFileParser> fileParser);
 
   void produce() override;
 
@@ -57,7 +57,6 @@ class FileParserProducer : public s3d::ProducerBarrier<VideoFrame> {
   bool readingFile_{false};
   std::unique_ptr<VideoFileParser> fileParser_;
   VideoFrame videoFrame_;
-  std::string filePath_;
 };
 
 }  // namespace s3d

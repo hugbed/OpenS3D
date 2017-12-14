@@ -23,7 +23,7 @@ private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;
   bool disparityRangeWideEnough();
 
-  float minDisparityRange_{0.1};
+  float minDisparityRange_{0.1f};
   s3d::DisparityAnalyzerSTAN* disparityAnalyzer_;
 };
 
