@@ -5,5 +5,5 @@ project(s3dcv_test)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 # automagically create tests
-set(TEST_ADDITIONAL_LIBRARIES s3dcv)
+set(TEST_ADDITIONAL_LIBRARIES s3d_cv s3d)
 include(${CMAKE_SOURCE_DIR}/cmake/gtest-cxx-dev-tools.cmake)

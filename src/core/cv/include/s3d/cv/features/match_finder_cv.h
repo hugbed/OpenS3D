@@ -1,7 +1,7 @@
 #ifndef S3D_CV_FEATURES_MATCH_FINDER_CV_H
 #define S3D_CV_FEATURES_MATCH_FINDER_CV_H
 
-#include "s3d/features/match_finder.h"
+#include <s3d/features/match_finder.h>
 
 #include <opencv2/core/mat.hpp>    // cv::Mat
 #include <opencv2/core/types.hpp>  // cv::DMatch, cv::KeyPoint

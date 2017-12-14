@@ -1,7 +1,7 @@
 #ifndef S3D_CV_DISPARITY_DISPARITY_ANALYZER_STAN_H
 #define S3D_CV_DISPARITY_DISPARITY_ANALYZER_STAN_H
 
-#include "s3d/disparity/disparity_analyzer.h"
+#include <s3d/disparity/disparity_analyzer.h>
 
 #include "s3d/cv/features/match_finder_surf.h"
 #include "s3d/multiview/sampson_distance_function.h"

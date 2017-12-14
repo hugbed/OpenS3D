@@ -42,9 +42,8 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(cmake/clang-cxx-dev-tools.cmake)
 
-# GTest
-set(ENV{CTEST_OUTPUT_ON_FAILURE} true)
-set(ENV{GTEST_COLOR} true)
+# Generate GTest solution
+include(cmake/gtest-generator.txt)
 enable_testing()
 
 # eigen
@@ -52,15 +51,15 @@ set(EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen)
 include_directories(${EIGEN_INCLUDE_DIRS})
 
 # Add project subdirectories
-add_subdirectory(libs/googletest)
+#add_subdirectory(libs/googletest)
 add_subdirectory(libs/gsl)
-add_subdirectory(libs/decklink)
 add_subdirectory(core/s3d)
 
 if (OpenS3D_USE_CV)
   add_subdirectory(core/cv)
 endif()
 if (OpenS3D_USE_DECKLINK)
+  add_subdirectory(libs/decklink)
   add_subdirectory(core/decklink)
 endif()
 if (OpenS3D_USE_FFMPEG)
