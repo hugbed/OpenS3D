@@ -28,6 +28,8 @@ The usage of the library is demonstrated with a stereoscopic 3D analysis softwar
 * Disparity analysis
   * Disparity range
   * Colored feature points from disparity (red = too close in front of the screen, purple = too far behind screen plane)
+* Viewer-centric depth analysis
+  * Depth from screen plane of detected features (from viewer distance, screen size...)
 
 ## Build Instructions
 
