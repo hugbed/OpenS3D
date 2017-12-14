@@ -15,17 +15,17 @@ public:
   explicit Kalman(int nbParameters);
 
   void setInitialValues(Eigen::VectorXd values);
-
-  void setVariances(const Eigen::VectorXd &variances);
+  void setObservationVariances(const Eigen::VectorXd &variances);
+  void setProcessVariances(const Eigen::VectorXd &variances);
 
   void filter(const Eigen::VectorXd &z);
 
   Eigen::VectorXd &getEstimation();
 
 private:
-  void updateEstimation();
-
+  void prediction();
   void innovationFromObservation(const Eigen::VectorXd &z);
+  void updateEstimation();
 
   struct Innovation {
     Eigen::VectorXd y;
@@ -37,6 +37,7 @@ private:
   Eigen::VectorXd x;
   Eigen::MatrixXd P;
   Eigen::MatrixXd R;
+  Eigen::MatrixXd Q;
 };
 
 } // namespace filter
