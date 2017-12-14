@@ -5,10 +5,10 @@
 #ifndef S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H
 #define S3D_VIDEO_CAPTURE_VIDEO_CAPTURE_DEVICE_DECKLINK_H
 
-#include "video_capture_device.h"
-#include "video_capture_device_factory.h"
+#include <s3d/video/capture/video_capture_device.h>
+#include <s3d/video/capture/video_capture_device_factory.h>
 
-#include "gsl/gsl"
+#include <gsl/gsl>
 
 #include <chrono>
 

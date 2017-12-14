@@ -2,15 +2,15 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include "s3d/video/capture/file_video_capture_device_3d.h"
+#include "s3d/video/capture/ffmpeg/file_video_capture_device_3d.h"
 
-#include "s3d/utilities/file_io.h"
-#include "s3d/utilities/strings.h"
-#include "s3d/video/compression/yuv.h"
 #include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 
-#include "s3d/video/file_parser/file_parser_consumer.h"
-#include "s3d/video/file_parser/file_parser_producer.h"
+#include <s3d/utilities/file_io.h>
+#include <s3d/utilities/strings.h>
+#include <s3d/video/compression/yuv.h>
+#include <s3d/video/file_parser/file_parser_consumer.h>
+#include <s3d/video/file_parser/file_parser_producer.h>
 
 namespace s3d {
 

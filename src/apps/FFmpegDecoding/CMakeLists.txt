@@ -2,22 +2,11 @@ cmake_minimum_required(VERSION 3.2)
 
 project(FFmpegDecoding)
 
-# ffmpeg 3.X
-find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL REQUIRED SWSCALE)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-if(FFMPEG_FOUND)
-  include_directories(${FFMPEG_INCLUDE_DIRS})
-else()
-  message(FATAL_ERROR "FFMPEG not found")
-endif()
-
-# get all *.cpp files from src to build target
-file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*${SRC_EXT_PATTERN})
-source_group("Source Files" FILES ${SRC_FILES})
-
-
 # build target
-add_executable(${PROJECT_NAME} ${SRC_FILES})
-target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES} ${SWSCALE_LIBRARIES} s3d pthread)
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/src/demo_decoding.cpp)
+target_link_libraries(${PROJECT_NAME} s3d_ffmpeg s3d pthread)
+
+add_executable(${PROJECT_NAME}_VideoFileClient ${PROJECT_SOURCE_DIR}/src/video_file_client.cpp)
+target_link_libraries(${PROJECT_NAME}_VideoFileClient s3d_ffmpeg s3d_cv pthread) # pthread is linux only

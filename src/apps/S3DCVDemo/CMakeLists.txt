@@ -23,7 +23,7 @@ function(add_demo filepath)
     string(REPLACE ".cpp" "" test_name ${test_name})
 
     add_executable(s3dcvdemo_${test_name} ${filepath} ${INCLUDE_FILES})
-    target_link_libraries(s3dcvdemo_${test_name} s3dcv ${OpenCV_LIBS} gsl)
+    target_link_libraries(s3dcvdemo_${test_name} s3d_cv ${OpenCV_LIBS} gsl)
 endfunction()
 
 message(${PROJECT_SOURCE_DIR})

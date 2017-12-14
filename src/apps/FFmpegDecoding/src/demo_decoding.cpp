@@ -1,5 +1,5 @@
-#include <s3d/video/capture/file_video_capture_device_3d.h>
-#include <s3d/video/capture/file_video_capture_device_ffmpeg.h>
+#include "s3d/video/capture/ffmpeg/file_video_capture_device_3d.h"
+#include "s3d/video/capture/ffmpeg/file_video_capture_device_ffmpeg.h"
 
 #include <fstream>
 

@@ -17,6 +17,8 @@ option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
 option(OpenS3D_BUILD_OGRE_APPS "Build Ogre applications" OFF)
 option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
 option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" OFF)
+option(OpenS3D_USE_DECKLINK "Build OpenS3D DeckLink implementations" ON)
+option(OpenS3D_USE_FFMPEG "Build OpenS3D FFmpeg implementations" ON)
 option(OpenS3D_BUILD_COVERAGE "Enable code coverage generation (gcc only)" OFF)
 
 # Remove 'lib' prefix for shared libraries on Windows
@@ -56,9 +58,14 @@ add_subdirectory(libs/decklink)
 add_subdirectory(core/s3d)
 
 if (OpenS3D_USE_CV)
-  add_subdirectory(core/s3dcv)
+  add_subdirectory(core/cv)
 endif()
-
+if (OpenS3D_USE_DECKLINK)
+  add_subdirectory(core/decklink)
+endif()
+if (OpenS3D_USE_FFMPEG)
+  add_subdirectory(core/ffmpeg)
+endif()
 if (OpenS3D_USE_CUDA AND OpenS3D_USE_CV)
   add_subdirectory(core/s3dcuda)
   add_subdirectory(apps/S3DCudaDemo)
@@ -75,7 +82,6 @@ if (OpenS3D_BUILD_APPS)
     add_subdirectory(apps/S3DAnalyzer)
   endif()
 endif()
-
 
 # add test target (make test)
 include(ProcessorCount)

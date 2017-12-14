@@ -2,8 +2,8 @@
 // Inspired by Chromium video capture interface
 // Simplified and stripped from internal base code
 
-#include "s3d/video/capture/video_capture_device_decklink.h"
-#include "s3d/video/capture/decklink.h"
+#include "../../../include/s3d/video/capture/video_capture_device_decklink.h"
+#include "../../../include/s3d/video/capture/decklink.h"
 
 namespace s3d {
 

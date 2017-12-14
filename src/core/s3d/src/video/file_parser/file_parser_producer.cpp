@@ -1,6 +1,6 @@
 #include "s3d/video/file_parser/file_parser_producer.h"
 
-#include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
+#include "../../../../ffmpeg/include/s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 
 #include "s3d/video/capture/video_capture_types.h"
 

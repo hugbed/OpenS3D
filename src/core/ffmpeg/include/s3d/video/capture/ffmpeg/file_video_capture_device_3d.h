@@ -5,7 +5,7 @@
 #ifndef S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 #define S3D_VIDEO_CAPTURE_FILE_VIDEO_CAPTURE_DEVICE_3D_H
 
-#include "video_capture_device.h"
+#include "s3d/video/capture/video_capture_device.h"
 
 #include <atomic>
 #include <thread>

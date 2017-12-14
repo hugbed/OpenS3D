@@ -1,4 +1,4 @@
-#include "s3d/video/capture/file_video_capture_device_ffmpeg.h"
+#include "s3d/video/capture/ffmpeg/file_video_capture_device_ffmpeg.h"
 
 #include "s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h"
 
