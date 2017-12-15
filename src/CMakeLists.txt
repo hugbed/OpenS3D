@@ -51,7 +51,6 @@ set(EIGEN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen)
 include_directories(${EIGEN_INCLUDE_DIRS})
 
 # Add project subdirectories
-#add_subdirectory(libs/googletest)
 add_subdirectory(libs/gsl)
 add_subdirectory(core/s3d)
 

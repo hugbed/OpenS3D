@@ -21,8 +21,6 @@ FilterAlignment::FilterAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disp
 }
 
 bool FilterAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
-  results->alignment;
-
   Eigen::VectorXd alignment(5);
   alignment << results->alignment.ch_y,
           results->alignment.a_z,
