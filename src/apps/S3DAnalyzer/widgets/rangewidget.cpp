@@ -13,8 +13,8 @@ RangeWidget::RangeWidget(QWidget* parent)
   // default values, will be replaced
   setDisplayRange(-5.0f, 5.0f);
   setExpectedRange(-1.1f, 3.1f);
-  setLowValue(-3.8);
-  setHighValue(-0.8);
+  setLowValue(-3.8f);
+  setHighValue(-0.8f);
 
   auto layout = std::make_unique<QHBoxLayout>();
   layout->addWidget(m_minValueLabel.get(), 0, Qt::AlignLeft);

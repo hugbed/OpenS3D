@@ -21,19 +21,19 @@ void WidthHintLabel::updateHint(float ratio) {
   // ok this is the worst
   // todo: think a bit more about this
   // it's way worse to have more than not enough range
-  if (inRange(0.8, 1.0, ratio)) {
+  if (inRange(0.8f, 1.0f, ratio)) {
     setState(State::Neutral);
-  } else if (inRange(0.7, 0.8, ratio)) {
+  } else if (inRange(0.7f, 0.8f, ratio)) {
     setState(State::ShouldWiden);
-  } else if (inRange(1.0, 1.05, ratio)) {
+  } else if (inRange(1.0f, 1.05f, ratio)) {
     setState(State::ShouldNarrow);
-  } else if (inRange(0.6, 0.7, ratio)) {
+  } else if (inRange(0.6f, 0.7f, ratio)) {
     setState(State::ShouldWidenMuch);
-  } else if (inRange(1.05, 1.1, ratio)) {
+  } else if (inRange(1.05f, 1.1f, ratio)) {
     setState(State::ShouldNarrowMuch);
-  } else if (ratio < 0.6) {
+  } else if (ratio < 0.6f) {
     setState(State::ShouldWidenVeryMuch);
-  } else if (ratio >= 1.1) {
+  } else if (ratio >= 1.1f) {
     setState(State::ShouldNarrowVeryMuch);
   }
   update();

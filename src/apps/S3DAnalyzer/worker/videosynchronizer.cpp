@@ -1,5 +1,7 @@
 #include "videosynchronizer.h"
 
+#include "live_capture_device_factory.h"
+
 #include <QDebug>
 #include <QImage>
 #include <QTimer>
@@ -8,7 +10,6 @@
 #include <s3d/cv/video/stereo_demuxer/stereo_demuxer_factory_cv.h>
 #include <s3d/video/capture/ffmpeg/file_video_capture_device_3d.h>
 #include <s3d/video/capture/ffmpeg/file_video_capture_device_ffmpeg.h>
-#include <s3d/video/capture/video_capture_device_decklink.h>
 #include <s3d/video/file_parser/ffmpeg/video_file_parser_ffmpeg.h>
 #include <s3d/video/stereo_demuxer/stereo_demuxer.h>
 
@@ -69,7 +70,7 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
   auto frameSize = frameFormat.frameSize;
 
   // should demux stereo
-  if (m_stereoDemuxer.get() != nullptr && not data.empty()) {
+  if (m_stereoDemuxer.get() != nullptr && !data.empty()) {
     m_stereoDemuxer->setSize(frameFormat.frameSize);
     m_stereoDemuxer->setPixelFormat(frameFormat.pixelFormat);
     frameSize = m_stereoDemuxer->demuxedSize();
@@ -224,8 +225,7 @@ void VideoSynchronizer::loadLiveCamera() {
 
   m_liveCamera = true;
 
-  m_videoCaptureDevice =
-      std::make_unique<s3d::VideoCaptureDeviceDecklink>(s3d::VideoCaptureDeviceDescriptor({}));
+  m_videoCaptureDevice = LiveCaptureDeviceFactory{}.create();
 
   // 1280x720, 60fps, BGRA, 2D or 3D supported
   s3d::VideoCaptureFormat format = m_videoCaptureDevice->DefaultFormat();

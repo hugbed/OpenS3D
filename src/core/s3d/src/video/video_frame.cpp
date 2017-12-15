@@ -22,9 +22,8 @@ size_t VideoFrame::NumBytesPerPixel(VideoPixelFormat format) {
     case VideoPixelFormat::RGB:
     case VideoPixelFormat::BGR:
       return 3;
-    case VideoPixelFormat::UNKNOWN:
-      return 0;
   }
+  return 0;
 }
 
 }  // namespace s3d

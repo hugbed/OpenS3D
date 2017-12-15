@@ -24,9 +24,9 @@ Building `INSTALL` project will create an `install` folder which you can copy di
 The procedure was inspired from [this one](https://github.com/snikulov/ffmpeg_win_example/wiki/Full-build-procedure).
 
 1- Download the "dev" and "shared" x86 versions from [here](https://ffmpeg.zeranoe.com/builds/).
-2- Create a `<OpenS3D>/src/deps/ffmpeg` folder.
-3- Copy the `bin` folder from the "shared" FFMPEG into `<OpenS3D>/src/deps/ffmpeg`.
-4- Copy the `include` and `lib` folder from the "dev" FFMPEG into `<OpenS3D>/src/deps/ffmpeg`.
+2- Create a `<OpenS3D>/src/deps/ffmpeg/x86` folder.
+3- Copy the `bin` folder from the "shared" FFMPEG into `<OpenS3D>/src/deps/ffmpeg/x86`.
+4- Copy the `include` and `lib` folder from the "dev" FFMPEG into `<OpenS3D>/src/deps/ffmpeg/x86`.
 
 ### Qt
 

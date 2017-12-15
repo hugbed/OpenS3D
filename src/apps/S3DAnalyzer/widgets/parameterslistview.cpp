@@ -9,7 +9,7 @@ ParametersListView::ParametersListView(QWidget* parent) : QWidget(parent) {
                             {"Tilt Keystone", "°/m"},
                             {"Tilt Offset", "%"},
                             {"Zoom", "%"}});
-  setParameter("Roll", 0.1);
+  setParameter("Roll", 0.1f);
   setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
 }
 
