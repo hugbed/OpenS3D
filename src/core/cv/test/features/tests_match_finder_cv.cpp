@@ -26,7 +26,7 @@ class FakeFeatureDetector : public cv::Feature2D {
     keypoints.push_back(goldKeypoints[1]);
   }
 
-  void compute(cv::InputArray img, std::vector<cv::KeyPoint>& keypoints, cv::OutputArray descriptors) {
+  void compute(cv::InputArray img, std::vector<cv::KeyPoint>& keypoints, cv::OutputArray descriptors) override {
     descriptors.create(1, 2, CV_8U);
     cv::Mat outMat = descriptors.getMat();
     outMat.at<uchar>(0) = goldDescriptors[0];

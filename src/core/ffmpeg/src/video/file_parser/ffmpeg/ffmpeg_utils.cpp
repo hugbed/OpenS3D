@@ -1,5 +1,7 @@
 #include "s3d/video/file_parser/ffmpeg/ffmpeg_utils.h"
 
+#include <string>
+
 namespace s3d {
 
 namespace ffmpeg {

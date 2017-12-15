@@ -2,6 +2,8 @@
 
 #include "s3d/video/file_parser/ffmpeg/decoder.h"
 
+#include <string>
+
 namespace s3d {
 
 Demuxer::Demuxer(const std::string& inputFilename) {

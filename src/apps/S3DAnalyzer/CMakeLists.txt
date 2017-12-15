@@ -56,15 +56,16 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/core/s3dcv/include
     ${CMAKE_SOURCE_DIR}/libs/gsl/include)
 
-# libraries
-set(LINK_LIBRARIES s3d s3d_cv s3d_ffmpeg Qt5::Widgets Qt5::Core Qt5::Gui)
-if(UNIX)
-  set(LINK_LIBRARIES ${LINK_LIBRARIES} s3d_decklink pthread)
+# libraries to link
+set(LINK_LIBS s3d s3d_cv s3d_ffmpeg Qt5::Widgets Qt5::Core Qt5::Gui pthread)
+if(UNIX AND NOT APPLE)
+  # decklink is currently only supported on Linux
+  set(LINK_LIBS ${LINK_LIBS} s3d_decklink)
 endif()
 
 # compile
 add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SRCS} ${RES_SOURCES} ${UI_HEADERS})
-target_link_libraries(${PROJECT_NAME} ${LINK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LINK_LIBS})
 
 # tests
 add_subdirectory(test)
