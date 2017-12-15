@@ -1,4 +1,6 @@
-## Dependencies Setup (Windows)
+# Windows Setup
+
+## Dependencies
 
 The project was tested on Windows 10 with Visual Studio 2017. Currently only s3d, s3d_cv and s3d_ffmpeg build on Windows. Plans are to implement s3d_decklink for Windows to support S3DAnalyzer which depends on all core (s3d) libraries.
 
@@ -30,3 +32,9 @@ The procedure was inspired from [this one](https://github.com/snikulov/ffmpeg_wi
 
 1- Download [Qt](https://www1.qt.io/download-open-source/)
 2- Install Qt from downloaded executable for your compiler (to C:/Qt)
+
+## Generate Visual Studio Solution
+
+Navigate to `<OpenS3D>/src/scripts` and run `generate-project.bat` which will set the appropriate environment variables and generate the Visual Studio Project using CMake (default is "Visual Studio 15 2017").
+
+For now, to run the built code, FFmpeg and OpenCV `.dll` have to be added to the path (see <OpenS3D>/src/scripts/set-environment.bat). Alternatively, you may run `set-environment.bat` from the command line before running the program from the same command line. Eventually, these `.dll` should be copied to the build directory.
