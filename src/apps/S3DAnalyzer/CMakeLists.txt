@@ -47,6 +47,11 @@ QT5_ADD_RESOURCES( RES_SOURCES ${RESOURCES} )
 QT5_WRAP_UI( UI_HEADERS ${UIS} )
 
 include_directories(
+    controllers
+    rendering
+    widgets
+    worker
+    utilities
     ${CMAKE_SOURCE_DIR}/core/s3d/include
     ${CMAKE_SOURCE_DIR}/core/s3dcv/include
     ${CMAKE_SOURCE_DIR}/libs/gsl/include)

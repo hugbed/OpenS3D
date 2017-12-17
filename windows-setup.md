@@ -27,6 +27,8 @@ The procedure was inspired from [this one](https://github.com/snikulov/ffmpeg_wi
 2- Create a `<OpenS3D>/src/deps/ffmpeg/x86` folder.
 3- Copy the `bin` folder from the "shared" FFMPEG into `<OpenS3D>/src/deps/ffmpeg/x86`.
 4- Copy the `include` and `lib` folder from the "dev" FFMPEG into `<OpenS3D>/src/deps/ffmpeg/x86`.
+5- In `<OpenS3D>/src/deps/ffmpeg/x86/lib`, create the appropriate MSVC `.lib` to load the `.dll` from the `.def` using `lib /machine:i386 /def:thedllname.def` (FFmpeg was built with MinGW and we want to load the .dll with Visual Studio) See: [this](http://adamli.blogspot.ca/2015/02/using-ffmpeg-library-in-visual-studio.html) and [that](http://www.mingw.org/wiki/MSVC_and_MinGW_DLLs).
+6- Replace the original FFmpeg .lib with the generated ones for Visual Studio (i.e: delete swscale.lib, rename swscale-5.lib -> swscale.lib)
 
 ### Qt
 
