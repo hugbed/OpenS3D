@@ -92,6 +92,9 @@ class VideoSynchronizer : public QObject, public s3d::VideoCaptureDevice::Client
   bool m_videoLoaded{false};
   bool m_liveCamera{false};
 
+  std::vector<uint8_t> m_dataLeft;
+  std::vector<uint8_t> m_dataRight;
+
   // synchronization
   QMutex m_mutex;
   bool m_imagesDirty{false};

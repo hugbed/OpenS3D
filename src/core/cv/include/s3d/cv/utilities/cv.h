@@ -54,7 +54,7 @@ inline int nbChannelsToMatType(int nbChannels) {
   return imgType;
 }
 
-inline cv::Mat dataToMat(Size size, VideoPixelFormat pixelFormat, gsl::span<const uint8_t> data) {
+inline cv::Mat dataToMat(Size size, VideoPixelFormat pixelFormat, const gsl::span<const uint8_t>& data) {
   auto nbChannels = static_cast<int>(VideoFrame::NumBytesPerPixel(pixelFormat));
   return cv::Mat(size.getHeight(),
                  size.getWidth(),

@@ -2,13 +2,17 @@
 
 #include "s3d/cv/utilities/cv.h"
 
+#include <utility>
+
 namespace s3d {
 
 StereoDemuxerCV::StereoDemuxerCV(Size frameSize, VideoPixelFormat pixelFormat, bool halfResolution)
     : halfResolution_{halfResolution}, frameSize_{frameSize}, pixelFormat_{pixelFormat} {}
 
-std::pair<StereoDemuxer::ImageData, StereoDemuxer::ImageData> StereoDemuxerCV::demux(
-    const StereoDemuxer::ImageData& image) {
+void StereoDemuxerCV::demux(
+    const InputImageData& image,
+    OutputImageData* leftImage,
+    OutputImageData* rightImage) {
   cv::Mat originalImg = dataToMat(frameSize_, pixelFormat_, image);
 
   cv::Mat leftImg, rightImg;
@@ -17,10 +21,10 @@ std::pair<StereoDemuxer::ImageData, StereoDemuxer::ImageData> StereoDemuxerCV::d
   assert(leftImg.rows == rightImg.rows);
 
   size_t nbBytes = VideoFrame::AllocationSize(pixelFormat_, Size(leftImg.cols, leftImg.rows));
-  std::vector<uint8_t> leftData(leftImg.data, leftImg.data + nbBytes);
-  std::vector<uint8_t> rightData(rightImg.data, rightImg.data + nbBytes);
-
-  return {leftData, rightData};
+  leftImage->resize(nbBytes);
+  rightImage->resize(nbBytes);
+  leftImage->assign(leftImg.data, leftImg.data + nbBytes);
+  rightImage->assign(rightImg.data, rightImg.data + nbBytes);
 }
 
 void StereoDemuxerCV::setSize(Size size) {

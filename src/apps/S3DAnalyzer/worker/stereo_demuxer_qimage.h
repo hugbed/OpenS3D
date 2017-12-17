@@ -10,7 +10,7 @@ class StereoDemuxerQImage : public s3d::StereoDemuxer {
  public:
   explicit StereoDemuxerQImage(bool halfResolution);
 
-  std::pair<ImageData, ImageData> demux(const ImageData& image) override;
+  void demux(const InputImageData& image, OutputImageData* leftImage, OutputImageData* rightImage) override;
 
   virtual std::pair<QImage, QImage> demuxQImage(const QImage& image) = 0;
 

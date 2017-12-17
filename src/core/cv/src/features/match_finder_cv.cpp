@@ -74,7 +74,7 @@ double MatchFinderCV::matchesMinDistance(MatchesCV matches) const {
 };
 
 cv::Ptr<cv::Feature2D> MatchFinderCV::createFeatureDetector() {
-  return cv::ORB::create(3000, 1.2f, 32, 5, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
+  return cv::ORB::create(static_cast<int>(maxNbFeatures_), 1.2f, 32, 5, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
 }
 
 cv::Ptr<cv::DescriptorMatcher> MatchFinderCV::createDescriptorMatcher() {

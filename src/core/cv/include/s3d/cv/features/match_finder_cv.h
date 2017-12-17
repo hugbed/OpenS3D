@@ -54,7 +54,7 @@ class MatchFinderCV : public MatchFinder {
                                  const cv::Mat& /*imgRight*/,
                                  const MatchFinder::Matches& /*matches*/) {}
 
-  size_t maxNbFeatures_{1000};
+  size_t maxNbFeatures_{3000}; // todo: set this somewhere else
 };
 
 /**

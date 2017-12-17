@@ -16,10 +16,11 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
 option(OpenS3D_BUILD_OGRE_APPS "Build Ogre applications" OFF)
 option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
-option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" OFF)
-option(OpenS3D_USE_DECKLINK "Build OpenS3D DeckLink implementations" ON)
+option(OpenS3D_USE_DECKLINK "Build OpenS3D DeckLink implementations" OFF)
 option(OpenS3D_USE_FFMPEG "Build OpenS3D FFmpeg implementations" ON)
+option(OpenS3D_BUILD_S3DANALYZER "Build S3DAnalyzer software" ON)
 option(OpenS3D_BUILD_COVERAGE "Enable code coverage generation (gcc only)" OFF)
+option(OpenS3D_USE_CUDA "Build OpenS3D Cuda related code" OFF)
 
 # Remove 'lib' prefix for shared libraries on Windows
 if (WIN32)

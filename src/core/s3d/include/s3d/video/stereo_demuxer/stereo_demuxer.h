@@ -6,6 +6,8 @@
 #include "s3d/video/capture/video_capture_types.h"
 #include "s3d/video/video_types.h"
 
+#include <gsl/gsl>
+
 #include <cstdint>
 #include <vector>
 
@@ -13,8 +15,11 @@ namespace s3d {
 
 class StereoDemuxer : public rule_of_five_interface<StereoDemuxer> {
  public:
-  using ImageData = std::vector<uint8_t>;
-  virtual std::pair<ImageData, ImageData> demux(const ImageData& image) = 0;
+  using InputImageData = gsl::span<const uint8_t>;
+  using OutputImageData = std::vector<uint8_t>;
+  virtual void demux(const InputImageData& image,
+                     OutputImageData* leftImage,
+                     OutputImageData* rightImage) = 0;
   virtual Size demuxedSize() const = 0;
   virtual Stereo3DFormat getStereoFormat() const = 0;
   virtual void setSize(Size size) = 0;

@@ -26,7 +26,7 @@ std::pair<cv::Mat, cv::Mat> StereoDemuxerCVSideBySide::demuxCV(const cv::Mat& or
     resizeMat(&leftImg, 2.0f, 1.0f);
     resizeMat(&rightImg, 2.0f, 1.0f);
   }
-  return {leftImg, rightImg};
+  return std::make_pair(leftImg, rightImg);
 }
 
 Size StereoDemuxerCVSideBySide::demuxedSize() const {

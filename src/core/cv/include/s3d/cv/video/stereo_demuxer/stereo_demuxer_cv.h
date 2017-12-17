@@ -19,7 +19,7 @@ class StereoDemuxerCV : public StereoDemuxer {
  public:
   StereoDemuxerCV(Size frameSize, VideoPixelFormat pixelFormat, bool halfResolution = false);
 
-  std::pair<ImageData, ImageData> demux(const ImageData& image) override;
+  void demux(const InputImageData& image, OutputImageData* leftImage, OutputImageData* rightImage) override;
   virtual std::pair<cv::Mat, cv::Mat> demuxCV(const cv::Mat& originalImg) = 0;
 
   void setSize(Size size) override;

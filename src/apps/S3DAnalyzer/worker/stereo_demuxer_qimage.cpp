@@ -2,11 +2,12 @@
 
 StereoDemuxerQImage::StereoDemuxerQImage(bool halfResolution) : halfResolution_{halfResolution} {}
 
-std::pair<s3d::StereoDemuxer::ImageData, s3d::StereoDemuxer::ImageData> StereoDemuxerQImage::demux(
-    const s3d::StereoDemuxer::ImageData& /*image*/) {
+void StereoDemuxerQImage::demux(
+    const InputImageData& /*image*/,
+    OutputImageData* /*leftImage*/,
+    OutputImageData* /*rightImage*/) {
   // data to QImage to data
   // todo: not implemented
-  return {};
 }
 
 void StereoDemuxerQImage::setSize(s3d::Size size) {

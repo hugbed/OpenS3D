@@ -63,28 +63,25 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
                                                std::chrono::microseconds timestamp) {
   m_mutex.lock();
 
-  if ((m_stereoDemuxer.get() == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
+  if ((m_stereoDemuxer == nullptr && stereoDemuxerRequired()) || stereoFormatChanged()) {
     updateStereoDemuxer(frameFormat);
   }
 
   auto frameSize = frameFormat.frameSize;
 
   // should demux stereo
-  if (m_stereoDemuxer.get() != nullptr && !data.empty()) {
+  if (m_stereoDemuxer != nullptr && !data.empty()) {
     m_stereoDemuxer->setSize(frameFormat.frameSize);
     m_stereoDemuxer->setPixelFormat(frameFormat.pixelFormat);
     frameSize = m_stereoDemuxer->demuxedSize();
 
-    std::vector<uint8_t> dataLeft, dataRight;
-    std::tie(dataLeft, dataRight) = m_stereoDemuxer->demux(
-        std::vector<uint8_t>(data[0].data(), data[0].data() + data[0].size()));
+    m_stereoDemuxer->demux(data[0], &m_dataLeft, &m_dataRight);
 
+    // don't need copy, already done in demux
     m_imageLeft =
-        QImage(dataLeft.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
-            .copy();
+        QImage(m_dataLeft.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32);
     m_imageRight =
-        QImage(dataRight.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32)
-            .copy();
+        QImage(m_dataRight.data(), frameSize.getWidth(), frameSize.getHeight(), QImage::Format_ARGB32);
   }
   // input in separate images
   else if (data.size() > 1) {
