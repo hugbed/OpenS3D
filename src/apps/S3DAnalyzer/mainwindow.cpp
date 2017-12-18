@@ -353,6 +353,7 @@ void MainWindow::computeAndUpdate() {
   cv::Mat outputImageRight;
   std::tie(outputImageLeft, outputImageRight) = m_imageOperations->inputOutputAdapter.getOutputImages();
 
+  m_userSettings.viewerContext.imageWidthPixels = outputImageLeft.cols;
   m_currentContext->makeCurrent();
   m_currentContext->textureManager->setImages(Mat2QImage(outputImageLeft), Mat2QImage(outputImageRight));
   m_currentContext->doneCurrent();
@@ -552,8 +553,8 @@ void MainWindow::handleNewImagePair(const QImage& imgLeft,
     return;
   }
 
+  m_imageOperations->inputOutputAdapter.setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
   ui->videoControls->updateSlider(timestamp);
-  m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
   m_currentContext->entityManager->setUserSettings(&m_userSettings);
   computeAndUpdate();
 }

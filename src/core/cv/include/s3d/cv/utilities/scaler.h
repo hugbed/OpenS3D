@@ -6,6 +6,7 @@
 class Scaler {
 public:
   void setRatio(float ratio) { ratio_ = ratio; }
+  float getRatio() { return ratio_; }
 
   void resize(gsl::not_null<cv::Mat*> image) {
     if (0.0f < ratio_ && ratio_ < 0.99f) {

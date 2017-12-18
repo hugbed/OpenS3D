@@ -19,6 +19,7 @@ namespace image_operation {
 class ScaleImages : public ImageOperation {
 public:
   void setRatio(float resizeRatio);
+  float getRatio();
 
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;

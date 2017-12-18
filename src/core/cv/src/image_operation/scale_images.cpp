@@ -9,6 +9,10 @@ void ScaleImages::setRatio(float resizeRatio) {
   imageScaler_.setRatio(resizeRatio);
 }
 
+float ScaleImages::getRatio() {
+  return imageScaler_.getRatio();
+}
+
 bool ScaleImages::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
   if (leftImage->empty() || rightImage->empty()) {
     return false;
