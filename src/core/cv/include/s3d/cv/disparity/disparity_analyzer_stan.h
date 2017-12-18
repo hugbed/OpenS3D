@@ -53,8 +53,10 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
 
   gsl::owner<DisparityAnalyzerSTAN*> clone() const override;
 
-  bool analyze(const cv::Mat& left, const cv::Mat& right);
+  void setMatchFinder(std::unique_ptr<MatchFinderCV> matchFinder);
+  void setMaxNumberOfFeatures(int maxNumberOfFeatures);
 
+  bool analyze(const cv::Mat& left, const cv::Mat& right);
   bool analyze(const Image<uint8_t>& left, const Image<uint8_t>& right) override;
   const std::vector<float>& getDisparitiesPercent() const override;
   const std::vector<Eigen::Vector2f>& getFeaturePointsLeft() const override;
@@ -69,7 +71,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
   bool enoughMatches(int nbOfMatches);
   RansacAlgorithmSTAN createRansac(Size imageSize);
 
-  std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<s3d::MatchFinderSurf>()};
+  std::unique_ptr<MatchFinderCV> matchFinder_{std::make_unique<MatchFinderCV>()};
   int minNbInliers_{4};
 };
 }  // namespace s3d

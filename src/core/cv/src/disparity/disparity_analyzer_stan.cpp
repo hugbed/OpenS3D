@@ -58,6 +58,14 @@ gsl::owner<DisparityAnalyzerSTAN*> DisparityAnalyzerSTAN::clone() const {
   return new DisparityAnalyzerSTAN();
 }
 
+void DisparityAnalyzerSTAN::setMatchFinder(std::unique_ptr<MatchFinderCV> matchFinder) {
+  matchFinder_ = std::move(matchFinder);
+}
+
+void DisparityAnalyzerSTAN::setMaxNumberOfFeatures(int maxNumberOfFeatures) {
+  matchFinder_->setMaxNumberOfFeatures(maxNumberOfFeatures);
+}
+
 bool DisparityAnalyzerSTAN::analyze(const Image<uint8_t>& left, const Image<uint8_t>& right) {
   return analyze(image2cv(left), image2cv(right));
 }

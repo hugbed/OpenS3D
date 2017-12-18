@@ -26,6 +26,8 @@ class MatchFinderCV : public MatchFinder {
     std::vector<cv::KeyPoint> keypoints;
   };
 
+  void setMaxNumberOfFeatures(int maxNumberOfFeatures);
+
   MatchFinder::Matches findMatches(const std::vector<Image<uint8_t>>& images) override;
   Features findFeatures(const Image<uint8_t>& img);
 

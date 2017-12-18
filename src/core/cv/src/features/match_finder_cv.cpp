@@ -96,6 +96,10 @@ std::vector<cv::KeyPoint> MatchFinderCV::keepBestKeypointsFromResponse(const std
   return filteredKeypoints;
 }
 
+void MatchFinderCV::setMaxNumberOfFeatures(int maxNumberOfFeatures) {
+  maxNbFeatures_ = static_cast<size_t>(maxNumberOfFeatures);
+}
+
 void MatchFinderCVViz::onFeaturesFound(const cv::Mat& imgLeft,
                                        const cv::Mat& imgRight,
                                        const MatchFinderCV::Features& featuresLeft,

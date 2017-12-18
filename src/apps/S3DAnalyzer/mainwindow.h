@@ -20,7 +20,8 @@ class OpenGLWindow;
 class DepthAnalyzer;
 struct RenderingContext;
 class VideoSynchronizer;
-class SettingsDialog;
+class DisparitySettingsDialog;
+class FeaturesSettingsDialog;
 class StereoDemuxerQImage;
 class StereoDemuxerFactoryQImage;
 
@@ -90,7 +91,8 @@ class MainWindow : public QMainWindow {
   std::vector<std::unique_ptr<ImageOperationActionController>> m_imageOperationsActionControllers;
 
   UserSettings m_userSettings{};
-  std::unique_ptr<SettingsDialog> m_settingsDialog;
+  std::unique_ptr<DisparitySettingsDialog> m_disparitySettingsDialog;
+  std::unique_ptr<FeaturesSettingsDialog> m_featuresSettingsDialog;
 
   Ui::MainWindow* ui;
 };

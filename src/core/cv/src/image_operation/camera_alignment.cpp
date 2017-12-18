@@ -4,12 +4,14 @@ namespace s3d {
 namespace image_operation {
 
 CameraAlignment::CameraAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer)
-        : computeAlignment{disparityAnalyzer}
+        : scaleImages{}
+        , computeAlignment{disparityAnalyzer}
         , filterAlignment{disparityAnalyzer}
         , drawEpilines(disparityAnalyzer)
         , updateRectification(disparityAnalyzer)
         , rectify(disparityAnalyzer)
         , inputOutputAdapter{&operations_} {
+  operations_.setNext(&scaleImages);
   operations_.setNext(&computeAlignment);
   operations_.setNext(&filterAlignment);
   operations_.setNext(&drawEpilines);

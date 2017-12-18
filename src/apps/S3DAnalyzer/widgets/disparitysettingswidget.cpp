@@ -1,10 +1,10 @@
-#include "settingswidget.h"
-#include "ui_settingswidget.h"
+#include "disparitysettingswidget.h"
+#include "ui_disparitysettingswidget.h"
 
 #include <QPushButton>
 
-SettingsWidget::SettingsWidget(QWidget* parent)
-    : QWidget(parent), ui{std::make_unique<Ui::SettingsWidget>()} {
+DisparitySettingsWidget::DisparitySettingsWidget(QWidget* parent)
+    : QWidget(parent), ui{std::make_unique<Ui::DisparitySettingsWidget>()} {
   ui->setupUi(this);
 
   connect(ui->dialogButtonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, [this] {
@@ -63,9 +63,9 @@ SettingsWidget::SettingsWidget(QWidget* parent)
           [this](int /*value*/) { conditionalAutoUpdate(); });
 }
 
-SettingsWidget::~SettingsWidget() = default;
+DisparitySettingsWidget::~DisparitySettingsWidget() = default;
 
-void SettingsWidget::setUserSettings(gsl::not_null<UserSettings*> settings) {
+void DisparitySettingsWidget::setUserSettings(gsl::not_null<UserSettings*> settings) {
   ui->minDisplayRangeSpinBox->setValue(settings->displayParameters.displayRangeMin);
   ui->maxDisplayRangeSpinBox->setValue(settings->displayParameters.displayRangeMax);
   ui->minExpectedRangeSpinBox->setValue(settings->displayParameters.expectedRangeMin);
@@ -76,7 +76,7 @@ void SettingsWidget::setUserSettings(gsl::not_null<UserSettings*> settings) {
   ui->displayZoomSpinBox->setValue(static_cast<int>(settings->viewerDisplayZoom * 100.0f));
 }
 
-UserSettings SettingsWidget::getUserSettings() {
+UserSettings DisparitySettingsWidget::getUserSettings() {
   DisplayParameters displayParameters;
   displayParameters.displayRangeMin = static_cast<float>(ui->minDisplayRangeSpinBox->value());
   displayParameters.displayRangeMax = static_cast<float>(ui->maxDisplayRangeSpinBox->value());
@@ -103,20 +103,20 @@ UserSettings SettingsWidget::getUserSettings() {
   return settings;
 }
 
-void SettingsWidget::conditionalAutoUpdate() {
+void DisparitySettingsWidget::conditionalAutoUpdate() {
   if (ui->automaticUpdateCheckBox->isChecked()) {
     emit settingsUpdated(getUserSettings());
   }
 }
 
-void SettingsWidget::ensureMinSmallerThanMax(gsl::not_null<QDoubleSpinBox*> min,
+void DisparitySettingsWidget::ensureMinSmallerThanMax(gsl::not_null<QDoubleSpinBox*> min,
                                              gsl::not_null<QDoubleSpinBox*> max) {
   if (min->value() >= max->value()) {
     min->setValue(max->value() - min->singleStep());
   }
 }
 
-void SettingsWidget::ensureMaxLargerThanMin(gsl::not_null<QDoubleSpinBox*> min,
+void DisparitySettingsWidget::ensureMaxLargerThanMin(gsl::not_null<QDoubleSpinBox*> min,
                                             gsl::not_null<QDoubleSpinBox*> max) {
   if (min->value() >= max->value()) {
     max->setValue(min->value() + max->singleStep());

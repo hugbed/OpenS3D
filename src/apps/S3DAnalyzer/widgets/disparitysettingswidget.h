@@ -12,15 +12,15 @@
 class QDoubleSpinBox;
 
 namespace Ui {
-class SettingsWidget;
+class DisparitySettingsWidget;
 }
 
-class SettingsWidget : public QWidget {
+class DisparitySettingsWidget : public QWidget {
   Q_OBJECT
 
  public:
-  explicit SettingsWidget(QWidget* parent = 0);
-  ~SettingsWidget() override;
+  explicit DisparitySettingsWidget(QWidget* parent = 0);
+  ~DisparitySettingsWidget() override;
 
   void setUserSettings(gsl::not_null<UserSettings*> settings);
   UserSettings getUserSettings();
@@ -38,7 +38,7 @@ class SettingsWidget : public QWidget {
   void ensureMaxLargerThanMin(gsl::not_null<QDoubleSpinBox*> min,
                               gsl::not_null<QDoubleSpinBox*> max);
 
-  std::unique_ptr<Ui::SettingsWidget> ui;
+  std::unique_ptr<Ui::DisparitySettingsWidget> ui;
 };
 
 #endif  // SETTINGSWIDGET_H

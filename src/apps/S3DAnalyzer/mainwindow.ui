@@ -211,8 +211,6 @@
     <addaction name="actionOpenRightVideo"/>
     <addaction name="actionOpenImage"/>
     <addaction name="actionOpenVideo"/>
-    <addaction name="separator"/>
-    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuOverlay">
     <property name="title">
@@ -241,6 +239,13 @@
     <addaction name="actionInputVideo"/>
     <addaction name="actionInputLive"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionDisparitySettings"/>
+    <addaction name="actionFeaturesSettings"/>
+   </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
@@ -254,6 +259,7 @@
    <addaction name="menuDisplay_Mode"/>
    <addaction name="menuOverlay"/>
    <addaction name="menuTools"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -343,9 +349,14 @@
     <string>Reset</string>
    </property>
   </action>
-  <action name="actionSettings">
+  <action name="actionDisparitySettings">
    <property name="text">
-    <string>Settings...</string>
+    <string>Disparity...</string>
+   </property>
+  </action>
+  <action name="actionFeaturesSettings">
+   <property name="text">
+    <string>Features...</string>
    </property>
   </action>
   <action name="actionEnableComputations">

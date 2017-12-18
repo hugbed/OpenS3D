@@ -1,6 +1,7 @@
 #ifndef S3D_CV_IMAGE_OPERATION_CAMERA_ALIGNMENT_H
 #define S3D_CV_IMAGE_OPERATION_CAMERA_ALIGNMENT_H
 
+#include "s3d/cv/image_operation/scale_images.h"
 #include "s3d/cv/image_operation/compute_alignment.h"
 #include "s3d/cv/image_operation/filter_alignment.h"
 #include "s3d/cv/image_operation/draw_epilines.h"
@@ -20,6 +21,7 @@ class CameraAlignment {
 public:
   explicit CameraAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer);
 
+  ScaleImages scaleImages;
   ComputeAlignment computeAlignment;
   FilterAlignment filterAlignment;
   DrawEpilines drawEpilines;

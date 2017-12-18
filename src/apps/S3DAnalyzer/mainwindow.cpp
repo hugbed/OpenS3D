@@ -8,7 +8,8 @@
 #include "rendering/renderingcontext.h"
 #include "rendering/texturemanager.h"
 #include "utilities/cv.h"
-#include "widgets/settingsdialog.h"
+#include "widgets/disparitysettingsdialog.h"
+#include "widgets/featuressettingsdialog.h"
 #include "worker/stereo_demuxer_factory_qimage.h"
 #include "worker/stereo_demuxer_qimage.h"
 #include "worker/videosynchronizer.h"
@@ -23,11 +24,12 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       m_stereoDemuxer{},
       m_stereoDemuxerFactory{std::make_unique<StereoDemuxerFactoryQImage>()},
-      m_settingsDialog{std::make_unique<SettingsDialog>(this)},
+      m_disparitySettingsDialog{std::make_unique<DisparitySettingsDialog>(this)},
+      m_featuresSettingsDialog{std::make_unique<FeaturesSettingsDialog>(this)},
       ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  m_settingsDialog->setUserSettings(&m_userSettings);
+  m_disparitySettingsDialog->setUserSettings(&m_userSettings);
   m_videoSynchronizer = std::make_unique<VideoSynchronizer>();
   m_videoSynchronizer->setStereoVideoFormat(s3d::Stereo3DFormat::AboveBelow);
   m_stereoFormat = s3d::Stereo3DFormat::AboveBelow;
@@ -78,7 +80,7 @@ MainWindow::MainWindow(QWidget* parent)
   updateStereo3DFormat();
 
   connect(
-      m_settingsDialog.get(), &SettingsDialog::settingsUpdated, [this](UserSettings userSettings) {
+      m_disparitySettingsDialog.get(), &DisparitySettingsDialog::settingsUpdated, [this](UserSettings userSettings) {
         // keep image width in pixels that is not controlled by the user
         int imageWidthPixels = m_userSettings.viewerContext.imageWidthPixels;
         m_userSettings = std::move(userSettings);
@@ -113,7 +115,23 @@ MainWindow::MainWindow(QWidget* parent)
   });
   connect(ui->actionFormatHalfResolution, &QAction::triggered, [this] { updateStereo3DFormat(); });
 
-  connect(ui->actionSettings, &QAction::triggered, [this] { m_settingsDialog->show(); });
+  connect(ui->actionDisparitySettings, &QAction::triggered, [this] { m_disparitySettingsDialog->show(); });
+  connect(ui->actionFeaturesSettings, &QAction::triggered, [this] { m_featuresSettingsDialog->show(); });
+
+  connect(m_featuresSettingsDialog.get(), &FeaturesSettingsDialog::featureDetectorChanged, [this] (int newDetectorIndex) {
+    m_analyzer->setMatchFinder(MatchFinderFromIndexFactory::create(newDetectorIndex));
+    computeAndUpdate();
+  });
+
+  connect(m_featuresSettingsDialog.get(), &FeaturesSettingsDialog::maxNbFeaturesChanged, [this] (int newMaxNbFeatures) {
+    m_analyzer->setMaxNumberOfFeatures(newMaxNbFeatures);
+    computeAndUpdate();
+  });
+
+  connect(m_featuresSettingsDialog.get(), &FeaturesSettingsDialog::imageScalingRatioChanged, [this] (float newRatio) {
+    m_imageOperations->scaleImages.setRatio(newRatio);
+    computeAndUpdate();
+  });
 
   connect(ui->actionOpenLeftImage, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
@@ -444,8 +462,8 @@ EntityManager::DisplayMode MainWindow::getCurrentDisplayMode() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* /*event*/) {
-  if (m_settingsDialog != nullptr) {
-    m_settingsDialog->close();
+  if (m_disparitySettingsDialog != nullptr) {
+    m_disparitySettingsDialog->close();
   }
 }
 
@@ -534,7 +552,6 @@ void MainWindow::handleNewImagePair(const QImage& imgLeft,
     return;
   }
 
-  m_imageOperations->inputOutputAdapter.setInputImages(QImage2Mat(imgLeft), QImage2Mat(imgRight));
   ui->videoControls->updateSlider(timestamp);
   m_userSettings.viewerContext.imageWidthPixels = imgLeft.width();
   m_currentContext->entityManager->setUserSettings(&m_userSettings);

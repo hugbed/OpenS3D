@@ -22,12 +22,13 @@ set ( SOURCES
 
 set ( MOC_HEADERS
  mainwindow.h
- widgets/settingswidget.h
+ widgets/disparitysettingswidget.h
 )
 
 set ( UIS
  mainwindow.ui
- widgets/settingswidget.ui
+ widgets/disparitysettingswidget.ui
+ widgets/featuressettingsdialog.ui
 )
 
 set ( RESOURCES

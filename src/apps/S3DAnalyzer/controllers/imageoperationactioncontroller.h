@@ -10,7 +10,7 @@
 #include <gsl/gsl>
 
 class ImageOperationActionController : public QObject {
-Q_OBJECT
+  Q_OBJECT
 
 public:
   ImageOperationActionController(gsl::not_null<QAction*> action,
