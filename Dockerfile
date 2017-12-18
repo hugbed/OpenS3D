@@ -63,7 +63,8 @@ CMD cd /opt && \
         -DOpenS3D_BUILD_APPS=OFF \
         -DOpenS3D_USE_CUDA=OFF \
         -DOpenS3D_BUILD_COVERAGE=ON \ 
-        -DOpenS3D_USE_CV=ON && \
+        -DOpenS3D_USE_CV=ON \
+        -DOpenS3D_USE_DECKLINK=OFF \
         -DOpenS3D_BUILD_S3DANALYZER=OFF && \
     make -j2 && make Tests && \
     ../scripts/coverage.sh && \
