@@ -21,14 +21,15 @@ set ( SOURCES
 )
 
 set ( MOC_HEADERS
- mainwindow.h
- widgets/disparitysettingswidget.h
+  mainwindow.h
+  widgets/disparitysettingswidget.h
 )
 
 set ( UIS
- mainwindow.ui
- widgets/disparitysettingswidget.ui
- widgets/featuressettingsdialog.ui
+  mainwindow.ui
+  widgets/disparitysettingswidget.ui
+  widgets/featuressettingsdialog.ui
+  widgets/filtersettingsdialog.ui
 )
 
 set ( RESOURCES

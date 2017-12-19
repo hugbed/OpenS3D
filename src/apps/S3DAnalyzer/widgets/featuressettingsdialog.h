@@ -1,9 +1,8 @@
 #ifndef WIDGETS_FEATURESSETTINGSDIALOG_H
 #define WIDGETS_FEATURESSETTINGSDIALOG_H
 
-#include <QObject>
-
 #include <QDialog>
+#include <QObject>
 
 #include <memory>
 

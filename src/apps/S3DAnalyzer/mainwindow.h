@@ -22,6 +22,7 @@ struct RenderingContext;
 class VideoSynchronizer;
 class DisparitySettingsDialog;
 class FeaturesSettingsDialog;
+class FilterSettingsDialog;
 class StereoDemuxerQImage;
 class StereoDemuxerFactoryQImage;
 
@@ -93,6 +94,7 @@ class MainWindow : public QMainWindow {
   UserSettings m_userSettings{};
   std::unique_ptr<DisparitySettingsDialog> m_disparitySettingsDialog;
   std::unique_ptr<FeaturesSettingsDialog> m_featuresSettingsDialog;
+  std::unique_ptr<FilterSettingsDialog> m_filterSettingsDialog;
 
   Ui::MainWindow* ui;
 };

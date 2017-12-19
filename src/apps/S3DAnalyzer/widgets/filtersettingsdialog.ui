@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FilterSettingsDialog</class>
+ <widget class="QDialog" name="FilterSettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>135</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Process Variance</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Roll</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Vertical</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Pan Keystone</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Tilt Keystone</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Tilt Offset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Zoom</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="DoubleSpinBoxMultiples" name="rollSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleSpinBoxMultiples" name="verticalSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="DoubleSpinBoxMultiples" name="panKeystoneSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="DoubleSpinBoxMultiples" name="tiltKeystoneSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="DoubleSpinBoxMultiples" name="tiltOffsetSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="DoubleSpinBoxMultiples" name="zoomSpinBox">
+        <property name="decimals">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.000001000000000</double>
+        </property>
+        <property name="minimum">
+         <double>0.000000000100000</double>
+        </property>
+        <property name="maximum">
+         <double>100.0000000000001</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -245,6 +245,7 @@
     </property>
     <addaction name="actionDisparitySettings"/>
     <addaction name="actionFeaturesSettings"/>
+    <addaction name="actionFilterSettings"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -357,6 +358,11 @@
   <action name="actionFeaturesSettings">
    <property name="text">
     <string>Features...</string>
+   </property>
+  </action>
+  <action name="actionFilterSettings">
+   <property name="text">
+    <string>Filter...</string>
    </property>
   </action>
   <action name="actionEnableComputations">

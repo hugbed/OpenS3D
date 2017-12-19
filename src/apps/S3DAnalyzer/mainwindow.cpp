@@ -10,6 +10,7 @@
 #include "utilities/cv.h"
 #include "widgets/disparitysettingsdialog.h"
 #include "widgets/featuressettingsdialog.h"
+#include "widgets/filtersettingsdialog.h"
 #include "worker/stereo_demuxer_factory_qimage.h"
 #include "worker/stereo_demuxer_qimage.h"
 #include "worker/videosynchronizer.h"
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
       m_stereoDemuxerFactory{std::make_unique<StereoDemuxerFactoryQImage>()},
       m_disparitySettingsDialog{std::make_unique<DisparitySettingsDialog>(this)},
       m_featuresSettingsDialog{std::make_unique<FeaturesSettingsDialog>(this)},
+      m_filterSettingsDialog{std::make_unique<FilterSettingsDialog>(this)},
       ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
@@ -117,6 +119,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionDisparitySettings, &QAction::triggered, [this] { m_disparitySettingsDialog->show(); });
   connect(ui->actionFeaturesSettings, &QAction::triggered, [this] { m_featuresSettingsDialog->show(); });
+  connect(ui->actionFilterSettings, &QAction::triggered, [this] { m_filterSettingsDialog->show(); });
 
   connect(m_featuresSettingsDialog.get(), &FeaturesSettingsDialog::featureDetectorChanged, [this] (int newDetectorIndex) {
     m_analyzer->setMatchFinder(MatchFinderFromIndexFactory::create(newDetectorIndex));
@@ -131,6 +134,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_featuresSettingsDialog.get(), &FeaturesSettingsDialog::imageScalingRatioChanged, [this] (float newRatio) {
     m_imageOperations->scaleImages.setRatio(newRatio);
     computeAndUpdate();
+  });
+
+  connect(m_filterSettingsDialog.get(), &FilterSettingsDialog::processVarianceChanged, [this] (const s3d::StanVariance& processVariance) {
+    m_imageOperations->filterAlignment.setProcessVariance(processVariance);
   });
 
   connect(ui->actionOpenLeftImage, &QAction::triggered, [this] {

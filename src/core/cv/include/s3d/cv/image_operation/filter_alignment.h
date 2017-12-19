@@ -4,6 +4,7 @@
 #include "image_operation.h"
 
 #include "s3d/filter/kalman.h"
+#include "s3d/filter/stan_variance.h"
 
 namespace s3d {
 class DisparityAnalyzerSTAN;
@@ -15,6 +16,7 @@ class Mat;
 }
 
 namespace s3d {
+
 namespace image_operation {
 
 class FilterAlignment : public ImageOperation {
@@ -22,6 +24,7 @@ public:
   explicit FilterAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disparityAnalyzer);
 
   void resetFilter();
+  void setProcessVariance(const s3d::StanVariance &processVariance);
 
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;

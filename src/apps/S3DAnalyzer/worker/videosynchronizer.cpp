@@ -105,10 +105,6 @@ void VideoSynchronizer::OnIncomingCapturedData(const Images& data,
   m_timestamp = timestamp;
   m_imagesDirty = true;
   m_mutex.unlock();
-
-  if (timestamp == m_videoDuration) {
-    stop();
-  }
 }
 
 void VideoSynchronizer::checkForIncomingImage() {
