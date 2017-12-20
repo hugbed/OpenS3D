@@ -383,8 +383,9 @@ void MainWindow::requestImageFilename(Functor f) {
   QString filename =
       QFileDialog::getOpenFileName(this,
                                    tr("Open Image"),
-                                   "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data",
-                                   tr("Image Files (*.png *.jpg *.bmp *.pbm)"));
+                                   "/home/bedh2102",
+                                   tr("Image Files (*.png *.jpg *.bmp *.pbm)",
+                                   nullptr, QFileDialog::DontUseNativeDialog));
   if (!filename.isEmpty()) {
     f(filename);
   }
@@ -393,7 +394,7 @@ void MainWindow::requestImageFilename(Functor f) {
 template <class Functor>
 void MainWindow::requestVideoFilename(Functor f) {
   QString filename = QFileDialog::getOpenFileName(
-      this, tr("Open Video"), "/home/jon/Projects/s3d_matlab/camera_alignment/dataset/data");
+      this, tr("Open Video"), "/home/bedh2102", "", nullptr, QFileDialog::DontUseNativeDialog);
   if (!filename.isEmpty()) {
     f(filename);
   }
