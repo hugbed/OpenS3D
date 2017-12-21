@@ -25,6 +25,7 @@ public:
 
   void resetFilter();
   void setProcessVariance(const s3d::StanVariance &processVariance);
+  void setMeasureVariance(const s3d::StanVariance &measureVariance);
 
 private:
   bool applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) override;

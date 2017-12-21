@@ -10,14 +10,21 @@ namespace s3d {
 // todo: variable names are really not clear (we assume here that one has read the article...)
 // todo: name this with readable format (i.e: verticalOffset, etc.)
 struct StanAlignment {
-  // logical representations and units
-  double verticalOffsetDegrees() { return ch_y * 180 / M_PI; }
-  double rollAngleDegrees() { return a_z * 180.0 / M_PI; }
-  double zoomRatioPercent() { return (a_f + 1.0) * 100.0; }
+  // raw alignment
+  double verticalOffsetRadians() { return ch_y; }
+  double rollAngleRadians() { return a_z; }
+  double zoomRatio() { return a_f; }
   double tiltOffsetPixels() { return f_a_x; }
-  double panKeystoneDegreesPerMeter() { return a_y_f * 180 / M_PI; }
-  double tiltKeystoneDegreesPerMeter() { return a_x_f * 180 / M_PI; }
+  double panKeystoneRadiansPerMeter() { return a_y_f; }
+  double tiltKeystoneRadiansPerMeter() { return a_x_f; }
   double zParallaxDeformationRatio() { return ch_z_f; }
+
+  // logical representations and units
+  double verticalOffsetDegrees() { return verticalOffsetRadians() * 180 / M_PI; }
+  double rollAngleDegrees() { return rollAngleRadians() * 180.0 / M_PI; }
+  double zoomRatioPercent() { return (zoomRatio() + 1.0) * 100.0; }
+  double panKeystoneDegreesPerMeter() { return panKeystoneRadiansPerMeter() * 180 / M_PI; }
+  double tiltKeystoneDegreesPerMeter() { return tiltKeystoneRadiansPerMeter() * 180 / M_PI; }
 
   // mathematical symbols
   double ch_y{};    // vertical offset: * 180 / PI (degrees)

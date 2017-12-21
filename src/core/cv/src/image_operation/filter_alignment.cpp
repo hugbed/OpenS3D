@@ -11,13 +11,7 @@ FilterAlignment::FilterAlignment(gsl::not_null<s3d::DisparityAnalyzerSTAN*> disp
         : disparityAnalyzer_{disparityAnalyzer}
         , kalmanFilter_{5}
 {
-  Eigen::VectorXd observationVariances(5);
-  observationVariances << 3.6816E-4, 5.9837E-7, 7.2080E-6, 0.7405, 3.6816E-4;
-  kalmanFilter_.setObservationVariances(observationVariances);
-
-  Eigen::VectorXd processVariances(5);
-  processVariances << 0.000000001, 0.00001, 0.00001, 0.00001, 0.00001;
-  kalmanFilter_.setProcessVariances(processVariances);
+  resetFilter();
 }
 
 bool FilterAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, StanResults* results) {
@@ -43,10 +37,22 @@ bool FilterAlignment::applyOnImage(cv::Mat* leftImage, cv::Mat* rightImage, Stan
 
 void FilterAlignment::resetFilter() {
   kalmanFilter_.setInitialValues(Eigen::VectorXd::Zero(5));
+
+  Eigen::VectorXd observationVariances(5);
+  observationVariances << 3.6816E-4, 5.9837E-7, 7.2080E-6, 0.7405, 3.6816E-4;
+  kalmanFilter_.setObservationVariances(observationVariances);
+
+  Eigen::VectorXd processVariances(5);
+  processVariances << 0.000000001, 0.00001, 0.00001, 0.00001, 0.00001;
+  kalmanFilter_.setProcessVariances(processVariances);
 }
 
 void FilterAlignment::setProcessVariance(const s3d::StanVariance &processVariance) {
   kalmanFilter_.setProcessVariances(processVariance.toVector());
+}
+
+void FilterAlignment::setMeasureVariance(const s3d::StanVariance &measureVariance) {
+  kalmanFilter_.setObservationVariances(measureVariance.toVector());
 }
 
 

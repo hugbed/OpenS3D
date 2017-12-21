@@ -65,6 +65,7 @@ inline cv::Mat dataToMat(Size size, VideoPixelFormat pixelFormat, const gsl::spa
 inline void resizeMat(gsl::not_null<cv::Mat*> mat, float colsRatio, float rowsRatio) {
   float cols = mat->cols;
   float rows = mat->rows;
+  // todo: use linear if upsampling, inter_area is good for down sampling
   cv::resize(*mat, *mat, cv::Size2f(cols * colsRatio, rows * rowsRatio), cv::INTER_AREA);
 }
 

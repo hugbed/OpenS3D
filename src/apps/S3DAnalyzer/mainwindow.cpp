@@ -140,6 +140,17 @@ MainWindow::MainWindow(QWidget* parent)
     m_imageOperations->filterAlignment.setProcessVariance(processVariance);
   });
 
+  connect(m_filterSettingsDialog.get(), &FilterSettingsDialog::startNoiseMeasure, [this] {
+    m_imageOperations->measureAlignmentNoise.reset();
+    m_imageOperations->measureAlignmentNoise.enable();
+  });
+
+  connect(m_filterSettingsDialog.get(), &FilterSettingsDialog::stopNoiseMeasure, [this] {
+    m_imageOperations->measureAlignmentNoise.disable();
+    auto variance = m_imageOperations->measureAlignmentNoise.getVariance();
+    m_imageOperations->filterAlignment.setMeasureVariance(variance);
+  });
+
   connect(ui->actionOpenLeftImage, &QAction::triggered, [this] {
     requestImageFilename([this](const QString& filename) {
       if (m_videoSynchronizer != nullptr) {
