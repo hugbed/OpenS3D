@@ -35,7 +35,7 @@ The usage of the library is demonstrated with a stereoscopic 3D analysis softwar
 
 This project uses C++14 and CMake.
 
-The only supported platform for now is linux (Ubuntu, Arch Linux) with the goal of porting it to Windows and Mac OS.
+This project is mainly developped on Linux (Ubuntu, Arch) but has recently been ported to Mac OS and Windows (see [Windows Setup](./windows-setup.md)). FFmpeg can be installed from source (or with brew on Mac OS) and OpenCV compiled from source.
 
 Dependencies are:
 
