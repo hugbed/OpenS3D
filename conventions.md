@@ -73,7 +73,7 @@ Eigen::Vector2d BlobDetector::detectBlob()(const Image<uint8_t>& imageData, doub
 }  // namespace OpenS3D
 ```
 
-Another example with mode code:
+Another example with more code:
 
 ```cpp
 #include <iostream>
