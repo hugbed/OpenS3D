@@ -17,6 +17,17 @@ FilterSettingsDialog::FilterSettingsDialog(QWidget* parent)
   connectSpinBox(ui->tiltKeystoneSpinBox, &processVariance.tiltKeystone);
   connectSpinBox(ui->tiltOffsetSpinBox, &processVariance.tiltOffset);
   connectSpinBox(ui->zoomSpinBox, &processVariance.zoom);
+
+  connect(ui->startNoiseMesureButton, &QPushButton::pressed, [this] {
+    measuringNoise = !measuringNoise;
+    if (measuringNoise) {
+      ui->startNoiseMesureButton->setText("Stop");
+      emit startNoiseMeasure();
+    } else {
+      ui->startNoiseMesureButton->setText("Start");
+      emit stopNoiseMeasure();
+    }
+  });
 }
 
 void FilterSettingsDialog::connectSpinBox(QDoubleSpinBox *spinBox, double *value) {

@@ -26,7 +26,7 @@ class DisparityAnalyzerSTAN : public DisparityAnalyzer {
  public:
   // can alternatively use Lmeds
   using RansacAlgorithmSTAN =
-      s3d::robust::Ransac<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction>;
+      s3d::robust::Lmeds<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction>;
 
   struct Results {
     explicit Results();

@@ -44,3 +44,33 @@ TEST(median, odd_value) {
   std::vector<double> values = { 1.0, 2.0, 3.0 };
   EXPECT_DOUBLE_EQ(values[1], s3d::median(values));
 }
+
+double mean(const std::vector<double>& values) {
+  double sum{0.0};
+  for (auto value : values) {
+    sum += value;
+  }
+  return sum / static_cast<double>(values.size());
+}
+
+double offlineVariance(const std::vector<double>& values) {
+  double meanValues = mean(values);
+  double sumDistSquared{0.0};
+  for (auto value : values) {
+    sumDistSquared += (value - meanValues) * (value - meanValues);
+  }
+  return sumDistSquared / (static_cast<double>(values.size()) - 1.0);
+}
+
+TEST(online_variance, compare_results) {
+  std::vector<double> values = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
+  double goldVariance = offlineVariance(values);
+
+  s3d::OnlineVariance<double> onlineVariance;
+
+  for (auto value : values) {
+    onlineVariance.update(value);
+  }
+
+  EXPECT_DOUBLE_EQ(onlineVariance.getVariance(), goldVariance);
+}

@@ -47,6 +47,43 @@ T median(const std::vector<T>& values) {
   return (copy[size/2] + copy[size/2 - 1]) / static_cast<T>(2);
 }
 
+/*
+ * B. P. Welford (1962).
+ * "Note on a method for calculating corrected sums of squares and products".
+ * Technometrics 4(3):419–420.
+ */
+template <class T>
+class OnlineVariance {
+public:
+  void update(T newValue) {
+    count++;
+    T delta = newValue - mean;
+    mean = mean + delta / static_cast<T>(count);
+    T delta2 = newValue - mean;
+    m2 += delta * delta2;
+  }
+
+  void reset() {
+    count = 0;
+    mean = {};
+    m2 = {};
+  }
+
+  // Only valid if count >= 2
+  T getMean() {
+    return mean;
+  }
+
+  T getVariance() {
+    return m2 / (static_cast<T>(count) - 1.0);
+  }
+
+private:
+  int count{};
+  T mean{};
+  T m2{};
+};
+
 }  // namespace s3d
 
 #endif  // S3D_UTILITIES_STATS_H

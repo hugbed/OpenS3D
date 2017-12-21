@@ -3,6 +3,7 @@
 
 #include "s3d/cv/image_operation/scale_images.h"
 #include "s3d/cv/image_operation/compute_alignment.h"
+#include "s3d/cv/image_operation/measure_alignment_noise.h"
 #include "s3d/cv/image_operation/filter_alignment.h"
 #include "s3d/cv/image_operation/draw_epilines.h"
 #include "s3d/cv/image_operation/update_rectification.h"
@@ -23,6 +24,7 @@ public:
 
   ScaleImages scaleImages;
   ComputeAlignment computeAlignment;
+  MeasureAlignmentNoise measureAlignmentNoise;
   FilterAlignment filterAlignment;
   DrawEpilines drawEpilines;
   UpdateRectification updateRectification;

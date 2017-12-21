@@ -18,11 +18,14 @@ public:
 
 signals:
   void processVarianceChanged(const s3d::StanVariance& processVariance);
+  void startNoiseMeasure();
+  void stopNoiseMeasure();
 
 private:
   void connectSpinBox(QDoubleSpinBox* spinBox, double* value);
   void setInitialVarianceValuesFromSpinBoxes();
 
+  bool measuringNoise{false};
   s3d::StanVariance processVariance;
   std::unique_ptr<Ui::FilterSettingsDialog> ui;
 };
