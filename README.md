@@ -3,7 +3,7 @@
 ## Open Source Library and Software for Stereoscopic 3D Content Production
 
 The goal of this library is to provide users with tools (C++ library and software) to create stereoscopic 3D content.
-These tools should be sufficient to create 3D content either for stereoscopic cinema content production.
+These tools should be sufficient to create stereoscopic 3D for cinematic purposes.
 
 ![S3DAnalyzer](https://i.imgur.com/BnjfVFd.png)
 
