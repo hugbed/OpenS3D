@@ -62,3 +62,15 @@ This project uses clang-format Chromium coding standard.
 ## License
 
 This software is licensed under a BSD 3-clause license. See [LICENSE](LICENSE) file.
+
+## Citations
+
+Cite as:
+
+```
+@misc{bedard2018opens3d,
+  author = "Hugo Bédard",
+  title = "OpenS3D, an Open-Source Real-Time Assistance Framework for Stereoscopic Content Production",
+  howpublished = "\url{https://github.com/hugbed/OpenS3D}",
+}
+```
