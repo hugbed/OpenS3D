@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/hugbed/OpenS3D.svg?branch=master)](https://travis-ci.org/hugbed/OpenS3D) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b1f285e4d9f34686910f4cc100c6f56d)](https://www.codacy.com/app/hugbed/OpenS3D?utm_source=github.com&utm_medium=referral&utm_content=hugbed/OpenS3D&utm_campaign=badger) [![codecov](https://codecov.io/gh/hugbed/OpenS3D/branch/master/graph/badge.svg)](https://codecov.io/gh/hugbed/OpenS3D)
 
-## Open Source Library and Software for Stereoscopic 3D Content Production
+## OpenS3D, an Open Source Framework for Stereoscopic Content Production
 
 The goal of this library is to provide users with tools (C++ library and software) to create stereoscopic 3D content.
 These tools should be sufficient to create stereoscopic 3D for cinematic purposes.
