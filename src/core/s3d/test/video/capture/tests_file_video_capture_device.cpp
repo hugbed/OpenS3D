@@ -246,7 +246,6 @@ class FakeFileVideoCaptureDeviceNoParser : public FileVideoCaptureDeviceRawUYVY 
 
 TEST(file_video_capture_device, no_file_parser_does_not_crash) {
   FakeFileVideoCaptureDeviceNoParser device;
-  auto fileParserPtr = new FakeVideoFileParser({});
   auto fakeVideoCaptureDeviceClient = std::make_unique<FakeVideoCaptureDeviceClient>();
 
   device.AllocateAndStart(VideoCaptureFormat{}, fakeVideoCaptureDeviceClient.get());

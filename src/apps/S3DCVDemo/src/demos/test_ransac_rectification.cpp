@@ -15,9 +15,6 @@ int main(int argc, char* argv[]) {
   cv::Mat imgLeft = dataset.loadImageLeft();
   cv::Mat imgRight = dataset.loadImageRight();
 
-  s3d::MatchFinderCV matchFinder;
-  std::vector<std::vector<Eigen::Vector2d>> matches = matchFinder.findMatches(imgLeft, imgRight);
-
   // load points to homogeneous coordinates
   std::vector<Eigen::Vector2d> ptsLeft = dataset.loadPointsLeft(),
                                ptsRight = dataset.loadPointsRight();
