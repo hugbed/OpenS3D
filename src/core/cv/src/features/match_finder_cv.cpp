@@ -14,7 +14,7 @@ MatchFinder::Matches MatchFinderCV::findMatches(const cv::Mat& imageLeft,
 
   if (featuresLeft.descriptors.rows == 0 || featuresRight.descriptors.rows == 0 ||
       featuresLeft.keypoints.size() == 0 || featuresRight.keypoints.size() == 0) {
-    return {{}, {}};
+    return MatchFinder::Matches{std::vector<Position>{}, std::vector<Position>{}};
   }
 
   onFeaturesFound(imageLeft, imageRight, featuresLeft, featuresRight);
