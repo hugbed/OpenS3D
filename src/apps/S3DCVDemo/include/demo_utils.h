@@ -26,7 +26,7 @@ inline DatasetLoaderVSG createDatasetLoader(int argc, char* argv[]) {
   return DatasetLoaderVSG{datasetName, datasetPath};
 }
 
-inline s3d::robust::Ransac<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> createRansac(
+inline s3d::robust::Lmeds<s3d::StanFundamentalMatrixSolver, s3d::SampsonDistanceFunction> createRansac(
         s3d::Size imageSize) {
   int h = imageSize.getHeight();
   int w = imageSize.getWidth();

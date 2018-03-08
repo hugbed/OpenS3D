@@ -9,7 +9,7 @@
 
 // Inspired by openMVG Image class
 
-#include "Eigen/Dense"
+#include "s3d/utilities/eigen.h"
 
 #include <cstdint>  // uint8_t
 

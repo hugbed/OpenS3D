@@ -50,6 +50,7 @@ private:
     panKeystone.update(results->alignment.panKeystoneRadiansPerMeter());
     tiltKeystone.update(results->alignment.tiltKeystoneRadiansPerMeter());
     zParallaxDeformation.update(results->alignment.zParallaxDeformationRatio());
+    return true;
   }
 
   OnlineVariance<double> vertical;

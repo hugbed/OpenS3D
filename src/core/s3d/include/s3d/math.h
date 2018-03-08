@@ -1,7 +1,7 @@
 #ifndef S3D_MATH_H
 #define S3D_MATH_H
 
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 #include <vector>
 

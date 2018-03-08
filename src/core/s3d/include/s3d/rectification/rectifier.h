@@ -5,7 +5,7 @@
 
 #include "s3d/image/image_container.h"
 
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 

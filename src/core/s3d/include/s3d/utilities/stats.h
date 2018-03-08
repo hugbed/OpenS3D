@@ -44,7 +44,7 @@ T median(const std::vector<T>& values) {
   if (size % 2 != 0) {
     return copy[size/2];
   }
-  return (copy[size/2] + copy[size/2 - 1]) / static_cast<T>(2);
+  return (copy[size/2] + copy[size/2 - 1]) / T{2.0};
 }
 
 /*

@@ -7,11 +7,10 @@
 
 #include <s3d/cv/rectification/rectifier_cv.h>
 #include <s3d/cv/utilities/cv.h>
+#include <s3d/utilities/eigen.h>
 
 #include <opencv/cxeigen.hpp>
 #include <opencv2/opencv.hpp>
-
-#include <Eigen/Dense>
 
 #include <string>
 

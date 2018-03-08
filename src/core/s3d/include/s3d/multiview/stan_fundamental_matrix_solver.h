@@ -6,7 +6,7 @@
 #include "s3d/geometry/size.h"
 
 // std::vector requires complete type
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 #include <vector>
 

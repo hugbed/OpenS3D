@@ -2,8 +2,7 @@
 #define S3D_MULTIVIEW_STAN_RESULTS_H
 
 #include "s3d/multiview/stan_alignment.h"
-
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 #include <vector>
 

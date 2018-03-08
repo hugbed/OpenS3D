@@ -59,7 +59,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/gsl/include)
 
 # libraries to link
-set(LINK_LIBS s3d s3d_cv s3d_ffmpeg Qt5::Widgets Qt5::Core Qt5::Gui pthread)
+set(LINK_LIBS s3d s3d_cv s3d_ffmpeg Qt5::Widgets Qt5::Core Qt5::Gui)
 if(UNIX AND NOT APPLE)
   # decklink is currently only supported on Linux
   set(LINK_LIBS ${LINK_LIBS} s3d_decklink)

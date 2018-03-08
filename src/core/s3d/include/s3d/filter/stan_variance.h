@@ -1,7 +1,7 @@
 #ifndef FILTER_STAN_VARIANCE_H
 #define FILTER_STAN_VARIANCE_H
 
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 

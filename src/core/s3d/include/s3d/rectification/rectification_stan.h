@@ -2,9 +2,8 @@
 #define S3D_MULTIVIEW_STAN_RECTIFICATION_H
 
 #include "s3d/multiview/stan_fundamental_matrix_solver.h"
-#include <s3d/geometry/size.h>
-
-#include <Eigen/Dense>
+#include "s3d/geometry/size.h"
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 

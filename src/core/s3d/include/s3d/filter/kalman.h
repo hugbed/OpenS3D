@@ -5,7 +5,7 @@
 #ifndef S3D_FILTER_KALMAN_FILTER_H
 #define S3D_FILTER_KALMAN_FILTER_H
 
-#include "Eigen/Dense"
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 namespace filter {

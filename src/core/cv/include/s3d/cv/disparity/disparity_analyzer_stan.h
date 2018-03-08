@@ -11,7 +11,7 @@
 #include "s3d/robust/lmeds.h"
 #include "s3d/utilities/math.h"
 
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 #include <opencv2/core/types.hpp>
 

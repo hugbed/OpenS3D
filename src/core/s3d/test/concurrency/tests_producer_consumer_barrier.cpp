@@ -25,7 +25,7 @@ class MockProducerConsumerMediator : public s3d::ProducerConsumerMediator {
 
 class MockCyclicCountDownLatch : public CyclicCountDownLatch {
  public:
-  MockCyclicCountDownLatch(int64_t parties) : CyclicCountDownLatch(parties) {}
+  explicit MockCyclicCountDownLatch(int64_t parties) : CyclicCountDownLatch(parties) {}
   MOCK_METHOD0(countDown, void());
   MOCK_METHOD0(await, void());
 };

@@ -5,8 +5,7 @@
 
 #include "s3d/cv/utilities/cv.h"
 #include "s3d/rectification/rectification_stan.h"
-
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 

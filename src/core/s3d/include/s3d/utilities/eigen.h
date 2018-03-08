@@ -4,6 +4,15 @@
 #include <Eigen/Dense>
 #include <Eigen/SVD>
 
+#include<Eigen/StdVector>
+
+// to prevent alignment issues with std::vector
+#ifndef EIGEN_SPECIALIZED
+#define EIGEN_SPECIALIZED
+  EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector2d);
+  EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3d);
+#endif // EIGEN_SPECIALIZED
+
 namespace s3d {
 
 template <class MatT>

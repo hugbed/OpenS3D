@@ -5,7 +5,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include <Eigen/Dense>
+#include <s3d/utilities/eigen.h>
 
 #include <fstream>
 #include <string>

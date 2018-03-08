@@ -5,8 +5,7 @@
 #include "s3d/utilities/random_color_generator.h"
 #include "s3d/video/video_frame.h"
 #include "s3d/video/video_types.h"
-
-#include "Eigen/Dense"
+#include "s3d/utilities/eigen.h"
 
 #include <opencv/cxeigen.hpp>
 #include <opencv2/opencv.hpp>
@@ -155,8 +154,8 @@ template <typename T1, typename T2>
 static std::tuple<cv::Mat, cv::Mat> drawEpipolarLines(const cv::Matx<T1, 3, 3> F,
                                                       const cv::Mat& img1,
                                                       const cv::Mat& img2,
-                                                      const std::vector<cv::Point_<T2>> points1,
-                                                      const std::vector<cv::Point_<T2>> points2,
+                                                      const std::vector<cv::Point_<T2>>& points1,
+                                                      const std::vector<cv::Point_<T2>>& points2,
                                                       const float inlierDistance = -1) {
   assert(img1.size() == img2.size() && img1.type() == img2.type());
   assert(points1.size() == points2.size());
@@ -233,8 +232,8 @@ static void displayEpipolarLines(const std::string& title,
                                  const cv::Matx<T1, 3, 3> F,
                                  const cv::Mat& img1,
                                  const cv::Mat& img2,
-                                 const std::vector<cv::Point_<T2>> points1,
-                                 const std::vector<cv::Point_<T2>> points2) {
+                                 const std::vector<cv::Point_<T2>>& points1,
+                                 const std::vector<cv::Point_<T2>>& points2) {
   assert(img1.size() == img2.size() && img1.type() == img2.type());
 
   cv::Mat imgLeftEpilines, imgRightEpilines;

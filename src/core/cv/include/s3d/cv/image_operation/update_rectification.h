@@ -3,7 +3,7 @@
 
 #include "image_operation.h"
 
-#include <Eigen/Dense>
+#include "s3d/utilities/eigen.h"
 
 namespace s3d {
 class DisparityAnalyzerSTAN;
