@@ -81,7 +81,8 @@ private:
   }
 
   size_t computeNbTrials() {
-    size_t nbTrials = log(1.0 - params_.confidence) / log(1.0 - pow(0.5, MIN_NB_SAMPLES));
+    const int temporary_nb_samples = 5;
+    size_t nbTrials = log(1.0 - params_.confidence) / log(1.0 - pow(0.5, temporary_nb_samples));
     nbTrials += sqrt(1 - pow(0.5, 4)) / pow(0.5, 4); // + std of multiples
     return std::min(nbTrials, params_.nbTrials);
   }

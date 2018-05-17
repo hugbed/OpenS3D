@@ -12,10 +12,11 @@ struct StanVariance {
   double tiltKeystone{};
   double tiltOffset{};
   double zoom{};
+  double zParallaxDeformation{};
 
   Eigen::VectorXd toVector() const {
-    Eigen::VectorXd varianceVector(5);
-    varianceVector << vertical, roll, zoom, tiltOffset, panKeystone;
+    Eigen::VectorXd varianceVector(7);
+    varianceVector << vertical, roll, zoom, tiltOffset, panKeystone, tiltKeystone, zParallaxDeformation;
     return varianceVector;
   }
 };

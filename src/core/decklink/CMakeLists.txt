@@ -9,7 +9,7 @@ file(GLOB_RECURSE SRC_FILES
         src/*.cpp)
 
 add_library(${PROJECT_NAME} ${SRC_FILES})
-target_link_libraries(${PROJECT_NAME} decklink_sdk s3d)
+target_link_libraries(${PROJECT_NAME} decklink_sdk s3d -pthread)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 add_subdirectory(test)

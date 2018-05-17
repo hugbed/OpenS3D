@@ -19,7 +19,7 @@ ModelType StanFundamentalMatrixSolver::ComputeModel(const std::vector<SampleType
   // solve
   Eigen::VectorXd x = A.colPivHouseholderQr().solve(b); // QR
 
-  return {x[0], x[1], x[2], x[3], x[4], 0.0f, 0.0f};
+  return {x[0], x[1], x[2], x[3], x[4], x[5], x[6]};
 }
 
 // static
@@ -40,8 +40,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> StanFundamentalMatrixSolver::BuildEq
 
     // fill A
     Eigen::VectorXd row(nbVariables);
-    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y();//, -x.y() * xp.y(),
-                                                              //   x.x() * xp.y() - xp.x() * x.y();
+    row << xp.x() - x.x(), xp.x(), xp.y(), -1, xp.x() * x.y(), -x.y() * xp.y(),
+                                                                x.x() * xp.y() - xp.x() * x.y();
     A.block<1, nbVariables>(i, 0) = row;
 
     // fill b

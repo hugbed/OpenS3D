@@ -14,7 +14,6 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 
 # BUILD OPTIONS
 option(OpenS3D_BUILD_APPS "Build OpenS3D applications" ON)
-option(OpenS3D_BUILD_OGRE_APPS "Build Ogre applications" OFF)
 option(OpenS3D_USE_CV "Build OpenS3D OpenCV implementations" ON)
 option(OpenS3D_USE_DECKLINK "Build OpenS3D DeckLink implementations" OFF)
 option(OpenS3D_USE_FFMPEG "Build OpenS3D FFmpeg implementations" ON)
@@ -79,10 +78,6 @@ if (OpenS3D_BUILD_DEMOS)
     add_subdirectory(apps/S3DCVDemo)
   endif()
 endif()
-
-if (OpenS3D_BUILD_OGRE_APPS)
-  add_subdirectory(apps/OgreS3DPlayer)
-endif (OpenS3D_BUILD_OGRE_APPS)
 
 if (OpenS3D_BUILD_S3DANALYZER)
   add_subdirectory(apps/S3DAnalyzer)

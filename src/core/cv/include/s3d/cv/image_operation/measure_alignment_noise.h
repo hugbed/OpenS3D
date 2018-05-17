@@ -26,7 +26,7 @@ public:
     variance.tiltOffset = tiltOffset.getVariance();
     variance.panKeystone = panKeystone.getVariance();
     variance.tiltKeystone = tiltKeystone.getVariance();
-//    variance.zParallaxDeformation = zParallaxDeformation.getVariance();
+    variance.zParallaxDeformation = zParallaxDeformation.getVariance();
 
     return variance;
   }
